@@ -1,0 +1,77 @@
+/* ============================================
+   Reset mínimo + fundamentos compartidos.
+   Los estilos de cada diseño viven en su carpeta
+   (src/designs/<slug>/), scoped bajo su clase raíz.
+   ============================================ */
+
+/* Switzer (Fontshare) — grotesca variable, sustituta de Neue Montreal */
+@font-face {
+  font-family: 'Switzer';
+  src: url('/fonts/Switzer-Variable.woff2') format('woff2');
+  font-weight: 100 900;
+  font-style: normal;
+  font-display: swap;
+}
+
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+}
+
+* {
+  margin: 0;
+}
+
+html {
+  scroll-behavior: smooth;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  html {
+    scroll-behavior: auto;
+  }
+
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
+}
+
+body {
+  min-height: 100dvh;
+  -webkit-font-smoothing: antialiased;
+  text-rendering: optimizeLegibility;
+}
+
+img,
+svg,
+video {
+  display: block;
+  max-width: 100%;
+}
+
+button {
+  font: inherit;
+  color: inherit;
+  background: none;
+  border: none;
+  cursor: pointer;
+  padding: 0;
+}
+
+a {
+  color: inherit;
+}
+
+:focus-visible {
+  outline: 2px solid currentColor;
+  outline-offset: 3px;
+}
+
+#root {
+  isolation: isolate;
+}

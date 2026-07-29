@@ -1,0 +1,80 @@
+.gallery {
+  min-height: 100dvh;
+  background: #fafafa;
+  color: #2a2722;
+  font-family: 'Switzer', system-ui, sans-serif;
+  padding: clamp(24px, 6vw, 80px);
+}
+
+.gallery__header {
+  max-width: 640px;
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  margin-bottom: 56px;
+}
+
+.gallery__eyebrow {
+  font-size: 0.8125rem;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  opacity: 0.55;
+}
+
+.gallery__title {
+  font-family: 'Instrument Serif', Georgia, serif;
+  font-weight: 400;
+  font-size: clamp(3rem, 8vw, 6rem);
+  line-height: 0.95;
+}
+
+.gallery__intro {
+  font-family: 'Lora', Georgia, serif;
+  font-size: 1.125rem;
+  line-height: 1.55;
+  opacity: 0.85;
+}
+
+.gallery__grid {
+  list-style: none;
+  padding: 0;
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+  gap: 16px;
+}
+
+.gallery__card {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  min-height: 220px;
+  padding: 20px;
+  border: 1px solid #2a2722;
+  border-radius: 12px;
+  text-decoration: none;
+  transition: transform 0.25s ease;
+}
+
+.gallery__card:hover {
+  transform: translateY(-4px);
+}
+
+.gallery__card-year {
+  font-size: 0.6875rem;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  opacity: 0.55;
+}
+
+.gallery__card-name {
+  font-family: 'Instrument Serif', Georgia, serif;
+  font-size: 2.25rem;
+  line-height: 1;
+}
+
+.gallery__card-description {
+  font-size: 0.875rem;
+  line-height: 1.5;
+  opacity: 0.75;
+  margin-top: auto;
+}

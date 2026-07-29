@@ -1,0 +1,406 @@
+/* ============================================================
+   HENRY — sistema editorial monocromático cálido
+   Spec: ./design.md  ·  Todos los valores salen de los tokens.
+   Reglas duras: sin color, sin sombras, radius siempre 12px.
+   ============================================================ */
+
+.design-henry {
+  /* --- Tokens de color (monocromo cálido) --- */
+  --paper: #fafafa;
+  --ink: #2a2722;
+  --sepia: #3e3b36;
+  --ash: #666666;
+  --midstone: #9f9f9f;
+  --pebble: #b3b3b3;
+  --hairline: #eeeeee;
+
+  /* --- Tipografía --- */
+  --font-sans: 'Switzer', 'Inter', system-ui, sans-serif;
+  --font-serif-display: 'Instrument Serif', 'Georgia', serif;
+  --font-serif: 'Lora', 'Georgia', serif;
+  --font-condensed: 'Anton', 'Arial Narrow', sans-serif;
+
+  /* Escala Minor Third (1.2) desde 20px */
+  --text-xs: 0.75rem;    /* 12px */
+  --text-sm: 0.875rem;   /* 14px */
+  --text-base: 1.25rem;  /* 20px */
+  --text-md: 1.5rem;     /* 24px */
+  --text-lg: 2rem;       /* 32px */
+  --headline-sm: clamp(2rem, 5vw, 4.8125rem);     /* 32→77px */
+  --headline-lg: clamp(3rem, 9vw, 8.25rem);       /* 48→132px */
+  --masthead: clamp(6rem, 24vw, 23.1875rem);      /* hasta 371px */
+
+  /* --- Espaciado y forma --- */
+  --space: 4px;
+  --section-gap: clamp(64px, 10vh, 96px);
+  --card-padding: 16px;
+  --radius: 12px; /* único radio permitido por la spec */
+  --gutter: clamp(16px, 4vw, 48px);
+
+  font-family: var(--font-sans);
+  font-size: var(--text-base);
+  letter-spacing: -0.01em;
+  line-height: 1.5;
+  background: var(--paper);
+  color: var(--ink);
+}
+
+/* ------------------------------------------------------------
+   Bandas Paper / Ink — el mecanismo central del sistema
+   ------------------------------------------------------------ */
+
+.henry-section {
+  padding: var(--section-gap) var(--gutter);
+}
+
+/* Arranca como Paper y se invierte a Ink al revelarse en el scroll */
+.henry-section--ink {
+  background-color: var(--paper);
+  color: var(--ink);
+  transition: background-color 0.9s ease, color 0.9s ease;
+}
+
+.henry-section--ink.is-visible {
+  background-color: var(--ink);
+  color: var(--paper);
+}
+
+.henry-section--ink .henry-hairline {
+  border-color: var(--sepia);
+}
+
+/* ------------------------------------------------------------
+   Tipografía
+   ------------------------------------------------------------ */
+
+.henry-display {
+  font-family: var(--font-serif-display);
+  font-weight: 400;
+  font-size: var(--headline-lg);
+  line-height: 0.9;
+  letter-spacing: -0.02em;
+  text-wrap: balance;
+}
+
+.henry-headline {
+  font-family: var(--font-serif-display);
+  font-weight: 400;
+  font-size: var(--headline-sm);
+  line-height: 1;
+  text-wrap: balance;
+}
+
+.henry-serif {
+  font-family: var(--font-serif);
+  font-size: var(--text-md);
+  line-height: 1.55;
+}
+
+.henry-meta {
+  font-family: var(--font-sans);
+  font-size: var(--text-sm);
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  color: var(--ash);
+}
+
+.henry-section--ink.is-visible .henry-meta {
+  color: var(--midstone);
+}
+
+.henry-hairline {
+  border: 0;
+  border-top: 1px solid var(--hairline);
+}
+
+/* ------------------------------------------------------------
+   Reveal tipográfico: los titulares suben línea a línea
+   ------------------------------------------------------------ */
+
+.henry-reveal {
+  overflow: hidden;
+}
+
+.henry-reveal > * {
+  transform: translateY(110%);
+  transition: transform 0.8s cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+.henry-reveal.is-visible > * {
+  transform: translateY(0);
+}
+
+/* ------------------------------------------------------------
+   Nav
+   ------------------------------------------------------------ */
+
+.henry-nav {
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
+  gap: calc(var(--space) * 4);
+  padding: calc(var(--space) * 5) var(--gutter);
+  border-bottom: 1px solid var(--hairline);
+  font-size: var(--text-sm);
+}
+
+.henry-nav a {
+  text-decoration: none;
+  padding: calc(var(--space) * 1) calc(var(--space) * 3);
+  border-radius: var(--radius);
+  transition: background-color 0.2s ease, color 0.2s ease;
+}
+
+.henry-nav a:hover {
+  background: var(--ink);
+  color: var(--paper);
+}
+
+/* ------------------------------------------------------------
+   Hero
+   ------------------------------------------------------------ */
+
+.henry-hero {
+  display: flex;
+  flex-direction: column;
+  gap: calc(var(--space) * 8);
+  min-height: 72dvh;
+  justify-content: center;
+}
+
+.henry-hero__tagline {
+  max-width: 34ch;
+  color: var(--sepia);
+}
+
+.henry-hero__foot {
+  display: flex;
+  justify-content: space-between;
+  gap: calc(var(--space) * 4);
+  flex-wrap: wrap;
+}
+
+/* ------------------------------------------------------------
+   Masthead — palabra masiva ultra-condensada con marquee
+   ------------------------------------------------------------ */
+
+.henry-masthead {
+  padding: calc(var(--space) * 6) 0;
+  overflow: hidden;
+  white-space: nowrap;
+}
+
+.henry-masthead__track {
+  display: inline-flex;
+  animation: henry-marquee 40s linear infinite;
+}
+
+.henry-masthead__word {
+  font-family: var(--font-condensed);
+  font-weight: 400;
+  font-size: var(--masthead);
+  line-height: 0.85;
+  text-transform: uppercase;
+  letter-spacing: 0.01em;
+  padding-right: 0.35em;
+}
+
+@keyframes henry-marquee {
+  to {
+    transform: translateX(-50%);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .henry-masthead__track {
+    animation: none;
+  }
+}
+
+/* ------------------------------------------------------------
+   Sobre mí — copy editorial a dos columnas
+   ------------------------------------------------------------ */
+
+.henry-about {
+  display: grid;
+  grid-template-columns: 1fr 2fr;
+  gap: calc(var(--space) * 12);
+  padding-top: calc(var(--space) * 8);
+}
+
+.henry-about__copy {
+  display: flex;
+  flex-direction: column;
+  gap: calc(var(--space) * 6);
+  max-width: 58ch;
+}
+
+@media (max-width: 720px) {
+  .henry-about {
+    grid-template-columns: 1fr;
+    gap: calc(var(--space) * 6);
+  }
+}
+
+/* ------------------------------------------------------------
+   Proyectos — tarjetas austeras, hover de inversión
+   ------------------------------------------------------------ */
+
+.henry-projects__list {
+  list-style: none;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+}
+
+.henry-project {
+  display: grid;
+  grid-template-columns: auto 1fr auto;
+  gap: calc(var(--space) * 6);
+  align-items: baseline;
+  padding: calc(var(--card-padding) * 2) var(--card-padding);
+  border-top: 1px solid var(--sepia);
+  border-radius: var(--radius);
+  transition: background-color 0.2s ease, color 0.2s ease;
+}
+
+.henry-project:hover {
+  background: var(--paper);
+  color: var(--ink);
+}
+
+.henry-project:hover .henry-meta {
+  color: var(--ash);
+}
+
+.henry-project__index {
+  font-family: var(--font-serif);
+  font-size: var(--text-base);
+  color: var(--midstone);
+}
+
+.henry-project__title {
+  font-family: var(--font-serif-display);
+  font-size: var(--headline-sm);
+  line-height: 1;
+}
+
+.henry-project__description {
+  font-size: var(--text-sm);
+  max-width: 52ch;
+  margin-top: calc(var(--space) * 3);
+  color: var(--pebble);
+}
+
+.henry-project:hover .henry-project__description {
+  color: var(--ash);
+}
+
+.henry-project__tags {
+  display: flex;
+  flex-wrap: wrap;
+  gap: calc(var(--space) * 2);
+  margin-top: calc(var(--space) * 4);
+}
+
+.henry-tag {
+  font-size: var(--text-xs);
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  padding: calc(var(--space) * 1) calc(var(--space) * 3);
+  border: 1px solid currentColor;
+  border-radius: var(--radius);
+  opacity: 0.7;
+}
+
+@media (max-width: 720px) {
+  .henry-project {
+    grid-template-columns: auto 1fr;
+  }
+
+  .henry-project__year {
+    grid-column: 2;
+  }
+}
+
+/* ------------------------------------------------------------
+   Habilidades — lista tipográfica grande
+   ------------------------------------------------------------ */
+
+.henry-skills__list {
+  list-style: none;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+}
+
+.henry-skill {
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
+  gap: calc(var(--space) * 4);
+  padding: calc(var(--space) * 4) 0;
+  border-bottom: 1px solid var(--hairline);
+}
+
+.henry-skill__name {
+  font-family: var(--font-serif);
+  font-size: var(--text-lg);
+}
+
+/* ------------------------------------------------------------
+   Contacto / footer — email como titular enorme
+   ------------------------------------------------------------ */
+
+.henry-contact {
+  display: flex;
+  flex-direction: column;
+  gap: calc(var(--space) * 10);
+}
+
+.henry-contact__email {
+  font-family: var(--font-serif-display);
+  font-size: var(--headline-lg);
+  line-height: 1;
+  text-decoration: underline;
+  text-decoration-thickness: 2px;
+  text-underline-offset: 0.08em;
+  word-break: break-word;
+  transition: color 0.2s ease;
+}
+
+.henry-contact__email:hover {
+  color: var(--ash);
+}
+
+.henry-contact__links {
+  display: flex;
+  flex-wrap: wrap;
+  gap: calc(var(--space) * 3);
+}
+
+.henry-contact__links a {
+  font-size: var(--text-sm);
+  text-decoration: none;
+  padding: calc(var(--space) * 2) calc(var(--space) * 4);
+  border: 1px solid var(--pebble);
+  border-radius: var(--radius);
+  transition: background-color 0.2s ease, color 0.2s ease;
+}
+
+.henry-contact__links a:hover {
+  background: var(--ink);
+  color: var(--paper);
+  border-color: var(--ink);
+}
+
+.henry-footer {
+  display: flex;
+  justify-content: space-between;
+  gap: calc(var(--space) * 4);
+  flex-wrap: wrap;
+  padding: calc(var(--space) * 5) var(--gutter);
+  border-top: 1px solid var(--hairline);
+  font-size: var(--text-xs);
+  color: var(--midstone);
+}
