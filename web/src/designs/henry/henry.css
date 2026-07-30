@@ -24,6 +24,10 @@
   --text-xs: 0.75rem;    /* 12px — caption */
   --text-sm: 0.875rem;   /* 14px — label secundaria */
   --text-base: 1rem;     /* 16px — body */
+  /* Excepción documentada a la escala: prosa larga. La escala de la spec salta de 16
+     a 24 y no contempla un tamaño de lectura sostenida; a 16px, sobre una página
+     ancha, las descripciones de proyecto cansaban. */
+  --text-body: 1.0625rem; /* 17px — cuerpo de lectura */
   --text-md: 1.5rem;     /* 24px — heading-sm / copy */
   --text-lg: 2rem;       /* 32px — heading */
   --headline-sm: clamp(2.25rem, 6vw, 4.8125rem);  /* 36→77px */
@@ -46,6 +50,13 @@
   background: var(--paper);
   color: var(--ink);
   overflow-x: clip; /* los títulos que se deslizan no generan scroll horizontal */
+  scroll-behavior: smooth; /* la nav salta a secciones de la misma página */
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .design-henry {
+    scroll-behavior: auto;
+  }
 }
 
 /* Solo para lectores de pantalla (encabezados que en pantalla son decorativos) */
@@ -118,6 +129,8 @@
   font-variation-settings: 'wght' 340, 'opsz' 40, 'SOFT' 0;
 }
 
+/* --ash sobre paper da 5.5:1 y --midstone sobre ink otro 5.5:1: ambos pasan AA.
+   El uppercase con tracking a 14px es lo que los hace *parecer* más flojos. */
 .henry-meta {
   font-family: var(--font-sans);
   font-size: var(--text-sm);
@@ -128,6 +141,13 @@
 
 .henry-section--ink .henry-meta {
   color: var(--midstone);
+}
+
+/* Rótulos de bloque (Problema / Lo difícil / Resultado): son estructura de lectura,
+   no metadato secundario, así que van a tinta plena. */
+.henry-proj__block-label,
+.henry-skills__area {
+  color: var(--ink);
 }
 
 .henry-hairline {
@@ -196,9 +216,11 @@
 }
 
 /* Segundo bloque dentro de una misma banda (Habilidades bajo Experiencia):
-   separación de sección sin abrir banda nueva, para no romper la alternancia. */
+   separación de sección sin abrir banda nueva, para no romper la alternancia.
+   Menor que --section-gap: a hueco completo, la separación entre bloques de una
+   misma banda superaba a la de las bandas entre sí. */
 .henry-subsection {
-  margin-top: var(--section-gap);
+  margin-top: clamp(48px, 7vh, 72px);
 }
 
 /* ------------------------------------------------------------
@@ -463,108 +485,45 @@
 /* Fila de proyecto, en una sola columna alineada al margen. El texto fantasma que
    flanqueaba el título se retiró: cancelaba las dos capas —ni se leía el fondo ni el
    título— y enterraba en decoración los datos más útiles, que ahora son metadato. */
+/* Fila de proyecto en dos columnas: meta a la izquierda, texto a la derecha. Antes
+   era una columna estrecha con el 60% del lienzo vacío durante toda la sección. */
 .henry-proj {
-  padding: calc(var(--space) * 5) 0;
+  display: grid;
+  grid-template-columns: minmax(0, 14rem) minmax(0, 1fr);
+  gap: calc(var(--space) * 8);
+  padding: calc(var(--space) * 8) 0;
   border-top: 1px solid var(--sepia);
 }
 
-.henry-proj__toggle {
+.henry-proj__aside {
   display: flex;
-  align-items: baseline;
-  gap: calc(var(--space) * 3);
-  width: 100%;
-  text-align: left;
-  cursor: pointer;
+  flex-direction: column;
+  gap: calc(var(--space) * 1);
+}
+
+.henry-proj__period {
+  color: var(--ink); /* la fecha es dato, no decoración: no se atenúa */
 }
 
 .henry-proj__title {
   font-family: var(--font-serif-display);
-  font-variation-settings: 'wght' 360, 'opsz' 40;
-  font-size: clamp(1.35rem, 2.4vw, 1.85rem);
+  font-variation-settings: 'wght' 400, 'opsz' 40;
+  font-size: clamp(1.5rem, 2.6vw, 2rem);
   line-height: 1.1;
-}
-
-/* Empresa · rol · periodo. Siempre visible, aunque la fila esté cerrada: el marco
-   temporal es lo que evita que nueve meses se lean como cuatro años. */
-.henry-proj__meta {
-  margin-top: calc(var(--space) * 2);
 }
 
 /* El dato de escala que antes vivía en el fantasma, ahora legible. */
 .henry-proj__metric {
-  margin-top: calc(var(--space) * 1);
+  margin-top: calc(var(--space) * 2);
   font-family: var(--font-serif);
   font-variation-settings: 'wght' 400, 'opsz' 28;
-  font-size: var(--text-base);
+  font-size: var(--text-body);
   line-height: 1.4;
 }
 
-/* Disparador discreto: signo +/× junto al título (no un rectángulo) */
-.henry-proj__sign {
-  position: relative;
-  width: 0.7em;
-  height: 0.7em;
-  flex: none;
-  opacity: 0.55;
-  transition: opacity 0.2s ease;
-}
-
-.henry-proj__sign::before,
-.henry-proj__sign::after {
-  content: '';
-  position: absolute;
-  background: currentColor;
-}
-
-.henry-proj__sign::before {
-  left: 0;
-  top: 50%;
-  width: 100%;
-  height: 1.5px;
-  transform: translateY(-50%);
-}
-
-.henry-proj__sign::after {
-  top: 0;
-  left: 50%;
-  width: 1.5px;
-  height: 100%;
-  transform: translateX(-50%);
-  transition: opacity 0.2s ease;
-}
-
-.henry-proj__toggle:hover .henry-proj__sign {
-  opacity: 1;
-}
-
-.henry-proj.is-open .henry-proj__sign::after {
-  opacity: 0; /* + → − al abrir */
-}
-
-/* La apertura va por fila de grid (0fr → 1fr), NO por max-height: la altura sale del
-   contenido real, así que un texto largo no puede recortarse a media línea. */
-.henry-proj__panel {
-  display: grid;
-  grid-template-rows: 0fr;
-  transition: grid-template-rows 0.5s cubic-bezier(0.22, 1, 0.36, 1);
-}
-
-.henry-proj.is-open .henry-proj__panel {
-  grid-template-rows: 1fr;
-}
-
-.henry-proj__panel-inner {
-  min-height: 0; /* imprescindible para que la fila 0fr colapse de verdad */
-  overflow: hidden;
-}
-
-.henry-proj.is-open .henry-proj__panel-inner {
-  padding-top: calc(var(--space) * 3);
-}
-
 /* Tres bloques rotulados en vez de un solo párrafo largo, que se leía como muro. */
-.henry-proj__block + .henry-proj__block {
-  margin-top: calc(var(--space) * 4);
+.henry-proj__block {
+  margin-top: calc(var(--space) * 5);
 }
 
 .henry-proj__block-label {
@@ -573,11 +532,16 @@
 
 /* Descripción en la serif editorial (design.md: "editorial copy" → serif), no la sans */
 .henry-proj__desc {
-  max-width: 68ch; /* medida de lectura: el ancho completo daba renglones interminables */
+  max-width: 68ch; /* medida de lectura */
+  margin-top: calc(var(--space) * 4);
   font-family: var(--font-serif);
   font-variation-settings: 'wght' 380, 'opsz' 28;
-  font-size: var(--text-base);
-  line-height: 1.55;
+  font-size: var(--text-body);
+  line-height: 1.6;
+}
+
+.henry-proj__block .henry-proj__desc {
+  margin-top: 0;
 }
 
 .henry-proj__tags {
@@ -587,9 +551,10 @@
   margin-top: calc(var(--space) * 3);
 }
 
-@media (prefers-reduced-motion: reduce) {
-  .henry-proj__panel {
-    transition: none;
+@media (max-width: 760px) {
+  .henry-proj {
+    grid-template-columns: 1fr;
+    gap: calc(var(--space) * 4);
   }
 }
 
@@ -635,14 +600,43 @@
   margin: 0;
   font-family: var(--font-serif);
   font-variation-settings: 'wght' 380, 'opsz' 28;
-  font-size: var(--text-base);
-  line-height: 1.5;
+  font-size: var(--text-body);
+  line-height: 1.55;
 }
 
 @media (max-width: 620px) {
   .henry-skills__row {
     grid-template-columns: 1fr;
   }
+}
+
+/* «Cómo está hecho»: bloque corto, no sección propia. */
+.henry-colophon {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: calc(var(--space) * 3);
+}
+
+.henry-colophon__text {
+  max-width: 68ch;
+  font-family: var(--font-serif);
+  font-variation-settings: 'wght' 380, 'opsz' 28;
+  font-size: var(--text-body);
+  line-height: 1.6;
+}
+
+/* Perfil, ya dentro de Contacto: hereda el patrón de Habilidades sobre banda Ink. */
+.henry-contact__facts {
+  padding-top: calc(var(--space) * 2);
+}
+
+.henry-contact__facts .henry-skills__row {
+  border-bottom-color: var(--sepia);
+}
+
+.henry-section--ink .henry-skills__area {
+  color: var(--paper);
 }
 
 .henry-inline-link {

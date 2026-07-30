@@ -6,7 +6,7 @@ import { Hero } from './components/Hero';
 import { Masthead } from './components/Masthead';
 import { Projects } from './components/Projects';
 import { Skills } from './components/Skills';
-import { Profile } from './components/Profile';
+import { Colophon } from './components/Colophon';
 import { Contact } from './components/Contact';
 
 export default function HenryPage() {
@@ -28,7 +28,7 @@ export default function HenryPage() {
         <div id="habilidades">
           <Skills />
         </div>
-        <Profile />
+        <Colophon />
       </section>
       <Contact />
       <footer className="henry-footer">
