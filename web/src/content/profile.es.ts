@@ -63,8 +63,12 @@ export const es = {
     },
     {
       label: 'Modalidad',
+      /* El orden importa: mencionar Deel sin declarar el estatus hacía leer lo contrario
+         de lo que es —que se recurre a contractor por no poder ser contratado en
+         planta—. Con los documentos por delante, Deel pasa a ser una opción extra para
+         clientes de fuera. */
       value:
-        'Empleo de planta —remoto, híbrido o presencial— o contractor vía Deel · Colombia (GMT-5)',
+        'Documentos colombianos, sin requisitos de visado ni patrocinio. Empleo de planta, remoto o híbrido en Colombia; también contratación internacional vía Deel (GMT-5).',
     },
     {
       label: 'Dominio',
