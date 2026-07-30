@@ -80,10 +80,6 @@ export const profile = {
       area: 'Infraestructura',
       items: ['Docker', 'Linux / Nginx', 'GitHub Actions', 'AWS S3'],
     },
-    {
-      area: 'Aprendiendo',
-      items: ['TypeScript', 'Node.js', 'React'],
-    },
   ] satisfies SkillGroup[],
   projectGroups: [
     {

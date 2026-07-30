@@ -2,7 +2,6 @@ import './henry.css';
 import '@fontsource-variable/fraunces';
 import '@fontsource-variable/antonio';
 import { profile } from '../../content/profile';
-import { useReveal } from '../../hooks/useReveal';
 import { DesignMenu } from './components/DesignMenu';
 import { Hero } from './components/Hero';
 import { Masthead } from './components/Masthead';
@@ -46,21 +45,5 @@ export default function HenryPage() {
         </span>
       </footer>
     </div>
-  );
-}
-
-/** Sección que se invierte de Paper a Ink cuando entra al viewport. */
-export function InkSection({
-  id,
-  children,
-}: {
-  id?: string;
-  children: React.ReactNode;
-}) {
-  const ref = useReveal<HTMLElement>(0.25);
-  return (
-    <section id={id} ref={ref} className="henry-section henry-section--ink">
-      {children}
-    </section>
   );
 }

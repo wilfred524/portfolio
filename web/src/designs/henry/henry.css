@@ -247,20 +247,6 @@
   color: var(--ash) !important;
 }
 
-/* ------------------------------------------------------------
-   Top Ticker Banner — franja de anuncio a sangre completa (spec)
-   ------------------------------------------------------------ */
-
-.henry-ticker {
-  padding: calc(var(--space) * 1.5) var(--gutter);
-  border-top: 1px solid var(--ink);
-  border-bottom: 1px solid var(--ink);
-  font-size: var(--text-xs);
-  text-transform: uppercase;
-  letter-spacing: 0.06em;
-  text-align: center;
-}
-
 /* Segundo bloque dentro de una misma banda (Habilidades bajo Experiencia):
    separación de sección sin abrir banda nueva, para no romper la alternancia. */
 .henry-subsection {
@@ -753,7 +739,7 @@
 
 .henry-skill__name {
   font-family: var(--font-serif);
-  font-size: var(--text-lg);
+  font-size: var(--text-md);
 }
 
 /* ------------------------------------------------------------
