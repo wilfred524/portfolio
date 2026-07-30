@@ -3,8 +3,8 @@
  *
  *   npm run build:cv -w @portfolio/api
  *
- * Escribe `web/public/cv-es.html` y `web/public/cv-en.html`. Se abren en el navegador
- * y se exportan con Imprimir → Guardar como PDF.
+ * Escribe cv-es y cv-en en web/public/, como HTML y como PDF. El PDF lo imprime Chrome
+ * headless si está instalado; si no, quedan los HTML para imprimirlos a mano.
  *
  * POR QUÉ ASÍ:
  * - Los datos duros (empresas, periodos, habilidades, formación, contacto) se leen de
@@ -17,12 +17,22 @@
  *   backend no debe acoplarse al frontend, y aquí solo consume un archivo de datos.
  */
 
+import { execFile } from 'node:child_process';
+import { promisify } from 'node:util';
+import { access } from 'node:fs/promises';
 import { build } from 'esbuild';
 import { mkdtemp, readFile, rm, writeFile } from 'node:fs/promises';
 import { tmpdir } from 'node:os';
 import { dirname, join, resolve } from 'node:path';
 import { fileURLToPath, pathToFileURL } from 'node:url';
-import { CERTIFICATIONS, EMPLOYERS, TEXT, TRANSLATIONS } from './content.js';
+import {
+  CERTIFICATIONS,
+  EMPLOYERS,
+  EMPLOYER_TAGLINE,
+  TEXT,
+  TRANSLATIONS,
+  WORK_MODE,
+} from './content.js';
 
 const HERE = dirname(fileURLToPath(import.meta.url));
 const ROOT = resolve(HERE, '../../..');
@@ -57,8 +67,13 @@ const escape = (value: string) =>
     .replace(/</g, '&lt;')
     .replace(/>/g, '&gt;');
 
-/** Traduce si hay entrada; si no, devuelve el original (el español es la base). */
-const tr = (dict: Record<string, string>, value: string) => dict[value] ?? value;
+/**
+ * TRANSLATIONS solo contiene inglés: el español es la base y sale tal cual de
+ * profile.ts. Traducir siempre hacía que el CV español saliera con los títulos en
+ * inglés.
+ */
+const translate = (en: boolean, dict: Record<string, string>, value: string) =>
+  en ? dict[value] ?? value : value;
 
 function renderCv(profile: any, lang: Lang): string {
   const t = TEXT[lang];
@@ -67,7 +82,10 @@ function renderCv(profile: any, lang: Lang): string {
   // Un CV se organiza por EMPLEO, no por proyecto: cinco entradas con el mismo periodo
   // se leen como cinco trabajos simultáneos. Se agrupan por empresa conservando el orden.
   const items = profile.projectGroups.flatMap((group: any) => group.items);
-  const jobs = new Map<string, { company: string; role: string; period: string; items: any[] }>();
+  const jobs = new Map<
+    string,
+    { company: string; role: string; period: string; hasCompany: boolean; items: any[] }
+  >();
 
   for (const item of items) {
     const fallback = en ? 'Personal projects' : 'Proyectos propios';
@@ -77,29 +95,37 @@ function renderCv(profile: any, lang: Lang): string {
     // Agrupa por empleador, no por marca ni periodo: dentro de un mismo contrato puede
     // haber proyectos para varias marcas del grupo.
     if (!jobs.has(company)) {
-      jobs.set(company, { company, role: item.role, period: item.period, items: [] });
+      jobs.set(company, {
+        company,
+        role: item.role,
+        period: item.period,
+        hasCompany: Boolean(item.company),
+        items: [],
+      });
     }
     jobs.get(company)!.items.push(item);
   }
 
   const experience = [...jobs.values()]
     .map((job) => {
-      const company = escape(tr(TRANSLATIONS.companies, job.company));
-      const role = escape(tr(TRANSLATIONS.roles, job.role));
+      const company = escape(translate(en, TRANSLATIONS.companies, job.company));
+      const role = escape(translate(en, TRANSLATIONS.roles, job.role));
       const period = escape(job.period.replace('actualidad', t.present));
+      const mode = WORK_MODE[job.company]?.[lang];
+      const tagline = EMPLOYER_TAGLINE[job.company]?.[lang];
 
       const entries = job.items
         .map((item: any) => {
           const note = item.company ? EMPLOYERS[item.company]?.note : undefined;
           const title =
-            escape(tr(TRANSLATIONS.titles, item.title)) +
+            escape(translate(en, TRANSLATIONS.titles, item.title)) +
             (note ? ` <span class="note">${escape(note[lang])}</span>` : '');
           const bullets = (t.bullets as Record<string, string[]>)[item.title] ?? [];
           const list = bullets.map((b) => `<li>${escape(b)}</li>`).join('\n            ');
           const stack = item.tags.map(escape).join(' · ');
           return `
         <div class="entry">
-          <h3>${title}</h3>
+          <p class="entry-title">${title}</p>
           <ul>
             ${list}
           </ul>
@@ -108,12 +134,19 @@ function renderCv(profile: any, lang: Lang): string {
         })
         .join('\n');
 
+      // Sin empresa real (proyectos propios) el rol ya lo dice todo: repetirlo como
+      // "Proyecto propio · Proyectos propios" sobra.
+      const head = job.hasCompany
+        ? `<span class="role">${role}</span> <span class="company">${company}</span>`
+        : `<span class="role">${company}</span>`;
+
       return `
       <div class="job">
-        <div class="job-head">
-          <h3 class="job-title">${role} — ${company}</h3>
+        <p class="job-head">
+          ${head}${mode ? ` · <span class="mode">${escape(mode)}</span>` : ''}
           <span class="period">${period}</span>
-        </div>
+        </p>
+        ${tagline ? `<p class="tagline">${escape(tagline)}</p>` : ''}
         ${entries}
       </div>`;
     })
@@ -122,11 +155,11 @@ function renderCv(profile: any, lang: Lang): string {
   const skills = profile.skillGroups
     .map(
       (group: any) =>
-        `<li><strong>${escape(tr(TRANSLATIONS.skillAreas, group.area))}:</strong> ${escape(
-          group.items.join(' · '),
-        )}</li>`,
+        `<p class="skill"><span class="skill-area">${escape(
+          translate(en, TRANSLATIONS.skillAreas, group.area),
+        )}</span> ${escape(group.items.join(' · '))}</p>`,
     )
-    .join('\n        ');
+    .join('\n      ');
 
   const education = en
     ? TRANSLATIONS.education
@@ -137,16 +170,21 @@ function renderCv(profile: any, lang: Lang): string {
   const location = en ? TRANSLATIONS.location : `${profile.location} (GMT-5)`;
 
   const certs = CERTIFICATIONS.map((c) => `<li>${escape(c[lang])}</li>`).join('\n        ');
-  const summary = t.summary.map((p) => `<p>${escape(p)}</p>`).join('\n        ');
-  const contact = [
-    profile.email,
-    profile.phone,
-    location,
-    ...profile.social.map((s: any) => s.url.replace(/^https?:\/\/(www\.)?/, '')),
-    profile.repoUrl.replace(/^https?:\/\/(www\.)?/, ''),
-  ]
-    .map(escape)
-    .join(' · ');
+  const summary = t.summary.map((x) => `<p>${escape(x)}</p>`).join('\n      ');
+
+  // El export de LinkedIn del que parte esta plantilla no incluía ni email ni teléfono:
+  // un CV sin vía de contacto en la primera pantalla es un CV que no sirve.
+  const join = (parts: string[]) => parts.map(escape).join('&nbsp;&nbsp;·&nbsp;&nbsp;');
+  const contact = join([profile.email, profile.phone, location]);
+  const links = join(
+    profile.social.map((x: any) => x.url.replace(/^https?:\/\/(www\.)?/, '')),
+  );
+
+  const section = (title: string, body: string) => `
+    <section>
+      <h2>${escape(title)}</h2>
+      ${body}
+    </section>`;
 
   return `<!doctype html>
 <html lang="${t.lang}">
@@ -154,48 +192,83 @@ function renderCv(profile: any, lang: Lang): string {
     <meta charset="utf-8" />
     <title>${escape(t.docTitle)}</title>
     <style>
-      /* Una columna, sin gráficos ni tablas: el CV pasa por lectores ATS antes que
-         por ojos humanos, y cualquier maquetación en columnas los confunde. */
-      @page { size: A4; margin: 14mm 15mm; }
+      /* Una columna, sin tablas ni gráficos: el CV pasa por lectores ATS antes que por
+         ojos humanos, y cualquier maquetación en columnas los confunde.
+         Estructura heredada del export de LinkedIn —nombre centrado, secciones en
+         versales con regla— porque es un formato que los reclutadores reconocen. */
+      /* Misma tipografía que el sitio, para que CV y web se lean como una sola cosa:
+         Fraunces (serif variable) en los titulares y Switzer (sans variable) en el
+         cuerpo. Las rutas son relativas porque el CV se imprime desde file:// y también
+         se sirve desde la raíz: fonts/… funciona en ambos casos.
+         No afecta a los lectores ATS: extraen texto, no tipografía. */
+      @font-face {
+        font-family: 'Switzer';
+        src: url('fonts/Switzer-Variable.woff2') format('woff2-variations');
+        font-weight: 100 900;
+        font-display: swap;
+      }
+      @font-face {
+        font-family: 'Fraunces CV';
+        src: url('fonts/fraunces-latin-wght-normal.woff2') format('woff2-variations');
+        font-weight: 100 900;
+        font-display: swap;
+      }
+
+      @page { size: A4; margin: 13mm 14mm; }
       * { box-sizing: border-box; }
       body {
         margin: 0 auto;
-        max-width: 190mm;
-        padding: 12mm 10mm;
-        font-family: Georgia, 'Times New Roman', serif;
-        font-size: 10.5pt;
+        max-width: 200mm;
+        padding: 10mm 12mm;
+        font-family: 'Switzer', 'Inter', 'Helvetica Neue', Arial, sans-serif;
+        font-size: 10pt;
         line-height: 1.45;
-        color: #1a1a1a;
+        letter-spacing: -0.005em;
+        color: #1c1c1c;
         background: #fff;
       }
-      h1 { margin: 0; font-size: 19pt; letter-spacing: -0.01em; }
-      .headline { margin: 2pt 0 0; font-size: 11pt; font-weight: bold; }
-      .contact { margin: 5pt 0 0; font-size: 9pt; color: #333; }
+      header { text-align: center; border-bottom: 2px solid #1c4a5a; padding-bottom: 6pt; }
+      h1 {
+        margin: 0;
+        font-family: 'Fraunces CV', Georgia, serif;
+        font-variation-settings: 'wght' 600, 'opsz' 144, 'SOFT' 0, 'WONK' 0;
+        font-size: 23pt;
+        line-height: 1.05;
+        letter-spacing: -0.015em;
+        color: #1c4a5a;
+      }
+      .headline { margin: 3pt 0 0; font-size: 9.5pt; color: #333; }
+      .contact { margin: 4pt 0 0; font-size: 8.5pt; color: #444; }
       h2 {
-        margin: 15pt 0 5pt;
+        margin: 14pt 0 0;
         padding-bottom: 2pt;
-        border-bottom: 1px solid #999;
-        font-size: 11pt;
+        border-bottom: 1px solid #b8c4c9;
+        font-size: 9.5pt;
+        font-weight: 600;
+        letter-spacing: 0.12em;
         text-transform: uppercase;
-        letter-spacing: 0.06em;
+        color: #1c4a5a;
       }
-      h3 { margin: 0; font-size: 10.5pt; }
-      .job { margin-bottom: 10pt; }
-      .job-head {
-        display: flex;
-        justify-content: space-between;
-        gap: 8pt;
-        margin-bottom: 4pt;
-      }
-      .job-title { font-size: 11pt; }
-      .period { font-size: 9pt; color: #333; white-space: nowrap; }
-      .entry { margin: 0 0 7pt; page-break-inside: avoid; }
-      ul { margin: 3pt 0 0; padding-left: 15pt; }
-      li { margin-bottom: 2pt; }
+      section > p:first-of-type, section > div:first-of-type { margin-top: 5pt; }
       p { margin: 0 0 4pt; }
-      .stack { margin-top: 2pt; font-size: 9pt; color: #444; }
-      .note { font-weight: normal; font-size: 9pt; color: #444; }
-      @media print { body { padding: 0; } }
+      /* Sin page-break-inside aquí: un empleo con varios proyectos no cabe en lo que
+         queda de página y saltaba entero, dejando media hoja en blanco. */
+      .job { margin-top: 8pt; }
+      .job-head { margin-bottom: 1pt; }
+      .role { font-weight: 700; }
+      .company { font-style: italic; }
+      .mode, .period { color: #555; font-size: 9pt; }
+      .period::before { content: ' · '; }
+      .tagline { margin: 0 0 4pt; font-size: 9pt; font-style: italic; color: #555; }
+      .entry { margin: 0 0 6pt; page-break-inside: avoid; }
+      .entry-title { margin: 0 0 1pt; font-weight: 600; }
+      .note { font-weight: 400; font-size: 9pt; color: #555; }
+      ul { margin: 0; padding-left: 14pt; }
+      li { margin-bottom: 1.5pt; }
+      .stack { margin-top: 2pt; font-size: 8.5pt; color: #555; }
+      .skill { margin-bottom: 2pt; }
+      .skill-area { font-weight: 700; }
+      @media print { body { padding: 0; max-width: none; } }
     </style>
   </head>
   <body>
@@ -203,57 +276,70 @@ function renderCv(profile: any, lang: Lang): string {
       <h1>${escape(profile.name)}</h1>
       <p class="headline">${escape(t.headline)}</p>
       <p class="contact">${contact}</p>
+      <p class="contact">${links}</p>
     </header>
-
-    <section>
-      <h2>${escape(t.sections.summary)}</h2>
-      ${summary}
-    </section>
-
-    <section>
-      <h2>${escape(t.sections.experience)}</h2>
-      ${experience}
-    </section>
-
-    <section>
-      <h2>${escape(t.sections.education)}</h2>
-      <p>${escape(education)}</p>
-    </section>
-
-    <section>
-      <h2>${escape(t.sections.skills)}</h2>
-      <ul>
-        ${skills}
-      </ul>
-    </section>
-
-    <section>
-      <h2>${escape(t.sections.languages)}</h2>
-      <p>${escape(languages)}</p>
-    </section>
-
-    <section>
-      <h2>${escape(t.sections.certifications)}</h2>
-      <ul>
-        ${certs}
-      </ul>
-    </section>
+${section(t.sections.summary, summary)}
+${section(t.sections.experience, experience)}
+${section(t.sections.education, `<p>${escape(education)}</p>`)}
+${section(t.sections.skills, skills)}
+${section(t.sections.languages, `<p>${escape(languages)}</p>`)}
+${section(t.sections.certifications, `<ul>\n        ${certs}\n      </ul>`)}
   </body>
 </html>
 `;
 }
 
+const run = promisify(execFile);
+
+/** Chrome imprime a PDF sin abrir ventana; si no está, se deja solo el HTML. */
+const CHROME_PATHS = [
+  'C:/Program Files/Google/Chrome/Application/chrome.exe',
+  'C:/Program Files (x86)/Google/Chrome/Application/chrome.exe',
+  '/Applications/Google Chrome.app/Contents/MacOS/Google Chrome',
+  '/usr/bin/google-chrome',
+  '/usr/bin/chromium',
+];
+
+async function findChrome(): Promise<string | null> {
+  for (const candidate of CHROME_PATHS) {
+    try {
+      await access(candidate);
+      return candidate;
+    } catch {
+      /* siguiente */
+    }
+  }
+  return null;
+}
+
 async function main() {
   const profile = await loadProfile();
+  const chrome = await findChrome();
 
   for (const lang of ['es', 'en'] as Lang[]) {
-    const file = join(OUT_DIR, `cv-${lang}.html`);
-    await writeFile(file, renderCv(profile, lang), 'utf8');
-    const size = (await readFile(file)).length;
-    console.log(`✓ web/public/cv-${lang}.html (${(size / 1024).toFixed(1)} kB)`);
+    const html = join(OUT_DIR, `cv-${lang}.html`);
+    await writeFile(html, renderCv(profile, lang), 'utf8');
+    console.log(`✓ web/public/cv-${lang}.html`);
+
+    if (chrome) {
+      const pdf = join(OUT_DIR, `cv-${lang}.pdf`);
+      // Rutas absolutas en los dos lados: con la ruta relativa Chrome toma "web" como
+      // dominio, y el destino relativo le da acceso denegado.
+      await run(chrome, [
+        '--headless',
+        '--disable-gpu',
+        '--no-pdf-header-footer',
+        `--print-to-pdf=${pdf}`,
+        pathToFileURL(html).href,
+      ]);
+      const size = (await readFile(pdf)).length;
+      console.log(`✓ web/public/cv-${lang}.pdf (${(size / 1024).toFixed(0)} kB)`);
+    }
   }
 
-  console.log('\nAbrir en el navegador e Imprimir → Guardar como PDF.');
+  if (!chrome) {
+    console.log('\nChrome no encontrado: abre los HTML e Imprime → Guardar como PDF.');
+  }
 }
 
 main().catch((error) => {
