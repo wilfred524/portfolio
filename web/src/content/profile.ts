@@ -88,15 +88,22 @@ export const profile = {
    * segundos y hoy no tenía respuesta en ninguna parte de la página.
    * Las líneas con `value` vacío no se renderizan.
    *
-   * PENDIENTE: carrera, universidad y año previsto de grado; nivel del certificado EF SET.
+   * El enlace del certificado apunta a web/public/ef-set-certificate.pdf. Si el archivo
+   * no está, la fila sigue mostrándose pero el enlace da 404: comprobarlo antes de
+   * desplegar.
    */
   facts: [
-    { label: 'Formación', value: '' },
+    {
+      label: 'Formación',
+      value:
+        'Ingeniería Informática, Universidad Nacional Experimental del Táchira (UNET). Cursando 7.º semestre.',
+    },
     {
       label: 'Idiomas',
-      value: '',
+      value:
+        'Español nativo · Inglés B2, con comprensión lectora y auditiva cercanas a C1',
       href: '/ef-set-certificate.pdf',
-      hrefLabel: 'Ver certificado',
+      hrefLabel: 'Ver certificado EF SET',
     },
     {
       label: 'Modalidad',
