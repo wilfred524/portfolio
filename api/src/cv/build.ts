@@ -25,29 +25,25 @@ import { mkdtemp, readFile, rm, writeFile } from 'node:fs/promises';
 import { tmpdir } from 'node:os';
 import { dirname, join, resolve } from 'node:path';
 import { fileURLToPath, pathToFileURL } from 'node:url';
-import {
-  CERTIFICATIONS,
-  EMPLOYERS,
-  EMPLOYER_TAGLINE,
-  TEXT,
-  TRANSLATIONS,
-  WORK_MODE,
-} from './content.js';
+import { CERTIFICATIONS, EMPLOYERS, EMPLOYER_TAGLINE, TEXT, WORK_MODE } from './content.js';
 
 const HERE = dirname(fileURLToPath(import.meta.url));
 const ROOT = resolve(HERE, '../../..');
-const PROFILE = join(ROOT, 'web/src/content/profile.ts');
+const PROFILES = {
+  es: join(ROOT, 'web/src/content/profile.es.ts'),
+  en: join(ROOT, 'web/src/content/profile.en.ts'),
+};
 const OUT_DIR = join(ROOT, 'web/public');
 
 type Lang = 'es' | 'en';
 
-/** Transpila profile.ts a un módulo temporal y lo importa. */
-async function loadProfile(): Promise<any> {
+/** Transpila un profile.<lang>.ts a un módulo temporal y lo importa. */
+async function loadProfile(lang: Lang): Promise<any> {
   const dir = await mkdtemp(join(tmpdir(), 'cv-'));
   const outfile = join(dir, 'profile.mjs');
   try {
     await build({
-      entryPoints: [PROFILE],
+      entryPoints: [PROFILES[lang]],
       outfile,
       format: 'esm',
       platform: 'node',
@@ -55,7 +51,7 @@ async function loadProfile(): Promise<any> {
       logLevel: 'silent',
     });
     const mod = await import(pathToFileURL(outfile).href);
-    return mod.profile;
+    return mod[lang];
   } finally {
     await rm(dir, { recursive: true, force: true });
   }
@@ -67,14 +63,6 @@ const escape = (value: string) =>
     .replace(/</g, '&lt;')
     .replace(/>/g, '&gt;');
 
-/**
- * TRANSLATIONS solo contiene inglés: el español es la base y sale tal cual de
- * profile.ts. Traducir siempre hacía que el CV español saliera con los títulos en
- * inglés.
- */
-const translate = (en: boolean, dict: Record<string, string>, value: string) =>
-  en ? dict[value] ?? value : value;
-
 function renderCv(profile: any, lang: Lang): string {
   const t = TEXT[lang];
   const en = lang === 'en';
@@ -84,13 +72,20 @@ function renderCv(profile: any, lang: Lang): string {
   const items = profile.projectGroups.flatMap((group: any) => group.items);
   const jobs = new Map<
     string,
-    { company: string; role: string; period: string; hasCompany: boolean; items: any[] }
+    {
+      company: string;
+      role: string;
+      period: string;
+      employer?: string;
+      hasCompany: boolean;
+      items: any[];
+    }
   >();
 
   for (const item of items) {
     const fallback = en ? 'Personal projects' : 'Proyectos propios';
-    const company = item.company
-      ? EMPLOYERS[item.company]?.employer ?? item.company
+    const company = item.employer
+      ? EMPLOYERS[item.employer]?.name[lang] ?? item.company ?? fallback
       : fallback;
     // Agrupa por empleador, no por marca ni periodo: dentro de un mismo contrato puede
     // haber proyectos para varias marcas del grupo.
@@ -99,6 +94,7 @@ function renderCv(profile: any, lang: Lang): string {
         company,
         role: item.role,
         period: item.period,
+        employer: item.employer,
         hasCompany: Boolean(item.company),
         items: [],
       });
@@ -108,19 +104,21 @@ function renderCv(profile: any, lang: Lang): string {
 
   const experience = [...jobs.values()]
     .map((job) => {
-      const company = escape(translate(en, TRANSLATIONS.companies, job.company));
-      const role = escape(translate(en, TRANSLATIONS.roles, job.role));
+      const company = escape(job.company);
+      const role = escape(job.role);
       const period = escape(job.period.replace('actualidad', t.present));
-      const mode = WORK_MODE[job.company]?.[lang];
-      const tagline = EMPLOYER_TAGLINE[job.company]?.[lang];
+      const mode = job.employer ? WORK_MODE[job.employer]?.[lang] : undefined;
+      const tagline = job.employer ? EMPLOYER_TAGLINE[job.employer]?.[lang] : undefined;
 
       const entries = job.items
         .map((item: any) => {
-          const note = item.company ? EMPLOYERS[item.company]?.note : undefined;
+          // Si la marca del proyecto no es la del empleador, se anota junto al título.
+          const brand =
+            item.company && item.company !== job.company ? item.company : undefined;
           const title =
-            escape(translate(en, TRANSLATIONS.titles, item.title)) +
-            (note ? ` <span class="note">${escape(note[lang])}</span>` : '');
-          const bullets = (t.bullets as Record<string, string[]>)[item.title] ?? [];
+            escape(item.title) +
+            (brand ? ` <span class="note">${escape(brand)}</span>` : '');
+          const bullets = (t.bullets as Record<string, string[]>)[item.id] ?? [];
           const list = bullets.map((b) => `<li>${escape(b)}</li>`).join('\n            ');
           const stack = item.tags.map(escape).join(' · ');
           return `
@@ -156,18 +154,17 @@ function renderCv(profile: any, lang: Lang): string {
     .map(
       (group: any) =>
         `<p class="skill"><span class="skill-area">${escape(
-          translate(en, TRANSLATIONS.skillAreas, group.area),
+          group.area,
         )}</span> ${escape(group.items.join(' · '))}</p>`,
     )
     .join('\n      ');
 
-  const education = en
-    ? TRANSLATIONS.education
-    : profile.facts.find((f: any) => f.label === 'Formación')?.value ?? '';
-  const languages = en
-    ? TRANSLATIONS.languages
-    : profile.facts.find((f: any) => f.label === 'Idiomas')?.value ?? '';
-  const location = en ? TRANSLATIONS.location : `${profile.location} (GMT-5)`;
+  // Las etiquetas de `facts` ya vienen en el idioma correcto; se localizan por
+  // posición para no depender de su texto.
+  const fact = (index: number) => profile.facts[index]?.value ?? '';
+  const education = fact(0);
+  const languages = fact(1);
+  const location = `${profile.location} (GMT-5)`;
 
   const certs = CERTIFICATIONS.map((c) => `<li>${escape(c[lang])}</li>`).join('\n        ');
   const summary = t.summary.map((x) => `<p>${escape(x)}</p>`).join('\n      ');
@@ -313,10 +310,10 @@ async function findChrome(): Promise<string | null> {
 }
 
 async function main() {
-  const profile = await loadProfile();
   const chrome = await findChrome();
 
   for (const lang of ['es', 'en'] as Lang[]) {
+    const profile = await loadProfile(lang);
     const html = join(OUT_DIR, `cv-${lang}.html`);
     await writeFile(html, renderCv(profile, lang), 'utf8');
     console.log(`✓ web/public/cv-${lang}.html`);

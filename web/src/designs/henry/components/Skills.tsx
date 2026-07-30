@@ -1,4 +1,4 @@
-import { profile } from '../../../content/profile';
+import { useContent } from '../../../i18n/LanguageProvider';
 import { SectionHeader } from './SectionHeader';
 
 /**
@@ -7,10 +7,12 @@ import { SectionHeader } from './SectionHeader';
  * ocupaban un tercio de la página sin comunicar jerarquía.
  */
 export function Skills() {
+  const profile = useContent();
+
   return (
     <div className="henry-subsection">
-      <h2 className="henry-sr-only">Habilidades</h2>
-      <SectionHeader word="Habilidades" />
+      <h2 className="henry-sr-only">{profile.ui.sections.skills}</h2>
+      <SectionHeader word={profile.ui.sections.skills} />
       <dl className="henry-skills">
         {profile.skillGroups.map((group) => (
           <div key={group.area} className="henry-skills__row">

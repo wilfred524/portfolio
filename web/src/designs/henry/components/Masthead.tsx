@@ -1,4 +1,4 @@
-import { profile } from '../../../content/profile';
+import { useContent } from '../../../i18n/LanguageProvider';
 import { useReveal } from '../../../hooks/useReveal';
 import { useScrollSlide } from '../../../hooks/useScrollSlide';
 
@@ -11,14 +11,14 @@ import { useScrollSlide } from '../../../hooks/useScrollSlide';
  * y el slogan tiene orden semántico. Conserva el gesto de firma del original:
  * romano en versales en los extremos, itálica de caja baja en el nexo.
  */
-const { start, link, end } = profile.heroSlogan;
-const WORDS = [
-  { text: start, nexus: false },
-  { text: link, nexus: true },
-  { text: end, nexus: false },
-];
-
 export function Masthead() {
+  const { heroSlogan } = useContent();
+  const words = [
+    { text: heroSlogan.start, nexus: false },
+    { text: heroSlogan.link, nexus: true },
+    { text: heroSlogan.end, nexus: false },
+  ];
+
   const sectionRef = useReveal<HTMLElement>(0.3); // inversión papel→tinta
   const trackRef = useScrollSlide<HTMLDivElement>(); // desplazamiento con el scroll
 
@@ -29,7 +29,7 @@ export function Masthead() {
       aria-hidden="true"
     >
       <div ref={trackRef} className="henry-masthead__track">
-        {WORDS.map((word, i) => (
+        {words.map((word, i) => (
           <span
             key={word.text}
             className={`henry-masthead__word${
@@ -38,7 +38,7 @@ export function Masthead() {
           >
             {word.text}
             {/* Espacios duros: el HTML colapsa los normales y quedaba "IDEAS —hechas" */}
-            {i < WORDS.length - 1 && (
+            {i < words.length - 1 && (
               <span className="henry-masthead__dash">{' — '}</span>
             )}
           </span>

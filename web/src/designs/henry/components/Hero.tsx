@@ -1,4 +1,4 @@
-import { profile } from '../../../content/profile';
+import { useContent } from '../../../i18n/LanguageProvider';
 import { useReveal } from '../../../hooks/useReveal';
 import { HalftonePlate } from './HalftonePlate';
 
@@ -8,6 +8,7 @@ import { HalftonePlate } from './HalftonePlate';
  * El slogan editorial se mudó a la banda Ink (ver Masthead).
  */
 export function Hero() {
+  const profile = useContent();
   const nameRef = useReveal<HTMLDivElement>(0.1);
 
   return (
@@ -21,9 +22,10 @@ export function Hero() {
         </p>
         <p className="henry-hero__credential">{profile.credential}</p>
         <div className="henry-hero__links">
-          {/* El CV primero: sin documento que reenviar, muchos procesos ni empiezan. */}
-          <a className="henry-linkbtn" href={profile.cv[0].url} target="_blank" rel="noreferrer">
-            {profile.cv[0].label} ↗
+          {/* El CV primero: sin documento que reenviar, muchos procesos ni empiezan.
+              `download` para que se guarde, no para abrirse en una pestaña. */}
+          <a className="henry-linkbtn" href={profile.cv.url} download>
+            {profile.cv.label} ↓
           </a>
           {profile.social.map((link) => (
             <a
