@@ -809,13 +809,17 @@
   flex-direction: column;
 }
 
+/* Fila de una sola columna: sin etiqueta de nivel, el orden comunica el dominio */
 .henry-skill {
   display: flex;
-  justify-content: space-between;
   align-items: baseline;
-  gap: calc(var(--space) * 4);
-  padding: calc(var(--space) * 4) 0;
+  padding: calc(var(--space) * 3) 0;
   border-bottom: 1px solid var(--hairline);
+}
+
+/* La última de cada grupo no lleva regla: ya la cierra el label del grupo siguiente */
+.henry-skill:last-child {
+  border-bottom: 0;
 }
 
 .henry-skill__name {
