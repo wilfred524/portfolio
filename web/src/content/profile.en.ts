@@ -44,7 +44,7 @@ export const en = {
     {
       label: 'Availability',
       value:
-        'Full-time employment —remote, hybrid or on-site— or contracting via Deel · Colombia (GMT-5)',
+        'Colombian documents — no visa or sponsorship required. Open to full-time roles in Colombia, remote or hybrid; also international contracting via Deel (GMT-5).',
     },
     {
       label: 'Domain',

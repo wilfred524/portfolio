@@ -12,7 +12,13 @@ import { useEffect, useRef } from 'react';
  * Universal (todos los navegadores). Con `prefers-reduced-motion` deja `--p = 1`
  * (estado final, estático).
  */
-export function useScrollProgress<T extends HTMLElement>(restLine = 0.55) {
+/**
+ * `restLine` es la altura del viewport, en tanto por uno, a la que el efecto llega a 1.
+ * A 0.55 el recorrido eran 45vh de scroll y la transición pasaba casi inadvertida; a
+ * 0.12 son 88vh —casi el doble— y el efecto se completa justo cuando el encabezado
+ * alcanza la parte superior de la pantalla, que es donde la vista se detiene a leerlo.
+ */
+export function useScrollProgress<T extends HTMLElement>(restLine = 0.12) {
   const ref = useRef<T>(null);
 
   useEffect(() => {
