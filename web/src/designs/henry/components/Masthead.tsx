@@ -37,7 +37,10 @@ export function Masthead() {
             }`}
           >
             {word.text}
-            {i < WORDS.length - 1 && <span className="henry-masthead__dash"> — </span>}
+            {/* Espacios duros: el HTML colapsa los normales y quedaba "IDEAS —hechas" */}
+            {i < WORDS.length - 1 && (
+              <span className="henry-masthead__dash">{' — '}</span>
+            )}
           </span>
         ))}
       </div>
