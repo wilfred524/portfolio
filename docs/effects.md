@@ -49,9 +49,12 @@ qué hacer con `--p`:
   `translateX(calc((1 - var(--p)) * -18%))` → empieza corrido y se centra en foco. El
   **título de la fila también se mueve** (`.henry-proj__head` translateX por `--p`).
 
-El **masthead** sí se desplaza de forma continua mientras está en pantalla: usa
-`useScrollSlide.ts` (`--slide` en [-1,1]) + CSS scroll-driven nativo donde se soporta
-(`.henry-masthead__track`, keyframes `henry-masthead-scroll`).
+El **masthead** lleva un **parallax corto** (±6%) ligado al scroll: `useScrollSlide.ts`
+(`--slide` en [-1,1]) + CSS scroll-driven nativo donde se soporta
+(`.henry-masthead__track`, keyframes `henry-masthead-scroll`). Es una **copia única
+centrada**, no una marquesina: el barrido largo anterior (dos copias, hasta −45%) partía
+la frase y a media banda se leía «PRODUCTO — IDEAS — hechas». El slogan tiene orden
+semántico, así que el recorrido se acotó para que siempre se lea entero y en orden.
 
 `.design-henry` tiene `overflow-x: clip` para que ningún desplazamiento genere scroll
 horizontal.
