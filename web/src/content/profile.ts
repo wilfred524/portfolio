@@ -26,6 +26,15 @@ export interface ProjectGroup {
   items: ProjectItem[];
 }
 
+export interface Fact {
+  label: string;
+  /** Si va vacío, la línea no se renderiza: mejor omitir que publicar un dato inventado. */
+  value: string;
+  /** Documento que respalda el dato (p. ej. el certificado de inglés). */
+  href?: string;
+  hrefLabel?: string;
+}
+
 export interface SkillGroup {
   /** Área de dominio (Backend, Automatización…). Se rotula como categoría. */
   area: string;
@@ -41,7 +50,10 @@ export const profile = {
   /** La credencial: sistemas en producción y en qué dominio. Es la frase que convierte. */
   credential:
     'Firma electrónica, motor de reglas y scoring crediticio en producción para crédito por libranza.',
-  availability: 'disponible para nuevos proyectos · 2026',
+  /* "Disponible para nuevos proyectos" leía freelance; la búsqueda es de empleo. */
+  availability: 'Buscando mi próximo rol como desarrollador backend',
+  /** Marco temporal, bajo el hero. Es lo que evita que el contenido se lea como 4 años. */
+  trajectory: 'Desarrollo backend desde octubre de 2025 · Colombia (GMT-5)',
   /** Slogan editorial: vive en la banda Ink (Masthead), no en el hero. */
   heroSlogan: { start: 'Ideas', link: 'hechas', end: 'Producto' },
   location: 'Colombia',
@@ -50,6 +62,32 @@ export const profile = {
   /** Cierre de la página: lo único de la antigua sección «Sobre mí» que se conserva. */
   closing:
     'Lo que me engancha es siempre lo mismo: un proceso que alguien hace a mano y no debería, o un sistema desordenado que se puede dejar mejor de como lo encontré.',
+  /**
+   * Sección Perfil: responde de una vez lo que un evaluador se pregunta en los primeros
+   * segundos y hoy no tenía respuesta en ninguna parte de la página.
+   * Las líneas con `value` vacío no se renderizan.
+   *
+   * PENDIENTE: carrera, universidad y año previsto de grado; nivel del certificado EF SET.
+   */
+  facts: [
+    { label: 'Formación', value: '' },
+    {
+      label: 'Idiomas',
+      value: '',
+      href: '/ef-set-certificate.pdf',
+      hrefLabel: 'Ver certificado',
+    },
+    {
+      label: 'Modalidad',
+      value:
+        'Empleo de planta —remoto, híbrido o presencial— o contractor vía Deel · Colombia (GMT-5)',
+    },
+    {
+      label: 'Dominio',
+      value:
+        'Crédito por libranza: préstamos con descuento directo de nómina, un sector regulado en Colombia (Ley 1527).',
+    },
+  ] satisfies Fact[],
   /** Sin niveles: el ORDEN comunica el dominio (spec Henry: énfasis por escala, no por etiqueta). */
   skillGroups: [
     {
@@ -83,6 +121,12 @@ export const profile = {
     {
       area: 'Infraestructura',
       items: ['Docker', 'Linux / Nginx', 'GitHub Actions', 'AWS S3'],
+    },
+    /* Se mantiene deliberadamente: con nueve meses de trayectoria, mostrar dirección
+       de aprendizaje suma. Corto y específico — nada de fundamentos. */
+    {
+      area: 'Aprendiendo',
+      items: ['TypeScript', 'React', 'Node.js'],
     },
   ] satisfies SkillGroup[],
   projectGroups: [

@@ -314,10 +314,13 @@
 
 .henry-hero__foot {
   display: flex;
-  justify-content: space-between;
-  gap: calc(var(--space) * 4);
-  flex-wrap: wrap;
+  flex-direction: column;
+  gap: calc(var(--space) * 2);
   margin-top: calc(var(--space) * 6);
+}
+
+.henry-hero__trajectory {
+  color: var(--ink);
 }
 
 /* Placa halftone: canvas generado por código (ver HalftonePlate.tsx).
@@ -372,10 +375,11 @@
    Masthead — palabra masiva ultra-condensada con marquee
    ------------------------------------------------------------ */
 
+/* Media altura: es un respiro editorial, no debe ocupar un slot premium. */
 .henry-masthead {
   display: flex;
   justify-content: center; /* copia única centrada: el slogan se lee entero y en orden */
-  padding: calc(var(--space) * 6) 0;
+  padding: calc(var(--space) * 3) 0;
   overflow: hidden;
   white-space: nowrap;
 }
@@ -395,7 +399,7 @@
   font-variation-settings: 'wght' 420, 'opsz' 144, 'SOFT' 0, 'WONK' 0;
   font-weight: 400;
   /* mínimo bajo para que la frase entera quepa en móvil sin recortarse */
-  font-size: clamp(1.5rem, 6.5vw, 6rem);
+  font-size: clamp(1.25rem, 4.5vw, 3.5rem);
   line-height: 1;
   letter-spacing: -0.01em;
   text-transform: uppercase;
@@ -465,22 +469,13 @@
   opacity: 0.7;
 }
 
-/* Variante serif: encabezado de sección a 77px+ (Fraunces alto contraste) */
-.henry-sechead--serif .henry-sechead__word {
+/* Un solo tratamiento para todas las secciones: serif display alto contraste.
+   Escala contenida — con el volumen de contenido que hay, 7rem sobraba. */
+.henry-sechead__word {
   font-family: var(--font-serif-display);
   font-variation-settings: 'wght' 500, 'opsz' 144, 'SOFT' 0, 'WONK' 0;
-  font-size: clamp(3rem, 9vw, 7rem);
+  font-size: clamp(2.25rem, 6vw, 4rem);
   letter-spacing: -0.02em;
-}
-
-/* Variante masthead: condensada a escala masthead (solo Proyectos/marquee) */
-.henry-sechead--masthead .henry-sechead__word {
-  font-family: var(--font-condensed);
-  font-variation-settings: 'wght' 600;
-  font-size: clamp(4rem, 16vw, 14rem);
-  line-height: 0.75;
-  text-transform: uppercase;
-  letter-spacing: 0.005em;
 }
 
 /* ------------------------------------------------------------
@@ -655,29 +650,51 @@
    Habilidades — lista tipográfica grande
    ------------------------------------------------------------ */
 
-.henry-skills__list {
-  list-style: none;
-  padding: 0;
-  display: flex;
-  flex-direction: column;
+/* Una línea por área, no una fila por tecnología. El orden dentro de cada línea
+   sigue comunicando el dominio (spec Henry: énfasis por escala, no por etiqueta). */
+.henry-skills {
+  margin: 0;
 }
 
-/* Fila de una sola columna: sin etiqueta de nivel, el orden comunica el dominio */
-.henry-skill {
-  display: flex;
+.henry-skills__row {
+  display: grid;
+  grid-template-columns: minmax(0, 10rem) minmax(0, 1fr);
+  gap: calc(var(--space) * 2) calc(var(--space) * 6);
   align-items: baseline;
   padding: calc(var(--space) * 3) 0;
   border-bottom: 1px solid var(--hairline);
 }
 
-/* La última de cada grupo no lleva regla: ya la cierra el label del grupo siguiente */
-.henry-skill:last-child {
+.henry-skills__row:last-child {
   border-bottom: 0;
 }
 
-.henry-skill__name {
+.henry-skills__area {
+  margin: 0;
+}
+
+.henry-skills__items {
+  margin: 0;
   font-family: var(--font-serif);
-  font-size: var(--text-md);
+  font-variation-settings: 'wght' 380, 'opsz' 28;
+  font-size: var(--text-base);
+  line-height: 1.5;
+}
+
+@media (max-width: 620px) {
+  .henry-skills__row {
+    grid-template-columns: 1fr;
+  }
+}
+
+.henry-inline-link {
+  text-decoration: underline;
+  text-underline-offset: 0.15em;
+  transition: color 0.2s ease;
+}
+
+.henry-inline-link:hover {
+  color: var(--ash);
 }
 
 /* ------------------------------------------------------------
