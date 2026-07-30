@@ -10,9 +10,9 @@ import { useScrollProgress } from '../../../hooks/useScrollProgress';
  * alinea a la izquierda y, sincronizada, una barra en color claro hace wipe de
  * izquierda→derecha con toda la info (contexto + descripción + tags dentro).
  */
-function ProjectRow({ item }: { item: ProjectItem }) {
+function ProjectRow({ item, defaultOpen = false }: { item: ProjectItem; defaultOpen?: boolean }) {
   const rowRef = useScrollProgress<HTMLLIElement>();
-  const [open, setOpen] = useState(false);
+  const [open, setOpen] = useState(defaultOpen);
 
   return (
     <li ref={rowRef} className={`henry-proj${open ? ' is-open' : ''}`}>
@@ -72,15 +72,21 @@ export function Projects() {
       <h2 className="henry-sr-only">Experiencia</h2>
       <SectionHeader word="Experiencia" variant="masthead" />
 
-      {profile.projectGroups.map((group) => (
+      {profile.projectGroups.map((group, groupIndex) => (
         <section key={group.category} className="henry-catgroup">
           <div className="henry-catgroup__label">
             <span className="henry-meta">{group.category}</span>
             <span className="henry-catgroup__rule" />
           </div>
           <ul className="henry-projlist">
-            {group.items.map((item) => (
-              <ProjectRow key={item.title} item={item} />
+            {/* La primera queda abierta: quien escanea sin hacer clic lee al menos
+                un proyecto entero. Las demás conservan su texto fantasma. */}
+            {group.items.map((item, itemIndex) => (
+              <ProjectRow
+                key={item.title}
+                item={item}
+                defaultOpen={groupIndex === 0 && itemIndex === 0}
+              />
             ))}
           </ul>
         </section>
