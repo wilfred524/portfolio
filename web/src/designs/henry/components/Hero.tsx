@@ -37,9 +37,10 @@ export function Hero() {
           </a>
         </div>
         <div className="henry-hero__foot">
-          <span className="henry-meta">
-            {profile.location} — {profile.availability}
-          </span>
+          <span className="henry-meta">{profile.availability}</span>
+          {/* Marco temporal desde el primer viewport: es lo que evita que nueve meses
+              de trabajo se lean como cuatro años. */}
+          <span className="henry-meta henry-hero__trajectory">{profile.trajectory}</span>
         </div>
       </div>
       <div className="henry-hero__plate" aria-hidden="true">

@@ -7,6 +7,7 @@ import { Hero } from './components/Hero';
 import { Masthead } from './components/Masthead';
 import { Projects } from './components/Projects';
 import { Skills } from './components/Skills';
+import { Profile } from './components/Profile';
 import { Contact } from './components/Contact';
 
 export default function HenryPage() {
@@ -21,9 +22,12 @@ export default function HenryPage() {
       <Masthead />
       {/* Experiencia y Habilidades comparten banda Paper: mantiene la alternancia
           Paper/Ink tras disolverse «Sobre mí» y deja el cierre en negro al contacto. */}
-      <section id="proyectos" className="henry-section">
+      <section id="experiencia" className="henry-section">
         <Projects />
-        <Skills />
+        <div id="habilidades">
+          <Skills />
+        </div>
+        <Profile />
       </section>
       <Contact />
       <footer className="henry-footer">

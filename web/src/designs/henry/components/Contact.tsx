@@ -6,7 +6,7 @@ export function Contact() {
   return (
     <InkSection id="contacto">
       <h2 className="henry-sr-only">Contacto</h2>
-      <SectionHeader word="Contacto" variant="serif" />
+      <SectionHeader word="Contacto" />
       <div className="henry-contact">
         <p className="henry-contact__closing">{profile.closing}</p>
         <p className="henry-meta">¿Trabajamos juntos?</p>
