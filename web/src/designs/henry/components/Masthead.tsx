@@ -1,7 +1,18 @@
+import { profile } from '../../../content/profile';
 import { useReveal } from '../../../hooks/useReveal';
 import { useScrollSlide } from '../../../hooks/useScrollSlide';
 
-const WORDS = ['Portafolio', 'Diseño', 'Código'];
+/**
+ * Banda Ink con el slogan editorial, que bajó aquí desde el hero: como respiro
+ * entre bandas funciona; ocupando el lugar de la credencial, no.
+ * Conserva el gesto de firma del original: romano en los extremos, itálica en el nexo.
+ */
+const { start, link, end } = profile.heroSlogan;
+const WORDS = [
+  { text: start, italic: false },
+  { text: link, italic: true },
+  { text: end, italic: false },
+];
 
 export function Masthead() {
   const sectionRef = useReveal<HTMLElement>(0.3); // inversión papel→tinta
@@ -18,8 +29,13 @@ export function Masthead() {
         {[0, 1].map((copy) => (
           <span key={copy}>
             {WORDS.map((word) => (
-              <span key={word} className="henry-masthead__word">
-                {word} —
+              <span
+                key={word.text}
+                className={`henry-masthead__word${
+                  word.italic ? ' henry-masthead__word--nexus' : ''
+                }`}
+              >
+                {word.text} —
               </span>
             ))}
           </span>
