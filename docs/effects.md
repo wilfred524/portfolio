@@ -24,18 +24,41 @@ viewport. La sección arranca en Paper y transiciona a Ink (`.henry-section--ink
 - Verificación sin navegador: se puede reproducir el pipeline en Node con ffmpeg
   (decodificar a gris) + el mismo Bayer, y volcar a PNG.
 
-## 3. Parallax tipográfico ligado al scroll (híbrido)
+## 3. Efectos de scroll con "reposo" (driver: `useScrollProgress`)
 
-Los encabezados grandes se deslizan derecha→izquierda al scrollear.
-- **Nativo** (Chrome/Edge): `@supports (animation-timeline: view())` aplica
-  `animation: henry-slide-x` con `animation-timeline: view()`. Sin JS.
-- **Fallback** (Safari/Firefox): `web/src/hooks/useScrollSlide.ts` detecta la falta de
-  soporte y, con un listener de scroll coalescido por `requestAnimationFrame`, actualiza
-  la variable CSS `--slide` en [-1, 1] según el progreso del elemento en el viewport. El
-  CSS traduce `--slide` a `translateX`.
-- Aplicado vía la clase `.henry-slide` (en `SectionHeader`) y a `.henry-masthead__track`
-  (con su propio rango y keyframes `henry-masthead-scroll`).
-- `.design-henry` tiene `overflow-x: clip` para que el deslizamiento no genere scroll horizontal.
+`web/src/hooks/useScrollProgress.ts` escribe una variable CSS `--p` en [0, 1]:
+0 al entrar por abajo, 1 al llegar a la línea de reposo (~55% del viewport) y **se
+mantiene en 1** (el efecto se asienta y NO sigue moviéndose → nada de sobrecarga).
+Universal (todos los navegadores); con reduced-motion deja `--p = 1`. El CSS decide
+qué hacer con `--p`:
+
+- **Regla que se extiende** (`.henry-extend` en `SectionHeader`): el TÍTULO queda
+  estático en su sitio; la regla crece con `transform: scaleX(var(--p))` (origen
+  izquierdo) hasta llenar el borde y se detiene. Es lo que pide el design.md
+  ("trailing rule extending to the right edge").
+- **Texto fantasma que se centra** (`.henry-proj__ghost`): repetición tenue del nombre
+  del proyecto, desplazada `translateX(calc((1 - var(--p)) * -22%))` → empieza corrida
+  y se alinea a 0 cuando la fila queda en foco, dejando la info legible.
+
+El **masthead** sí se desplaza de forma continua mientras está en pantalla: usa
+`useScrollSlide.ts` (`--slide` en [-1,1]) + CSS scroll-driven nativo donde se soporta
+(`.henry-masthead__track`, keyframes `henry-masthead-scroll`).
+
+`.design-henry` tiene `overflow-x: clip` para que ningún desplazamiento genere scroll
+horizontal.
+
+## 3b. Slogan del hero (dos tipografías + solapamiento)
+
+El titular grande del hero es un **slogan** (no el nombre, que es corto): dos palabras
+en condensada (Antonio) con un conector serif itálico anidado/solapado
+(`.henry-slogan__word` + `.henry-slogan__link` posicionado en absoluto). El contenido
+está en `profile.heroSlogan { start, link, end }`. El nombre va como firma pequeña arriba.
+
+## 3c. Expandir proyecto
+
+Cada fila de proyecto muestra título + contexto + tags y un botón **Expandir**
+(`<details>/<summary>` = `.henry-proj__more` / `.henry-proj__expand`) que revela la
+descripción completa en un panel contrastado (papel sobre la banda ink). Accesible y sin JS.
 
 ## 4. Reveal tipográfico
 

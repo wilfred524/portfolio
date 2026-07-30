@@ -145,6 +145,33 @@
   letter-spacing: -0.02em;
 }
 
+/* Slogan del hero: dos palabras condensadas con un conector serif itálico solapado */
+.henry-slogan {
+  position: relative;
+  margin: 0;
+}
+
+.henry-slogan__word {
+  display: block;
+  font-family: var(--font-condensed);
+  font-variation-settings: 'wght' 600;
+  font-size: var(--hero);
+  line-height: 0.78;
+  text-transform: uppercase;
+  letter-spacing: 0.005em;
+}
+
+.henry-slogan__link {
+  position: absolute;
+  left: calc(var(--hero) * 0.04);
+  top: calc(var(--hero) * 0.5);
+  font-family: var(--font-serif-display);
+  font-style: italic;
+  font-variation-settings: 'wght' 340, 'opsz' 40, 'SOFT' 0;
+  font-size: calc(var(--hero) * 0.34);
+  line-height: 1;
+}
+
 .henry-meta {
   font-family: var(--font-sans);
   font-size: var(--text-sm);
@@ -180,38 +207,21 @@
 }
 
 /* ------------------------------------------------------------
-   Parallax tipográfico ligado al scroll (híbrido)
-   - Fallback JS: useScrollSlide.ts actualiza --slide en [-1, 1].
-   - Nativo: animation-timeline: view() donde el navegador lo soporte.
+   Efectos ligados al scroll (driver: useScrollProgress → variable --p [0,1],
+   universal y con "reposo": el efecto se detiene al asentarse, sin sobrecargar).
+   --p lo consumen: la regla que se extiende (.henry-extend) y el texto fantasma.
    ------------------------------------------------------------ */
 
-.henry-slide {
-  transform: translateX(calc(var(--slide, 0) * 7%));
+/* Regla del encabezado: se extiende de izquierda a derecha con el scroll. */
+.henry-extend {
+  transform: scaleX(var(--p, 1));
+  transform-origin: left center;
   will-change: transform;
 }
 
-@keyframes henry-slide-x {
-  from {
-    transform: translateX(7%);
-  }
-  to {
-    transform: translateX(-7%);
-  }
-}
-
-@supports (animation-timeline: view()) {
-  .henry-slide {
-    transform: none;
-    animation: henry-slide-x linear both;
-    animation-timeline: view();
-    animation-range: entry 0% exit 100%;
-  }
-}
-
 @media (prefers-reduced-motion: reduce) {
-  .henry-slide {
-    transform: none !important;
-    animation: none !important;
+  .henry-extend {
+    transform: none;
   }
 }
 
@@ -219,26 +229,24 @@
    Nav
    ------------------------------------------------------------ */
 
+/* Lista mínima arriba-izquierda: sin barra ni borde (spec: "no background bar") */
 .henry-nav {
   display: flex;
-  justify-content: space-between;
-  align-items: baseline;
-  gap: calc(var(--space) * 4);
-  padding: calc(var(--space) * 5) var(--gutter);
-  border-bottom: 1px solid var(--hairline);
-  font-size: var(--text-sm);
+  gap: calc(var(--space) * 5);
+  padding: calc(var(--space) * 4) var(--gutter) 0;
+  font-size: var(--text-xs);
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
 }
 
 .henry-nav a {
   text-decoration: none;
-  padding: calc(var(--space) * 1) calc(var(--space) * 3);
-  border-radius: var(--radius);
-  transition: background-color 0.2s ease, color 0.2s ease;
+  color: var(--ash);
+  transition: color 0.2s ease;
 }
 
 .henry-nav a:hover {
-  background: var(--ink);
-  color: var(--paper);
+  color: var(--ink);
 }
 
 /* ------------------------------------------------------------
@@ -512,24 +520,44 @@
   flex-direction: column;
 }
 
-/* Fila compacta de proyecto, con hover de inversión papel↔tinta */
+/* Fila de proyecto: contenido estático y legible por encima de un texto fantasma
+   que se alinea al scroll (--p). Botón "Expandir" con la info completa contrastada. */
 .henry-proj {
-  display: flex;
-  flex-direction: column;
-  gap: calc(var(--space) * 1);
+  position: relative;
+  overflow: hidden;
   padding: calc(var(--space) * 4) var(--card-padding);
   border-top: 1px solid var(--sepia);
   border-radius: var(--radius);
-  transition: background-color 0.2s ease, color 0.2s ease;
 }
 
-.henry-proj:hover {
-  background: var(--paper);
-  color: var(--ink);
+/* Texto fantasma: repetición tenue del nombre, desplazada, que se centra al bajar */
+.henry-proj__ghost {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  align-items: center;
+  z-index: 0;
+  opacity: 0.06;
+  pointer-events: none;
+  white-space: nowrap;
+  transform: translateX(calc((1 - var(--p, 1)) * -22%));
+  will-change: transform;
 }
 
-.henry-proj:hover .henry-meta {
-  color: var(--ash);
+.henry-proj__ghost-track {
+  font-family: var(--font-condensed);
+  font-variation-settings: 'wght' 600;
+  font-size: clamp(3rem, 8vw, 6rem);
+  line-height: 1;
+  text-transform: uppercase;
+}
+
+.henry-proj__body {
+  position: relative;
+  z-index: 1;
+  display: flex;
+  flex-direction: column;
+  gap: calc(var(--space) * 1);
 }
 
 .henry-proj__top {
@@ -551,20 +579,66 @@
   margin-top: calc(var(--space) * 1);
 }
 
-.henry-proj__desc {
-  font-size: var(--text-sm);
-  line-height: 1.45;
-  max-width: 68ch;
-  margin-top: calc(var(--space) * 2);
-  color: var(--pebble);
-  display: -webkit-box;
-  -webkit-line-clamp: 2;
-  -webkit-box-orient: vertical;
-  overflow: hidden;
+/* Botón Expandir (details/summary): píldora ghost que se invierte al hover */
+.henry-proj__more {
+  margin-top: calc(var(--space) * 3);
 }
 
-.henry-proj:hover .henry-proj__desc {
-  color: var(--ash);
+.henry-proj__expand {
+  cursor: pointer;
+  list-style: none;
+  display: inline-flex;
+  align-items: center;
+  gap: calc(var(--space) * 2);
+  font-family: var(--font-sans);
+  font-size: var(--text-xs);
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  padding: calc(var(--space) * 1.5) calc(var(--space) * 3);
+  border: 1px solid currentColor;
+  border-radius: var(--radius);
+  transition: background-color 0.2s ease, color 0.2s ease;
+}
+
+.henry-proj__expand::-webkit-details-marker {
+  display: none;
+}
+
+.henry-proj__expand::after {
+  content: '↓';
+}
+
+.henry-proj__more[open] .henry-proj__expand::after {
+  content: '↑';
+}
+
+.henry-proj__expand-close {
+  display: none;
+}
+
+.henry-proj__more[open] .henry-proj__expand-open {
+  display: none;
+}
+
+.henry-proj__more[open] .henry-proj__expand-close {
+  display: inline;
+}
+
+.henry-proj__expand:hover {
+  background: var(--paper);
+  color: var(--ink);
+}
+
+/* Panel expandido: info completa a sangre contrastada (papel sobre la banda ink) */
+.henry-proj__desc {
+  font-size: var(--text-sm);
+  line-height: 1.5;
+  max-width: 68ch;
+  margin-top: calc(var(--space) * 3);
+  padding: calc(var(--space) * 4);
+  background: var(--paper);
+  color: var(--ink);
+  border-radius: var(--radius);
 }
 
 .henry-proj__tags {
