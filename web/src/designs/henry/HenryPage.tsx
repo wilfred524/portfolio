@@ -2,7 +2,6 @@ import './henry.css';
 import '@fontsource-variable/fraunces';
 import '@fontsource-variable/antonio';
 import { profile } from '../../content/profile';
-import { DesignMenu } from './components/DesignMenu';
 import { Hero } from './components/Hero';
 import { Masthead } from './components/Masthead';
 import { Projects } from './components/Projects';
@@ -13,9 +12,11 @@ import { Contact } from './components/Contact';
 export default function HenryPage() {
   return (
     <div className="design-henry">
-      {/* Nav mínima arriba-izquierda, sin barra ni borde (spec: "no background bar") */}
+      {/* Nav mínima arriba-izquierda, sin barra ni borde (spec: "no background bar").
+          Apunta a las secciones reales de la página, no a una colección de diseños. */}
       <nav className="henry-nav" aria-label="Principal">
-        <DesignMenu />
+        <a href="#experiencia">Experiencia</a>
+        <a href="#habilidades">Habilidades</a>
         <a href="#contacto">Contacto</a>
       </nav>
       <Hero />
