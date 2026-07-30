@@ -26,14 +26,27 @@ export function useScrollProgress<T extends HTMLElement>(restLine = 0.55) {
     }
 
     let raf = 0;
+    // El progreso no retrocede: "asentarse" significa quedarse en el máximo alcanzado,
+    // no recalcularse hacia atrás cuando se sube el scroll.
+    let settled = 0;
+
     const update = () => {
       raf = 0;
       const vh = window.innerHeight || document.documentElement.clientHeight;
       const top = el.getBoundingClientRect().top;
       const rest = restLine * vh;
       // 0 cuando top = vh (entrando); 1 cuando top = rest (en reposo); se mantiene en 1.
-      const p = (vh - top) / (vh - rest);
-      el.style.setProperty('--p', Math.max(0, Math.min(1, p)).toFixed(4));
+      let p = (vh - top) / (vh - rest);
+
+      // Un elemento cerca del pie de página nunca alcanza la línea de reposo: el scroll
+      // se agota antes y su efecto quedaba congelado a medias (reglas de distinto largo).
+      // Al tocar fondo, todo lo visible se da por asentado.
+      const atBottom =
+        window.scrollY + vh >= document.documentElement.scrollHeight - 2;
+      if (atBottom && top < vh) p = 1;
+
+      settled = Math.max(settled, Math.max(0, Math.min(1, p)));
+      el.style.setProperty('--p', settled.toFixed(4));
     };
     const onScroll = () => {
       if (!raf) raf = requestAnimationFrame(update);

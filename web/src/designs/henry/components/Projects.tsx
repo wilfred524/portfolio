@@ -1,4 +1,3 @@
-import { useState } from 'react';
 import type { ProjectItem } from '../../../content/profile';
 import { profile } from '../../../content/profile';
 import { SectionHeader } from './SectionHeader';
@@ -11,49 +10,41 @@ const BLOCKS = [
 ] as const;
 
 /**
- * Fila de proyecto. Abierta por defecto: el "+" no invitaba a nada y quien no hacía
- * clic se llevaba la impresión de que no había contenido. El toggle sigue ahí para
- * poder cerrar.
+ * Fila de proyecto en dos columnas: la meta (empresa, rol, periodo, tags) a la
+ * izquierda y el texto a la derecha. Antes era una columna estrecha con el 60% del
+ * lienzo vacío durante toda la sección; así el patrón se repite y ordena la lectura.
  *
- * Título, periodo y métrica viven FUERA del panel plegable: son lo que se escanea, y
- * antes estaban enterrados en el texto fantasma de fondo.
+ * Sin plegado: el acordeón escondía el contenido a quien no hacía clic, que es casi
+ * todo el mundo.
  */
 function ProjectRow({ item }: { item: ProjectItem }) {
-  const [open, setOpen] = useState(true);
-
-  const meta = [item.company, item.role, item.period].filter(Boolean).join(' · ');
-
   return (
-    <li className={`henry-proj${open ? ' is-open' : ''}`}>
-      <button
-        type="button"
-        className="henry-proj__toggle"
-        aria-expanded={open}
-        onClick={() => setOpen((v) => !v)}
-      >
-        <h3 className="henry-proj__title">{item.title}</h3>
-        <span className="henry-proj__sign" aria-hidden="true" />
-      </button>
-
-      <p className="henry-meta henry-proj__meta">{meta}</p>
-      {item.metric && <p className="henry-proj__metric">{item.metric}</p>}
-
-      <div className="henry-proj__panel">
-        <div className="henry-proj__panel-inner">
-          {BLOCKS.map(({ key, label }) => (
-            <div key={key} className="henry-proj__block">
-              <p className="henry-meta henry-proj__block-label">{label}</p>
-              <p className="henry-proj__desc">{item.body[key]}</p>
-            </div>
+    <li className="henry-proj">
+      <div className="henry-proj__aside">
+        {item.company && <p className="henry-meta">{item.company}</p>}
+        <p className="henry-meta">{item.role}</p>
+        <p className="henry-meta henry-proj__period">{item.period}</p>
+        <div className="henry-proj__tags">
+          {item.tags.map((tag) => (
+            <span key={tag} className="henry-tag">
+              {tag}
+            </span>
           ))}
-          <div className="henry-proj__tags">
-            {item.tags.map((tag) => (
-              <span key={tag} className="henry-tag">
-                {tag}
-              </span>
-            ))}
-          </div>
         </div>
+      </div>
+
+      <div className="henry-proj__main">
+        <h3 className="henry-proj__title">{item.title}</h3>
+        {item.metric && <p className="henry-proj__metric">{item.metric}</p>}
+
+        {item.body
+          ? BLOCKS.map(({ key, label }) => (
+              <div key={key} className="henry-proj__block">
+                <p className="henry-meta henry-proj__block-label">{label}</p>
+                <p className="henry-proj__desc">{item.body![key]}</p>
+              </div>
+            ))
+          : item.brief && <p className="henry-proj__desc">{item.brief}</p>}
       </div>
     </li>
   );
