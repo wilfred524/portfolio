@@ -228,17 +228,18 @@
    ------------------------------------------------------------ */
 
 /* Composición partida: titular a la izquierda, placa halftone a la derecha */
+/* Dos mitades iguales: el texto a la izquierda y la placa centrada en la mitad
+   derecha. Con `auto` en la segunda columna, la placa cedía ancho cada vez que crecía
+   el texto —y como es cuadrada, encogerse de ancho la encogía de alto. */
 .henry-hero {
   display: grid;
-  /* texto flexible + placa dimensionada por SU alto (columna auto) */
-  grid-template-columns: minmax(0, 1fr) auto;
+  grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
   align-items: start;    /* eyebrow a la altura del borde superior de la placa */
   align-content: center; /* el bloque completo centrado en el alto del hero */
   gap: clamp(24px, 4vw, 64px);
   /* La manda la placa, no un alto fijo: con el hero de credencial, 82dvh dejaba
      aire muerto bajo el bloque. */
   min-height: 72dvh;
-  padding-right: 0; /* la placa llega al borde derecho de la página */
 }
 
 .henry-hero__left {
@@ -301,25 +302,14 @@
 /* Altura propia, no heredada del texto: el bloque de credencial es bastante más
    corto que el antiguo slogan, y estirarse a su altura dejaba el retrato diminuto
    con un hueco alrededor. Se centra frente a la columna de texto. */
+/* Centrada en su mitad y dimensionada por ANCHO, no por alto: así su tamaño depende
+   solo del viewport y no de cuánto texto haya al lado. */
 .henry-hero__plate {
+  justify-self: center;
   align-self: center;
-  height: clamp(320px, 64dvh, 620px);
-  width: auto;
+  width: min(100%, clamp(300px, 32vw, 560px));
+  height: auto;
   aspect-ratio: 1 / 1;
-}
-
-@media (max-width: 860px) {
-  .henry-hero {
-    padding-right: var(--gutter);
-  }
-
-  /* en móvil la placa vuelve a dimensionarse por ancho (capada), no por alto */
-  .henry-hero__plate {
-    height: auto;
-    width: 100%;
-    max-width: 360px;
-    aspect-ratio: 1 / 1;
-  }
 }
 
 .henry-plate-canvas {
@@ -336,8 +326,10 @@
     min-height: auto;
   }
 
+  /* Una sola columna: la placa se centra bajo el texto y se capa por ancho. */
   .henry-hero__plate {
-    max-width: 320px;
+    width: min(100%, 320px);
+    justify-self: start;
   }
 }
 
@@ -379,6 +371,8 @@
 .henry-masthead__dash {
   font-style: normal;
   font-variation-settings: 'wght' 420, 'opsz' 144, 'SOFT' 0, 'WONK' 0;
+  /* padding en vez de espacios: el texto va en nowrap y el HTML los colapsaba */
+  padding: 0 0.2em;
 }
 
 /* El nexo del slogan conserva la itálica en caja baja del original. */
