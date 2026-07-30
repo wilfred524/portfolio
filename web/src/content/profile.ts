@@ -74,6 +74,15 @@ export const profile = {
   /** Repositorio de este sitio: evidencia inspeccionable sin firmar nada. */
   repoUrl: 'https://github.com/wilfred524/portfolio',
   /**
+   * CV en dos idiomas. Los genera `npm run build:cv -w @portfolio/api` desde este mismo
+   * archivo, así que no pueden contradecir a la web. Para servir PDF en vez de HTML,
+   * exportarlos desde el navegador a web/public/ y cambiar la extensión aquí.
+   */
+  cv: [
+    { label: 'CV (español)', url: '/cv-es.html' },
+    { label: 'CV (English)', url: '/cv-en.html' },
+  ],
+  /**
    * «Cómo está hecho»: a nivel JR/intermedio, la prueba de que se aprende solo pesa
    * tanto como el stack. Incluye el uso de IA como herramienta, que es cómo se
    * trabaja hoy y es una competencia declarable, no una carencia.
@@ -114,7 +123,9 @@ export const profile = {
       value:
         'Crédito por libranza: préstamos con descuento directo de nómina, un sector regulado en Colombia (Ley 1527).',
     },
-  ] satisfies Fact[],
+    /* `as` y no `satisfies`: sin ninguna entrada con `href`, satisfies estrecha el tipo
+       y los consumidores dejan de ver los campos opcionales. */
+  ] as Fact[],
   /** Sin niveles: el ORDEN comunica el dominio (spec Henry: énfasis por escala, no por etiqueta). */
   skillGroups: [
     {
@@ -139,8 +150,8 @@ export const profile = {
       ],
     },
     {
-      area: 'Automatización',
-      items: ['n8n', 'Integración de APIs / Webhooks', 'LLMs vía API'],
+      area: 'Automatización e IA',
+      items: ['n8n', 'OpenAI API', 'Integración de APIs / Webhooks'],
     },
     {
       area: 'Frontend',
@@ -148,7 +159,13 @@ export const profile = {
     },
     {
       area: 'Infraestructura',
-      items: ['Docker', 'Linux / Nginx', 'GitHub Actions', 'AWS S3'],
+      items: [
+        'Docker',
+        'Linux / Nginx',
+        'CI/CD (GitHub Actions)',
+        'Google Cloud Platform',
+        'AWS S3',
+      ],
     },
     /*
      * PENDIENTE: qué estás aprendiendo AHORA.
@@ -163,7 +180,7 @@ export const profile = {
       items: [
         {
           title: 'Motor de reglas de crédito',
-          company: 'CK Comercializadora (cliente de GAF Solutions)',
+          company: 'CK Comercializadora, filial de GAF',
           role: 'Desarrollador backend',
           period: 'Oct 2025 – actualidad',
           body: {
@@ -178,7 +195,7 @@ export const profile = {
         },
         {
           title: 'Firma electrónica con validación de identidad',
-          company: 'GAF Solutions',
+          company: 'GAF Technology Solutions',
           role: 'Desarrollador backend',
           period: 'Oct 2025 – actualidad',
           body: {
@@ -193,7 +210,7 @@ export const profile = {
         },
         {
           title: 'Pipeline de scoring crediticio',
-          company: 'GAF Solutions',
+          company: 'GAF Technology Solutions',
           role: 'Desarrollador backend',
           period: 'Oct 2025 – actualidad',
           metric: '~300.000 registros por corrida, una vez al mes',
@@ -209,7 +226,7 @@ export const profile = {
         },
         {
           title: 'Control de accesos y auditoría',
-          company: 'GAF Solutions',
+          company: 'GAF Technology Solutions',
           role: 'Desarrollador backend',
           period: 'Oct 2025 – actualidad',
           brief:
@@ -218,7 +235,7 @@ export const profile = {
         },
         {
           title: 'Migración a arquitectura por capas',
-          company: 'GAF Solutions',
+          company: 'GAF Technology Solutions',
           role: 'Desarrollador backend',
           period: 'Oct 2025 – actualidad',
           brief:
@@ -230,6 +247,15 @@ export const profile = {
     {
       category: 'Fuera del trabajo',
       items: [
+        {
+          title: 'Automatización de procesos con IA',
+          company: 'Autónomo',
+          role: 'Freelance, media jornada',
+          period: 'Ene 2026 – actualidad',
+          brief:
+            'Pipelines de automatización con n8n y la API de OpenAI para generación de contenido, y un bot conversacional de Telegram integrado con n8n y PostgreSQL que atiende solicitudes de punta a punta.',
+          tags: ['n8n', 'OpenAI API', 'PostgreSQL'],
+        },
         {
           title: 'CLI de clipping de vídeo',
           role: 'Proyecto propio',

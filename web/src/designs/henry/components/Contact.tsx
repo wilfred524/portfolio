@@ -49,6 +49,17 @@ export function Contact() {
         </a>
         <span className="henry-meta">{profile.phone}</span>
         <div className="henry-contact__links">
+          {profile.cv.map((doc) => (
+            <a
+              key={doc.url}
+              className="henry-linkbtn"
+              href={doc.url}
+              target="_blank"
+              rel="noreferrer"
+            >
+              {doc.label} ↗
+            </a>
+          ))}
           {profile.social.map((link) => (
             <a
               key={link.label}

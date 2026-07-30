@@ -21,6 +21,10 @@ export function Hero() {
         </p>
         <p className="henry-hero__credential">{profile.credential}</p>
         <div className="henry-hero__links">
+          {/* El CV primero: sin documento que reenviar, muchos procesos ni empiezan. */}
+          <a className="henry-linkbtn" href={profile.cv[0].url} target="_blank" rel="noreferrer">
+            {profile.cv[0].label} ↗
+          </a>
           {profile.social.map((link) => (
             <a
               key={link.label}

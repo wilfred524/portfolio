@@ -1,0 +1,187 @@
+<!doctype html>
+<html lang="es">
+  <head>
+    <meta charset="utf-8" />
+    <title>Wilfred Morales — Desarrollador backend</title>
+    <style>
+      /* Una columna, sin gráficos ni tablas: el CV pasa por lectores ATS antes que
+         por ojos humanos, y cualquier maquetación en columnas los confunde. */
+      @page { size: A4; margin: 14mm 15mm; }
+      * { box-sizing: border-box; }
+      body {
+        margin: 0 auto;
+        max-width: 190mm;
+        padding: 12mm 10mm;
+        font-family: Georgia, 'Times New Roman', serif;
+        font-size: 10.5pt;
+        line-height: 1.45;
+        color: #1a1a1a;
+        background: #fff;
+      }
+      h1 { margin: 0; font-size: 19pt; letter-spacing: -0.01em; }
+      .headline { margin: 2pt 0 0; font-size: 11pt; font-weight: bold; }
+      .contact { margin: 5pt 0 0; font-size: 9pt; color: #333; }
+      h2 {
+        margin: 15pt 0 5pt;
+        padding-bottom: 2pt;
+        border-bottom: 1px solid #999;
+        font-size: 11pt;
+        text-transform: uppercase;
+        letter-spacing: 0.06em;
+      }
+      h3 { margin: 0; font-size: 10.5pt; }
+      .job { margin-bottom: 10pt; }
+      .job-head {
+        display: flex;
+        justify-content: space-between;
+        gap: 8pt;
+        margin-bottom: 4pt;
+      }
+      .job-title { font-size: 11pt; }
+      .period { font-size: 9pt; color: #333; white-space: nowrap; }
+      .entry { margin: 0 0 7pt; page-break-inside: avoid; }
+      ul { margin: 3pt 0 0; padding-left: 15pt; }
+      li { margin-bottom: 2pt; }
+      p { margin: 0 0 4pt; }
+      .stack { margin-top: 2pt; font-size: 9pt; color: #444; }
+      .note { font-weight: normal; font-size: 9pt; color: #444; }
+      @media print { body { padding: 0; } }
+    </style>
+  </head>
+  <body>
+    <header>
+      <h1>Wilfred Morales</h1>
+      <p class="headline">Desarrollador backend · PHP/Laravel · PostgreSQL · Seguridad de plataforma</p>
+      <p class="contact">wilfred3019@gmail.com · +57 301 737 4234 · Colombia (GMT-5) · github.com/wilfred524 · linkedin.com/in/wilfred-morales-3220b2126 · github.com/wilfred524/portfolio</p>
+    </header>
+
+    <section>
+      <h2>Perfil</h2>
+      <p>Desarrollador backend en una fintech de crédito por libranza —préstamos con descuento directo de nómina, un sector regulado en Colombia—, donde trabajo desde octubre de 2025.</p>
+        <p>He construido y puesto en producción el motor de reglas de crédito, la firma electrónica con validación de identidad contra buró y el pipeline mensual de scoring que procesa unos 300.000 registros por corrida. También dirigí la migración de la plataforma a una arquitectura por capas.</p>
+        <p>Cursando Ingeniería Informática en la UNET. Abierto a empleo de planta, remoto o híbrido, y a contratación internacional vía Deel (GMT-5).</p>
+    </section>
+
+    <section>
+      <h2>Experiencia</h2>
+      
+      <div class="job">
+        <div class="job-head">
+          <h3 class="job-title">Backend Developer — GAF Technology Solutions</h3>
+          <span class="period">Oct 2025 – actualidad</span>
+        </div>
+        
+        <div class="entry">
+          <h3>Credit rules engine <span class="note">para CK Comercializadora (filial)</span></h3>
+          <ul>
+            <li>Modelé los datos y traduje las reglas de negocio a un esquema de políticas en PostgreSQL: elegibilidad, embargos, límites de plazo y requisitos laborales y financieros por pagaduría. El área de negocio ajusta parámetros sin desplegar código.</li>
+            <li>Implementé la evaluación completa: cálculo de capacidad de endeudamiento según Ley 1527 y Ley 50 para activos y pensionados, criterios de decisión, reglas especiales y reevaluación de solicitudes.</li>
+            <li>Construí el portal público de solicitudes y sus validaciones de front y backend, con trazabilidad por asesor y protección antibot.</li>
+          </ul>
+          <p class="stack">Laravel · Vue.js · Inertia.js · PostgreSQL</p>
+        </div>
+
+        <div class="entry">
+          <h3>Electronic signature with identity validation</h3>
+          <ul>
+            <li>Implementé la máquina de estados que sigue la cola del proveedor de validación de identidad y se recupera de estados no contemplados, preservando la integridad del XML entre peticiones.</li>
+            <li>Entregué el módulo de libranzas de punta a punta: formulario multipaso con autoguardado, borrador en PDF, historial de correos y reintentos de subida a S3.</li>
+            <li>Extraje un patrón de firma genérico para que los módulos siguientes lo implementaran en vez de repetir el flujo.</li>
+          </ul>
+          <p class="stack">Laravel · Vue.js · TransUnion · AWS S3</p>
+        </div>
+
+        <div class="entry">
+          <h3>Credit scoring pipeline</h3>
+          <ul>
+            <li>Llevé a producción un modelo de riesgo que vivía en el cuaderno de un analista: contenedor con cron mensual que extrae de PostgreSQL, ejecuta el modelo y persiste los resultados. Antes no se calculaba de forma automática.</li>
+            <li>Procesa unos 300.000 registros por corrida, con carga en bloques de cinco mil, control de estado en disco para no reprocesar el mismo artefacto y descarte de filas inválidas sin abortar la carga.</li>
+            <li>Añadí la consulta en vivo por API para mostrar el puntaje de una cédula en la pantalla de visado.</li>
+          </ul>
+          <p class="stack">Python · PostgreSQL · Docker · Laravel</p>
+        </div>
+
+        <div class="entry">
+          <h3>Access control and auditing</h3>
+          <ul>
+            <li>Consolidé el control de accesos sobre Spatie —guards, middleware y policies— con una migración que llevó usuarios y roles existentes al esquema nuevo sin interrumpir la operación.</li>
+            <li>Trabajé en el endurecimiento de la autenticación y en la trazabilidad de eventos críticos de cara a una auditoría de seguridad.</li>
+          </ul>
+          <p class="stack">Spatie Permission · Autenticación · Auditoría · Laravel</p>
+        </div>
+
+        <div class="entry">
+          <h3>Migration to a layered architecture</h3>
+          <ul>
+            <li>Dirigí y verifiqué la migración de una plataforma de seis años —más de doscientos modelos Eloquent mezclados con controladores, colas y providers— a una arquitectura por capas.</li>
+            <li>Sin suite de pruebas de la que fiarse, la migración fue módulo a módulo con verificación en cada paso. Tres meses, con revisión del líder técnico.</li>
+          </ul>
+          <p class="stack">Arquitectura Hexagonal · DDD · Laravel</p>
+        </div>
+      </div>
+
+      <div class="job">
+        <div class="job-head">
+          <h3 class="job-title">Freelance, part-time — Self-employed</h3>
+          <span class="period">Ene 2026 – actualidad</span>
+        </div>
+        
+        <div class="entry">
+          <h3>AI process automation</h3>
+          <ul>
+            <li>Pipelines de automatización con n8n y la API de OpenAI para generación de contenido.</li>
+            <li>Bot conversacional de Telegram integrado con n8n y PostgreSQL que atiende solicitudes de punta a punta.</li>
+          </ul>
+          <p class="stack">n8n · OpenAI API · PostgreSQL</p>
+        </div>
+      </div>
+
+      <div class="job">
+        <div class="job-head">
+          <h3 class="job-title">Personal project — Proyectos propios</h3>
+          <span class="period">Jul 2026 – en curso</span>
+        </div>
+        
+        <div class="entry">
+          <h3>Video clipping CLI</h3>
+          <ul>
+            <li>Herramienta de línea de comandos en TypeScript que parte un vídeo largo en clips verticales: transcripción con Whisper, guion generado por un modelo cuya salida se valida contra un esquema, síntesis de voz y montaje de subtítulos con Remotion.</li>
+            <li>Cada paso persiste su resultado en disco y el proceso es reanudable, para no repetir llamadas al modelo ya pagadas.</li>
+          </ul>
+          <p class="stack">TypeScript · Node.js · Remotion · ffmpeg</p>
+        </div>
+      </div>
+    </section>
+
+    <section>
+      <h2>Formación</h2>
+      <p>Ingeniería Informática, Universidad Nacional Experimental del Táchira (UNET). Cursando 7.º semestre.</p>
+    </section>
+
+    <section>
+      <h2>Habilidades</h2>
+      <ul>
+        <li><strong>Backend:</strong> PHP / Laravel · PostgreSQL / SQL · MySQL · Arquitectura Hexagonal / DDD · Pruebas (PHPUnit / pytest) · Python · Node.js</li>
+        <li><strong>Security:</strong> Roles y permisos (Spatie) · MFA / gestión de sesiones · SAST y detección de secretos · reCAPTCHA Enterprise</li>
+        <li><strong>Automation &amp; AI:</strong> n8n · OpenAI API · Integración de APIs / Webhooks</li>
+        <li><strong>Frontend:</strong> Vue.js · Inertia.js · Blade · Tailwind CSS · React · TypeScript</li>
+        <li><strong>Infrastructure:</strong> Docker · Linux / Nginx · CI/CD (GitHub Actions) · Google Cloud Platform · AWS S3</li>
+      </ul>
+    </section>
+
+    <section>
+      <h2>Idiomas</h2>
+      <p>Español nativo · Inglés B2, con lectura C2</p>
+    </section>
+
+    <section>
+      <h2>Certificaciones</h2>
+      <ul>
+        <li>Generative AI Fundamentals &amp; Prompt Engineering for Developers — Coursera</li>
+        <li>Programación Intensiva en Python — Coursera</li>
+        <li>Google IT Automation with Python Professional Certificate — Coursera (en curso)</li>
+        <li>EF SET English Certificate — B2 global, lectura C2</li>
+      </ul>
+    </section>
+  </body>
+</html>
