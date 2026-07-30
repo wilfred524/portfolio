@@ -8,7 +8,7 @@ Repo: https://github.com/wilfred524/portfolio (público, remoto SSH).
 | Paquete | Nombre npm | Rol | Puerto dev |
 |---|---|---|---|
 | `web/` | `@portfolio/web` | Frontend React 19 + Vite + TS | 5173 |
-| `api/` | `@portfolio/api` | Backend Express + TS (demos IA/APIs futuras) | 3001 |
+| `api/` | `@portfolio/api` | Backend Express + TS; genera el CV (`build:cv`) | 3001 |
 | `shared/` | `@portfolio/shared` | Contratos de la API tipados | — |
 
 ## Reglas de separación
@@ -25,7 +25,11 @@ Repo: https://github.com/wilfred524/portfolio (público, remoto SSH).
 ```
 main.tsx / App.tsx        monta HenryPage; sin router
 lib/api.ts                cliente HTTP tipado (único punto de contacto con /api)
-content/profile.ts        TODO el contenido (hero, facts, skills, proyectos, contacto)
+content/types.ts          forma del contenido; el `satisfies Profile` fuerza paridad
+content/profile.en.ts     contenido en inglés (idioma por defecto)
+content/profile.es.ts     contenido en español
+content/index.ts          content = { en, es }, Lang, LANGS
+i18n/LanguageProvider.tsx idioma activo (localStorage) + useContent()
 hooks/                    useReveal.ts, useScrollProgress.ts, useScrollSlide.ts
 styles/global.css         reset + @font-face de Switzer
 designs/henry/            el diseño Henry (design.md, henry.css, HenryPage.tsx, components/)
@@ -45,7 +49,8 @@ npm install                          # instala los 3 workspaces
 npm run dev                          # concurrently: api + web
 npm run build                        # api (tsc) + web (vite)
 npm run build -w @portfolio/web      # solo bundle web → web/dist
-npm run typecheck -w @portfolio/web  # tsc -b (chequeo de tipos, no genera nada)
+npm run typecheck -w @portfolio/web  # tsc -b; también verifica la paridad es/en
+npm run build:cv -w @portfolio/api   # CV en HTML y PDF, ambos idiomas → web/public/
 ```
 
 ## Notas técnicas
