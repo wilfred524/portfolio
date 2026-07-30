@@ -2,11 +2,15 @@
 
 Todos respetan `prefers-reduced-motion` (se desactivan). CSS en `henry.css`.
 
-## 1. Inversión Paper→Ink al scroll
+## 1. Bandas Paper / Ink estáticas y alternadas
 
-`InkSection` (en `HenryPage.tsx`) usa `useReveal` para añadir `is-visible` al entrar en
-viewport. La sección arranca en Paper y transiciona a Ink (`.henry-section--ink` →
-`.is-visible`). Da el efecto de bandas que "se encienden".
+El sistema alterna bandas Paper e Ink a sangre completa (spec: *"never gradient-blend
+between them"*). Las secciones Ink (`.henry-section--ink`) son **ink de principio a fin,
+sin transición de color** — una inversión animada pasaría por grises/marrones y va contra
+la spec. Ritmo actual (paper/ink alternados para no cansar):
+Hero (paper) → Masthead (ink) → Sobre mí (paper) → Proyectos (ink) → Habilidades (paper)
+→ Contacto (ink) → footer (paper). `InkSection` sigue exportada desde `HenryPage.tsx`
+(Masthead/Projects/Contact la usan); `useReveal` ya no cambia color (queda para otros reveals).
 
 ## 2. Placa halftone generada por código
 

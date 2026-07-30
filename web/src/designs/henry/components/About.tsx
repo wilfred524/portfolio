@@ -1,10 +1,10 @@
 import { profile } from '../../../content/profile';
-import { InkSection } from '../HenryPage';
 import { SectionHeader } from './SectionHeader';
 
+/** Banda Paper: alterna con las bandas Ink (Masthead / Proyectos) para dar ritmo. */
 export function About() {
   return (
-    <InkSection>
+    <section className="henry-section">
       <h2 className="henry-sr-only">Sobre mí</h2>
       <SectionHeader word="Sobre mí" variant="serif" />
       <div className="henry-letter">
@@ -20,6 +20,6 @@ export function About() {
           Una breve carta
         </p>
       </div>
-    </InkSection>
+    </section>
   );
 }
