@@ -1,4 +1,4 @@
-import { profile } from '../../../content/profile';
+import { useContent } from '../../../i18n/LanguageProvider';
 import { InkSection } from './InkSection';
 import { SectionHeader } from './SectionHeader';
 
@@ -8,12 +8,13 @@ import { SectionHeader } from './SectionHeader';
  * justo antes de que alguien decida escribir.
  */
 export function Contact() {
+  const profile = useContent();
   const facts = profile.facts.filter((fact) => fact.value.trim() !== '');
 
   return (
     <InkSection id="contacto">
-      <h2 className="henry-sr-only">Contacto</h2>
-      <SectionHeader word="Contacto" />
+      <h2 className="henry-sr-only">{profile.ui.sections.contact}</h2>
+      <SectionHeader word={profile.ui.sections.contact} />
 
       <div className="henry-contact">
         <p className="henry-contact__closing">{profile.closing}</p>
@@ -49,17 +50,10 @@ export function Contact() {
         </a>
         <span className="henry-meta">{profile.phone}</span>
         <div className="henry-contact__links">
-          {profile.cv.map((doc) => (
-            <a
-              key={doc.url}
-              className="henry-linkbtn"
-              href={doc.url}
-              target="_blank"
-              rel="noreferrer"
-            >
-              {doc.label} ↗
-            </a>
-          ))}
+          {/* Un solo documento, el del idioma activo, y se descarga en vez de abrirse. */}
+          <a className="henry-linkbtn" href={profile.cv.url} download>
+            {profile.cv.label} ↓
+          </a>
           {profile.social.map((link) => (
             <a
               key={link.label}

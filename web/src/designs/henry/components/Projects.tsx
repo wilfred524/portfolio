@@ -1,13 +1,9 @@
-import type { ProjectItem } from '../../../content/profile';
-import { profile } from '../../../content/profile';
+import type { ProjectItem, UiStrings } from '../../../content';
+import { useContent } from '../../../i18n/LanguageProvider';
 import { SectionHeader } from './SectionHeader';
 
 /** El bloque del medio es el que contrata: ahí va el criterio, no la ejecución. */
-const BLOCKS = [
-  { key: 'problem', label: 'Problema' },
-  { key: 'hard', label: 'Lo difícil' },
-  { key: 'result', label: 'Resultado' },
-] as const;
+const BLOCK_KEYS = ['problem', 'hard', 'result'] as const;
 
 /**
  * Fila de proyecto en dos columnas: la meta (empresa, rol, periodo, tags) a la
@@ -17,7 +13,7 @@ const BLOCKS = [
  * Sin plegado: el acordeón escondía el contenido a quien no hacía clic, que es casi
  * todo el mundo.
  */
-function ProjectRow({ item }: { item: ProjectItem }) {
+function ProjectRow({ item, labels }: { item: ProjectItem; labels: UiStrings['blocks'] }) {
   return (
     <li className="henry-proj">
       <div className="henry-proj__aside">
@@ -38,9 +34,9 @@ function ProjectRow({ item }: { item: ProjectItem }) {
         {item.metric && <p className="henry-proj__metric">{item.metric}</p>}
 
         {item.body
-          ? BLOCKS.map(({ key, label }) => (
+          ? BLOCK_KEYS.map((key) => (
               <div key={key} className="henry-proj__block">
-                <p className="henry-meta henry-proj__block-label">{label}</p>
+                <p className="henry-meta henry-proj__block-label">{labels[key]}</p>
                 <p className="henry-proj__desc">{item.body![key]}</p>
               </div>
             ))
@@ -55,10 +51,12 @@ function ProjectRow({ item }: { item: ProjectItem }) {
  * (ver HenryPage), porque al disolverse «Sobre mí» quedaban dos bandas Ink seguidas.
  */
 export function Projects() {
+  const profile = useContent();
+
   return (
     <>
-      <h2 className="henry-sr-only">Experiencia</h2>
-      <SectionHeader word="Experiencia" />
+      <h2 className="henry-sr-only">{profile.ui.sections.experience}</h2>
+      <SectionHeader word={profile.ui.sections.experience} />
 
       {profile.projectGroups.map((group) => (
         <section key={group.category} className="henry-catgroup">
@@ -68,7 +66,7 @@ export function Projects() {
           </div>
           <ul className="henry-projlist">
             {group.items.map((item) => (
-              <ProjectRow key={item.title} item={item} />
+              <ProjectRow key={item.title} item={item} labels={profile.ui.blocks} />
             ))}
           </ul>
         </section>

@@ -1,4 +1,4 @@
-import { profile } from '../../../content/profile';
+import { useContent } from '../../../i18n/LanguageProvider';
 
 /**
  * «Cómo está hecho». Tres líneas antes de Contacto: a nivel JR/intermedio la
@@ -6,13 +6,15 @@ import { profile } from '../../../content/profile';
  * más limpia que hay de ella — inspeccionable sin firmar nada.
  */
 export function Colophon() {
+  const profile = useContent();
+
   return (
     <div className="henry-subsection henry-colophon">
-      <h2 className="henry-sr-only">Cómo está hecho este sitio</h2>
-      <p className="henry-meta">Cómo está hecho este sitio</p>
+      <h2 className="henry-sr-only">{profile.ui.sections.colophon}</h2>
+      <p className="henry-meta">{profile.ui.sections.colophon}</p>
       <p className="henry-colophon__text">{profile.colophon}</p>
       <a className="henry-linkbtn" href={profile.repoUrl} target="_blank" rel="noreferrer">
-        Ver el código ↗
+        {profile.ui.viewCode} ↗
       </a>
     </div>
   );

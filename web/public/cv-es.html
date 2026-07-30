@@ -94,7 +94,7 @@
     <section>
       <h2>Perfil</h2>
       <p>Desarrollador backend en una fintech de crédito por libranza —préstamos con descuento directo de nómina, un sector regulado en Colombia—, donde trabajo desde octubre de 2025.</p>
-      <p>He construido y puesto en producción el motor de reglas de crédito, la firma electrónica con validación de identidad contra buró y el pipeline mensual de scoring que procesa unos 300.000 registros por corrida. También dirigí la migración de la plataforma a una arquitectura por capas.</p>
+      <p>He construido y puesto en producción el motor de reglas de crédito, la firma electrónica con validación de identidad contra buró y el proceso mensual de puntaje crediticio que procesa unos 300.000 registros por corrida. También dirigí la migración de la plataforma a una arquitectura por capas.</p>
       <p>Cursando Ingeniería Informática en la UNET. Abierto a empleo de planta, remoto o híbrido, y a contratación internacional vía Deel (GMT-5).</p>
     </section>
 
@@ -109,7 +109,7 @@
         <p class="tagline">Fintech de crédito por libranza, respaldada por un fondo de inversión.</p>
         
         <div class="entry">
-          <p class="entry-title">Motor de reglas de crédito <span class="note">para CK Comercializadora (filial)</span></p>
+          <p class="entry-title">Motor de reglas de crédito <span class="note">CK Comercializadora, filial de GAF</span></p>
           <ul>
             <li>Modelé los datos y traduje las reglas de negocio a un esquema de políticas en PostgreSQL: elegibilidad, embargos, límites de plazo y requisitos laborales y financieros por pagaduría. El área de negocio ajusta parámetros sin desplegar código.</li>
             <li>Implementé la evaluación completa: cálculo de capacidad de endeudamiento según Ley 1527 y Ley 50 para activos y pensionados, criterios de decisión, reglas especiales y reevaluación de solicitudes.</li>
@@ -129,7 +129,7 @@
         </div>
 
         <div class="entry">
-          <p class="entry-title">Pipeline de scoring crediticio</p>
+          <p class="entry-title">Proceso mensual de puntaje crediticio</p>
           <ul>
             <li>Llevé a producción un modelo de riesgo que vivía en el cuaderno de un analista: contenedor con cron mensual que extrae de PostgreSQL, ejecuta el modelo y persiste los resultados. Antes no se calculaba de forma automática.</li>
             <li>Procesa unos 300.000 registros por corrida, con carga en bloques de cinco mil, control de estado en disco para no reprocesar el mismo artefacto y descarte de filas inválidas sin abortar la carga.</li>
@@ -167,7 +167,7 @@
         <div class="entry">
           <p class="entry-title">Automatización de procesos con IA</p>
           <ul>
-            <li>Pipelines de automatización con n8n y la API de OpenAI para generación de contenido.</li>
+            <li>Procesos automatizados con n8n y la API de OpenAI para generación de contenido.</li>
             <li>Bot conversacional de Telegram integrado con n8n y PostgreSQL que atiende solicitudes de punta a punta.</li>
           </ul>
           <p class="stack">n8n · OpenAI API · PostgreSQL</p>
@@ -182,7 +182,7 @@
         
         
         <div class="entry">
-          <p class="entry-title">CLI de clipping de vídeo</p>
+          <p class="entry-title">CLI de recorte de vídeo</p>
           <ul>
             <li>Herramienta de línea de comandos en TypeScript que parte un vídeo largo en clips verticales: transcripción con Whisper, guion generado por un modelo cuya salida se valida contra un esquema, síntesis de voz y montaje de subtítulos con Remotion.</li>
             <li>Cada paso persiste su resultado en disco y el proceso es reanudable, para no repetir llamadas al modelo ya pagadas.</li>

@@ -1,67 +1,18 @@
 /**
- * TODO el contenido de la página vive aquí.
- * Para poner tus datos reales solo hay que editar este archivo:
- * ningún componente tiene textos hardcodeados.
+ * Contenido en español. La estructura la fija `types.ts`; el `satisfies Profile` del
+ * final garantiza que este archivo y `profile.en.ts` no se desincronicen.
  */
+import type { Profile } from './types';
 
-export interface ProjectItem {
-  /** Título corto (una palabra o dos). */
-  title: string;
-  /** Marca o plataforma. Ausente en proyectos propios. */
-  company?: string;
-  /** Rol desempeñado en el proyecto. */
-  role: string;
-  /** Marco temporal. Sin él, nueve meses de trabajo se leen como cuatro años. */
-  period: string;
-  /** Dato de escala, legible junto al título (antes enterrado en el texto fantasma). */
-  metric?: string;
-  /**
-   * Cuerpo en tres partes, para los proyectos que van en extenso. La del medio es la
-   * que contrata: ahí se demuestra criterio técnico, no ejecución.
-   */
-  body?: {
-    problem: string;
-    hard: string;
-    result: string;
-  };
-  /**
-   * Alternativa al `body`: un párrafo corto. Cinco tarjetas de longitud idéntica se
-   * aplanan entre sí y ninguna destaca; tres en extenso y dos en resumen jerarquizan.
-   */
-  brief?: string;
-  tags: string[];
-  url?: string;
-}
+export const es = {
 
-export interface ProjectGroup {
-  category: string;
-  items: ProjectItem[];
-}
-
-export interface Fact {
-  label: string;
-  /** Si va vacío, la línea no se renderiza: mejor omitir que publicar un dato inventado. */
-  value: string;
-  /** Documento que respalda el dato (p. ej. el certificado de inglés). */
-  href?: string;
-  hrefLabel?: string;
-}
-
-export interface SkillGroup {
-  /** Área de dominio (Backend, Automatización…). Se rotula como categoría. */
-  area: string;
-  /** Tecnologías, ordenadas de mayor a menor dominio dentro del área. */
-  items: string[];
-}
-
-export const profile = {
   name: 'Wilfred Morales',
   role: 'Desarrollador backend',
   /** Stack de cabecera: lo que un reclutador técnico busca en los primeros dos segundos. */
   stack: 'PHP/Laravel · PostgreSQL · seguridad de plataforma',
   /** La credencial: sistemas en producción y en qué dominio. Es la frase que convierte. */
   credential:
-    'Firma electrónica, motor de reglas y scoring crediticio en producción para crédito por libranza.',
+    'Firma electrónica, motor de reglas y puntaje crediticio en producción para crédito por libranza.',
   /* "Disponible para nuevos proyectos" leía freelance; la búsqueda es de empleo. */
   availability: 'Buscando mi próximo rol como desarrollador backend',
   /** Marco temporal, bajo el hero. Es lo que evita que el contenido se lea como 4 años. */
@@ -78,10 +29,7 @@ export const profile = {
    * archivo, así que no pueden contradecir a la web. El script exporta también el PDF
    * con Chrome headless; si no hay Chrome, quedan solo los .html y hay que imprimirlos.
    */
-  cv: [
-    { label: 'CV (español)', url: '/cv-es.pdf' },
-    { label: 'CV (English)', url: '/cv-en.pdf' },
-  ],
+  cv: { label: 'Descargar CV', url: '/cv-es.pdf' },
   /**
    * «Cómo está hecho»: a nivel JR/intermedio, la prueba de que se aprende solo pesa
    * tanto como el stack. Incluye el uso de IA como herramienta, que es cómo se
@@ -125,7 +73,7 @@ export const profile = {
     },
     /* `as` y no `satisfies`: sin ninguna entrada con `href`, satisfies estrecha el tipo
        y los consumidores dejan de ver los campos opcionales. */
-  ] as Fact[],
+  ],
   /** Sin niveles: el ORDEN comunica el dominio (spec Henry: énfasis por escala, no por etiqueta). */
   skillGroups: [
     {
@@ -173,12 +121,14 @@ export const profile = {
      * —este sitio y el CLI de vídeo—, así que listarlos como «aprendiendo» contradecía
      * la propia página. La línea vuelve cuando haya algo real que poner.
      */
-  ] satisfies SkillGroup[],
+  ],
   projectGroups: [
     {
       category: 'En producción',
       items: [
         {
+          id: 'rules-engine',
+          employer: 'gaf',
           title: 'Motor de reglas de crédito',
           company: 'CK Comercializadora, filial de GAF',
           role: 'Desarrollador backend',
@@ -189,11 +139,13 @@ export const profile = {
             hard:
               'Modelé los datos y traduje las reglas de negocio a un esquema de políticas en PostgreSQL —elegibilidad, embargos, límites de plazo, requisitos laborales y financieros por pagaduría—, de modo que el código no sabe cuáles son las reglas, solo cómo aplicarlas. Sobre esa base implementé la evaluación completa: cálculo de capacidad de endeudamiento según Ley 1527 y Ley 50 para activos y pensionados, criterios de decisión, reglas especiales, reevaluación de solicitudes y las validaciones de front y backend.',
             result:
-              'El área de negocio ajusta parámetros sin tocar código ni esperar despliegue, y cada solicitud queda trazada al asesor que la originó. La API de envío la construyó un compañero; reestructuré su payload varias veces conforme cambiaba el modelo.',
+              'El área de negocio ajusta parámetros sin tocar código ni esperar despliegue, y cada solicitud queda trazada al asesor que la originó. La API de envío la construyó un compañero; reestructuré el cuerpo de sus peticiones varias veces conforme cambiaba el modelo.',
           },
           tags: ['Laravel', 'Vue.js', 'Inertia.js', 'PostgreSQL'],
         },
         {
+          id: 'esignature',
+          employer: 'gaf',
           title: 'Firma electrónica con validación de identidad',
           company: 'GAF Technology Solutions',
           role: 'Desarrollador backend',
@@ -209,7 +161,9 @@ export const profile = {
           tags: ['Laravel', 'Vue.js', 'TransUnion', 'AWS S3'],
         },
         {
-          title: 'Pipeline de scoring crediticio',
+          id: 'scoring',
+          employer: 'gaf',
+          title: 'Proceso mensual de puntaje crediticio',
           company: 'GAF Technology Solutions',
           role: 'Desarrollador backend',
           period: 'Oct 2025 – actualidad',
@@ -225,6 +179,8 @@ export const profile = {
           tags: ['Python', 'PostgreSQL', 'Docker', 'Laravel'],
         },
         {
+          id: 'access-control',
+          employer: 'gaf',
           title: 'Control de accesos y auditoría',
           company: 'GAF Technology Solutions',
           role: 'Desarrollador backend',
@@ -234,6 +190,8 @@ export const profile = {
           tags: ['Spatie Permission', 'Autenticación', 'Auditoría', 'Laravel'],
         },
         {
+          id: 'layered-migration',
+          employer: 'gaf',
           title: 'Migración a arquitectura por capas',
           company: 'GAF Technology Solutions',
           role: 'Desarrollador backend',
@@ -248,16 +206,19 @@ export const profile = {
       category: 'Fuera del trabajo',
       items: [
         {
+          id: 'ai-automation',
+          employer: 'self',
           title: 'Automatización de procesos con IA',
           company: 'Autónomo',
           role: 'Freelance, media jornada',
           period: 'Ene 2026 – actualidad',
           brief:
-            'Pipelines de automatización con n8n y la API de OpenAI para generación de contenido, y un bot conversacional de Telegram integrado con n8n y PostgreSQL que atiende solicitudes de punta a punta.',
+            'Procesos automatizados con n8n y la API de OpenAI para generación de contenido, y un bot conversacional de Telegram integrado con n8n y PostgreSQL que atiende solicitudes de punta a punta.',
           tags: ['n8n', 'OpenAI API', 'PostgreSQL'],
         },
         {
-          title: 'CLI de clipping de vídeo',
+          id: 'video-cli',
+          title: 'CLI de recorte de vídeo',
           role: 'Proyecto propio',
           period: 'Jul 2026 – en curso',
           brief:
@@ -266,9 +227,31 @@ export const profile = {
         },
       ],
     },
-  ] satisfies ProjectGroup[],
+  ],
   social: [
     { label: 'GitHub', url: 'https://github.com/wilfred524' },
     { label: 'LinkedIn', url: 'https://www.linkedin.com/in/wilfred-morales-3220b2126' },
   ],
-};
+  ui: {
+    nav: {
+      experience: 'Experiencia',
+      skills: 'Habilidades',
+      contact: 'Contacto',
+      ariaLabel: 'Principal',
+    },
+    sections: {
+      experience: 'Experiencia',
+      skills: 'Habilidades',
+      contact: 'Contacto',
+      colophon: 'Cómo está hecho este sitio',
+    },
+    blocks: { problem: 'Problema', hard: 'Lo difícil', result: 'Resultado' },
+    viewCode: 'Ver el código',
+    credit: {
+      intro: 'Interpretación del sistema de diseño',
+      author: '«Henry» de Henry Desroches',
+      catalogued: 'catalogado en',
+      outro: 'Reconstruido en React; contenido y código propios.',
+    },
+  },
+} satisfies Profile;

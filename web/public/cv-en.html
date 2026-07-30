@@ -103,13 +103,13 @@
       
       <div class="job">
         <p class="job-head">
-          <span class="role">Backend Developer</span> <span class="company">GAF Technology Solutions</span> · <span class="mode">Full-time · Remote, Colombia</span>
+          <span class="role">Backend developer</span> <span class="company">GAF Technology Solutions</span> · <span class="mode">Full-time · Remote, Colombia</span>
           <span class="period">Oct 2025 – Present</span>
         </p>
         <p class="tagline">Payroll-deduction lending fintech, backed by an investment fund.</p>
         
         <div class="entry">
-          <p class="entry-title">Credit rules engine <span class="note">for CK Comercializadora (subsidiary)</span></p>
+          <p class="entry-title">Credit rules engine <span class="note">CK Comercializadora, a GAF subsidiary</span></p>
           <ul>
             <li>Modelled the data and translated business policy into a rules schema in PostgreSQL: eligibility, garnishments, term limits, and employment and financial requirements per payer. The business team now adjusts parameters without a deployment.</li>
             <li>Implemented the full evaluation logic: borrowing-capacity calculation under Colombian Law 1527 and Law 50 for active employees and pensioners, decision criteria, special rules, and application re-evaluation.</li>
@@ -129,7 +129,7 @@
         </div>
 
         <div class="entry">
-          <p class="entry-title">Credit scoring pipeline</p>
+          <p class="entry-title">Monthly credit scoring process</p>
           <ul>
             <li>Took a risk model living in a data analyst notebook to production: a containerised monthly cron job that reads from PostgreSQL, runs the model and persists results. Scoring was not automated before this.</li>
             <li>Processes around 300,000 records per run, loading in batches of five thousand, with on-disk state tracking to avoid reprocessing the same artifact and invalid-row handling that does not abort the load.</li>
@@ -144,7 +144,7 @@
             <li>Consolidated access control on Spatie — guards, middleware and policies — with a migration that moved existing users and roles to the new schema without interrupting operations.</li>
             <li>Worked on authentication hardening and on traceability of business-critical events ahead of a security audit.</li>
           </ul>
-          <p class="stack">Spatie Permission · Autenticación · Auditoría · Laravel</p>
+          <p class="stack">Spatie Permission · Authentication · Auditing · Laravel</p>
         </div>
 
         <div class="entry">
@@ -153,14 +153,14 @@
             <li>Led and verified the migration of a six-year-old platform — over two hundred Eloquent models mixed with controllers, queues and providers — to a layered architecture.</li>
             <li>With no test suite to rely on, the migration went module by module with verification at each step. Three months, reviewed by the tech lead.</li>
           </ul>
-          <p class="stack">Arquitectura Hexagonal · DDD · Laravel</p>
+          <p class="stack">Hexagonal Architecture · DDD · Laravel</p>
         </div>
       </div>
 
       <div class="job">
         <p class="job-head">
           <span class="role">Freelance, part-time</span> <span class="company">Self-employed</span> · <span class="mode">Part-time</span>
-          <span class="period">Ene 2026 – Present</span>
+          <span class="period">Jan 2026 – Present</span>
         </p>
         
         
@@ -177,7 +177,7 @@
       <div class="job">
         <p class="job-head">
           <span class="role">Personal projects</span>
-          <span class="period">Jul 2026 – en curso</span>
+          <span class="period">Jul 2026 – ongoing</span>
         </p>
         
         
@@ -199,9 +199,9 @@
 
     <section>
       <h2>Skills</h2>
-      <p class="skill"><span class="skill-area">Backend</span> PHP / Laravel · PostgreSQL / SQL · MySQL · Arquitectura Hexagonal / DDD · Pruebas (PHPUnit / pytest) · Python · Node.js</p>
-      <p class="skill"><span class="skill-area">Security</span> Roles y permisos (Spatie) · MFA / gestión de sesiones · SAST y detección de secretos · reCAPTCHA Enterprise</p>
-      <p class="skill"><span class="skill-area">Automation &amp; AI</span> n8n · OpenAI API · Integración de APIs / Webhooks</p>
+      <p class="skill"><span class="skill-area">Backend</span> PHP / Laravel · PostgreSQL / SQL · MySQL · Hexagonal Architecture / DDD · Testing (PHPUnit / pytest) · Python · Node.js</p>
+      <p class="skill"><span class="skill-area">Security</span> Roles and permissions (Spatie) · MFA / session management · SAST and secret detection · reCAPTCHA Enterprise</p>
+      <p class="skill"><span class="skill-area">Automation &amp; AI</span> n8n · OpenAI API · API / webhook integration</p>
       <p class="skill"><span class="skill-area">Frontend</span> Vue.js · Inertia.js · Blade · Tailwind CSS · React · TypeScript</p>
       <p class="skill"><span class="skill-area">Infrastructure</span> Docker · Linux / Nginx · CI/CD (GitHub Actions) · Google Cloud Platform · AWS S3</p>
     </section>

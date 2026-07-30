@@ -215,6 +215,33 @@
   color: var(--ink);
 }
 
+/* Conmutador de idioma: mismo registro que la nav, empujado al extremo opuesto para
+   que no compita con las secciones. */
+.henry-langswitch {
+  display: flex;
+  gap: calc(var(--space) * 2);
+  margin-left: auto;
+}
+
+.henry-langswitch__btn {
+  font: inherit;
+  letter-spacing: inherit;
+  color: var(--ash);
+  cursor: pointer;
+  transition: color 0.2s ease;
+}
+
+.henry-langswitch__btn:hover {
+  color: var(--ink);
+}
+
+/* El activo se marca por peso y tinta, no por relleno: la spec prohíbe el CTA sólido. */
+.henry-langswitch__btn.is-active {
+  color: var(--ink);
+  text-decoration: underline;
+  text-underline-offset: 0.35em;
+}
+
 /* Segundo bloque dentro de una misma banda (Habilidades bajo Experiencia):
    separación de sección sin abrir banda nueva, para no romper la alternancia.
    Menor que --section-gap: a hueco completo, la separación entre bloques de una
