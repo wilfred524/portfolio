@@ -25,7 +25,7 @@ export interface ProjectGroup {
 export const profile = {
   name: 'Wilfred Morales',
   role: 'Desarrollador Full-Stack',
-  tagline: 'Diseño y construyo interfaces que se sienten inevitables.',
+  tagline: 'Interfaces claras sobre sistemas que aguantan.',
   availability: 'Disponible para nuevos proyectos — 2026',
   ticker: 'Diseño y desarrollo full-stack · Disponible para proyectos 2026 · Hablemos',
   /** Slogan del hero: línea condensada + conector (itálica serif anidada) + línea serif. */
