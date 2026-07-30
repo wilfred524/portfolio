@@ -22,108 +22,123 @@ export interface ProjectGroup {
   items: ProjectItem[];
 }
 
+export interface SkillGroup {
+  /** Área de dominio (Backend, Automatización…). Se rotula como categoría. */
+  area: string;
+  /** Tecnologías, ordenadas de mayor a menor dominio dentro del área. */
+  items: string[];
+}
+
 export const profile = {
   name: 'Wilfred Morales',
   role: 'Desarrollador Full-Stack',
-  tagline: 'Interfaces claras sobre sistemas que aguantan.',
+  tagline: 'Interfaces claras sobre sistemas robustos.',
   availability: 'Disponible para nuevos proyectos — 2026',
-  ticker: 'Diseño y desarrollo full-stack · Disponible para proyectos 2026 · Hablemos',
+  ticker: 'Desarrollo full-stack · Automatización de procesos · Disponible para proyectos 2026 · Hablemos',
   /** Slogan del hero: línea condensada + conector (itálica serif anidada) + línea serif. */
   heroSlogan: { start: 'Ideas', link: 'hechas', end: 'Producto' },
   location: 'Colombia',
   email: 'wilfred3019@gmail.com',
   phone: '+57 301 737 4234',
   bio: [
-    'Trabajo en la intersección entre diseño y código: interfaces con intención tipográfica, sistemas de diseño rigurosos y el detalle técnico para que todo se mueva a 60fps.',
-    'Mi stack de cabecera es TypeScript de punta a punta — React en el navegador, Node en el servidor — con una obsesión particular por la automatización y el video programático.',
+    'Soy desarrollador backend. Trabajé en GAF Solutions y en CK Comercializadora, crédito por libranza: la firma electrónica contra TransUnion, el motor de reglas que evalúa las solicitudes, el scoring que corre cada mes y la migración del sistema a una arquitectura por capas.',
+    'Lo que me engancha es siempre lo mismo: un proceso que alguien hace a mano y no debería, o un sistema desordenado que se puede dejar mejor de como lo encontré. El resto lo digo de frente — este sitio es el primer diseño propio que hago, y TypeScript y React son territorio nuevo. Preferí que se notara antes que fingir lo contrario.',
   ],
-  skills: [
-    { name: 'Laravel / PHP', level: 'Avanzado' },
-    { name: 'Vue.js / Frontend', level: 'Avanzado' },
-    { name: 'Node.js / TypeScript', level: 'Avanzado' },
-    { name: 'n8n / Automatización', level: 'Avanzado' },
-    { name: 'LLMs — OpenAI / LangChain', level: 'Intermedio' },
-    { name: 'PostgreSQL / SQL', level: 'Avanzado' },
-    { name: 'Arquitectura Hexagonal / DDD', level: 'Intermedio' },
-    { name: 'Docker / GCP / Nginx', level: 'Intermedio' },
-  ],
+  /** Sin niveles: el ORDEN comunica el dominio (spec Henry: énfasis por escala, no por etiqueta). */
+  skillGroups: [
+    {
+      area: 'Backend',
+      items: [
+        'PHP / Laravel',
+        'PostgreSQL / SQL',
+        'MySQL',
+        'Arquitectura Hexagonal / DDD',
+        'Pruebas (PHPUnit / pytest)',
+        'Python',
+      ],
+    },
+    {
+      area: 'Seguridad',
+      items: [
+        'Roles y permisos (Spatie)',
+        'MFA / gestión de sesiones',
+        'SAST y detección de secretos',
+        'reCAPTCHA Enterprise',
+      ],
+    },
+    {
+      area: 'Automatización',
+      items: ['n8n', 'Integración de APIs / Webhooks', 'LLMs vía API'],
+    },
+    {
+      area: 'Frontend',
+      items: ['Vue.js', 'Inertia.js', 'Blade', 'Tailwind CSS', 'HTML / CSS'],
+    },
+    {
+      area: 'Infraestructura',
+      items: ['Docker', 'Linux / Nginx', 'GitHub Actions', 'AWS S3'],
+    },
+    {
+      area: 'Aprendiendo',
+      items: ['TypeScript', 'Node.js', 'React'],
+    },
+  ] satisfies SkillGroup[],
   projectGroups: [
     {
-      category: 'Automatización de Procesos & Flujos con IA',
+      category: 'En producción',
       items: [
         {
-          title: 'Chatbot',
-          ghost: 'mensajería en tiempo real',
-          context: 'n8n + Telegram API',
-          description:
-            'Atiende en Telegram sin intervención humana: interpreta comandos, consulta datos en vivo y responde al instante. Flujos de n8n sobre la API de Telegram que convierten una conversación en una acción — de la pregunta a la respuesta útil en segundos.',
-          tags: ['n8n', 'Telegram API', 'Webhooks'],
-        },
-        {
-          title: 'Generador de contenido',
-          ghost: 'de un prompt a una publicación',
-          context: 'AI Pipeline',
-          description:
-            'Convierte una idea en publicaciones listas para redes. Ingesta prompts, genera copys estructurados con LLMs (OpenAI / LangChain) y prepara el contenido sin intervención manual — creatividad a escala, con consistencia de marca.',
-          tags: ['OpenAI API', 'LangChain', 'LLMs'],
-        },
-        {
-          title: 'Score crediticio',
-          ghost: 'riesgo vuelto decisión',
+          title: 'Firma digital TransUnion',
+          ghost: 'el proveedor falla, el estado no',
           context: 'GAF Solutions',
           description:
-            'El motor que evalúa el riesgo crediticio de forma automática: procesa información financiera, calcula el score e ingesta los datos validados en PostgreSQL. Datos crudos convertidos en decisiones confiables, con trazabilidad de punta a punta.',
-          tags: ['PostgreSQL', 'Backend', 'Scoring'],
+            'Firma electrónica de documentos validada contra un buró de crédito. El mecanismo: un formulario largo llena una plantilla, la plantilla viaja a TransUnion para verificar la identidad de quien firma, y regresa un documento firmado con un hash verificable contra el propio proveedor. Lo difícil no es firmar, es sobrevivir al tercero: la validación va por preguntas de conocimiento o por código de un solo uso, sobre una máquina de estados que sigue la cola del proveedor y se reinicia cuando devuelve un estado que no contempla, preservando la integridad del XML entre peticiones y traduciendo sus errores a algo que el usuario pueda resolver. Lo construí primero para las libranzas — formulario multipaso con autoguardado por sección, borrador en PDF, historial de correos, reintentos de subida a S3 y pólizas de Sura — y después extraje el patrón de firma genérica para el expediente de conocimiento de contraparte, de modo que el siguiente módulo que necesitara firmarse lo implementara en vez de repetir el flujo. Trabajo de equipo pequeño, con revisión del líder técnico.',
+          tags: ['Laravel', 'Vue.js', 'TransUnion', 'AWS S3'],
         },
-      ],
-    },
-    {
-      category: 'Desarrollo Backend & Arquitectura de Software',
-      items: [
         {
-          title: 'Hexagonal',
-          ghost: 'la lógica, libre del framework',
+          title: 'Permisos, MFA, auditoría',
+          ghost: 'quién puede qué, y quién hizo qué',
           context: 'GAF Solutions',
           description:
-            'Migración de código legacy a arquitectura hexagonal: la lógica de negocio deja de depender del framework y pasa al centro, testeable y portable. El sistema gana libertad para escalar y cambiar piezas sin reescribirse.',
-          tags: ['Arquitectura Hexagonal', 'Laravel', 'Refactor'],
+            'Preparación de la plataforma para una eventual auditoría ISO 27001. El control de accesos estaba a medio camino entre Spatie y una lógica propia acumulada en el modelo de usuario: lo consolidé sobre Spatie — guards, middleware y policies — con una migración y un seeder que llevaron los usuarios y roles existentes al esquema nuevo sin dejar a nadie fuera, que era la parte delicada porque había gente trabajando dentro. Encima, segundo factor con confianza por dispositivo y cierre de sesión por inactividad, y en el pipeline detección de secretos y análisis estático, más la actualización de dependencias con vulnerabilidades conocidas. Al margen de la norma, un registro de eventos críticos con limpieza automática: no solo errores, también aprobaciones y tareas completadas, con su autor y su detalle.',
+          tags: ['Spatie Permission', 'MFA', 'ISO 27001', 'GitHub Actions'],
         },
         {
-          title: 'Auditoría',
-          ghost: 'cada acción, registrada',
-          context: 'GAF Solutions',
-          description:
-            'Trazabilidad total de las acciones críticas. Con Spatie Activitylog sobre Laravel, cada evento queda registrado con su autor y su contexto — un historial confiable para auditar, depurar y rendir cuentas.',
-          tags: ['Laravel', 'Spatie Activitylog', 'Auditoría'],
-        },
-        {
-          title: 'Anti-bot',
-          ghost: 'humanos sí, bots no',
+          title: 'Motor de reglas',
+          ghost: 'la política, vuelta parámetro',
           context: 'CK Comercializadora',
           description:
-            'Defensa contra bots sin fricción para el usuario: Cloudflare Turnstile en el frontend (Vue.js) con validación en backend, y resolución de los problemas de contenido mixto en producción. Seguridad real que no estorba la experiencia.',
-          tags: ['Vue.js', 'Cloudflare Turnstile', 'Seguridad'],
+            'Cambiar una política de crédito dejó de ser un despliegue y pasó a ser un parámetro. El motor lee las condiciones desde un esquema de políticas en PostgreSQL — elegibilidad, embargos, límites de plazo, requisitos laborales y financieros por pagaduría — que el área de negocio administra desde la otra plataforma, de modo que el código no sabe cuáles son las reglas, solo cómo aplicarlas. Incluye el cálculo de capacidad de endeudamiento según Ley 1527 y Ley 50, para empleados activos y pensionados. Es el portal público de solicitudes del mismo empleador, y la parte que llevé casi entera.',
+          tags: ['Laravel', 'Vue.js', 'Inertia.js', 'PostgreSQL'],
         },
         {
-          title: 'Este sitio',
-          ghost: 'diseño y código, una pieza',
-          context: 'Proyecto propio',
+          title: 'Pipeline scoring Python',
+          ghost: '300 mil registros, una vez al mes',
+          context: 'GAF Solutions',
           description:
-            'El sitio que estás viendo: monorepo TypeScript con frontend y backend desacoplados (React + Vite / Express) y una placa halftone generada por código (dithering Bayer en canvas). Donde el diseño y la ingeniería se sostienen mutuamente.',
-          tags: ['React', 'Vite', 'Express', 'Canvas'],
+            'Un modelo de riesgo que vivía en un cuaderno de un analista de datos, convertido en un proceso que corre solo. Un contenedor con cron mensual extrae de PostgreSQL, ejecuta el modelo, comprueba que el artefacto se haya regenerado antes de seguir adelante y carga los resultados en bloques de cinco mil para acotar el tamaño de cada sentencia — del orden de 300.000 registros por corrida. Guarda el estado en disco para no reprocesar dos veces el mismo artefacto y descarta las filas inválidas sin abortar la carga entera. El modelo no es mío; la tubería que lo pone en producción sí. La otra mitad es la consulta en vivo: un servicio que pide el puntaje de una cédula a la API y lo muestra en la pantalla de visado.',
+          tags: ['Python', 'PostgreSQL', 'Docker', 'Laravel'],
+        },
+        {
+          title: 'Refactor Laravel hexagonal',
+          ghost: 'seis años, sin apagar nada',
+          context: 'GAF Solutions',
+          description:
+            'Reordenar una plataforma de seis años sin detenerla. Todo el dominio vivía plano dentro de app/: más de doscientos modelos Eloquent revueltos con controladores, colas y providers. La reorganicé en capas — casos de uso con el patrón entrada/manejador/resultado, entidades e interfaces de repositorio en el dominio, y Eloquent, HTTP y colas confinados a infraestructura — con un proveedor que enlaza cada contrato con su implementación PostgreSQL o MySQL. No había suite de pruebas de la que fiarse, así que migré por partes y verifiqué módulo a módulo conforme avanzaba, en lugar de mover todo de golpe; el trabajo se extendió tres meses y pasó por revisión del líder técnico. De ahí en adelante fui dejando pruebas donde tocaba.',
+          tags: ['Arquitectura Hexagonal', 'DDD', 'Laravel', 'Refactor'],
         },
       ],
     },
     {
-      category: 'Despliegue & Administración de Infraestructura',
+      category: 'Fuera del trabajo',
       items: [
         {
-          title: 'Infra GCP',
-          ghost: 'el suelo donde corre todo',
-          context: 'Infraestructura',
+          title: 'CLI vídeo TypeScript',
+          ghost: 'un video, muchos clips',
+          context: 'Proyecto propio — en curso',
           description:
-            'La infraestructura que sostiene los productos en producción: servidores Linux en Google Cloud, contenedores Docker y proxys inversos con Nginx. Configuración, despliegue y mantenimiento pensados para que el sistema siga en pie.',
-          tags: ['GCP', 'Docker', 'Nginx', 'Linux'],
+            'Una herramienta de línea de comandos que parte un video largo en clips verticales: transcribe con Whisper, elige los fragmentos y escribe el guion con un modelo cuya salida se valida contra un esquema antes de usarla, narra con síntesis de voz, mezcla el audio atenuando el ambiente y monta los subtítulos con Remotion. Cada paso deja su resultado en disco y el proceso es reanudable, para no repetir llamadas al modelo ya pagadas. Funciona de punta a punta; la publicación automática a redes todavía no.',
+          tags: ['TypeScript', 'Node.js', 'Remotion', 'ffmpeg'],
         },
       ],
     },

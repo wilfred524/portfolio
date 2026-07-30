@@ -6,14 +6,22 @@ export function Skills() {
     <section className="henry-section">
       <h2 className="henry-sr-only">Habilidades</h2>
       <SectionHeader word="Habilidades" variant="serif" />
-      <ul className="henry-skills__list">
-        {profile.skills.map((skill) => (
-          <li key={skill.name} className="henry-skill">
-            <span className="henry-skill__name">{skill.name}</span>
-            <span className="henry-meta">{skill.level}</span>
-          </li>
-        ))}
-      </ul>
+      {/* Mismo patrón de agrupación que Projects: label + regla, luego la lista */}
+      {profile.skillGroups.map((group) => (
+        <section key={group.area} className="henry-catgroup">
+          <div className="henry-catgroup__label">
+            <span className="henry-meta">{group.area}</span>
+            <span className="henry-catgroup__rule" />
+          </div>
+          <ul className="henry-skills__list">
+            {group.items.map((item) => (
+              <li key={item} className="henry-skill">
+                <span className="henry-skill__name">{item}</span>
+              </li>
+            ))}
+          </ul>
+        </section>
+      ))}
     </section>
   );
 }

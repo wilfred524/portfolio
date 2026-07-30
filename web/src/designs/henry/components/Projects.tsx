@@ -66,8 +66,8 @@ function ProjectRow({ item }: { item: ProjectItem }) {
 export function Projects() {
   return (
     <InkSection id="proyectos">
-      <h2 className="henry-sr-only">Proyectos seleccionados</h2>
-      <SectionHeader word="Proyectos" variant="masthead" />
+      <h2 className="henry-sr-only">Experiencia</h2>
+      <SectionHeader word="Experiencia" variant="masthead" />
 
       {profile.projectGroups.map((group) => (
         <section key={group.category} className="henry-catgroup">
