@@ -20,9 +20,6 @@ export default function HenryPage() {
         <a href="#contacto">Contacto</a>
       </nav>
       <Hero />
-      <div className="henry-coordline">
-        {`${profile.location} — ${profile.role} — ${profile.availability}`}
-      </div>
       <Masthead />
       <About />
       <Projects />

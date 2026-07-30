@@ -2,34 +2,44 @@ import { profile } from '../../../content/profile';
 import { useReveal } from '../../../hooks/useReveal';
 import { HalftonePlate } from './HalftonePlate';
 
+/**
+ * Hero de credencial: el nombre es el titular y debajo va lo que un reclutador
+ * busca al escanear — rol, stack y sistemas en producción — sin pedir un clic.
+ * El slogan editorial se mudó a la banda Ink (ver Masthead).
+ */
 export function Hero() {
-  const titleRef = useReveal<HTMLDivElement>(0.1);
-
-  // Gesto de firma: la última palabra del tagline va en itálica dentro del romano.
-  const words = profile.tagline.trim().split(' ');
-  const lead = words.slice(0, -1).join(' ');
-  const lastWord = words[words.length - 1];
-  const { start, link, end } = profile.heroSlogan;
+  const nameRef = useReveal<HTMLDivElement>(0.1);
 
   return (
     <header className="henry-section henry-hero">
       <div className="henry-hero__left">
-        {/* Nombre como firma pequeña; el titular grande es el slogan */}
-        <p className="henry-meta">
-          {profile.name} — {profile.role}
-        </p>
-        <div ref={titleRef} className="henry-reveal">
-          <h1 className="henry-slogan">
-            <span className="henry-slogan__start">{start}</span>
-            <span className="henry-slogan__link">{link}</span>
-            <span className="henry-slogan__end">{end}</span>
-          </h1>
+        <div ref={nameRef} className="henry-reveal">
+          <h1 className="henry-hero__name">{profile.name}</h1>
         </div>
-        <p className="henry-headline henry-hero__tagline">
-          {lead} <em>{lastWord}</em>
+        <p className="henry-meta henry-hero__stack">
+          {profile.role} — {profile.stack}
         </p>
+        <p className="henry-hero__credential">{profile.credential}</p>
+        <div className="henry-hero__links">
+          {profile.social.map((link) => (
+            <a
+              key={link.label}
+              className="henry-linkbtn"
+              href={link.url}
+              target="_blank"
+              rel="noreferrer"
+            >
+              {link.label} ↗
+            </a>
+          ))}
+          <a className="henry-linkbtn" href={`mailto:${profile.email}`}>
+            {profile.email}
+          </a>
+        </div>
         <div className="henry-hero__foot">
-          <span className="henry-meta">{profile.availability}</span>
+          <span className="henry-meta">
+            {profile.location} — {profile.availability}
+          </span>
         </div>
       </div>
       <div className="henry-hero__plate" aria-hidden="true">
