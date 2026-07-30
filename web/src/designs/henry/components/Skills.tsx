@@ -1,9 +1,10 @@
 import { profile } from '../../../content/profile';
 import { SectionHeader } from './SectionHeader';
 
+/** Cierra la banda Paper que abre Experiencia; no es banda propia (ver HenryPage). */
 export function Skills() {
   return (
-    <section className="henry-section">
+    <div className="henry-subsection">
       <h2 className="henry-sr-only">Habilidades</h2>
       <SectionHeader word="Habilidades" variant="serif" />
       {/* Mismo patrón de agrupación que Projects: label + regla, luego la lista */}
@@ -22,6 +23,6 @@ export function Skills() {
           </ul>
         </section>
       ))}
-    </section>
+    </div>
   );
 }
