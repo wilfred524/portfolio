@@ -69,14 +69,9 @@
   padding: var(--section-gap) var(--gutter);
 }
 
-/* Arranca como Paper y se invierte a Ink al revelarse en el scroll */
+/* Bandas Ink ESTÁTICAS (spec: alternar Paper/Ink a sangre completa, nunca
+   degradar/interpolar entre ellas). Ink de principio a fin, sin transición de color. */
 .henry-section--ink {
-  background-color: var(--paper);
-  color: var(--ink);
-  transition: background-color 0.9s ease, color 0.9s ease;
-}
-
-.henry-section--ink.is-visible {
   background-color: var(--ink);
   color: var(--paper);
 }
@@ -152,19 +147,22 @@
   text-transform: uppercase;
 }
 
-/* Conector serif itálico: fluye en el HUECO entre las dos líneas (no encima de las
-   letras). Se solapa por márgenes negativos, pero cae sobre el papel → legible. */
+/* Conector serif itálico solapado ENCIMA, centrado entre las dos palabras. Relleno
+   papel + contorno fino de tinta → legible tanto sobre las letras como sobre el papel. */
 .henry-slogan__link {
-  display: block;
-  width: fit-content;
-  margin: calc(var(--hero) * -0.1) 0 calc(var(--hero) * -0.06)
-    calc(var(--hero) * 0.06);
+  position: absolute;
+  z-index: 2;
+  left: 50%;
+  top: calc(var(--hero) * 0.5);
+  transform: translate(-50%, -50%);
   font-family: var(--font-serif-display);
   font-style: italic;
-  font-variation-settings: 'wght' 360, 'opsz' 40, 'SOFT' 0;
-  font-size: calc(var(--hero) * 0.4);
+  font-variation-settings: 'wght' 400, 'opsz' 40, 'SOFT' 0;
+  font-size: calc(var(--hero) * 0.42);
   line-height: 1;
-  color: var(--ink);
+  color: var(--paper);
+  -webkit-text-stroke: 1.2px var(--ink);
+  paint-order: stroke fill;
 }
 
 .henry-meta {
@@ -175,7 +173,7 @@
   color: var(--ash);
 }
 
-.henry-section--ink.is-visible .henry-meta {
+.henry-section--ink .henry-meta {
   color: var(--midstone);
 }
 
@@ -510,7 +508,7 @@
 
 .henry-sechead__rule {
   flex: 1;
-  height: 3px;
+  height: 4.5px;
   background: currentColor;
   opacity: 0.7;
 }
@@ -720,9 +718,12 @@
   margin-bottom: calc(var(--space) * 2);
 }
 
+/* Descripción en la serif editorial (design.md: "editorial copy" → serif), no la sans */
 .henry-proj__desc {
-  font-size: var(--text-sm);
-  line-height: 1.6;
+  font-family: var(--font-serif);
+  font-variation-settings: 'wght' 380, 'opsz' 28;
+  font-size: var(--text-base);
+  line-height: 1.55;
 }
 
 .henry-proj__tags {
