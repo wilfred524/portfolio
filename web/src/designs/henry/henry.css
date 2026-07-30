@@ -718,7 +718,8 @@
   padding: calc(var(--space) * 5) var(--gutter);
   border-top: 1px solid var(--hairline);
   font-size: var(--text-xs);
-  color: var(--midstone);
+  /* --midstone sobre paper daba 2.5:1, por debajo de AA. --ash da 5.5:1. */
+  color: var(--ash);
 }
 
 .henry-credit {
@@ -727,7 +728,7 @@
 }
 
 .henry-credit a {
-  color: var(--ash);
+  color: var(--ink);
   text-decoration: underline;
   text-underline-offset: 0.15em;
   transition: color 0.2s ease;
