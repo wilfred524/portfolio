@@ -5,13 +5,17 @@ import { useScrollSlide } from '../../../hooks/useScrollSlide';
 /**
  * Banda Ink con el slogan editorial, que bajó aquí desde el hero: como respiro
  * entre bandas funciona; ocupando el lugar de la credencial, no.
- * Conserva el gesto de firma del original: romano en los extremos, itálica en el nexo.
+ *
+ * Copia única y centrada, con un desplazamiento corto ligado al scroll. El barrido
+ * largo anterior partía la frase — a media banda se leía "PRODUCTO — IDEAS — hechas" —
+ * y el slogan tiene orden semántico. Conserva el gesto de firma del original:
+ * romano en versales en los extremos, itálica de caja baja en el nexo.
  */
 const { start, link, end } = profile.heroSlogan;
 const WORDS = [
-  { text: start, italic: false },
-  { text: link, italic: true },
-  { text: end, italic: false },
+  { text: start, nexus: false },
+  { text: link, nexus: true },
+  { text: end, nexus: false },
 ];
 
 export function Masthead() {
@@ -25,19 +29,15 @@ export function Masthead() {
       aria-hidden="true"
     >
       <div ref={trackRef} className="henry-masthead__track">
-        {/* El contenido se duplica para dar recorrido al desplazamiento */}
-        {[0, 1].map((copy) => (
-          <span key={copy}>
-            {WORDS.map((word) => (
-              <span
-                key={word.text}
-                className={`henry-masthead__word${
-                  word.italic ? ' henry-masthead__word--nexus' : ''
-                }`}
-              >
-                {word.text} —
-              </span>
-            ))}
+        {WORDS.map((word, i) => (
+          <span
+            key={word.text}
+            className={`henry-masthead__word${
+              word.nexus ? ' henry-masthead__word--nexus' : ''
+            }`}
+          >
+            {word.text}
+            {i < WORDS.length - 1 && <span className="henry-masthead__dash"> — </span>}
           </span>
         ))}
       </div>

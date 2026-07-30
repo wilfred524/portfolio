@@ -373,16 +373,20 @@
    ------------------------------------------------------------ */
 
 .henry-masthead {
+  display: flex;
+  justify-content: center; /* copia única centrada: el slogan se lee entero y en orden */
   padding: calc(var(--space) * 6) 0;
   overflow: hidden;
   white-space: nowrap;
 }
 
 /* El track se mueve con el scroll (no con temporizador): fallback JS con --slide,
-   nativo con animation-timeline donde se soporte. */
+   nativo con animation-timeline donde se soporte. Recorrido corto (±6%): parallax,
+   no barrido — con más recorrido la frase se partía y perdía el orden. */
 .henry-masthead__track {
   display: inline-flex;
-  transform: translateX(calc(var(--slide, 0) * -14%));
+  align-items: baseline;
+  transform: translateX(calc(var(--slide, 0) * -6%));
   will-change: transform;
 }
 
@@ -390,11 +394,17 @@
   font-family: var(--font-serif-display);
   font-variation-settings: 'wght' 420, 'opsz' 144, 'SOFT' 0, 'WONK' 0;
   font-weight: 400;
-  font-size: clamp(2.5rem, 7vw, 6rem);
+  /* mínimo bajo para que la frase entera quepa en móvil sin recortarse */
+  font-size: clamp(1.5rem, 6.5vw, 6rem);
   line-height: 1;
   letter-spacing: -0.01em;
   text-transform: uppercase;
-  padding-right: 0.3em;
+}
+
+/* Separador siempre romano, aunque cuelgue del span en itálica del nexo. */
+.henry-masthead__dash {
+  font-style: normal;
+  font-variation-settings: 'wght' 420, 'opsz' 144, 'SOFT' 0, 'WONK' 0;
 }
 
 /* El nexo del slogan conserva la itálica en caja baja del original. */
@@ -406,10 +416,10 @@
 
 @keyframes henry-masthead-scroll {
   from {
-    transform: translateX(8%);
+    transform: translateX(6%);
   }
   to {
-    transform: translateX(-45%);
+    transform: translateX(-6%);
   }
 }
 
