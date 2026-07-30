@@ -14,7 +14,6 @@ import { Contact } from './components/Contact';
 export default function HenryPage() {
   return (
     <div className="design-henry">
-      <div className="henry-ticker">{profile.ticker}</div>
       {/* Nav mínima arriba-izquierda, sin barra ni borde (spec: "no background bar") */}
       <nav className="henry-nav" aria-label="Principal">
         <DesignMenu />
