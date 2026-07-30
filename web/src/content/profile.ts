@@ -100,12 +100,9 @@ export const profile = {
     },
     {
       label: 'Idiomas',
-      /* Fiel al certificado: global B2 (53/100) y lectura C2. El desglose completo está
-         en el PDF enlazado — declarar aquí algo que el documento contradiga sale caro. */
-      value:
-        'Español nativo · Inglés B2 según EF SET, con lectura C2: leo documentación y código técnico sin fricción',
-      href: '/ef-set-certificate.pdf',
-      hrefLabel: 'Ver certificado EF SET',
+      /* Sin enlace al certificado: el examen se va a repetir. Cuando haya nota nueva,
+         volver a publicar el PDF en web/public/ y restaurar href + hrefLabel. */
+      value: 'Español nativo · Inglés B2, con lectura C2',
     },
     {
       label: 'Modalidad',
