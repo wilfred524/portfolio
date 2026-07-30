@@ -567,9 +567,11 @@
   flex-direction: column;
 }
 
-/* Fila de proyecto. Colapsada: título CENTRADO con el fantasma rodeándolo a ambos
-   lados. Al abrir: el título se desliza a la izquierda y, sincronizada, la barra papel
-   hace wipe de izquierda→derecha con contexto + descripción + tags. */
+/* Fila de proyecto. Colapsada: título CENTRADO, con el fantasma flanqueándolo a
+   izquierda y derecha (nunca detrás → jamás lo solapa). Título + fantasma se mueven
+   juntos con el scroll (--p) y se asientan. Al expandir: el fantasma desaparece, solo
+   el título se desliza a la izquierda y una barra papel (col 3) hace wipe izq→der
+   hasta el borde derecho de la fila, con contexto + descripción + tags. */
 .henry-proj {
   position: relative;
   overflow: hidden;
@@ -578,48 +580,58 @@
   border-radius: var(--radius);
 }
 
-/* Texto fantasma: descriptor repetido (misma serif), banda centrada que rodea el
-   título a izquierda y derecha; leve nudge con el scroll. */
-.henry-proj__ghost {
-  position: absolute;
-  inset: 0;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  z-index: 0;
-  opacity: 0.08;
-  pointer-events: none;
-  white-space: nowrap;
-  transform: translateX(calc((1 - var(--p, 1)) * -6%));
-  will-change: transform;
-}
-
-.henry-proj__ghost-track {
-  font-family: var(--font-serif-display);
-  font-variation-settings: 'wght' 360, 'opsz' 144, 'SOFT' 0;
-  font-size: clamp(2.5rem, 6vw, 4.5rem);
-  line-height: 1;
-}
-
-/* Grid: [1fr] [título auto] [1fr] → título centrado. Al abrir, la col izquierda
-   colapsa a 0fr y el título se desliza a la izquierda; el panel vive en la col 3. */
 .henry-proj__grid {
-  position: relative;
-  z-index: 1;
   display: grid;
   grid-template-columns: 1fr auto 1fr;
-  align-items: center;
+  align-items: start;
+  column-gap: calc(var(--space) * 4);
+  /* título + fantasma se mueven juntos con el scroll y se asientan en --p = 1 */
+  transform: translateX(calc((1 - var(--p, 1)) * 6%));
   transition: grid-template-columns 0.5s cubic-bezier(0.22, 1, 0.36, 1);
+  will-change: transform;
 }
 
 .henry-proj.is-open .henry-proj__grid {
   grid-template-columns: 0fr auto 1fr;
 }
 
+/* Fantasma que flanquea el título (mismo tamaño que el título, sobre la misma línea) */
+.henry-proj__ghost {
+  overflow: hidden;
+  opacity: 0.09;
+  pointer-events: none;
+  white-space: nowrap;
+  transition: opacity 0.4s ease;
+}
+
+.henry-proj__ghost--left {
+  grid-column: 1;
+  min-width: 0;
+  text-align: right;
+}
+
+.henry-proj__ghost--right {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  align-items: center;
+}
+
+.henry-proj.is-open .henry-proj__ghost {
+  opacity: 0; /* desaparece al expandir: solo estorba la lectura */
+}
+
+.henry-proj__ghost-track {
+  font-family: var(--font-serif-display);
+  font-variation-settings: 'wght' 360, 'opsz' 144, 'SOFT' 0;
+  font-size: clamp(1.5rem, 3vw, 2.25rem);
+  line-height: 1.05;
+}
+
 .henry-proj__toggle {
   grid-column: 2;
   display: inline-flex;
-  align-items: center;
+  align-items: baseline;
   gap: calc(var(--space) * 3);
   cursor: pointer;
   white-space: nowrap;
@@ -632,11 +644,11 @@
   line-height: 1.05;
 }
 
-/* Disparador discreto: signo +/× a la derecha del título (no un rectángulo) */
+/* Disparador discreto: signo +/× junto al título (no un rectángulo) */
 .henry-proj__sign {
   position: relative;
-  width: 0.9em;
-  height: 0.9em;
+  width: 0.7em;
+  height: 0.7em;
   flex: none;
   opacity: 0.55;
   transition: opacity 0.2s ease;
@@ -674,26 +686,33 @@
   opacity: 0; /* + → − al abrir */
 }
 
-/* Barra: vive en la col 3 y hace wipe izquierda→derecha (clip-path) al abrir,
-   sincronizada con el deslizamiento del título. Color claro sobre la banda ink. */
-.henry-proj__panel {
+/* Columna 3: contiene el fantasma derecho (colapsado) y la barra (al expandir). */
+.henry-proj__col3 {
   grid-column: 3;
+  position: relative;
+  align-self: stretch;
   min-width: 0;
-  justify-self: start;
-  padding-left: calc(var(--space) * 4);
+  overflow: hidden;
 }
 
+/* Barra de descripción: llega al borde derecho de la fila; wipe izq→der (clip-path)
+   + crecimiento de altura, sincronizado con el deslizamiento del título. */
 .henry-proj__panel-inner {
-  width: min(48ch, 40vw);
+  width: 100%;
+  max-height: 0;
+  overflow: hidden;
   background: var(--paper);
   color: var(--ink);
   border-radius: var(--radius);
-  padding: calc(var(--space) * 4) calc(var(--space) * 5);
+  padding: 0 calc(var(--space) * 5);
   clip-path: inset(0 100% 0 0);
-  transition: clip-path 0.5s cubic-bezier(0.22, 1, 0.36, 1);
+  transition: max-height 0.5s cubic-bezier(0.22, 1, 0.36, 1),
+    padding 0.5s ease, clip-path 0.5s cubic-bezier(0.22, 1, 0.36, 1);
 }
 
 .henry-proj.is-open .henry-proj__panel-inner {
+  max-height: 26em;
+  padding: calc(var(--space) * 4) calc(var(--space) * 5);
   clip-path: inset(0 0 0 0);
 }
 
@@ -713,29 +732,26 @@
   margin-top: calc(var(--space) * 3);
 }
 
-/* Móvil: apilar. Título arriba (izquierda) y el panel debajo, revelando altura. */
+/* Móvil: sin fantasma lateral útil; título a la izquierda y barra debajo. */
 @media (max-width: 720px) {
   .henry-proj__grid {
     grid-template-columns: 1fr;
-    grid-template-rows: auto 0fr;
-    transition: grid-template-rows 0.5s cubic-bezier(0.22, 1, 0.36, 1);
+    transform: none;
   }
   .henry-proj.is-open .henry-proj__grid {
     grid-template-columns: 1fr;
-    grid-template-rows: auto 1fr;
+  }
+  .henry-proj__ghost--left {
+    display: none;
   }
   .henry-proj__toggle {
     grid-column: 1;
   }
-  .henry-proj__panel {
+  .henry-proj__col3 {
     grid-column: 1;
-    grid-row: 2;
-    overflow: hidden;
-    padding-left: 0;
-    padding-top: calc(var(--space) * 3);
+    margin-top: calc(var(--space) * 2);
   }
   .henry-proj__panel-inner {
-    width: 100%;
     clip-path: none;
   }
 }
@@ -744,14 +760,6 @@
   .henry-proj__grid,
   .henry-proj__panel-inner {
     transition: none;
-  }
-}
-
-@media (prefers-reduced-motion: reduce) {
-  .henry-proj__grid {
-    transition: none;
-  }
-  .henry-proj__head {
     transform: none;
   }
 }
