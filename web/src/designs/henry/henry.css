@@ -45,6 +45,7 @@
   line-height: 1.5;
   background: var(--paper);
   color: var(--ink);
+  overflow-x: clip; /* los títulos que se deslizan no generan scroll horizontal */
 }
 
 /* Solo para lectores de pantalla (encabezados que en pantalla son decorativos) */
@@ -122,6 +123,28 @@
   font-variation-settings: 'wght' 340, 'opsz' 40, 'SOFT' 0;
 }
 
+/* Titular del hero a dos voces: nombre en condensada + apellido en serif display */
+.henry-display__condensed,
+.henry-display__serif {
+  display: block;
+  font-size: var(--hero);
+}
+
+.henry-display__condensed {
+  font-family: var(--font-condensed);
+  font-variation-settings: 'wght' 600;
+  line-height: 0.8;
+  text-transform: uppercase;
+  letter-spacing: 0.005em;
+}
+
+.henry-display__serif {
+  font-family: var(--font-serif-display);
+  font-variation-settings: 'wght' 340, 'opsz' 144, 'SOFT' 0;
+  line-height: 0.85;
+  letter-spacing: -0.02em;
+}
+
 .henry-meta {
   font-family: var(--font-sans);
   font-size: var(--text-sm);
@@ -154,6 +177,42 @@
 
 .henry-reveal.is-visible > * {
   transform: translateY(0);
+}
+
+/* ------------------------------------------------------------
+   Parallax tipográfico ligado al scroll (híbrido)
+   - Fallback JS: useScrollSlide.ts actualiza --slide en [-1, 1].
+   - Nativo: animation-timeline: view() donde el navegador lo soporte.
+   ------------------------------------------------------------ */
+
+.henry-slide {
+  transform: translateX(calc(var(--slide, 0) * 7%));
+  will-change: transform;
+}
+
+@keyframes henry-slide-x {
+  from {
+    transform: translateX(7%);
+  }
+  to {
+    transform: translateX(-7%);
+  }
+}
+
+@supports (animation-timeline: view()) {
+  .henry-slide {
+    transform: none;
+    animation: henry-slide-x linear both;
+    animation-timeline: view();
+    animation-range: entry 0% exit 100%;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .henry-slide {
+    transform: none !important;
+    animation: none !important;
+  }
 }
 
 /* ------------------------------------------------------------
@@ -332,9 +391,12 @@
   white-space: nowrap;
 }
 
+/* El track se mueve con el scroll (no con temporizador): fallback JS con --slide,
+   nativo con animation-timeline donde se soporte. */
 .henry-masthead__track {
   display: inline-flex;
-  animation: henry-marquee 40s linear infinite;
+  transform: translateX(calc(var(--slide, 0) * -14%));
+  will-change: transform;
 }
 
 .henry-masthead__word {
@@ -347,46 +409,73 @@
   padding-right: 0.3em;
 }
 
-@keyframes henry-marquee {
+@keyframes henry-masthead-scroll {
+  from {
+    transform: translateX(8%);
+  }
   to {
-    transform: translateX(-50%);
+    transform: translateX(-45%);
+  }
+}
+
+@supports (animation-timeline: view()) {
+  .henry-masthead__track {
+    transform: none;
+    animation: henry-masthead-scroll linear both;
+    animation-timeline: view();
+    animation-range: cover 0% cover 100%;
   }
 }
 
 @media (prefers-reduced-motion: reduce) {
   .henry-masthead__track {
+    transform: none;
     animation: none;
   }
 }
 
 /* ------------------------------------------------------------
-   Cabecera de sección estampada (componente "Stamped Display Section
-   Header" de la spec): palabra masiva condensada + regla al borde
+   Encabezado de sección ("Stamped Display Section Header"): palabra
+   masiva + regla al borde. Dos variantes según las guidelines del autor:
+   --serif (Fraunces 77px+, para secciones) y --masthead (Antonio 226px+,
+   reservada a Proyectos/marquee). Se desliza al scroll vía .henry-slide.
    ------------------------------------------------------------ */
 
-.henry-stamp {
+.henry-sechead {
   display: flex;
   align-items: center;
   gap: calc(var(--space) * 6);
-  margin-bottom: calc(var(--space) * 12);
+  margin-bottom: calc(var(--space) * 10);
 }
 
-.henry-stamp__word {
+.henry-sechead__word {
+  line-height: 0.82;
+  white-space: nowrap;
+}
+
+.henry-sechead__rule {
+  flex: 1;
+  height: 1px;
+  background: currentColor;
+  opacity: 0.4;
+}
+
+/* Variante serif: encabezado de sección a 77px+ (Fraunces alto contraste) */
+.henry-sechead--serif .henry-sechead__word {
+  font-family: var(--font-serif-display);
+  font-variation-settings: 'wght' 360, 'opsz' 144, 'SOFT' 0;
+  font-size: clamp(3rem, 9vw, 7rem);
+  letter-spacing: -0.02em;
+}
+
+/* Variante masthead: condensada a escala masthead (solo Proyectos/marquee) */
+.henry-sechead--masthead .henry-sechead__word {
   font-family: var(--font-condensed);
-  font-weight: 400;
   font-variation-settings: 'wght' 600;
   font-size: clamp(4rem, 16vw, 14rem);
   line-height: 0.75;
   text-transform: uppercase;
   letter-spacing: 0.005em;
-  white-space: nowrap;
-}
-
-.henry-stamp__rule {
-  flex: 1;
-  height: 1px;
-  background: currentColor;
-  opacity: 0.5;
 }
 
 /* ------------------------------------------------------------
