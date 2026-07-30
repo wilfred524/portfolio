@@ -214,7 +214,7 @@ export const profile = {
           role: 'Desarrollador backend',
           period: 'Oct 2025 – actualidad',
           brief:
-            'Consolidé el control de accesos sobre Spatie —guards, middleware y policies—, con una migración que llevó los usuarios y roles existentes al esquema nuevo sin interrumpir a quien estaba trabajando dentro. Trabajé además en el endurecimiento de la autenticación y en la trazabilidad de eventos críticos, de cara a una auditoría de seguridad. El detalle lo cuento en conversación, no aquí.',
+            'Consolidé el control de accesos sobre Spatie —guards, middleware y policies—, con una migración que llevó los usuarios y roles existentes al esquema nuevo sin interrumpir a quien estaba trabajando dentro. Trabajé además en el endurecimiento de la autenticación y en la trazabilidad de eventos críticos, de cara a una auditoría de seguridad.',
           tags: ['Spatie Permission', 'Autenticación', 'Auditoría', 'Laravel'],
         },
         {
