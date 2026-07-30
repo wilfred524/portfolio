@@ -4,75 +4,112 @@
     <meta charset="utf-8" />
     <title>Wilfred Morales — Backend Developer</title>
     <style>
-      /* Una columna, sin gráficos ni tablas: el CV pasa por lectores ATS antes que
-         por ojos humanos, y cualquier maquetación en columnas los confunde. */
-      @page { size: A4; margin: 14mm 15mm; }
+      /* Una columna, sin tablas ni gráficos: el CV pasa por lectores ATS antes que por
+         ojos humanos, y cualquier maquetación en columnas los confunde.
+         Estructura heredada del export de LinkedIn —nombre centrado, secciones en
+         versales con regla— porque es un formato que los reclutadores reconocen. */
+      /* Misma tipografía que el sitio, para que CV y web se lean como una sola cosa:
+         Fraunces (serif variable) en los titulares y Switzer (sans variable) en el
+         cuerpo. Las rutas son relativas porque el CV se imprime desde file:// y también
+         se sirve desde la raíz: fonts/… funciona en ambos casos.
+         No afecta a los lectores ATS: extraen texto, no tipografía. */
+      @font-face {
+        font-family: 'Switzer';
+        src: url('fonts/Switzer-Variable.woff2') format('woff2-variations');
+        font-weight: 100 900;
+        font-display: swap;
+      }
+      @font-face {
+        font-family: 'Fraunces CV';
+        src: url('fonts/fraunces-latin-wght-normal.woff2') format('woff2-variations');
+        font-weight: 100 900;
+        font-display: swap;
+      }
+
+      @page { size: A4; margin: 13mm 14mm; }
       * { box-sizing: border-box; }
       body {
         margin: 0 auto;
-        max-width: 190mm;
-        padding: 12mm 10mm;
-        font-family: Georgia, 'Times New Roman', serif;
-        font-size: 10.5pt;
+        max-width: 200mm;
+        padding: 10mm 12mm;
+        font-family: 'Switzer', 'Inter', 'Helvetica Neue', Arial, sans-serif;
+        font-size: 10pt;
         line-height: 1.45;
-        color: #1a1a1a;
+        letter-spacing: -0.005em;
+        color: #1c1c1c;
         background: #fff;
       }
-      h1 { margin: 0; font-size: 19pt; letter-spacing: -0.01em; }
-      .headline { margin: 2pt 0 0; font-size: 11pt; font-weight: bold; }
-      .contact { margin: 5pt 0 0; font-size: 9pt; color: #333; }
+      header { text-align: center; border-bottom: 2px solid #1c4a5a; padding-bottom: 6pt; }
+      h1 {
+        margin: 0;
+        font-family: 'Fraunces CV', Georgia, serif;
+        font-variation-settings: 'wght' 600, 'opsz' 144, 'SOFT' 0, 'WONK' 0;
+        font-size: 23pt;
+        line-height: 1.05;
+        letter-spacing: -0.015em;
+        color: #1c4a5a;
+      }
+      .headline { margin: 3pt 0 0; font-size: 9.5pt; color: #333; }
+      .contact { margin: 4pt 0 0; font-size: 8.5pt; color: #444; }
       h2 {
-        margin: 15pt 0 5pt;
+        margin: 14pt 0 0;
         padding-bottom: 2pt;
-        border-bottom: 1px solid #999;
-        font-size: 11pt;
+        border-bottom: 1px solid #b8c4c9;
+        font-size: 9.5pt;
+        font-weight: 600;
+        letter-spacing: 0.12em;
         text-transform: uppercase;
-        letter-spacing: 0.06em;
+        color: #1c4a5a;
       }
-      h3 { margin: 0; font-size: 10.5pt; }
-      .job { margin-bottom: 10pt; }
-      .job-head {
-        display: flex;
-        justify-content: space-between;
-        gap: 8pt;
-        margin-bottom: 4pt;
-      }
-      .job-title { font-size: 11pt; }
-      .period { font-size: 9pt; color: #333; white-space: nowrap; }
-      .entry { margin: 0 0 7pt; page-break-inside: avoid; }
-      ul { margin: 3pt 0 0; padding-left: 15pt; }
-      li { margin-bottom: 2pt; }
+      section > p:first-of-type, section > div:first-of-type { margin-top: 5pt; }
       p { margin: 0 0 4pt; }
-      .stack { margin-top: 2pt; font-size: 9pt; color: #444; }
-      .note { font-weight: normal; font-size: 9pt; color: #444; }
-      @media print { body { padding: 0; } }
+      /* Sin page-break-inside aquí: un empleo con varios proyectos no cabe en lo que
+         queda de página y saltaba entero, dejando media hoja en blanco. */
+      .job { margin-top: 8pt; }
+      .job-head { margin-bottom: 1pt; }
+      .role { font-weight: 700; }
+      .company { font-style: italic; }
+      .mode, .period { color: #555; font-size: 9pt; }
+      .period::before { content: ' · '; }
+      .tagline { margin: 0 0 4pt; font-size: 9pt; font-style: italic; color: #555; }
+      .entry { margin: 0 0 6pt; page-break-inside: avoid; }
+      .entry-title { margin: 0 0 1pt; font-weight: 600; }
+      .note { font-weight: 400; font-size: 9pt; color: #555; }
+      ul { margin: 0; padding-left: 14pt; }
+      li { margin-bottom: 1.5pt; }
+      .stack { margin-top: 2pt; font-size: 8.5pt; color: #555; }
+      .skill { margin-bottom: 2pt; }
+      .skill-area { font-weight: 700; }
+      @media print { body { padding: 0; max-width: none; } }
     </style>
   </head>
   <body>
     <header>
       <h1>Wilfred Morales</h1>
       <p class="headline">Backend Developer · PHP/Laravel · PostgreSQL · Platform Security</p>
-      <p class="contact">wilfred3019@gmail.com · +57 301 737 4234 · Colombia (GMT-5) · github.com/wilfred524 · linkedin.com/in/wilfred-morales-3220b2126 · github.com/wilfred524/portfolio</p>
+      <p class="contact">wilfred3019@gmail.com&nbsp;&nbsp;·&nbsp;&nbsp;+57 301 737 4234&nbsp;&nbsp;·&nbsp;&nbsp;Colombia (GMT-5)</p>
+      <p class="contact">github.com/wilfred524&nbsp;&nbsp;·&nbsp;&nbsp;linkedin.com/in/wilfred-morales-3220b2126</p>
     </header>
 
     <section>
       <h2>Profile</h2>
       <p>Backend developer at a payroll-deduction lending fintech — a regulated sector in Colombia — where I have worked since October 2025.</p>
-        <p>I built and shipped the credit rules engine, the electronic signature flow with credit-bureau identity validation, and the monthly scoring pipeline that processes around 300,000 records per run. I also led the migration of the platform to a layered architecture.</p>
-        <p>Currently studying Computer Engineering at UNET. Open to full-time roles, remote or hybrid, and to international contracting via Deel (GMT-5).</p>
+      <p>I built and shipped the credit rules engine, the electronic signature flow with credit-bureau identity validation, and the monthly scoring pipeline that processes around 300,000 records per run. I also led the migration of the platform to a layered architecture.</p>
+      <p>Currently studying Computer Engineering at UNET. Open to full-time roles, remote or hybrid, and to international contracting via Deel (GMT-5).</p>
     </section>
 
     <section>
       <h2>Experience</h2>
       
       <div class="job">
-        <div class="job-head">
-          <h3 class="job-title">Backend Developer — GAF Technology Solutions</h3>
+        <p class="job-head">
+          <span class="role">Backend Developer</span> <span class="company">GAF Technology Solutions</span> · <span class="mode">Full-time · Remote, Colombia</span>
           <span class="period">Oct 2025 – Present</span>
-        </div>
+        </p>
+        <p class="tagline">Payroll-deduction lending fintech, backed by an investment fund.</p>
         
         <div class="entry">
-          <h3>Credit rules engine <span class="note">for CK Comercializadora (subsidiary)</span></h3>
+          <p class="entry-title">Credit rules engine <span class="note">for CK Comercializadora (subsidiary)</span></p>
           <ul>
             <li>Modelled the data and translated business policy into a rules schema in PostgreSQL: eligibility, garnishments, term limits, and employment and financial requirements per payer. The business team now adjusts parameters without a deployment.</li>
             <li>Implemented the full evaluation logic: borrowing-capacity calculation under Colombian Law 1527 and Law 50 for active employees and pensioners, decision criteria, special rules, and application re-evaluation.</li>
@@ -82,7 +119,7 @@
         </div>
 
         <div class="entry">
-          <h3>Electronic signature with identity validation</h3>
+          <p class="entry-title">Electronic signature with identity validation</p>
           <ul>
             <li>Implemented the state machine that tracks the identity-validation provider queue and recovers from unhandled states, preserving XML integrity across requests.</li>
             <li>Delivered the payroll-lending module end to end: multi-step form with section autosave, PDF draft, email history, and S3 upload retries.</li>
@@ -92,7 +129,7 @@
         </div>
 
         <div class="entry">
-          <h3>Credit scoring pipeline</h3>
+          <p class="entry-title">Credit scoring pipeline</p>
           <ul>
             <li>Took a risk model living in a data analyst notebook to production: a containerised monthly cron job that reads from PostgreSQL, runs the model and persists results. Scoring was not automated before this.</li>
             <li>Processes around 300,000 records per run, loading in batches of five thousand, with on-disk state tracking to avoid reprocessing the same artifact and invalid-row handling that does not abort the load.</li>
@@ -102,7 +139,7 @@
         </div>
 
         <div class="entry">
-          <h3>Access control and auditing</h3>
+          <p class="entry-title">Access control and auditing</p>
           <ul>
             <li>Consolidated access control on Spatie — guards, middleware and policies — with a migration that moved existing users and roles to the new schema without interrupting operations.</li>
             <li>Worked on authentication hardening and on traceability of business-critical events ahead of a security audit.</li>
@@ -111,7 +148,7 @@
         </div>
 
         <div class="entry">
-          <h3>Migration to a layered architecture</h3>
+          <p class="entry-title">Migration to a layered architecture</p>
           <ul>
             <li>Led and verified the migration of a six-year-old platform — over two hundred Eloquent models mixed with controllers, queues and providers — to a layered architecture.</li>
             <li>With no test suite to rely on, the migration went module by module with verification at each step. Three months, reviewed by the tech lead.</li>
@@ -121,13 +158,14 @@
       </div>
 
       <div class="job">
-        <div class="job-head">
-          <h3 class="job-title">Freelance, part-time — Self-employed</h3>
+        <p class="job-head">
+          <span class="role">Freelance, part-time</span> <span class="company">Self-employed</span> · <span class="mode">Part-time</span>
           <span class="period">Ene 2026 – Present</span>
-        </div>
+        </p>
+        
         
         <div class="entry">
-          <h3>AI process automation</h3>
+          <p class="entry-title">AI process automation</p>
           <ul>
             <li>Automation pipelines built with n8n and the OpenAI API for content generation.</li>
             <li>Conversational Telegram bot integrated with n8n and PostgreSQL handling requests end to end.</li>
@@ -137,13 +175,14 @@
       </div>
 
       <div class="job">
-        <div class="job-head">
-          <h3 class="job-title">Personal project — Personal projects</h3>
+        <p class="job-head">
+          <span class="role">Personal projects</span>
           <span class="period">Jul 2026 – en curso</span>
-        </div>
+        </p>
+        
         
         <div class="entry">
-          <h3>Video clipping CLI</h3>
+          <p class="entry-title">Video clipping CLI</p>
           <ul>
             <li>TypeScript command-line tool that splits long video into vertical clips: Whisper transcription, script generation by a model whose output is schema-validated, speech synthesis, and subtitle rendering with Remotion.</li>
             <li>Every step persists its result to disk and the process is resumable, so already-paid model calls are never repeated.</li>
@@ -160,13 +199,11 @@
 
     <section>
       <h2>Skills</h2>
-      <ul>
-        <li><strong>Backend:</strong> PHP / Laravel · PostgreSQL / SQL · MySQL · Arquitectura Hexagonal / DDD · Pruebas (PHPUnit / pytest) · Python · Node.js</li>
-        <li><strong>Security:</strong> Roles y permisos (Spatie) · MFA / gestión de sesiones · SAST y detección de secretos · reCAPTCHA Enterprise</li>
-        <li><strong>Automation &amp; AI:</strong> n8n · OpenAI API · Integración de APIs / Webhooks</li>
-        <li><strong>Frontend:</strong> Vue.js · Inertia.js · Blade · Tailwind CSS · React · TypeScript</li>
-        <li><strong>Infrastructure:</strong> Docker · Linux / Nginx · CI/CD (GitHub Actions) · Google Cloud Platform · AWS S3</li>
-      </ul>
+      <p class="skill"><span class="skill-area">Backend</span> PHP / Laravel · PostgreSQL / SQL · MySQL · Arquitectura Hexagonal / DDD · Pruebas (PHPUnit / pytest) · Python · Node.js</p>
+      <p class="skill"><span class="skill-area">Security</span> Roles y permisos (Spatie) · MFA / gestión de sesiones · SAST y detección de secretos · reCAPTCHA Enterprise</p>
+      <p class="skill"><span class="skill-area">Automation &amp; AI</span> n8n · OpenAI API · Integración de APIs / Webhooks</p>
+      <p class="skill"><span class="skill-area">Frontend</span> Vue.js · Inertia.js · Blade · Tailwind CSS · React · TypeScript</p>
+      <p class="skill"><span class="skill-area">Infrastructure</span> Docker · Linux / Nginx · CI/CD (GitHub Actions) · Google Cloud Platform · AWS S3</p>
     </section>
 
     <section>

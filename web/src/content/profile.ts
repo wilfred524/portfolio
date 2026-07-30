@@ -75,12 +75,12 @@ export const profile = {
   repoUrl: 'https://github.com/wilfred524/portfolio',
   /**
    * CV en dos idiomas. Los genera `npm run build:cv -w @portfolio/api` desde este mismo
-   * archivo, así que no pueden contradecir a la web. Para servir PDF en vez de HTML,
-   * exportarlos desde el navegador a web/public/ y cambiar la extensión aquí.
+   * archivo, así que no pueden contradecir a la web. El script exporta también el PDF
+   * con Chrome headless; si no hay Chrome, quedan solo los .html y hay que imprimirlos.
    */
   cv: [
-    { label: 'CV (español)', url: '/cv-es.html' },
-    { label: 'CV (English)', url: '/cv-en.html' },
+    { label: 'CV (español)', url: '/cv-es.pdf' },
+    { label: 'CV (English)', url: '/cv-en.pdf' },
   ],
   /**
    * «Cómo está hecho»: a nivel JR/intermedio, la prueba de que se aprende solo pesa

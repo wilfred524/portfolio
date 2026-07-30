@@ -155,6 +155,20 @@ export const EMPLOYERS: Record<string, { employer: string; note?: { es: string; 
   Autónomo: { employer: 'Autónomo' },
 };
 
+/** Una línea que sitúa al empleador: quien lea el CV puede no conocerlo. */
+export const EMPLOYER_TAGLINE: Record<string, { es: string; en: string }> = {
+  'GAF Technology Solutions': {
+    es: 'Fintech de crédito por libranza, respaldada por un fondo de inversión.',
+    en: 'Payroll-deduction lending fintech, backed by an investment fund.',
+  },
+};
+
+/** Modalidad de trabajo, junto a las fechas, como en un CV convencional. */
+export const WORK_MODE: Record<string, { es: string; en: string }> = {
+  'GAF Technology Solutions': { es: 'Jornada completa · Remoto, Colombia', en: 'Full-time · Remote, Colombia' },
+  Autónomo: { es: 'Media jornada', en: 'Part-time' },
+};
+
 /** Traducciones de los datos que vienen de profile.ts y hay que mostrar en inglés. */
 export const TRANSLATIONS = {
   titles: {
