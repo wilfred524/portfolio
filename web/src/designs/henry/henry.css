@@ -265,7 +265,9 @@
   align-items: start;    /* eyebrow a la altura del borde superior de la placa */
   align-content: center; /* el bloque completo centrado en el alto del hero */
   gap: clamp(24px, 4vw, 64px);
-  min-height: 82dvh;
+  /* La manda la placa, no un alto fijo: con el hero de credencial, 82dvh dejaba
+     aire muerto bajo el bloque. */
+  min-height: 72dvh;
   padding-right: 0; /* la placa llega al borde derecho de la página */
 }
 
@@ -290,7 +292,7 @@
 }
 
 .henry-hero__stack {
-  max-width: 46ch;
+  max-width: 60ch; /* a 46ch partía tras "PHP/Laravel ·", un corte feo */
   line-height: 1.5;
 }
 
@@ -323,9 +325,12 @@
    a papel en los bordes y de izquierda a derecha, así no parece un recuadro). */
 /* Placa: se ESTIRA a todo el alto del bloque de texto (arriba con el eyebrow, abajo
    con la línea de disponibilidad). Cuadrada: el ancho sale de esa altura. */
+/* Altura propia, no heredada del texto: el bloque de credencial es bastante más
+   corto que el antiguo slogan, y estirarse a su altura dejaba el retrato diminuto
+   con un hueco alrededor. Se centra frente a la columna de texto. */
 .henry-hero__plate {
-  align-self: stretch;
-  height: auto;
+  align-self: center;
+  height: clamp(320px, 64dvh, 620px);
   width: auto;
   aspect-ratio: 1 / 1;
 }
