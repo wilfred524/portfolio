@@ -1,14 +1,12 @@
 import { profile } from '../../../content/profile';
 import { InkSection } from '../HenryPage';
+import { SectionHeader } from './SectionHeader';
 
 export function Projects() {
   return (
     <InkSection id="proyectos">
       <h2 className="henry-sr-only">Proyectos seleccionados</h2>
-      <div className="henry-stamp" aria-hidden="true">
-        <span className="henry-stamp__word">Proyectos</span>
-        <span className="henry-stamp__rule" />
-      </div>
+      <SectionHeader word="Proyectos" variant="masthead" />
 
       {profile.projectGroups.map((group) => (
         <section key={group.category} className="henry-catgroup">

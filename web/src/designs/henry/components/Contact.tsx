@@ -1,9 +1,12 @@
 import { profile } from '../../../content/profile';
 import { InkSection } from '../HenryPage';
+import { SectionHeader } from './SectionHeader';
 
 export function Contact() {
   return (
     <InkSection id="contacto">
+      <h2 className="henry-sr-only">Contacto</h2>
+      <SectionHeader word="Contacto" variant="serif" />
       <div className="henry-contact">
         <p className="henry-meta">¿Trabajamos juntos?</p>
         <a className="henry-contact__email" href={`mailto:${profile.email}`}>

@@ -1,9 +1,12 @@
 import { profile } from '../../../content/profile';
 import { InkSection } from '../HenryPage';
+import { SectionHeader } from './SectionHeader';
 
 export function About() {
   return (
     <InkSection>
+      <h2 className="henry-sr-only">Sobre mí</h2>
+      <SectionHeader word="Sobre mí" variant="serif" />
       <div className="henry-letter">
         <p className="henry-meta henry-letter__eyebrow">Una breve carta</p>
         <div className="henry-letter__body">

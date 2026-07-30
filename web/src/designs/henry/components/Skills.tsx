@@ -1,9 +1,11 @@
 import { profile } from '../../../content/profile';
+import { SectionHeader } from './SectionHeader';
 
 export function Skills() {
   return (
     <section className="henry-section">
-      <p className="henry-meta">Habilidades</p>
+      <h2 className="henry-sr-only">Habilidades</h2>
+      <SectionHeader word="Habilidades" variant="serif" />
       <ul className="henry-skills__list">
         {profile.skills.map((skill) => (
           <li key={skill.name} className="henry-skill">
