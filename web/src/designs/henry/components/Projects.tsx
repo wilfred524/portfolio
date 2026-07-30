@@ -1,44 +1,55 @@
+import { useState } from 'react';
 import type { ProjectItem } from '../../../content/profile';
 import { profile } from '../../../content/profile';
 import { InkSection } from '../HenryPage';
 import { SectionHeader } from './SectionHeader';
 import { useScrollProgress } from '../../../hooks/useScrollProgress';
 
-/** Una fila de proyecto: contenido estático legible + texto fantasma que se alinea
- *  al scroll + botón "Expandir" contrastado con la info completa. */
+/**
+ * Fila de proyecto. Colapsada: el título queda CENTRADO y un texto fantasma
+ * (descriptor, misma serif) lo rodea a izquierda y derecha. Al expandir: el título se
+ * alinea a la izquierda y, sincronizada, una barra en color claro hace wipe de
+ * izquierda→derecha con toda la info (contexto + descripción + tags dentro).
+ */
 function ProjectRow({ item }: { item: ProjectItem }) {
-  const ghostRef = useScrollProgress<HTMLSpanElement>();
+  const rowRef = useScrollProgress<HTMLLIElement>();
+  const [open, setOpen] = useState(false);
 
   return (
-    <li className="henry-proj">
-      {/* Texto fantasma: nombre repetido, desplazado, que se centra al bajar (--p) */}
-      <span ref={ghostRef} className="henry-proj__ghost" aria-hidden="true">
+    <li ref={rowRef} className={`henry-proj${open ? ' is-open' : ''}`}>
+      {/* Fantasma: descriptor repetido (misma serif) que rodea el título a ambos lados */}
+      <span className="henry-proj__ghost" aria-hidden="true">
         <span className="henry-proj__ghost-track">
-          {Array.from({ length: 6 }, (_, i) => (
-            <span key={i}>{item.title}&nbsp;&nbsp;</span>
+          {Array.from({ length: 9 }, (_, i) => (
+            <span key={i}>{item.ghost}&nbsp;&nbsp;·&nbsp;&nbsp;</span>
           ))}
         </span>
       </span>
 
-      <div className="henry-proj__body">
-        <div className="henry-proj__top">
+      <div className="henry-proj__grid">
+        <button
+          type="button"
+          className="henry-proj__toggle"
+          aria-expanded={open}
+          onClick={() => setOpen((v) => !v)}
+        >
           <h3 className="henry-proj__title">{item.title}</h3>
-          <div className="henry-proj__tags">
-            {item.tags.map((tag) => (
-              <span key={tag} className="henry-tag">
-                {tag}
-              </span>
-            ))}
+          <span className="henry-proj__sign" aria-hidden="true" />
+        </button>
+
+        <div className="henry-proj__panel">
+          <div className="henry-proj__panel-inner">
+            <p className="henry-meta henry-proj__context">{item.context}</p>
+            <p className="henry-proj__desc">{item.description}</p>
+            <div className="henry-proj__tags">
+              {item.tags.map((tag) => (
+                <span key={tag} className="henry-tag">
+                  {tag}
+                </span>
+              ))}
+            </div>
           </div>
         </div>
-        <p className="henry-meta henry-proj__context">{item.context}</p>
-        <details className="henry-proj__more">
-          <summary className="henry-proj__expand">
-            <span className="henry-proj__expand-open">Expandir</span>
-            <span className="henry-proj__expand-close">Cerrar</span>
-          </summary>
-          <p className="henry-proj__desc">{item.description}</p>
-        </details>
       </div>
     </li>
   );

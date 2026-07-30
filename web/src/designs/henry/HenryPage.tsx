@@ -1,9 +1,9 @@
 import './henry.css';
 import '@fontsource-variable/fraunces';
 import '@fontsource-variable/antonio';
-import { Link } from 'react-router-dom';
 import { profile } from '../../content/profile';
 import { useReveal } from '../../hooks/useReveal';
+import { DesignMenu } from './components/DesignMenu';
 import { Hero } from './components/Hero';
 import { Masthead } from './components/Masthead';
 import { About } from './components/About';
@@ -17,7 +17,7 @@ export default function HenryPage() {
       <div className="henry-ticker">{profile.ticker}</div>
       {/* Nav mínima arriba-izquierda, sin barra ni borde (spec: "no background bar") */}
       <nav className="henry-nav" aria-label="Principal">
-        <Link to="/disenos">Diseños</Link>
+        <DesignMenu />
         <a href="#contacto">Contacto</a>
       </nav>
       <Hero />

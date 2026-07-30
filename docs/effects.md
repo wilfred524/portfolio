@@ -36,9 +36,10 @@ qué hacer con `--p`:
   estático en su sitio; la regla crece con `transform: scaleX(var(--p))` (origen
   izquierdo) hasta llenar el borde y se detiene. Es lo que pide el design.md
   ("trailing rule extending to the right edge").
-- **Texto fantasma que se centra** (`.henry-proj__ghost`): repetición tenue del nombre
-  del proyecto, desplazada `translateX(calc((1 - var(--p)) * -22%))` → empieza corrida
-  y se alinea a 0 cuando la fila queda en foco, dejando la info legible.
+- **Texto fantasma que se centra** (`.henry-proj__ghost`): el **descriptor** del proyecto
+  (`item.ghost`) repetido en la **misma serif** que el título, desplazado
+  `translateX(calc((1 - var(--p)) * -18%))` → empieza corrido y se centra en foco. El
+  **título de la fila también se mueve** (`.henry-proj__head` translateX por `--p`).
 
 El **masthead** sí se desplaza de forma continua mientras está en pantalla: usa
 `useScrollSlide.ts` (`--slide` en [-1,1]) + CSS scroll-driven nativo donde se soporta
@@ -47,18 +48,28 @@ El **masthead** sí se desplaza de forma continua mientras está en pantalla: us
 `.design-henry` tiene `overflow-x: clip` para que ningún desplazamiento genere scroll
 horizontal.
 
-## 3b. Slogan del hero (dos tipografías + solapamiento)
+## 3b. Slogan del hero (dos tipografías + solapamiento real)
 
-El titular grande del hero es un **slogan** (no el nombre, que es corto): dos palabras
-en condensada (Antonio) con un conector serif itálico anidado/solapado
-(`.henry-slogan__word` + `.henry-slogan__link` posicionado en absoluto). El contenido
-está en `profile.heroSlogan { start, link, end }`. El nombre va como firma pequeña arriba.
+El titular grande del hero es un **slogan** (no el nombre, que es corto). Estructura fiel
+al original (verificada en el fotograma): **línea 1 CONDENSADA** (`.henry-slogan__start`,
+Antonio uppercase) + **conector ITÁLICA SERIF** anidado a la izquierda sobre la juntura
+(`.henry-slogan__link`, absoluto) + **línea 2 SERIF** (`.henry-slogan__end`, Fraunces).
+El contraste vive entre las dos líneas. Contenido en `profile.heroSlogan { start, link,
+end }` (actual: Ideas / hechas / Producto). El nombre va como firma pequeña arriba.
 
-## 3c. Expandir proyecto
+## 3c. Fila de proyecto: centrada → expandir (título a la izq + barra wipe)
 
-Cada fila de proyecto muestra título + contexto + tags y un botón **Expandir**
-(`<details>/<summary>` = `.henry-proj__more` / `.henry-proj__expand`) que revela la
-descripción completa en un panel contrastado (papel sobre la banda ink). Accesible y sin JS.
+Cada fila (`ProjectRow` en `Projects.tsx`) usa un **grid `1fr auto 1fr`**:
+- **Colapsada**: el **título va centrado** (columna 2) y el **texto fantasma** (descriptor
+  en la misma serif, `.henry-proj__ghost`, `justify-content:center`) lo **rodea a ambos
+  lados**. NO se muestran contexto ni tags sueltos. Disparador = el título (signo +/×).
+- **Al expandir** (estado `useState`, `aria-expanded`): el grid pasa a `0fr auto 1fr` → el
+  **título se desliza a la izquierda**, y **sincronizada** (misma duración/easing) la
+  **barra** (`.henry-proj__panel-inner`, columna 3, fondo `--paper`) hace **wipe
+  izquierda→derecha** con `clip-path: inset(0 100% 0 0)` → `inset(0 0 0 0)`. Dentro de la
+  barra van **contexto + descripción + tags** (no sueltos en la fila).
+- En ≤720px se apila: título arriba, barra debajo revelando altura (`grid-template-rows`).
+- Respeta `prefers-reduced-motion` (sin transición).
 
 ## 4. Reveal tipográfico
 

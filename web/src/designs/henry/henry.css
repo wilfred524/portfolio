@@ -123,53 +123,48 @@
   font-variation-settings: 'wght' 340, 'opsz' 40, 'SOFT' 0;
 }
 
-/* Titular del hero a dos voces: nombre en condensada + apellido en serif display */
-.henry-display__condensed,
-.henry-display__serif {
-  display: block;
-  font-size: var(--hero);
-}
-
-.henry-display__condensed {
-  font-family: var(--font-condensed);
-  font-variation-settings: 'wght' 600;
-  line-height: 0.8;
-  text-transform: uppercase;
-  letter-spacing: 0.005em;
-}
-
-.henry-display__serif {
-  font-family: var(--font-serif-display);
-  font-variation-settings: 'wght' 340, 'opsz' 144, 'SOFT' 0;
-  line-height: 0.85;
-  letter-spacing: -0.02em;
-}
-
-/* Slogan del hero: dos palabras condensadas con un conector serif itálico solapado */
+/* Slogan del hero — estructura real del original:
+   línea 1 CONDENSADA (sans) + conector ITÁLICA SERIF anidado a la izquierda +
+   línea 2 SERIF display. El contraste vive entre las dos líneas. */
 .henry-slogan {
   position: relative;
   margin: 0;
 }
 
-.henry-slogan__word {
+.henry-slogan__start,
+.henry-slogan__end {
   display: block;
+  font-size: var(--hero);
+  line-height: 0.82;
+}
+
+.henry-slogan__start {
   font-family: var(--font-condensed);
   font-variation-settings: 'wght' 600;
-  font-size: var(--hero);
-  line-height: 0.78;
   text-transform: uppercase;
   letter-spacing: 0.005em;
 }
 
+.henry-slogan__end {
+  font-family: var(--font-serif-display);
+  font-variation-settings: 'wght' 350, 'opsz' 144, 'SOFT' 0;
+  letter-spacing: -0.02em;
+  text-transform: uppercase;
+}
+
+/* Conector serif itálico: fluye en el HUECO entre las dos líneas (no encima de las
+   letras). Se solapa por márgenes negativos, pero cae sobre el papel → legible. */
 .henry-slogan__link {
-  position: absolute;
-  left: calc(var(--hero) * 0.04);
-  top: calc(var(--hero) * 0.5);
+  display: block;
+  width: fit-content;
+  margin: calc(var(--hero) * -0.1) 0 calc(var(--hero) * -0.06)
+    calc(var(--hero) * 0.06);
   font-family: var(--font-serif-display);
   font-style: italic;
-  font-variation-settings: 'wght' 340, 'opsz' 40, 'SOFT' 0;
-  font-size: calc(var(--hero) * 0.34);
+  font-variation-settings: 'wght' 360, 'opsz' 40, 'SOFT' 0;
+  font-size: calc(var(--hero) * 0.4);
   line-height: 1;
+  color: var(--ink);
 }
 
 .henry-meta {
@@ -247,6 +242,58 @@
 
 .henry-nav a:hover {
   color: var(--ink);
+}
+
+/* Desplegable "Diseños" (reemplaza al botón flotante) */
+.henry-menu {
+  position: relative;
+}
+
+.henry-menu__toggle {
+  font: inherit;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  color: var(--ash);
+  transition: color 0.2s ease;
+}
+
+.henry-menu__toggle:hover,
+.henry-menu__toggle[aria-expanded='true'] {
+  color: var(--ink);
+}
+
+.henry-menu__list {
+  position: absolute;
+  top: calc(100% + 6px);
+  left: 0;
+  z-index: 50;
+  min-width: 200px;
+  list-style: none;
+  margin: 0;
+  padding: calc(var(--space) * 2);
+  display: flex;
+  flex-direction: column;
+  gap: calc(var(--space) * 1);
+  background: var(--paper);
+  border: 1px solid var(--ink);
+  border-radius: var(--radius);
+}
+
+.henry-menu__list a {
+  display: block;
+  padding: calc(var(--space) * 2) calc(var(--space) * 2);
+  border-radius: var(--radius);
+  color: var(--ink);
+  transition: background-color 0.2s ease, color 0.2s ease;
+}
+
+.henry-menu__list a:hover {
+  background: var(--ink);
+  color: var(--paper);
+}
+
+.henry-menu__all {
+  color: var(--ash) !important;
 }
 
 /* ------------------------------------------------------------
@@ -463,9 +510,9 @@
 
 .henry-sechead__rule {
   flex: 1;
-  height: 1px;
+  height: 3px;
   background: currentColor;
-  opacity: 0.4;
+  opacity: 0.7;
 }
 
 /* Variante serif: encabezado de sección a 77px+ (Fraunces alto contraste) */
@@ -520,131 +567,193 @@
   flex-direction: column;
 }
 
-/* Fila de proyecto: contenido estático y legible por encima de un texto fantasma
-   que se alinea al scroll (--p). Botón "Expandir" con la info completa contrastada. */
+/* Fila de proyecto. Colapsada: título CENTRADO con el fantasma rodeándolo a ambos
+   lados. Al abrir: el título se desliza a la izquierda y, sincronizada, la barra papel
+   hace wipe de izquierda→derecha con contexto + descripción + tags. */
 .henry-proj {
   position: relative;
   overflow: hidden;
-  padding: calc(var(--space) * 4) var(--card-padding);
+  padding: calc(var(--space) * 5) var(--card-padding);
   border-top: 1px solid var(--sepia);
   border-radius: var(--radius);
 }
 
-/* Texto fantasma: repetición tenue del nombre, desplazada, que se centra al bajar */
+/* Texto fantasma: descriptor repetido (misma serif), banda centrada que rodea el
+   título a izquierda y derecha; leve nudge con el scroll. */
 .henry-proj__ghost {
   position: absolute;
   inset: 0;
   display: flex;
   align-items: center;
+  justify-content: center;
   z-index: 0;
-  opacity: 0.06;
+  opacity: 0.08;
   pointer-events: none;
   white-space: nowrap;
-  transform: translateX(calc((1 - var(--p, 1)) * -22%));
+  transform: translateX(calc((1 - var(--p, 1)) * -6%));
   will-change: transform;
 }
 
 .henry-proj__ghost-track {
-  font-family: var(--font-condensed);
-  font-variation-settings: 'wght' 600;
-  font-size: clamp(3rem, 8vw, 6rem);
+  font-family: var(--font-serif-display);
+  font-variation-settings: 'wght' 360, 'opsz' 144, 'SOFT' 0;
+  font-size: clamp(2.5rem, 6vw, 4.5rem);
   line-height: 1;
-  text-transform: uppercase;
 }
 
-.henry-proj__body {
+/* Grid: [1fr] [título auto] [1fr] → título centrado. Al abrir, la col izquierda
+   colapsa a 0fr y el título se desliza a la izquierda; el panel vive en la col 3. */
+.henry-proj__grid {
   position: relative;
   z-index: 1;
-  display: flex;
-  flex-direction: column;
-  gap: calc(var(--space) * 1);
+  display: grid;
+  grid-template-columns: 1fr auto 1fr;
+  align-items: center;
+  transition: grid-template-columns 0.5s cubic-bezier(0.22, 1, 0.36, 1);
 }
 
-.henry-proj__top {
-  display: flex;
-  justify-content: space-between;
-  align-items: baseline;
-  gap: calc(var(--space) * 4);
-  flex-wrap: wrap;
+.henry-proj.is-open .henry-proj__grid {
+  grid-template-columns: 0fr auto 1fr;
+}
+
+.henry-proj__toggle {
+  grid-column: 2;
+  display: inline-flex;
+  align-items: center;
+  gap: calc(var(--space) * 3);
+  cursor: pointer;
+  white-space: nowrap;
 }
 
 .henry-proj__title {
   font-family: var(--font-serif-display);
   font-variation-settings: 'wght' 360, 'opsz' 40;
-  font-size: clamp(1.25rem, 2.5vw, 1.75rem);
+  font-size: clamp(1.5rem, 3vw, 2.25rem);
   line-height: 1.05;
 }
 
-.henry-proj__context {
-  margin-top: calc(var(--space) * 1);
+/* Disparador discreto: signo +/× a la derecha del título (no un rectángulo) */
+.henry-proj__sign {
+  position: relative;
+  width: 0.9em;
+  height: 0.9em;
+  flex: none;
+  opacity: 0.55;
+  transition: opacity 0.2s ease;
 }
 
-/* Botón Expandir (details/summary): píldora ghost que se invierte al hover */
-.henry-proj__more {
-  margin-top: calc(var(--space) * 3);
+.henry-proj__sign::before,
+.henry-proj__sign::after {
+  content: '';
+  position: absolute;
+  background: currentColor;
 }
 
-.henry-proj__expand {
-  cursor: pointer;
-  list-style: none;
-  display: inline-flex;
-  align-items: center;
-  gap: calc(var(--space) * 2);
-  font-family: var(--font-sans);
-  font-size: var(--text-xs);
-  text-transform: uppercase;
-  letter-spacing: 0.06em;
-  padding: calc(var(--space) * 1.5) calc(var(--space) * 3);
-  border: 1px solid currentColor;
-  border-radius: var(--radius);
-  transition: background-color 0.2s ease, color 0.2s ease;
+.henry-proj__sign::before {
+  left: 0;
+  top: 50%;
+  width: 100%;
+  height: 1.5px;
+  transform: translateY(-50%);
 }
 
-.henry-proj__expand::-webkit-details-marker {
-  display: none;
+.henry-proj__sign::after {
+  top: 0;
+  left: 50%;
+  width: 1.5px;
+  height: 100%;
+  transform: translateX(-50%);
+  transition: opacity 0.2s ease;
 }
 
-.henry-proj__expand::after {
-  content: '↓';
+.henry-proj__toggle:hover .henry-proj__sign {
+  opacity: 1;
 }
 
-.henry-proj__more[open] .henry-proj__expand::after {
-  content: '↑';
+.henry-proj.is-open .henry-proj__sign::after {
+  opacity: 0; /* + → − al abrir */
 }
 
-.henry-proj__expand-close {
-  display: none;
+/* Barra: vive en la col 3 y hace wipe izquierda→derecha (clip-path) al abrir,
+   sincronizada con el deslizamiento del título. Color claro sobre la banda ink. */
+.henry-proj__panel {
+  grid-column: 3;
+  min-width: 0;
+  justify-self: start;
+  padding-left: calc(var(--space) * 4);
 }
 
-.henry-proj__more[open] .henry-proj__expand-open {
-  display: none;
-}
-
-.henry-proj__more[open] .henry-proj__expand-close {
-  display: inline;
-}
-
-.henry-proj__expand:hover {
+.henry-proj__panel-inner {
+  width: min(48ch, 40vw);
   background: var(--paper);
   color: var(--ink);
+  border-radius: var(--radius);
+  padding: calc(var(--space) * 4) calc(var(--space) * 5);
+  clip-path: inset(0 100% 0 0);
+  transition: clip-path 0.5s cubic-bezier(0.22, 1, 0.36, 1);
 }
 
-/* Panel expandido: info completa a sangre contrastada (papel sobre la banda ink) */
+.henry-proj.is-open .henry-proj__panel-inner {
+  clip-path: inset(0 0 0 0);
+}
+
+.henry-proj__context {
+  margin-bottom: calc(var(--space) * 2);
+}
+
 .henry-proj__desc {
   font-size: var(--text-sm);
-  line-height: 1.5;
-  max-width: 68ch;
-  margin-top: calc(var(--space) * 3);
-  padding: calc(var(--space) * 4);
-  background: var(--paper);
-  color: var(--ink);
-  border-radius: var(--radius);
+  line-height: 1.6;
 }
 
 .henry-proj__tags {
   display: flex;
   flex-wrap: wrap;
   gap: calc(var(--space) * 2);
+  margin-top: calc(var(--space) * 3);
+}
+
+/* Móvil: apilar. Título arriba (izquierda) y el panel debajo, revelando altura. */
+@media (max-width: 720px) {
+  .henry-proj__grid {
+    grid-template-columns: 1fr;
+    grid-template-rows: auto 0fr;
+    transition: grid-template-rows 0.5s cubic-bezier(0.22, 1, 0.36, 1);
+  }
+  .henry-proj.is-open .henry-proj__grid {
+    grid-template-columns: 1fr;
+    grid-template-rows: auto 1fr;
+  }
+  .henry-proj__toggle {
+    grid-column: 1;
+  }
+  .henry-proj__panel {
+    grid-column: 1;
+    grid-row: 2;
+    overflow: hidden;
+    padding-left: 0;
+    padding-top: calc(var(--space) * 3);
+  }
+  .henry-proj__panel-inner {
+    width: 100%;
+    clip-path: none;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .henry-proj__grid,
+  .henry-proj__panel-inner {
+    transition: none;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .henry-proj__grid {
+    transition: none;
+  }
+  .henry-proj__head {
+    transform: none;
+  }
 }
 
 .henry-tag {

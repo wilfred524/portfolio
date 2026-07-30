@@ -1,7 +1,6 @@
 import { Suspense } from 'react';
 import { Routes, Route, Navigate, useParams } from 'react-router-dom';
 import { getDesign } from './designs/registry';
-import { DesignSwitcher } from './components/DesignSwitcher';
 import GalleryPage from './pages/GalleryPage';
 import HenryPage from './designs/henry/HenryPage';
 
@@ -24,14 +23,11 @@ function DesignRoute() {
 
 export default function App() {
   return (
-    <>
-      <Routes>
-        <Route path="/" element={<HenryPage />} />
-        <Route path="/disenos" element={<GalleryPage />} />
-        <Route path="/disenos/:slug" element={<DesignRoute />} />
-        <Route path="*" element={<Navigate to="/" replace />} />
-      </Routes>
-      <DesignSwitcher />
-    </>
+    <Routes>
+      <Route path="/" element={<HenryPage />} />
+      <Route path="/disenos" element={<GalleryPage />} />
+      <Route path="/disenos/:slug" element={<DesignRoute />} />
+      <Route path="*" element={<Navigate to="/" replace />} />
+    </Routes>
   );
 }

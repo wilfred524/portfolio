@@ -5,9 +5,13 @@
  */
 
 export interface ProjectItem {
+  /** Título corto (una palabra o dos). */
   title: string;
+  /** Descriptor breve que se repite como texto fantasma de fondo. */
+  ghost: string;
   /** Cliente o contexto del proyecto (GAF Solutions, n8n + Telegram API…). */
   context: string;
+  /** Descripción completa (se revela al Expandir). */
   description: string;
   tags: string[];
   url?: string;
@@ -24,8 +28,8 @@ export const profile = {
   tagline: 'Diseño y construyo interfaces que se sienten inevitables.',
   availability: 'Disponible para nuevos proyectos — 2026',
   ticker: 'Diseño y desarrollo full-stack · Disponible para proyectos 2026 · Hablemos',
-  /** Slogan del hero: palabra + conector (itálica serif anidada) + palabra. */
-  heroSlogan: { start: 'Diseño', link: 'y', end: 'Código' },
+  /** Slogan del hero: línea condensada + conector (itálica serif anidada) + línea serif. */
+  heroSlogan: { start: 'Ideas', link: 'hechas', end: 'Producto' },
   location: 'Colombia',
   email: 'wilfred3019@gmail.com',
   phone: '+57 301 737 4234',
@@ -48,24 +52,27 @@ export const profile = {
       category: 'Automatización de Procesos & Flujos con IA',
       items: [
         {
-          title: 'Bot Conversacional para Telegram',
+          title: 'Chatbot',
+          ghost: 'mensajería en tiempo real',
           context: 'n8n + Telegram API',
           description:
-            'Respuestas automatizadas en tiempo real: procesa comandos, consulta datos y devuelve información mediante nodos en n8n.',
+            'Atiende en Telegram sin intervención humana: interpreta comandos, consulta datos en vivo y responde al instante. Flujos de n8n sobre la API de Telegram que convierten una conversación en una acción — de la pregunta a la respuesta útil en segundos.',
           tags: ['n8n', 'Telegram API', 'Webhooks'],
         },
         {
-          title: 'Generador Automático de Contenido',
+          title: 'Generador de contenido',
+          ghost: 'de un prompt a una publicación',
           context: 'AI Pipeline',
           description:
-            'Flujo que ingesta prompts, genera copys estructurados con LLMs (OpenAI / LangChain) y prepara publicaciones sin intervención manual.',
+            'Convierte una idea en publicaciones listas para redes. Ingesta prompts, genera copys estructurados con LLMs (OpenAI / LangChain) y prepara el contenido sin intervención manual — creatividad a escala, con consistencia de marca.',
           tags: ['OpenAI API', 'LangChain', 'LLMs'],
         },
         {
-          title: 'Motor de Cálculo e Ingesta de Score Crediticio',
+          title: 'Score crediticio',
+          ghost: 'riesgo vuelto decisión',
           context: 'GAF Solutions',
           description:
-            'Automatización del backend para evaluar información financiera, calcular el riesgo crediticio e ingestar los datos validados en PostgreSQL.',
+            'El motor que evalúa el riesgo crediticio de forma automática: procesa información financiera, calcula el score e ingesta los datos validados en PostgreSQL. Datos crudos convertidos en decisiones confiables, con trazabilidad de punta a punta.',
           tags: ['PostgreSQL', 'Backend', 'Scoring'],
         },
       ],
@@ -74,32 +81,36 @@ export const profile = {
       category: 'Desarrollo Backend & Arquitectura de Software',
       items: [
         {
-          title: 'Refactorización a Arquitectura Hexagonal',
+          title: 'Hexagonal',
+          ghost: 'la lógica, libre del framework',
           context: 'GAF Solutions',
           description:
-            'Migración de código legacy hacia una arquitectura desacoplada que independiza la lógica de negocio del framework y escala el sistema.',
+            'Migración de código legacy a arquitectura hexagonal: la lógica de negocio deja de depender del framework y pasa al centro, testeable y portable. El sistema gana libertad para escalar y cambiar piezas sin reescribirse.',
           tags: ['Arquitectura Hexagonal', 'Laravel', 'Refactor'],
         },
         {
-          title: 'Auditoría y Trazabilidad de Eventos',
+          title: 'Auditoría',
+          ghost: 'cada acción, registrada',
           context: 'GAF Solutions',
           description:
-            'Implementación de Spatie Activitylog en Laravel para el registro detallado y el rastreo de acciones críticas.',
+            'Trazabilidad total de las acciones críticas. Con Spatie Activitylog sobre Laravel, cada evento queda registrado con su autor y su contexto — un historial confiable para auditar, depurar y rendir cuentas.',
           tags: ['Laravel', 'Spatie Activitylog', 'Auditoría'],
         },
         {
-          title: 'Seguridad y Anti-Bot',
+          title: 'Anti-bot',
+          ghost: 'humanos sí, bots no',
           context: 'CK Comercializadora',
           description:
-            'Integración de Cloudflare Turnstile en frontend (Vue.js) y validación en backend, resolviendo problemas de contenido mixto en producción.',
+            'Defensa contra bots sin fricción para el usuario: Cloudflare Turnstile en el frontend (Vue.js) con validación en backend, y resolución de los problemas de contenido mixto en producción. Seguridad real que no estorba la experiencia.',
           tags: ['Vue.js', 'Cloudflare Turnstile', 'Seguridad'],
         },
         {
-          title: 'Este portafolio',
+          title: 'Este sitio',
+          ghost: 'diseño y código, una pieza',
           context: 'Proyecto propio',
           description:
-            'Monorepo TypeScript con frontend y backend desacoplados (React + Vite / Express), tipos compartidos y una placa halftone generada por código (dithering Bayer en canvas).',
-          tags: ['React', 'Vite', 'Express', 'TypeScript', 'Canvas'],
+            'El sitio que estás viendo: monorepo TypeScript con frontend y backend desacoplados (React + Vite / Express) y una placa halftone generada por código (dithering Bayer en canvas). Donde el diseño y la ingeniería se sostienen mutuamente.',
+          tags: ['React', 'Vite', 'Express', 'Canvas'],
         },
       ],
     },
@@ -107,10 +118,11 @@ export const profile = {
       category: 'Despliegue & Administración de Infraestructura',
       items: [
         {
-          title: 'Servidores en Google Cloud Platform',
+          title: 'Infra GCP',
+          ghost: 'el suelo donde corre todo',
           context: 'Infraestructura',
           description:
-            'Configuración, despliegue y mantenimiento de infraestructura con servidores Linux, contenedores Docker y proxies inversos en Nginx.',
+            'La infraestructura que sostiene los productos en producción: servidores Linux en Google Cloud, contenedores Docker y proxys inversos con Nginx. Configuración, despliegue y mantenimiento pensados para que el sistema siga en pie.',
           tags: ['GCP', 'Docker', 'Nginx', 'Linux'],
         },
       ],
