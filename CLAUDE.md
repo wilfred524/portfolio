@@ -5,9 +5,13 @@
 
 ## Qué es
 
-Sitio personal de presentación + colección de sistemas de diseño reconstruidos con
-fidelidad. Primer diseño: **Henry** (editorial monocromático). Monorepo TypeScript.
-**Idioma de trabajo: español.**
+Sitio personal de presentación de **una sola página**, construido sobre una
+reconstrucción fiel del sistema de diseño **Henry** (editorial monocromático). Monorepo
+TypeScript. **Idioma de trabajo: español.**
+
+La colección de diseños que había en `/disenos` se retiró: varias páginas diluían el
+mensaje del portafolio. El objetivo del sitio es que un evaluador técnico entienda en
+tres o cuatro pantallas qué se ha construido, en qué dominio y desde cuándo.
 
 ## Reglas invariantes (no romper)
 
