@@ -60,15 +60,17 @@ end }` (actual: Ideas / hechas / Producto). El nombre va como firma pequeña arr
 ## 3c. Fila de proyecto: centrada → expandir (título a la izq + barra wipe)
 
 Cada fila (`ProjectRow` en `Projects.tsx`) usa un **grid `1fr auto 1fr`**:
-- **Colapsada**: el **título va centrado** (columna 2) y el **texto fantasma** (descriptor
-  en la misma serif, `.henry-proj__ghost`, `justify-content:center`) lo **rodea a ambos
-  lados**. NO se muestran contexto ni tags sueltos. Disparador = el título (signo +/×).
-- **Al expandir** (estado `useState`, `aria-expanded`): el grid pasa a `0fr auto 1fr` → el
-  **título se desliza a la izquierda**, y **sincronizada** (misma duración/easing) la
-  **barra** (`.henry-proj__panel-inner`, columna 3, fondo `--paper`) hace **wipe
-  izquierda→derecha** con `clip-path: inset(0 100% 0 0)` → `inset(0 0 0 0)`. Dentro de la
-  barra van **contexto + descripción + tags** (no sueltos en la fila).
-- En ≤720px se apila: título arriba, barra debajo revelando altura (`grid-template-rows`).
+- **Colapsada**: título **centrado** (col 2) con el **fantasma flanqueándolo** — descriptor
+  repetido (misma serif, mismo tamaño) en la col 1 (`--left`, alineado a la derecha) y en
+  la col 3 (`--right`, absoluto). El fantasma **nunca va detrás del título** (jamás lo
+  solapa). Título + fantasma **se mueven juntos** con el scroll: el grid lleva
+  `translateX(calc((1 - var(--p)) * 6%))` y se asienta en `--p = 1`.
+- **Al expandir** (`useState`, `aria-expanded`): el grid pasa a `0fr auto 1fr` → **solo el
+  título se desliza a la izquierda**; el **fantasma desaparece** (`opacity: 0`, estorba la
+  lectura); y en la col 3 la **barra** (`.henry-proj__panel-inner`, fondo `--paper`) crece
+  (`max-height`) y hace **wipe izquierda→derecha** (`clip-path`), **llegando al borde
+  derecho** de la fila, con **contexto + descripción + tags** dentro. Todo 0.5s mismo easing.
+- En ≤720px: sin fantasma lateral; título arriba y barra debajo.
 - Respeta `prefers-reduced-motion` (sin transición).
 
 ## 4. Reveal tipográfico

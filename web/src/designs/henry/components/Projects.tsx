@@ -17,16 +17,16 @@ function ProjectRow({ item }: { item: ProjectItem }) {
 
   return (
     <li ref={rowRef} className={`henry-proj${open ? ' is-open' : ''}`}>
-      {/* Fantasma: descriptor repetido (misma serif) que rodea el título a ambos lados */}
-      <span className="henry-proj__ghost" aria-hidden="true">
-        <span className="henry-proj__ghost-track">
-          {Array.from({ length: 9 }, (_, i) => (
-            <span key={i}>{item.ghost}&nbsp;&nbsp;·&nbsp;&nbsp;</span>
-          ))}
-        </span>
-      </span>
-
       <div className="henry-proj__grid">
+        {/* Fantasma izquierdo: flanquea el título (nunca detrás → jamás lo solapa) */}
+        <span className="henry-proj__ghost henry-proj__ghost--left" aria-hidden="true">
+          <span className="henry-proj__ghost-track">
+            {Array.from({ length: 5 }, (_, i) => (
+              <span key={i}>{item.ghost}&nbsp;&nbsp;·&nbsp;&nbsp;</span>
+            ))}
+          </span>
+        </span>
+
         <button
           type="button"
           className="henry-proj__toggle"
@@ -37,7 +37,15 @@ function ProjectRow({ item }: { item: ProjectItem }) {
           <span className="henry-proj__sign" aria-hidden="true" />
         </button>
 
-        <div className="henry-proj__panel">
+        {/* Columna derecha: fantasma (colapsado) + barra de descripción (al expandir) */}
+        <div className="henry-proj__col3">
+          <span className="henry-proj__ghost henry-proj__ghost--right" aria-hidden="true">
+            <span className="henry-proj__ghost-track">
+              {Array.from({ length: 5 }, (_, i) => (
+                <span key={i}>{item.ghost}&nbsp;&nbsp;·&nbsp;&nbsp;</span>
+              ))}
+            </span>
+          </span>
           <div className="henry-proj__panel-inner">
             <p className="henry-meta henry-proj__context">{item.context}</p>
             <p className="henry-proj__desc">{item.description}</p>
