@@ -89,7 +89,7 @@
 .henry-display {
   font-family: var(--font-serif-display);
   font-weight: 400;
-  font-variation-settings: 'wght' 340, 'opsz' 144, 'SOFT' 0;
+  font-variation-settings: 'wght' 460, 'opsz' 144, 'SOFT' 0, 'WONK' 0;
   font-size: var(--hero);
   line-height: 0.85;
   letter-spacing: -0.02em;
@@ -98,7 +98,7 @@
 .henry-headline {
   font-family: var(--font-serif-display);
   font-weight: 400;
-  font-variation-settings: 'wght' 360, 'opsz' 144, 'SOFT' 0;
+  font-variation-settings: 'wght' 500, 'opsz' 144, 'SOFT' 0, 'WONK' 0;
   font-size: var(--headline-sm);
   line-height: 0.95;
   letter-spacing: -0.015em;
@@ -121,48 +121,61 @@
 /* Slogan del hero — estructura real del original:
    línea 1 CONDENSADA (sans) + conector ITÁLICA SERIF anidado a la izquierda +
    línea 2 SERIF display. El contraste vive entre las dos líneas. */
+/* Slogan como bloque de 3 líneas en flujo (una sola escala en cqw, sin solaparse
+   entre sí). IDEAS domina; PRODUCTO menor; "hechas" en el hueco, tinta oscura. */
 .henry-slogan {
-  position: relative;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start; /* IDEAS y PRODUCTO alineadas a la izquierda */
   margin: 0;
 }
 
 .henry-slogan__start,
 .henry-slogan__end {
   display: block;
-  font-size: var(--hero);
-  line-height: 0.82;
+  line-height: 0.9;
 }
 
 .henry-slogan__start {
   font-family: var(--font-condensed);
-  font-variation-settings: 'wght' 600;
+  font-variation-settings: 'wght' 700;
+  font-size: clamp(5.5rem, 52cqw, 29rem);
+  line-height: 0.9;
   text-transform: uppercase;
   letter-spacing: 0.005em;
+  margin-left: -0.02em;
 }
 
 .henry-slogan__end {
   font-family: var(--font-serif-display);
-  font-variation-settings: 'wght' 350, 'opsz' 144, 'SOFT' 0;
+  font-variation-settings: 'wght' 520, 'opsz' 144, 'SOFT' 0, 'WONK' 0;
+  font-size: clamp(2.5rem, 18cqw, 7.5rem);
+  line-height: 0.9;
   letter-spacing: -0.02em;
   text-transform: uppercase;
+  margin-left: 0.09em;
+  margin-top: 0.12em;
 }
 
-/* Conector serif itálico solapado a la IZQUIERDA, sobre la juntura de las dos
-   palabras (encima de las letras oscuras, donde el relleno papel se lee como knockout);
-   contorno fino de tinta para que se defina también donde cruza el papel. */
 .henry-slogan__link {
-  position: absolute;
+  position: relative;
   z-index: 2;
-  left: calc(var(--hero) * 0.08);
-  top: calc(var(--hero) * 0.6 + 6px);
+  align-self: flex-start;
+  height: 0;
+  display: flex;
+  align-items: center;
+  overflow: visible;
+  white-space: nowrap;
+  margin: 0 0 0 0.4em;
   font-family: var(--font-serif-display);
   font-style: italic;
-  font-variation-settings: 'wght' 400, 'opsz' 40, 'SOFT' 0;
-  font-size: calc(var(--hero) * 0.44);
+  font-variation-settings: 'wght' 480, 'opsz' 144, 'SOFT' 0, 'WONK' 1;
+  font-size: clamp(1.75rem, 15cqw, 6.3rem);
   line-height: 1;
   color: var(--paper);
-  -webkit-text-stroke: 1.5px var(--ink);
+  -webkit-text-stroke: 2px var(--ink);
   paint-order: stroke fill;
+  transform: translateY(8px); /* baja "hechas" unos píxeles (no afecta el layout) */
 }
 
 .henry-meta {
@@ -365,11 +378,13 @@
 /* Composición partida: titular a la izquierda, placa halftone a la derecha */
 .henry-hero {
   display: grid;
-  grid-template-columns: 1.15fr 0.9fr;
-  align-items: center;
-  gap: calc(var(--space) * 4);
+  /* texto flexible + placa dimensionada por SU alto (columna auto) */
+  grid-template-columns: minmax(0, 1fr) auto;
+  align-items: start;    /* eyebrow a la altura del borde superior de la placa */
+  align-content: center; /* el bloque completo centrado en el alto del hero */
+  gap: clamp(24px, 4vw, 64px);
   min-height: 82dvh;
-  padding-right: 0; /* la placa sangra hasta el borde derecho de la página */
+  padding-right: 0; /* la placa llega al borde derecho de la página */
 }
 
 .henry-hero__left {
@@ -399,13 +414,13 @@
 /* Placa halftone: canvas generado por código (ver HalftonePlate.tsx).
    Sin borde ni fondo: se funde con el papel de la página (el dither se desvanece
    a papel en los bordes y de izquierda a derecha, así no parece un recuadro). */
+/* Placa: se ESTIRA a todo el alto del bloque de texto (arriba con el eyebrow, abajo
+   con la línea de disponibilidad). Cuadrada: el ancho sale de esa altura. */
 .henry-hero__plate {
-  aspect-ratio: 1 / 1;
+  align-self: stretch;
+  height: auto;
   width: auto;
-  align-self: center;
-  /* Se extiende sobre la columna de texto por la izquierda para que el degradado
-     tenga recorrido; el borde izquierdo es casi papel, así que no tapa el texto. */
-  margin-left: -8%;
+  aspect-ratio: 1 / 1;
 }
 
 @media (max-width: 860px) {
@@ -413,10 +428,12 @@
     padding-right: var(--gutter);
   }
 
+  /* en móvil la placa vuelve a dimensionarse por ancho (capada), no por alto */
   .henry-hero__plate {
-    aspect-ratio: 224 / 200;
+    height: auto;
     width: 100%;
-    margin-left: 0;
+    max-width: 360px;
+    aspect-ratio: 1 / 1;
   }
 }
 
@@ -459,7 +476,7 @@
 
 .henry-masthead__word {
   font-family: var(--font-serif-display);
-  font-variation-settings: 'wght' 340, 'opsz' 144;
+  font-variation-settings: 'wght' 420, 'opsz' 144, 'SOFT' 0, 'WONK' 0;
   font-weight: 400;
   font-size: clamp(2.5rem, 7vw, 6rem);
   line-height: 1;
@@ -521,7 +538,7 @@
 /* Variante serif: encabezado de sección a 77px+ (Fraunces alto contraste) */
 .henry-sechead--serif .henry-sechead__word {
   font-family: var(--font-serif-display);
-  font-variation-settings: 'wght' 360, 'opsz' 144, 'SOFT' 0;
+  font-variation-settings: 'wght' 500, 'opsz' 144, 'SOFT' 0, 'WONK' 0;
   font-size: clamp(3rem, 9vw, 7rem);
   letter-spacing: -0.02em;
 }
@@ -626,7 +643,7 @@
 
 .henry-proj__ghost-track {
   font-family: var(--font-serif-display);
-  font-variation-settings: 'wght' 360, 'opsz' 144, 'SOFT' 0;
+  font-variation-settings: 'wght' 500, 'opsz' 144, 'SOFT' 0, 'WONK' 0;
   font-size: clamp(1.5rem, 3vw, 2.25rem);
   line-height: 1.05;
 }
@@ -818,7 +835,7 @@
 
 .henry-contact__email {
   font-family: var(--font-serif-display);
-  font-variation-settings: 'wght' 360, 'opsz' 144;
+  font-variation-settings: 'wght' 480, 'opsz' 144, 'SOFT' 0, 'WONK' 0;
   font-size: clamp(1.5rem, 4.5vw, 3rem);
   line-height: 1;
   text-decoration: underline;
