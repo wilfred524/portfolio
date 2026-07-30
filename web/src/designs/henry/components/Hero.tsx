@@ -20,9 +20,9 @@ export function Hero() {
         </p>
         <div ref={titleRef} className="henry-reveal">
           <h1 className="henry-slogan">
-            <span className="henry-slogan__word">{start}</span>
+            <span className="henry-slogan__start">{start}</span>
             <span className="henry-slogan__link">{link}</span>
-            <span className="henry-slogan__word">{end}</span>
+            <span className="henry-slogan__end">{end}</span>
           </h1>
         </div>
         <p className="henry-headline henry-hero__tagline">

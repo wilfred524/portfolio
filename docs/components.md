@@ -11,7 +11,7 @@ ticker → nav → Hero → coordline → Masthead → About → Projects → Sk
 | `Masthead` | `components/Masthead.tsx` | Marquee (Portafolio/Diseño/Código) **ligado al scroll** (continuo mientras está en pantalla) | `.henry-masthead`, `.henry-masthead__track` |
 | `SectionHeader` | `components/SectionHeader.tsx` | Encabezado grande: título **estático** + **regla que se extiende** al scroll (`.henry-extend`, vía `useScrollProgress`); `variant` = `serif` \| `masthead` | `.henry-sechead`, `.henry-extend` |
 | `About` | `components/About.tsx` | SectionHeader "Sobre mí" + carta editorial invertida centrada | `.henry-letter`, `.henry-letter__eyebrow` |
-| `Projects` | `components/Projects.tsx` | SectionHeader "Proyectos" (masthead) + grupos por categoría. Subcomponente `ProjectRow`: contenido estático + **texto fantasma** que se centra al scroll + botón **Expandir** con la info completa | `.henry-proj`, `.henry-proj__ghost`, `.henry-proj__more`, `.henry-tag` |
+| `Projects` | `components/Projects.tsx` | SectionHeader "Proyectos" (masthead) + grupos por categoría. Subcomponente `ProjectRow`: título **centrado** con **fantasma** a ambos lados; al expandir el título va a la izquierda y una **barra papel** hace wipe izq→der con contexto+descripción+tags. Ver [`effects.md`](effects.md) §3c | `.henry-proj`, `.henry-proj__grid`, `.henry-proj__ghost`, `.henry-proj__panel`, `.henry-tag` |
 | `Skills` | `components/Skills.tsx` | SectionHeader "Habilidades" + lista tipográfica | `.henry-skills__list`, `.henry-skill` |
 | `Contact` | `components/Contact.tsx` | SectionHeader "Contacto" + email grande + teléfono + redes | `.henry-contact`, `.henry-contact__email` |
 
