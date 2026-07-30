@@ -8,9 +8,13 @@ El sistema alterna bandas Paper e Ink a sangre completa (spec: *"never gradient-
 between them"*). Las secciones Ink (`.henry-section--ink`) son **ink de principio a fin,
 sin transición de color** — una inversión animada pasaría por grises/marrones y va contra
 la spec. Ritmo actual (paper/ink alternados para no cansar):
-Hero (paper) → Masthead (ink) → Sobre mí (paper) → Proyectos (ink) → Habilidades (paper)
-→ Contacto (ink) → footer (paper). `InkSection` sigue exportada desde `HenryPage.tsx`
-(Masthead/Projects/Contact la usan); `useReveal` ya no cambia color (queda para otros reveals).
+Hero (paper) → Masthead (ink) → **Experiencia + Habilidades (paper)** → Contacto (ink)
+→ footer (paper).
+
+Al disolverse «Sobre mí» desaparecía la única banda Paper entre Masthead y Experiencia,
+así que Experiencia y Habilidades comparten ahora una sola banda Paper (separadas por
+`.henry-subsection`). `InkSection` vive en `components/InkSection.tsx` y solo la usa
+`Contact`; `useReveal` ya no cambia color (queda para otros reveals).
 
 ## 2. Placa halftone generada por código
 
@@ -52,14 +56,18 @@ El **masthead** sí se desplaza de forma continua mientras está en pantalla: us
 `.design-henry` tiene `overflow-x: clip` para que ningún desplazamiento genere scroll
 horizontal.
 
-## 3b. Slogan del hero (dos tipografías + solapamiento real)
+## 3b. Hero de credencial y slogan en la banda Ink
 
-El titular grande del hero es un **slogan** (no el nombre, que es corto). Estructura fiel
-al original (verificada en el fotograma): **línea 1 CONDENSADA** (`.henry-slogan__start`,
-Antonio uppercase) + **conector ITÁLICA SERIF** anidado a la izquierda sobre la juntura
-(`.henry-slogan__link`, absoluto) + **línea 2 SERIF** (`.henry-slogan__end`, Fraunces).
-El contraste vive entre las dos líneas. Contenido en `profile.heroSlogan { start, link,
-end }` (actual: Ideas / hechas / Producto). El nombre va como firma pequeña arriba.
+El titular del hero es ahora **el nombre**, en serif display dimensionada en `cqw` respecto
+a su columna (`.henry-hero__name`) — Antonio queda reservada a los mastheads gigantes que
+manda la spec. Debajo: rol + stack (`.henry-meta`), la frase de credencial en serif a 24px
+(`.henry-hero__credential`), los enlaces como botones fantasma (`.henry-linkbtn`) y el pie
+con ubicación y disponibilidad. La placa halftone no cambió.
+
+El **slogan** (`profile.heroSlogan { start, link, end }` → Ideas / hechas / Producto) bajó
+a la banda Ink del `Masthead`, donde funciona como respiro editorial. Conserva el gesto de
+firma del original: extremos en romano y versales, nexo en itálica de caja baja
+(`.henry-masthead__word--nexus`).
 
 ## 3c. Fila de proyecto: centrada → expandir (título a la izq + barra wipe)
 
@@ -69,6 +77,8 @@ Cada fila (`ProjectRow` en `Projects.tsx`) usa un **grid `1fr auto 1fr`**:
   la col 3 (`--right`, absoluto). El fantasma **nunca va detrás del título** (jamás lo
   solapa). Título + fantasma **se mueven juntos** con el scroll: el grid lleva
   `translateX(calc((1 - var(--p)) * 6%))` y se asienta en `--p = 1`.
+- **La primera fila abre por defecto** (prop `defaultOpen`): quien escanea sin hacer clic
+  lee al menos un proyecto entero. Las demás siguen cerradas, que es donde el fantasma se ve.
 - **Al expandir** (`useState`, `aria-expanded`): el grid pasa a `0fr auto 1fr` → **solo el
   título se desliza a la izquierda**; el **fantasma desaparece** (`opacity: 0`, estorba la
   lectura); y en la col 3 la **barra** (`.henry-proj__panel-inner`, fondo `--paper`) crece
