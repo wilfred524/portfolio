@@ -1,7 +1,6 @@
 import { useState } from 'react';
 import type { ProjectItem } from '../../../content/profile';
 import { profile } from '../../../content/profile';
-import { InkSection } from '../HenryPage';
 import { SectionHeader } from './SectionHeader';
 import { useScrollProgress } from '../../../hooks/useScrollProgress';
 
@@ -63,9 +62,13 @@ function ProjectRow({ item }: { item: ProjectItem }) {
   );
 }
 
+/**
+ * Experiencia. Ya no abre banda propia: comparte la banda Paper con Habilidades
+ * (ver HenryPage), porque al disolverse «Sobre mí» quedaban dos bandas Ink seguidas.
+ */
 export function Projects() {
   return (
-    <InkSection id="proyectos">
+    <>
       <h2 className="henry-sr-only">Experiencia</h2>
       <SectionHeader word="Experiencia" variant="masthead" />
 
@@ -82,6 +85,6 @@ export function Projects() {
           </ul>
         </section>
       ))}
-    </InkSection>
+    </>
   );
 }

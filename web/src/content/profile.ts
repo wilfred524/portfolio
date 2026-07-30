@@ -43,10 +43,9 @@ export const profile = {
   location: 'Colombia',
   email: 'wilfred3019@gmail.com',
   phone: '+57 301 737 4234',
-  bio: [
-    'Soy desarrollador backend. Trabajé en GAF Solutions y en CK Comercializadora, crédito por libranza: la firma electrónica contra TransUnion, el motor de reglas que evalúa las solicitudes, el scoring que corre cada mes y la migración del sistema a una arquitectura por capas.',
-    'Lo que me engancha es siempre lo mismo: un proceso que alguien hace a mano y no debería, o un sistema desordenado que se puede dejar mejor de como lo encontré. El resto lo digo de frente — este sitio es el primer diseño propio que hago, y TypeScript y React son territorio nuevo. Preferí que se notara antes que fingir lo contrario.',
-  ],
+  /** Cierre de la página: lo único de la antigua sección «Sobre mí» que se conserva. */
+  closing:
+    'Lo que me engancha es siempre lo mismo: un proceso que alguien hace a mano y no debería, o un sistema desordenado que se puede dejar mejor de como lo encontré.',
   /** Sin niveles: el ORDEN comunica el dominio (spec Henry: énfasis por escala, no por etiqueta). */
   skillGroups: [
     {

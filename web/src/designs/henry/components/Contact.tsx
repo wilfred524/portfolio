@@ -8,6 +8,7 @@ export function Contact() {
       <h2 className="henry-sr-only">Contacto</h2>
       <SectionHeader word="Contacto" variant="serif" />
       <div className="henry-contact">
+        <p className="henry-contact__closing">{profile.closing}</p>
         <p className="henry-meta">¿Trabajamos juntos?</p>
         <a className="henry-contact__email" href={`mailto:${profile.email}`}>
           {profile.email}

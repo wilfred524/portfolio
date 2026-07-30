@@ -6,7 +6,6 @@ import { useReveal } from '../../hooks/useReveal';
 import { DesignMenu } from './components/DesignMenu';
 import { Hero } from './components/Hero';
 import { Masthead } from './components/Masthead';
-import { About } from './components/About';
 import { Projects } from './components/Projects';
 import { Skills } from './components/Skills';
 import { Contact } from './components/Contact';
@@ -21,9 +20,12 @@ export default function HenryPage() {
       </nav>
       <Hero />
       <Masthead />
-      <About />
-      <Projects />
-      <Skills />
+      {/* Experiencia y Habilidades comparten banda Paper: mantiene la alternancia
+          Paper/Ink tras disolverse «Sobre mí» y deja el cierre en negro al contacto. */}
+      <section id="proyectos" className="henry-section">
+        <Projects />
+        <Skills />
+      </section>
       <Contact />
       <footer className="henry-footer">
         <span>© 2026 {profile.name}</span>
