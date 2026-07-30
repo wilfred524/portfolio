@@ -517,81 +517,43 @@
   flex-direction: column;
 }
 
-/* Fila de proyecto. Colapsada: título CENTRADO, con el fantasma flanqueándolo a
-   izquierda y derecha (nunca detrás → jamás lo solapa). Título + fantasma se mueven
-   juntos con el scroll (--p) y se asientan. Al expandir: el fantasma desaparece, solo
-   el título se desliza a la izquierda y una barra papel (col 3) hace wipe izq→der
-   hasta el borde derecho de la fila, con contexto + descripción + tags. */
+/* Fila de proyecto, en una sola columna alineada al margen. El texto fantasma que
+   flanqueaba el título se retiró: cancelaba las dos capas —ni se leía el fondo ni el
+   título— y enterraba en decoración los datos más útiles, que ahora son metadato. */
 .henry-proj {
-  position: relative;
-  overflow: hidden;
-  padding: calc(var(--space) * 5) var(--card-padding);
+  padding: calc(var(--space) * 5) 0;
   border-top: 1px solid var(--sepia);
-  border-radius: var(--radius);
-}
-
-.henry-proj__grid {
-  display: grid;
-  grid-template-columns: 1fr auto 1fr;
-  align-items: start;
-  column-gap: calc(var(--space) * 4);
-  /* título + fantasma se mueven juntos con el scroll y se asientan en --p = 1 */
-  transform: translateX(calc((1 - var(--p, 1)) * 6%));
-  transition: grid-template-columns 0.5s cubic-bezier(0.22, 1, 0.36, 1);
-  will-change: transform;
-}
-
-.henry-proj.is-open .henry-proj__grid {
-  grid-template-columns: 0fr auto 1fr;
-}
-
-/* Fantasma que flanquea el título (mismo tamaño que el título, sobre la misma línea) */
-.henry-proj__ghost {
-  overflow: hidden;
-  opacity: 0.09;
-  pointer-events: none;
-  white-space: nowrap;
-  transition: opacity 0.4s ease;
-}
-
-.henry-proj__ghost--left {
-  grid-column: 1;
-  min-width: 0;
-  text-align: right;
-}
-
-.henry-proj__ghost--right {
-  position: absolute;
-  inset: 0;
-  display: flex;
-  align-items: center;
-}
-
-.henry-proj.is-open .henry-proj__ghost {
-  opacity: 0; /* desaparece al expandir: solo estorba la lectura */
-}
-
-.henry-proj__ghost-track {
-  font-family: var(--font-serif-display);
-  font-variation-settings: 'wght' 500, 'opsz' 144, 'SOFT' 0, 'WONK' 0;
-  font-size: clamp(1.5rem, 3vw, 2.25rem);
-  line-height: 1.05;
 }
 
 .henry-proj__toggle {
-  grid-column: 2;
-  display: inline-flex;
+  display: flex;
   align-items: baseline;
   gap: calc(var(--space) * 3);
+  width: 100%;
+  text-align: left;
   cursor: pointer;
-  white-space: nowrap;
 }
 
 .henry-proj__title {
   font-family: var(--font-serif-display);
   font-variation-settings: 'wght' 360, 'opsz' 40;
-  font-size: clamp(1.5rem, 3vw, 2.25rem);
-  line-height: 1.05;
+  font-size: clamp(1.35rem, 2.4vw, 1.85rem);
+  line-height: 1.1;
+}
+
+/* Empresa · rol · periodo. Siempre visible, aunque la fila esté cerrada: el marco
+   temporal es lo que evita que nueve meses se lean como cuatro años. */
+.henry-proj__meta {
+  margin-top: calc(var(--space) * 2);
+}
+
+/* El dato de escala que antes vivía en el fantasma, ahora legible. */
+.henry-proj__metric {
+  margin-top: calc(var(--space) * 1);
+  font-family: var(--font-serif);
+  font-variation-settings: 'wght' 400, 'opsz' 28;
+  font-size: var(--text-base);
+  line-height: 1.4;
 }
 
 /* Disparador discreto: signo +/× junto al título (no un rectángulo) */
@@ -636,45 +598,25 @@
   opacity: 0; /* + → − al abrir */
 }
 
-/* Columna 3: contiene el fantasma derecho (colapsado) y la barra (al expandir).
-   La apertura va por fila de grid (0fr → 1fr), NO por max-height: la altura sale del
+/* La apertura va por fila de grid (0fr → 1fr), NO por max-height: la altura sale del
    contenido real, así que un texto largo no puede recortarse a media línea. */
-.henry-proj__col3 {
-  grid-column: 3;
-  position: relative;
-  align-self: stretch;
-  min-width: 0;
-  overflow: hidden;
+.henry-proj__panel {
   display: grid;
   grid-template-rows: 0fr;
   transition: grid-template-rows 0.5s cubic-bezier(0.22, 1, 0.36, 1);
 }
 
-.henry-proj.is-open .henry-proj__col3 {
+.henry-proj.is-open .henry-proj__panel {
   grid-template-rows: 1fr;
 }
 
-/* Barra de descripción: llega al borde derecho de la fila; wipe izq→der (clip-path),
-   sincronizado con el deslizamiento del título. */
 .henry-proj__panel-inner {
-  width: 100%;
   min-height: 0; /* imprescindible para que la fila 0fr colapse de verdad */
   overflow: hidden;
-  background: var(--paper);
-  color: var(--ink);
-  border-radius: var(--radius);
-  padding: 0 calc(var(--space) * 5);
-  clip-path: inset(0 100% 0 0);
-  transition: padding 0.5s ease, clip-path 0.5s cubic-bezier(0.22, 1, 0.36, 1);
 }
 
 .henry-proj.is-open .henry-proj__panel-inner {
-  padding: calc(var(--space) * 4) calc(var(--space) * 5);
-  clip-path: inset(0 0 0 0);
-}
-
-.henry-proj__context {
-  margin-bottom: calc(var(--space) * 2);
+  padding-top: calc(var(--space) * 3);
 }
 
 /* Descripción en la serif editorial (design.md: "editorial copy" → serif), no la sans */
@@ -692,36 +634,9 @@
   margin-top: calc(var(--space) * 3);
 }
 
-/* Móvil: sin fantasma lateral útil; título a la izquierda y barra debajo. */
-@media (max-width: 720px) {
-  .henry-proj__grid {
-    grid-template-columns: 1fr;
-    transform: none;
-  }
-  .henry-proj.is-open .henry-proj__grid {
-    grid-template-columns: 1fr;
-  }
-  .henry-proj__ghost--left {
-    display: none;
-  }
-  .henry-proj__toggle {
-    grid-column: 1;
-  }
-  .henry-proj__col3 {
-    grid-column: 1;
-    margin-top: calc(var(--space) * 2);
-  }
-  .henry-proj__panel-inner {
-    clip-path: none;
-  }
-}
-
 @media (prefers-reduced-motion: reduce) {
-  .henry-proj__grid,
-  .henry-proj__col3,
-  .henry-proj__panel-inner {
+  .henry-proj__panel {
     transition: none;
-    transform: none;
   }
 }
 
