@@ -28,7 +28,7 @@
   --text-lg: 2rem;       /* 32px — heading */
   --headline-sm: clamp(2.25rem, 6vw, 4.8125rem);  /* 36→77px */
   --headline-lg: clamp(4rem, 11vw, 8.25rem);      /* 64→132px */
-  --hero: clamp(3.25rem, 13vw, 9.5rem);           /* nombre del hero */
+  --hero: clamp(2.75rem, 21cqw, 12rem);           /* slogan: 21% del ANCHO de su columna → siempre cabe, nunca invade la placa */
   --masthead: clamp(5rem, 26vw, 23.2rem);         /* hasta ~371px */
 
   /* --- Espaciado y forma --- */
@@ -147,21 +147,21 @@
   text-transform: uppercase;
 }
 
-/* Conector serif itálico solapado ENCIMA, centrado entre las dos palabras. Relleno
-   papel + contorno fino de tinta → legible tanto sobre las letras como sobre el papel. */
+/* Conector serif itálico solapado a la IZQUIERDA, sobre la juntura de las dos
+   palabras (encima de las letras oscuras, donde el relleno papel se lee como knockout);
+   contorno fino de tinta para que se defina también donde cruza el papel. */
 .henry-slogan__link {
   position: absolute;
   z-index: 2;
-  left: 50%;
-  top: calc(var(--hero) * 0.5);
-  transform: translate(-50%, -50%);
+  left: calc(var(--hero) * 0.08);
+  top: calc(var(--hero) * 0.6 + 6px);
   font-family: var(--font-serif-display);
   font-style: italic;
   font-variation-settings: 'wght' 400, 'opsz' 40, 'SOFT' 0;
-  font-size: calc(var(--hero) * 0.42);
+  font-size: calc(var(--hero) * 0.44);
   line-height: 1;
   color: var(--paper);
-  -webkit-text-stroke: 1.2px var(--ink);
+  -webkit-text-stroke: 1.5px var(--ink);
   paint-order: stroke fill;
 }
 
@@ -376,11 +376,16 @@
   display: flex;
   flex-direction: column;
   gap: calc(var(--space) * 8);
+  min-width: 0; /* permite que la columna encoja en el grid (evita desbordes) */
+  container-type: inline-size; /* el slogan se dimensiona respecto a ESTA columna */
 }
 
 .henry-hero__tagline {
-  max-width: 30ch;
-  color: var(--sepia);
+  max-width: 26ch;
+  color: var(--ink);
+  /* tagline de apoyo: bastante menor que un headline, para no invadir la placa */
+  font-size: clamp(1.2rem, 2.3vw, 1.8rem);
+  line-height: 1.15;
 }
 
 .henry-hero__foot {
