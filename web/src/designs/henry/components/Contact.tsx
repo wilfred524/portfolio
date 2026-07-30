@@ -15,7 +15,13 @@ export function Contact() {
         <span className="henry-meta">{profile.phone}</span>
         <div className="henry-contact__links">
           {profile.social.map((link) => (
-            <a key={link.label} href={link.url} target="_blank" rel="noreferrer">
+            <a
+              key={link.label}
+              className="henry-linkbtn"
+              href={link.url}
+              target="_blank"
+              rel="noreferrer"
+            >
               {link.label} ↗
             </a>
           ))}

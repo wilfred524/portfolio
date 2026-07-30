@@ -118,66 +118,6 @@
   font-variation-settings: 'wght' 340, 'opsz' 40, 'SOFT' 0;
 }
 
-/* Slogan del hero — estructura real del original:
-   línea 1 CONDENSADA (sans) + conector ITÁLICA SERIF anidado a la izquierda +
-   línea 2 SERIF display. El contraste vive entre las dos líneas. */
-/* Slogan como bloque de 3 líneas en flujo (una sola escala en cqw, sin solaparse
-   entre sí). IDEAS domina; PRODUCTO menor; "hechas" en el hueco, tinta oscura. */
-.henry-slogan {
-  display: flex;
-  flex-direction: column;
-  align-items: flex-start; /* IDEAS y PRODUCTO alineadas a la izquierda */
-  margin: 0;
-}
-
-.henry-slogan__start,
-.henry-slogan__end {
-  display: block;
-  line-height: 0.9;
-}
-
-.henry-slogan__start {
-  font-family: var(--font-condensed);
-  font-variation-settings: 'wght' 700;
-  font-size: clamp(5.5rem, 52cqw, 29rem);
-  line-height: 0.9;
-  text-transform: uppercase;
-  letter-spacing: 0.005em;
-  margin-left: -0.02em;
-}
-
-.henry-slogan__end {
-  font-family: var(--font-serif-display);
-  font-variation-settings: 'wght' 520, 'opsz' 144, 'SOFT' 0, 'WONK' 0;
-  font-size: clamp(2.5rem, 18cqw, 7.5rem);
-  line-height: 0.9;
-  letter-spacing: -0.02em;
-  text-transform: uppercase;
-  margin-left: 0.09em;
-  margin-top: 0.12em;
-}
-
-.henry-slogan__link {
-  position: relative;
-  z-index: 2;
-  align-self: flex-start;
-  height: 0;
-  display: flex;
-  align-items: center;
-  overflow: visible;
-  white-space: nowrap;
-  margin: 0 0 0 0.4em;
-  font-family: var(--font-serif-display);
-  font-style: italic;
-  font-variation-settings: 'wght' 480, 'opsz' 144, 'SOFT' 0, 'WONK' 1;
-  font-size: clamp(1.75rem, 15cqw, 6.3rem);
-  line-height: 1;
-  color: var(--paper);
-  -webkit-text-stroke: 2px var(--ink);
-  paint-order: stroke fill;
-  transform: translateY(8px); /* baja "hechas" unos píxeles (no afecta el layout) */
-}
-
 .henry-meta {
   font-family: var(--font-sans);
   font-size: var(--text-sm);
@@ -322,22 +262,6 @@
 }
 
 /* ------------------------------------------------------------
-   Coordinate Footer — línea meta con separadores em-dash (spec)
-   ------------------------------------------------------------ */
-
-.henry-coordline {
-  padding: calc(var(--space) * 3) var(--gutter);
-  border-bottom: 1px solid var(--hairline);
-  font-size: var(--text-xs);
-  text-transform: uppercase;
-  letter-spacing: 0.06em;
-  color: var(--ash);
-  white-space: nowrap;
-  overflow: hidden;
-  text-overflow: ellipsis;
-}
-
-/* ------------------------------------------------------------
    Inverted Editorial Letter — prosa serif centrada sobre banda ink,
    con eyebrow arriba y reflejado abajo (spec)
    ------------------------------------------------------------ */
@@ -395,12 +319,37 @@
   container-type: inline-size; /* el slogan se dimensiona respecto a ESTA columna */
 }
 
-.henry-hero__tagline {
-  max-width: 26ch;
+/* El nombre es el titular. Serif display, no Antonio: la condensada queda
+   reservada a los mastheads gigantes (spec). Se dimensiona en cqw respecto a la
+   columna de texto, así nunca invade la placa. */
+.henry-hero__name {
+  font-family: var(--font-serif-display);
+  font-variation-settings: 'wght' 520, 'opsz' 144, 'SOFT' 0, 'WONK' 0;
+  font-size: clamp(2.75rem, 12cqw, 6.5rem);
+  line-height: 0.92;
+  letter-spacing: -0.02em;
+  margin: 0;
+}
+
+.henry-hero__stack {
+  max-width: 46ch;
+  line-height: 1.5;
+}
+
+/* La frase que convierte: serif, un escalón por encima del cuerpo. */
+.henry-hero__credential {
+  max-width: 34ch;
+  font-family: var(--font-serif);
+  font-variation-settings: 'wght' 380, 'opsz' 28;
+  font-size: var(--text-md);
+  line-height: 1.35;
   color: var(--ink);
-  /* tagline de apoyo: bastante menor que un headline, para no invadir la placa */
-  font-size: clamp(1.2rem, 2.3vw, 1.8rem);
-  line-height: 1.15;
+}
+
+.henry-hero__links {
+  display: flex;
+  flex-wrap: wrap;
+  gap: calc(var(--space) * 3);
 }
 
 .henry-hero__foot {
@@ -859,19 +808,28 @@
   gap: calc(var(--space) * 3);
 }
 
-.henry-contact__links a {
+/* Botón fantasma compartido (hero y contacto): sin relleno de color ni sombra,
+   el énfasis llega por inversión al hover. Único radius del sistema. */
+.henry-linkbtn {
   font-size: var(--text-sm);
   text-decoration: none;
   padding: calc(var(--space) * 2) calc(var(--space) * 4);
   border: 1px solid var(--pebble);
   border-radius: var(--radius);
-  transition: background-color 0.2s ease, color 0.2s ease;
+  transition: background-color 0.2s ease, color 0.2s ease, border-color 0.2s ease;
 }
 
-.henry-contact__links a:hover {
+.henry-linkbtn:hover {
   background: var(--ink);
   color: var(--paper);
   border-color: var(--ink);
+}
+
+/* Sobre banda Ink la inversión va al revés: el hover llena de papel. */
+.henry-section--ink .henry-linkbtn:hover {
+  background: var(--paper);
+  color: var(--ink);
+  border-color: var(--paper);
 }
 
 .henry-footer {

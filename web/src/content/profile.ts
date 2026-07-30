@@ -31,11 +31,14 @@ export interface SkillGroup {
 
 export const profile = {
   name: 'Wilfred Morales',
-  role: 'Desarrollador Full-Stack',
-  tagline: 'Interfaces claras sobre sistemas robustos.',
-  availability: 'Disponible para nuevos proyectos — 2026',
-  ticker: 'Desarrollo full-stack · Automatización de procesos · Disponible para proyectos 2026 · Hablemos',
-  /** Slogan del hero: línea condensada + conector (itálica serif anidada) + línea serif. */
+  role: 'Desarrollador backend',
+  /** Stack de cabecera: lo que un reclutador técnico busca en los primeros dos segundos. */
+  stack: 'PHP/Laravel · PostgreSQL · seguridad de plataforma',
+  /** La credencial: sistemas en producción y en qué dominio. Es la frase que convierte. */
+  credential:
+    'Firma electrónica, motor de reglas y scoring crediticio en producción para crédito por libranza.',
+  availability: 'disponible para nuevos proyectos · 2026',
+  /** Slogan editorial: vive en la banda Ink (Masthead), no en el hero. */
   heroSlogan: { start: 'Ideas', link: 'hechas', end: 'Producto' },
   location: 'Colombia',
   email: 'wilfred3019@gmail.com',
