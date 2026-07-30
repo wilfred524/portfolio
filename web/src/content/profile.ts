@@ -24,6 +24,8 @@ export const profile = {
   tagline: 'Diseño y construyo interfaces que se sienten inevitables.',
   availability: 'Disponible para nuevos proyectos — 2026',
   ticker: 'Diseño y desarrollo full-stack · Disponible para proyectos 2026 · Hablemos',
+  /** Slogan del hero: palabra + conector (itálica serif anidada) + palabra. */
+  heroSlogan: { start: 'Diseño', link: 'y', end: 'Código' },
   location: 'Colombia',
   email: 'wilfred3019@gmail.com',
   phone: '+57 301 737 4234',
