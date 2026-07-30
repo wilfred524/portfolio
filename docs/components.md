@@ -14,6 +14,7 @@ reservada a la banda del slogan.
 | Componente | Archivo | Qué hace | Clases CSS clave |
 |---|---|---|---|
 | `HenryPage` | `HenryPage.tsx` | Ensambla la página; nav a las secciones reales | `.design-henry`, `.henry-nav`, `.henry-footer` |
+| `LangSwitch` | `components/LangSwitch.tsx` | Conmutador EN/ES en la nav. Botones, no enlaces: no hay navegación | `.henry-langswitch` |
 | `InkSection` | `components/InkSection.tsx` | Banda Ink a sangre completa (solo la usa `Contact`) | `.henry-section--ink` |
 | `Hero` | `components/Hero.tsx` | **Nombre como titular** (serif display) + rol/stack + frase de credencial + enlaces + pie con ubicación y disponibilidad, junto a la placa halftone | `.henry-hero__name`, `.henry-hero__credential`, `.henry-linkbtn`, `.henry-hero__plate` |
 | `HalftonePlate` | `components/HalftonePlate.tsx` | Canvas: dithering Bayer del grabado da Vinci, spotlight al cursor, fade izq→der. Ver [`effects.md`](effects.md) | `.henry-plate-canvas` |
@@ -25,6 +26,9 @@ reservada a la banda del slogan.
 | `Contact` | `components/Contact.tsx` | Frase de cierre + **facts de perfil** (formación, idiomas, modalidad, dominio) + email + teléfono + redes. Las facts con `value` vacío no se renderizan | `.henry-contact__closing`, `.henry-contact__facts` |
 
 Fuera del diseño no queda nada: el sitio es una sola página (ver [`architecture.md`](architecture.md)).
+
+Los componentes **no importan un perfil concreto**: llaman a `useContent()`
+(`web/src/i18n/LanguageProvider.tsx`), que devuelve el contenido del idioma activo.
 
 ## Hooks
 
