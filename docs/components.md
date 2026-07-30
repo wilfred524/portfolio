@@ -1,9 +1,9 @@
 # Mapa de componentes
 
 Todo en `web/src/designs/henry/`. La página se compone en `HenryPage.tsx`:
-nav → Hero → Masthead → **banda Paper con Projects + Skills + Profile** → Contact → footer.
+nav → Hero → Masthead → **banda Paper con Projects + Skills + Colophon** → Contact → footer.
 
-`Projects`, `Skills` y `Profile` no abren banda propia: comparten una
+`Projects`, `Skills` y `Colophon` no abren banda propia: comparten una
 `<section id="experiencia" className="henry-section">` declarada en `HenryPage`. Es lo que
 mantiene la alternancia Paper/Ink tras disolverse «Sobre mí» (ver [`effects.md`](effects.md) §1).
 
@@ -19,10 +19,10 @@ reservada a la banda del slogan.
 | `HalftonePlate` | `components/HalftonePlate.tsx` | Canvas: dithering Bayer del grabado da Vinci, spotlight al cursor, fade izq→der. Ver [`effects.md`](effects.md) | `.henry-plate-canvas` |
 | `Masthead` | `components/Masthead.tsx` | Marquee con el **slogan** (`profile.heroSlogan`, bajado desde el hero) **ligado al scroll** | `.henry-masthead`, `.henry-masthead__word--nexus` |
 | `SectionHeader` | `components/SectionHeader.tsx` | Encabezado grande: título **estático** + **regla que se extiende** al scroll (`.henry-extend`, vía `useScrollProgress`); `variant` = `serif` \| `masthead` | `.henry-sechead`, `.henry-extend` |
-| `Projects` | `components/Projects.tsx` | SectionHeader "Experiencia" + grupos por categoría. `ProjectRow` **nace abierta**; título, `empresa · rol · periodo` y métrica van fuera del panel plegable. Ver [`effects.md`](effects.md) §3c | `.henry-proj`, `.henry-proj__meta`, `.henry-proj__metric`, `.henry-tag` |
+| `Projects` | `components/Projects.tsx` | SectionHeader "Experiencia" + grupos por categoría. `ProjectRow` en **dos columnas** (meta izquierda, texto derecha) y **sin plegado**. Tres proyectos con `body` en tres partes, dos con `brief` de tres líneas. Ver [`effects.md`](effects.md) §3c | `.henry-proj`, `.henry-proj__aside`, `.henry-proj__block`, `.henry-tag` |
 | `Skills` | `components/Skills.tsx` | SectionHeader "Habilidades" + una línea por área (`<dl>`), no una fila por tecnología | `.henry-subsection`, `.henry-skills__row` |
-| `Profile` | `components/Profile.tsx` | Formación, idiomas, modalidad y contexto de dominio. Las líneas con `value` vacío no se renderizan | `.henry-skills__row`, `.henry-inline-link` |
-| `Contact` | `components/Contact.tsx` | Frase de cierre + email grande + teléfono + redes | `.henry-contact__closing`, `.henry-contact__email` |
+| `Colophon` | `components/Colophon.tsx` | «Cómo está hecho»: stack del sitio, método de trabajo con IA y enlace al repo | `.henry-colophon` |
+| `Contact` | `components/Contact.tsx` | Frase de cierre + **facts de perfil** (formación, idiomas, modalidad, dominio) + email + teléfono + redes. Las facts con `value` vacío no se renderizan | `.henry-contact__closing`, `.henry-contact__facts` |
 
 Fuera del diseño no queda nada: el sitio es una sola página (ver [`architecture.md`](architecture.md)).
 

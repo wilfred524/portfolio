@@ -37,6 +37,10 @@ así que Experiencia y Habilidades comparten ahora una sola banda Paper (separad
 `web/src/hooks/useScrollProgress.ts` escribe una variable CSS `--p` en [0, 1]:
 0 al entrar por abajo, 1 al llegar a la línea de reposo (~55% del viewport) y **se
 mantiene en 1** (el efecto se asienta y NO sigue moviéndose → nada de sobrecarga).
+El progreso **no retrocede** —conserva el máximo alcanzado— y **se completa al tocar
+fondo del documento**: un encabezado cercano al pie nunca alcanzaba la línea de reposo
+porque el scroll se agota antes, y su regla quedaba congelada a un tercio mientras las
+de arriba llegaban al borde.
 Universal (todos los navegadores); con reduced-motion deja `--p = 1`. El CSS decide
 qué hacer con `--p`:
 
@@ -70,25 +74,29 @@ a la banda Ink del `Masthead`, donde funciona como respiro editorial. Conserva e
 firma del original: extremos en romano y versales, nexo en itálica de caja baja
 (`.henry-masthead__word--nexus`).
 
-## 3c. Fila de proyecto: abierta por defecto, sin fantasma
+## 3c. Fila de proyecto: dos columnas, sin plegado
 
-Cada fila (`ProjectRow` en `Projects.tsx`) es **una sola columna alineada al margen**.
+Cada fila (`ProjectRow` en `Projects.tsx`) es un **grid de dos columnas**: la meta
+—empresa, rol, periodo, tags— a la izquierda y el texto a la derecha. Con una sola
+columna estrecha, el 60% del lienzo quedaba vacío durante toda la sección.
 
-- **Nace abierta.** El `+` no invitaba a nada: quien no hacía clic se llevaba la impresión
-  de que no había contenido. El toggle sigue (`aria-expanded`) para poder cerrar.
-- **Título, `empresa · rol · periodo` y métrica van fuera del panel plegable**, así se leen
-  siempre. El marco temporal es lo que impide que nueve meses se lean como cuatro años.
-- **El panel abre por fila de grid** (`.henry-proj__panel`, `0fr → 1fr`), no por
-  `max-height`. El `max-height: 26em` anterior recortaba la descripción de TransUnion
-  (~1.100 caracteres) a media línea en cuanto la columna bajaba de ~1000px: se leía
-  tachada, y el corte caía sobre el borde de la fila siguiente. La fila de grid saca la
-  altura del contenido real y no puede recortar.
+- **Sin acordeón.** El `+` no invitaba a nada y quien no hacía clic se llevaba la
+  impresión de que no había contenido. Con el toggle desapareció también el guion
+  suelto que quedaba colgando junto a cada título.
+- **Dos formatos.** Tres proyectos llevan `body` en tres partes rotuladas (Problema /
+  Lo difícil / Resultado) y dos llevan `brief`, un párrafo corto. Cinco tarjetas de
+  longitud idéntica se aplanaban entre sí y ninguna destacaba.
+- **El periodo va a tinta plena**, no atenuado: es dato, no decoración.
 - **El texto fantasma se retiró por completo** (12 instancias, `item.ghost` y
   `.henry-proj__ghost*`). Cancelaba las dos capas —ni se leía el fondo ni el título
-  centrado encima— y enterraba en decoración los datos más útiles, que ahora son metadato
-  legible. La marquesina «seis años, sin apagar nada» no se recuperó en ninguna forma: era
-  la antigüedad del sistema refactorizado, pero se leía como la del autor.
-- Respeta `prefers-reduced-motion` (sin transición).
+  centrado encima— y enterraba en decoración los datos más útiles. La marquesina «seis
+  años, sin apagar nada» no se recuperó: era la antigüedad del sistema refactorizado,
+  pero se leía como la del autor.
+- **Historia del panel plegable**, por si alguien lo reintroduce: abría con
+  `max-height: 26em` y `overflow: hidden`, lo que recortaba la descripción más larga
+  (~1.100 caracteres) a media línea en cuanto la columna bajaba de ~1000px. Si vuelve
+  a hacer falta plegar, la fila de grid (`0fr → 1fr`) saca la altura del contenido real
+  y no puede recortar.
 
 ## 4. Reveal tipográfico
 
