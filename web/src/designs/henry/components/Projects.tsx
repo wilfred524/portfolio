@@ -4,26 +4,38 @@ import { InkSection } from '../HenryPage';
 export function Projects() {
   return (
     <InkSection id="proyectos">
-      <p className="henry-meta">Proyectos seleccionados</p>
-      <ul className="henry-projects__list">
-        {profile.projects.map((project) => (
-          <li key={project.index} className="henry-project">
-            <span className="henry-project__index">{project.index}</span>
-            <div>
-              <h2 className="henry-project__title">{project.title}</h2>
-              <p className="henry-project__description">{project.description}</p>
-              <div className="henry-project__tags">
-                {project.tags.map((tag) => (
-                  <span key={tag} className="henry-tag">
-                    {tag}
-                  </span>
-                ))}
-              </div>
-            </div>
-            <span className="henry-meta henry-project__year">{project.year}</span>
-          </li>
-        ))}
-      </ul>
+      <h2 className="henry-sr-only">Proyectos seleccionados</h2>
+      <div className="henry-stamp" aria-hidden="true">
+        <span className="henry-stamp__word">Proyectos</span>
+        <span className="henry-stamp__rule" />
+      </div>
+
+      {profile.projectGroups.map((group) => (
+        <section key={group.category} className="henry-catgroup">
+          <div className="henry-catgroup__label">
+            <span className="henry-meta">{group.category}</span>
+            <span className="henry-catgroup__rule" />
+          </div>
+          <ul className="henry-projlist">
+            {group.items.map((item) => (
+              <li key={item.title} className="henry-proj">
+                <div className="henry-proj__top">
+                  <h3 className="henry-proj__title">{item.title}</h3>
+                  <div className="henry-proj__tags">
+                    {item.tags.map((tag) => (
+                      <span key={tag} className="henry-tag">
+                        {tag}
+                      </span>
+                    ))}
+                  </div>
+                </div>
+                <p className="henry-meta henry-proj__context">{item.context}</p>
+                <p className="henry-proj__desc">{item.description}</p>
+              </li>
+            ))}
+          </ul>
+        </section>
+      ))}
     </InkSection>
   );
 }

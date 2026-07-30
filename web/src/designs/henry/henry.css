@@ -14,35 +14,50 @@
   --pebble: #b3b3b3;
   --hairline: #eeeeee;
 
-  /* --- Tipografía --- */
-  --font-sans: 'Switzer', 'Inter', system-ui, sans-serif;
-  --font-serif-display: 'Instrument Serif', 'Georgia', serif;
-  --font-serif: 'Lora', 'Georgia', serif;
-  --font-condensed: 'Anton', 'Arial Narrow', sans-serif;
+  /* --- Tipografía (sustitutos libres cercanos a las comerciales) --- */
+  --font-sans: 'Switzer', 'Inter', system-ui, sans-serif;      /* ← Neue Montreal */
+  --font-serif-display: 'Fraunces Variable', 'Fraunces', Georgia, serif; /* ← Louize Display */
+  --font-serif: 'Fraunces Variable', Georgia, serif;           /* ← Louize (copy) */
+  --font-condensed: 'Antonio Variable', 'Antonio', 'Arial Narrow', sans-serif; /* ← Manuka */
 
-  /* Escala Minor Third (1.2) desde 20px */
-  --text-xs: 0.75rem;    /* 12px */
-  --text-sm: 0.875rem;   /* 14px */
-  --text-base: 1.25rem;  /* 20px */
-  --text-md: 1.5rem;     /* 24px */
-  --text-lg: 2rem;       /* 32px */
-  --headline-sm: clamp(2rem, 5vw, 4.8125rem);     /* 32→77px */
-  --headline-lg: clamp(3rem, 9vw, 8.25rem);       /* 48→132px */
-  --masthead: clamp(6rem, 24vw, 23.1875rem);      /* hasta 371px */
+  /* Escala tipográfica de la spec (caption→heading) */
+  --text-xs: 0.75rem;    /* 12px — caption */
+  --text-sm: 0.875rem;   /* 14px — label secundaria */
+  --text-base: 1rem;     /* 16px — body */
+  --text-md: 1.5rem;     /* 24px — heading-sm / copy */
+  --text-lg: 2rem;       /* 32px — heading */
+  --headline-sm: clamp(2.25rem, 6vw, 4.8125rem);  /* 36→77px */
+  --headline-lg: clamp(4rem, 11vw, 8.25rem);      /* 64→132px */
+  --hero: clamp(3.25rem, 13vw, 9.5rem);           /* nombre del hero */
+  --masthead: clamp(5rem, 26vw, 23.2rem);         /* hasta ~371px */
 
   /* --- Espaciado y forma --- */
   --space: 4px;
-  --section-gap: clamp(64px, 10vh, 96px);
+  --section-gap: clamp(72px, 12vh, 120px);
   --card-padding: 16px;
   --radius: 12px; /* único radio permitido por la spec */
   --gutter: clamp(16px, 4vw, 48px);
 
   font-family: var(--font-sans);
   font-size: var(--text-base);
+  font-optical-sizing: auto;
   letter-spacing: -0.01em;
   line-height: 1.5;
   background: var(--paper);
   color: var(--ink);
+}
+
+/* Solo para lectores de pantalla (encabezados que en pantalla son decorativos) */
+.henry-sr-only {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+  border: 0;
 }
 
 /* ------------------------------------------------------------
@@ -73,27 +88,38 @@
    Tipografía
    ------------------------------------------------------------ */
 
+/* Alto contraste grueso/fino: eje opsz al máximo + peso medio (esto es
+   lo que da el aire de "broadside tallado" que perdíamos con Instrument Serif) */
 .henry-display {
   font-family: var(--font-serif-display);
   font-weight: 400;
-  font-size: var(--headline-lg);
-  line-height: 0.9;
+  font-variation-settings: 'wght' 340, 'opsz' 144, 'SOFT' 0;
+  font-size: var(--hero);
+  line-height: 0.85;
   letter-spacing: -0.02em;
-  text-wrap: balance;
 }
 
 .henry-headline {
   font-family: var(--font-serif-display);
   font-weight: 400;
+  font-variation-settings: 'wght' 360, 'opsz' 144, 'SOFT' 0;
   font-size: var(--headline-sm);
-  line-height: 1;
-  text-wrap: balance;
+  line-height: 0.95;
+  letter-spacing: -0.015em;
 }
 
 .henry-serif {
   font-family: var(--font-serif);
+  font-variation-settings: 'wght' 380, 'opsz' 28;
   font-size: var(--text-md);
-  line-height: 1.55;
+  line-height: 1.45;
+}
+
+/* Palabra en itálica embebida dentro de un titular romano (gesto de firma) */
+.henry-display em,
+.henry-headline em {
+  font-style: italic;
+  font-variation-settings: 'wght' 340, 'opsz' 40, 'SOFT' 0;
 }
 
 .henry-meta {
@@ -157,19 +183,91 @@
 }
 
 /* ------------------------------------------------------------
+   Top Ticker Banner — franja de anuncio a sangre completa (spec)
+   ------------------------------------------------------------ */
+
+.henry-ticker {
+  padding: calc(var(--space) * 1.5) var(--gutter);
+  border-top: 1px solid var(--ink);
+  border-bottom: 1px solid var(--ink);
+  font-size: var(--text-xs);
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  text-align: center;
+}
+
+/* ------------------------------------------------------------
+   Coordinate Footer — línea meta con separadores em-dash (spec)
+   ------------------------------------------------------------ */
+
+.henry-coordline {
+  padding: calc(var(--space) * 3) var(--gutter);
+  border-bottom: 1px solid var(--hairline);
+  font-size: var(--text-xs);
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  color: var(--ash);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+/* ------------------------------------------------------------
+   Inverted Editorial Letter — prosa serif centrada sobre banda ink,
+   con eyebrow arriba y reflejado abajo (spec)
+   ------------------------------------------------------------ */
+
+.henry-letter {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: calc(var(--space) * 10);
+  max-width: 62ch;
+  margin: 0 auto;
+  text-align: center;
+}
+
+.henry-letter__body {
+  display: flex;
+  flex-direction: column;
+  gap: calc(var(--space) * 5);
+}
+
+.henry-letter__body .henry-serif {
+  font-size: var(--text-lg);
+  line-height: 1.35;
+}
+
+.henry-letter__eyebrow {
+  opacity: 0.6;
+}
+
+.henry-letter__eyebrow--flip {
+  transform: rotate(180deg);
+}
+
+/* ------------------------------------------------------------
    Hero
    ------------------------------------------------------------ */
 
+/* Composición partida: titular a la izquierda, placa halftone a la derecha */
 .henry-hero {
+  display: grid;
+  grid-template-columns: 1.15fr 0.9fr;
+  align-items: center;
+  gap: calc(var(--space) * 4);
+  min-height: 82dvh;
+  padding-right: 0; /* la placa sangra hasta el borde derecho de la página */
+}
+
+.henry-hero__left {
   display: flex;
   flex-direction: column;
   gap: calc(var(--space) * 8);
-  min-height: 72dvh;
-  justify-content: center;
 }
 
 .henry-hero__tagline {
-  max-width: 34ch;
+  max-width: 30ch;
   color: var(--sepia);
 }
 
@@ -178,6 +276,50 @@
   justify-content: space-between;
   gap: calc(var(--space) * 4);
   flex-wrap: wrap;
+  margin-top: calc(var(--space) * 6);
+}
+
+/* Placa halftone: canvas generado por código (ver HalftonePlate.tsx).
+   Sin borde ni fondo: se funde con el papel de la página (el dither se desvanece
+   a papel en los bordes y de izquierda a derecha, así no parece un recuadro). */
+.henry-hero__plate {
+  aspect-ratio: 1 / 1;
+  width: auto;
+  align-self: center;
+  /* Se extiende sobre la columna de texto por la izquierda para que el degradado
+     tenga recorrido; el borde izquierdo es casi papel, así que no tapa el texto. */
+  margin-left: -8%;
+}
+
+@media (max-width: 860px) {
+  .henry-hero {
+    padding-right: var(--gutter);
+  }
+
+  .henry-hero__plate {
+    aspect-ratio: 224 / 200;
+    width: 100%;
+    margin-left: 0;
+  }
+}
+
+.henry-plate-canvas {
+  display: block;
+  width: 100%;
+  height: 100%;
+  image-rendering: pixelated; /* mantiene los puntos del dither crujientes al escalar */
+}
+
+@media (max-width: 860px) {
+  .henry-hero {
+    grid-template-columns: 1fr;
+    gap: calc(var(--space) * 8);
+    min-height: auto;
+  }
+
+  .henry-hero__plate {
+    max-width: 320px;
+  }
 }
 
 /* ------------------------------------------------------------
@@ -196,13 +338,13 @@
 }
 
 .henry-masthead__word {
-  font-family: var(--font-condensed);
+  font-family: var(--font-serif-display);
+  font-variation-settings: 'wght' 340, 'opsz' 144;
   font-weight: 400;
-  font-size: var(--masthead);
-  line-height: 0.85;
-  text-transform: uppercase;
-  letter-spacing: 0.01em;
-  padding-right: 0.35em;
+  font-size: clamp(2.5rem, 7vw, 6rem);
+  line-height: 1;
+  letter-spacing: -0.01em;
+  padding-right: 0.3em;
 }
 
 @keyframes henry-marquee {
@@ -218,89 +360,128 @@
 }
 
 /* ------------------------------------------------------------
-   Sobre mí — copy editorial a dos columnas
+   Cabecera de sección estampada (componente "Stamped Display Section
+   Header" de la spec): palabra masiva condensada + regla al borde
    ------------------------------------------------------------ */
 
-.henry-about {
-  display: grid;
-  grid-template-columns: 1fr 2fr;
-  gap: calc(var(--space) * 12);
-  padding-top: calc(var(--space) * 8);
-}
-
-.henry-about__copy {
+.henry-stamp {
   display: flex;
-  flex-direction: column;
+  align-items: center;
   gap: calc(var(--space) * 6);
-  max-width: 58ch;
+  margin-bottom: calc(var(--space) * 12);
 }
 
-@media (max-width: 720px) {
-  .henry-about {
-    grid-template-columns: 1fr;
-    gap: calc(var(--space) * 6);
-  }
+.henry-stamp__word {
+  font-family: var(--font-condensed);
+  font-weight: 400;
+  font-variation-settings: 'wght' 600;
+  font-size: clamp(4rem, 16vw, 14rem);
+  line-height: 0.75;
+  text-transform: uppercase;
+  letter-spacing: 0.005em;
+  white-space: nowrap;
+}
+
+.henry-stamp__rule {
+  flex: 1;
+  height: 1px;
+  background: currentColor;
+  opacity: 0.5;
 }
 
 /* ------------------------------------------------------------
    Proyectos — tarjetas austeras, hover de inversión
    ------------------------------------------------------------ */
 
-.henry-projects__list {
+/* Grupo por categoría: label + regla, y su lista de filas compactas */
+.henry-catgroup {
+  margin-top: calc(var(--space) * 12);
+}
+
+.henry-catgroup:first-of-type {
+  margin-top: 0;
+}
+
+.henry-catgroup__label {
+  display: flex;
+  align-items: center;
+  gap: calc(var(--space) * 4);
+  margin-bottom: calc(var(--space) * 2);
+}
+
+.henry-catgroup__rule {
+  flex: 1;
+  height: 1px;
+  background: currentColor;
+  opacity: 0.3;
+}
+
+.henry-projlist {
   list-style: none;
   padding: 0;
   display: flex;
   flex-direction: column;
 }
 
-.henry-project {
-  display: grid;
-  grid-template-columns: auto 1fr auto;
-  gap: calc(var(--space) * 6);
-  align-items: baseline;
-  padding: calc(var(--card-padding) * 2) var(--card-padding);
+/* Fila compacta de proyecto, con hover de inversión papel↔tinta */
+.henry-proj {
+  display: flex;
+  flex-direction: column;
+  gap: calc(var(--space) * 1);
+  padding: calc(var(--space) * 4) var(--card-padding);
   border-top: 1px solid var(--sepia);
   border-radius: var(--radius);
   transition: background-color 0.2s ease, color 0.2s ease;
 }
 
-.henry-project:hover {
+.henry-proj:hover {
   background: var(--paper);
   color: var(--ink);
 }
 
-.henry-project:hover .henry-meta {
+.henry-proj:hover .henry-meta {
   color: var(--ash);
 }
 
-.henry-project__index {
-  font-family: var(--font-serif);
-  font-size: var(--text-base);
-  color: var(--midstone);
+.henry-proj__top {
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
+  gap: calc(var(--space) * 4);
+  flex-wrap: wrap;
 }
 
-.henry-project__title {
+.henry-proj__title {
   font-family: var(--font-serif-display);
-  font-size: var(--headline-sm);
-  line-height: 1;
+  font-variation-settings: 'wght' 360, 'opsz' 40;
+  font-size: clamp(1.25rem, 2.5vw, 1.75rem);
+  line-height: 1.05;
 }
 
-.henry-project__description {
+.henry-proj__context {
+  margin-top: calc(var(--space) * 1);
+}
+
+.henry-proj__desc {
   font-size: var(--text-sm);
-  max-width: 52ch;
-  margin-top: calc(var(--space) * 3);
+  line-height: 1.45;
+  max-width: 68ch;
+  margin-top: calc(var(--space) * 2);
   color: var(--pebble);
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
 }
 
-.henry-project:hover .henry-project__description {
+.henry-proj:hover .henry-proj__desc {
   color: var(--ash);
 }
 
-.henry-project__tags {
+.henry-proj__tags {
   display: flex;
   flex-wrap: wrap;
   gap: calc(var(--space) * 2);
-  margin-top: calc(var(--space) * 4);
 }
 
 .henry-tag {
@@ -311,16 +492,7 @@
   border: 1px solid currentColor;
   border-radius: var(--radius);
   opacity: 0.7;
-}
-
-@media (max-width: 720px) {
-  .henry-project {
-    grid-template-columns: auto 1fr;
-  }
-
-  .henry-project__year {
-    grid-column: 2;
-  }
+  white-space: nowrap;
 }
 
 /* ------------------------------------------------------------
@@ -360,7 +532,8 @@
 
 .henry-contact__email {
   font-family: var(--font-serif-display);
-  font-size: var(--headline-lg);
+  font-variation-settings: 'wght' 360, 'opsz' 144;
+  font-size: clamp(1.5rem, 4.5vw, 3rem);
   line-height: 1;
   text-decoration: underline;
   text-decoration-thickness: 2px;
@@ -403,4 +576,20 @@
   border-top: 1px solid var(--hairline);
   font-size: var(--text-xs);
   color: var(--midstone);
+}
+
+.henry-credit {
+  max-width: 60ch;
+  text-align: right;
+}
+
+.henry-credit a {
+  color: var(--ash);
+  text-decoration: underline;
+  text-underline-offset: 0.15em;
+  transition: color 0.2s ease;
+}
+
+.henry-credit a:hover {
+  color: var(--ink);
 }

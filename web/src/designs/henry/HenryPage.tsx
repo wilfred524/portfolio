@@ -1,7 +1,6 @@
 import './henry.css';
-import '@fontsource/instrument-serif';
-import '@fontsource/lora';
-import '@fontsource/anton';
+import '@fontsource-variable/fraunces';
+import '@fontsource-variable/antonio';
 import { profile } from '../../content/profile';
 import { useReveal } from '../../hooks/useReveal';
 import { Hero } from './components/Hero';
@@ -14,12 +13,16 @@ import { Contact } from './components/Contact';
 export default function HenryPage() {
   return (
     <div className="design-henry">
+      <div className="henry-ticker">{profile.ticker}</div>
       <nav className="henry-nav">
         <span>{profile.name}</span>
         <span className="henry-meta">{profile.location}</span>
         <a href="#contacto">Contacto</a>
       </nav>
       <Hero />
+      <div className="henry-coordline">
+        {`${profile.location} — ${profile.role} — ${profile.availability}`}
+      </div>
       <Masthead />
       <About />
       <Projects />
@@ -27,7 +30,21 @@ export default function HenryPage() {
       <Contact />
       <footer className="henry-footer">
         <span>© 2026 {profile.name}</span>
-        <span>Diseño: sistema Henry — colección de diseños</span>
+        <span className="henry-credit">
+          Interpretación del sistema de diseño{' '}
+          <a href="https://henry.codes" target="_blank" rel="noreferrer">
+            «Henry» de Henry Desroches
+          </a>
+          , catalogado en{' '}
+          <a
+            href="https://styles.refero.design/style/ff4b9eff-dc0b-4886-bd65-c2f5e9069318"
+            target="_blank"
+            rel="noreferrer"
+          >
+            refero.design
+          </a>
+          . Reconstruido en React; contenido y código propios.
+        </span>
       </footer>
     </div>
   );

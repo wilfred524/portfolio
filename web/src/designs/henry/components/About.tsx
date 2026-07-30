@@ -1,22 +1,22 @@
 import { profile } from '../../../content/profile';
-import { useReveal } from '../../../hooks/useReveal';
+import { InkSection } from '../HenryPage';
 
 export function About() {
-  const ref = useReveal<HTMLDivElement>(0.2);
-
   return (
-    <section className="henry-section">
-      <hr className="henry-hairline" />
-      <div className="henry-about">
-        <p className="henry-meta">Sobre mí</p>
-        <div ref={ref} className="henry-about__copy henry-reveal">
+    <InkSection>
+      <div className="henry-letter">
+        <p className="henry-meta henry-letter__eyebrow">Una breve carta</p>
+        <div className="henry-letter__body">
           {profile.bio.map((paragraph) => (
             <p key={paragraph.slice(0, 24)} className="henry-serif">
               {paragraph}
             </p>
           ))}
         </div>
+        <p className="henry-meta henry-letter__eyebrow henry-letter__eyebrow--flip">
+          Una breve carta
+        </p>
       </div>
-    </section>
+    </InkSection>
   );
 }

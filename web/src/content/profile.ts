@@ -4,13 +4,18 @@
  * ningún componente tiene textos hardcodeados.
  */
 
-export interface Project {
-  index: string;
+export interface ProjectItem {
   title: string;
+  /** Cliente o contexto del proyecto (GAF Solutions, n8n + Telegram API…). */
+  context: string;
   description: string;
   tags: string[];
-  year: string;
   url?: string;
+}
+
+export interface ProjectGroup {
+  category: string;
+  items: ProjectItem[];
 }
 
 export const profile = {
@@ -18,49 +23,99 @@ export const profile = {
   role: 'Desarrollador Full-Stack',
   tagline: 'Diseño y construyo interfaces que se sienten inevitables.',
   availability: 'Disponible para nuevos proyectos — 2026',
-  location: 'República Dominicana',
-  email: 'hola@ejemplo.com',
+  ticker: 'Diseño y desarrollo full-stack · Disponible para proyectos 2026 · Hablemos',
+  location: 'Colombia',
+  email: 'wilfred3019@gmail.com',
+  phone: '+57 301 737 4234',
   bio: [
     'Trabajo en la intersección entre diseño y código: interfaces con intención tipográfica, sistemas de diseño rigurosos y el detalle técnico para que todo se mueva a 60fps.',
     'Mi stack de cabecera es TypeScript de punta a punta — React en el navegador, Node en el servidor — con una obsesión particular por la automatización y el video programático.',
   ],
   skills: [
-    { name: 'TypeScript / Node.js', level: 'Avanzado' },
-    { name: 'React / Vite', level: 'Avanzado' },
-    { name: 'CSS / Sistemas de diseño', level: 'Avanzado' },
-    { name: 'Remotion / Video programático', level: 'Intermedio' },
-    { name: 'Automatización (n8n, bots)', level: 'Intermedio' },
-    { name: 'SQL / Postgres / SQLite', level: 'Intermedio' },
+    { name: 'Laravel / PHP', level: 'Avanzado' },
+    { name: 'Vue.js / Frontend', level: 'Avanzado' },
+    { name: 'Node.js / TypeScript', level: 'Avanzado' },
+    { name: 'n8n / Automatización', level: 'Avanzado' },
+    { name: 'LLMs — OpenAI / LangChain', level: 'Intermedio' },
+    { name: 'PostgreSQL / SQL', level: 'Avanzado' },
+    { name: 'Arquitectura Hexagonal / DDD', level: 'Intermedio' },
+    { name: 'Docker / GCP / Nginx', level: 'Intermedio' },
   ],
-  projects: [
+  projectGroups: [
     {
-      index: '01',
-      title: 'ViralFarm',
-      description:
-        'Pipeline automatizado de edición y publicación de video para redes sociales: transcripción, guion con LLM, TTS y montaje programático con Remotion y ffmpeg.',
-      tags: ['Node.js', 'TypeScript', 'Remotion', 'ffmpeg', 'n8n'],
-      year: '2026',
+      category: 'Automatización de Procesos & Flujos con IA',
+      items: [
+        {
+          title: 'Bot Conversacional para Telegram',
+          context: 'n8n + Telegram API',
+          description:
+            'Respuestas automatizadas en tiempo real: procesa comandos, consulta datos y devuelve información mediante nodos en n8n.',
+          tags: ['n8n', 'Telegram API', 'Webhooks'],
+        },
+        {
+          title: 'Generador Automático de Contenido',
+          context: 'AI Pipeline',
+          description:
+            'Flujo que ingesta prompts, genera copys estructurados con LLMs (OpenAI / LangChain) y prepara publicaciones sin intervención manual.',
+          tags: ['OpenAI API', 'LangChain', 'LLMs'],
+        },
+        {
+          title: 'Motor de Cálculo e Ingesta de Score Crediticio',
+          context: 'GAF Solutions',
+          description:
+            'Automatización del backend para evaluar información financiera, calcular el riesgo crediticio e ingestar los datos validados en PostgreSQL.',
+          tags: ['PostgreSQL', 'Backend', 'Scoring'],
+        },
+      ],
     },
     {
-      index: '02',
-      title: 'Motor de video programático',
-      description:
-        'Sistema de composición de video vertical 1080×1920 con análisis de escenas por visión LLM, transiciones sincronizadas a audio y render local optimizado.',
-      tags: ['Remotion', 'React', 'Visión LLM'],
-      year: '2025',
+      category: 'Desarrollo Backend & Arquitectura de Software',
+      items: [
+        {
+          title: 'Refactorización a Arquitectura Hexagonal',
+          context: 'GAF Solutions',
+          description:
+            'Migración de código legacy hacia una arquitectura desacoplada que independiza la lógica de negocio del framework y escala el sistema.',
+          tags: ['Arquitectura Hexagonal', 'Laravel', 'Refactor'],
+        },
+        {
+          title: 'Auditoría y Trazabilidad de Eventos',
+          context: 'GAF Solutions',
+          description:
+            'Implementación de Spatie Activitylog en Laravel para el registro detallado y el rastreo de acciones críticas.',
+          tags: ['Laravel', 'Spatie Activitylog', 'Auditoría'],
+        },
+        {
+          title: 'Seguridad y Anti-Bot',
+          context: 'CK Comercializadora',
+          description:
+            'Integración de Cloudflare Turnstile en frontend (Vue.js) y validación en backend, resolviendo problemas de contenido mixto en producción.',
+          tags: ['Vue.js', 'Cloudflare Turnstile', 'Seguridad'],
+        },
+        {
+          title: 'Este portafolio',
+          context: 'Proyecto propio',
+          description:
+            'Monorepo TypeScript con frontend y backend desacoplados (React + Vite / Express), tipos compartidos y una placa halftone generada por código (dithering Bayer en canvas).',
+          tags: ['React', 'Vite', 'Express', 'TypeScript', 'Canvas'],
+        },
+      ],
     },
     {
-      index: '03',
-      title: 'Colección de diseños',
-      description:
-        'Este mismo sitio: una colección creciente de sistemas de diseño implementados con fidelidad — cada uno con su spec, sus tokens y sus interacciones propias.',
-      tags: ['React', 'Vite', 'Express', 'CSS puro'],
-      year: '2026',
+      category: 'Despliegue & Administración de Infraestructura',
+      items: [
+        {
+          title: 'Servidores en Google Cloud Platform',
+          context: 'Infraestructura',
+          description:
+            'Configuración, despliegue y mantenimiento de infraestructura con servidores Linux, contenedores Docker y proxies inversos en Nginx.',
+          tags: ['GCP', 'Docker', 'Nginx', 'Linux'],
+        },
+      ],
     },
-  ] satisfies Project[],
+  ] satisfies ProjectGroup[],
   social: [
-    { label: 'GitHub', url: 'https://github.com/usuario' },
-    { label: 'LinkedIn', url: 'https://linkedin.com/in/usuario' },
-    { label: 'X / Twitter', url: 'https://x.com/usuario' },
+    { label: 'GitHub', url: 'https://github.com/wilfred524' },
+    { label: 'LinkedIn', url: 'https://www.linkedin.com/in/wilfred-morales-3220b2126' },
   ],
 };

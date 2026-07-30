@@ -10,7 +10,11 @@
   ],
   "scripts": {
     "dev": "concurrently -n api,web -c yellow,cyan \"npm run dev -w @portfolio/api\" \"npm run dev -w @portfolio/web\"",
-    "build": "npm run build -w @portfolio/api && npm run build -w @portfolio/web"
+    "build": "npm run build -w @portfolio/api && npm run build -w @portfolio/web",
+    "build:web": "npm run build -w @portfolio/web"
+  },
+  "engines": {
+    "node": "22.x"
   },
   "devDependencies": {
     "concurrently": "^9.1.2"
