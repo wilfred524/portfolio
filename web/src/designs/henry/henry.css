@@ -562,8 +562,18 @@
   padding-top: calc(var(--space) * 3);
 }
 
+/* Tres bloques rotulados en vez de un solo párrafo largo, que se leía como muro. */
+.henry-proj__block + .henry-proj__block {
+  margin-top: calc(var(--space) * 4);
+}
+
+.henry-proj__block-label {
+  margin-bottom: calc(var(--space) * 1);
+}
+
 /* Descripción en la serif editorial (design.md: "editorial copy" → serif), no la sans */
 .henry-proj__desc {
+  max-width: 68ch; /* medida de lectura: el ancho completo daba renglones interminables */
   font-family: var(--font-serif);
   font-variation-settings: 'wght' 380, 'opsz' 28;
   font-size: var(--text-base);

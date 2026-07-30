@@ -3,6 +3,13 @@ import type { ProjectItem } from '../../../content/profile';
 import { profile } from '../../../content/profile';
 import { SectionHeader } from './SectionHeader';
 
+/** El bloque del medio es el que contrata: ahí va el criterio, no la ejecución. */
+const BLOCKS = [
+  { key: 'problem', label: 'Problema' },
+  { key: 'hard', label: 'Lo difícil' },
+  { key: 'result', label: 'Resultado' },
+] as const;
+
 /**
  * Fila de proyecto. Abierta por defecto: el "+" no invitaba a nada y quien no hacía
  * clic se llevaba la impresión de que no había contenido. El toggle sigue ahí para
@@ -33,7 +40,12 @@ function ProjectRow({ item }: { item: ProjectItem }) {
 
       <div className="henry-proj__panel">
         <div className="henry-proj__panel-inner">
-          <p className="henry-proj__desc">{item.description}</p>
+          {BLOCKS.map(({ key, label }) => (
+            <div key={key} className="henry-proj__block">
+              <p className="henry-meta henry-proj__block-label">{label}</p>
+              <p className="henry-proj__desc">{item.body[key]}</p>
+            </div>
+          ))}
           <div className="henry-proj__tags">
             {item.tags.map((tag) => (
               <span key={tag} className="henry-tag">
