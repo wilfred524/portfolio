@@ -1,5 +1,5 @@
 import { profile } from '../../../content/profile';
-import { InkSection } from '../HenryPage';
+import { InkSection } from './InkSection';
 import { SectionHeader } from './SectionHeader';
 
 export function Contact() {
