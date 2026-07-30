@@ -430,7 +430,15 @@
   font-size: clamp(2.5rem, 7vw, 6rem);
   line-height: 1;
   letter-spacing: -0.01em;
+  text-transform: uppercase;
   padding-right: 0.3em;
+}
+
+/* El nexo del slogan conserva la itálica en caja baja del original. */
+.henry-masthead__word--nexus {
+  font-style: italic;
+  font-variation-settings: 'wght' 380, 'opsz' 144, 'SOFT' 0, 'WONK' 1;
+  text-transform: none;
 }
 
 @keyframes henry-masthead-scroll {
