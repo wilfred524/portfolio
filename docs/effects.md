@@ -8,8 +8,8 @@ El sistema alterna bandas Paper e Ink a sangre completa (spec: *"never gradient-
 between them"*). Las secciones Ink (`.henry-section--ink`) son **ink de principio a fin,
 sin transición de color** — una inversión animada pasaría por grises/marrones y va contra
 la spec. Ritmo actual (paper/ink alternados para no cansar):
-Hero (paper) → Masthead (ink) → **Experiencia + Habilidades + Perfil (paper)** →
-Contacto (ink) → footer (paper).
+Hero (paper) → Masthead (ink) → **Experiencia + Habilidades + Cómo está hecho (paper)** →
+Contacto, con los datos de perfil dentro (ink) → footer (paper).
 
 Al disolverse «Sobre mí» desaparecía la única banda Paper entre Masthead y Experiencia,
 así que Experiencia y Habilidades comparten ahora una sola banda Paper (separadas por
