@@ -636,32 +636,39 @@
   opacity: 0; /* + → − al abrir */
 }
 
-/* Columna 3: contiene el fantasma derecho (colapsado) y la barra (al expandir). */
+/* Columna 3: contiene el fantasma derecho (colapsado) y la barra (al expandir).
+   La apertura va por fila de grid (0fr → 1fr), NO por max-height: la altura sale del
+   contenido real, así que un texto largo no puede recortarse a media línea. */
 .henry-proj__col3 {
   grid-column: 3;
   position: relative;
   align-self: stretch;
   min-width: 0;
   overflow: hidden;
+  display: grid;
+  grid-template-rows: 0fr;
+  transition: grid-template-rows 0.5s cubic-bezier(0.22, 1, 0.36, 1);
 }
 
-/* Barra de descripción: llega al borde derecho de la fila; wipe izq→der (clip-path)
-   + crecimiento de altura, sincronizado con el deslizamiento del título. */
+.henry-proj.is-open .henry-proj__col3 {
+  grid-template-rows: 1fr;
+}
+
+/* Barra de descripción: llega al borde derecho de la fila; wipe izq→der (clip-path),
+   sincronizado con el deslizamiento del título. */
 .henry-proj__panel-inner {
   width: 100%;
-  max-height: 0;
+  min-height: 0; /* imprescindible para que la fila 0fr colapse de verdad */
   overflow: hidden;
   background: var(--paper);
   color: var(--ink);
   border-radius: var(--radius);
   padding: 0 calc(var(--space) * 5);
   clip-path: inset(0 100% 0 0);
-  transition: max-height 0.5s cubic-bezier(0.22, 1, 0.36, 1),
-    padding 0.5s ease, clip-path 0.5s cubic-bezier(0.22, 1, 0.36, 1);
+  transition: padding 0.5s ease, clip-path 0.5s cubic-bezier(0.22, 1, 0.36, 1);
 }
 
 .henry-proj.is-open .henry-proj__panel-inner {
-  max-height: 26em;
   padding: calc(var(--space) * 4) calc(var(--space) * 5);
   clip-path: inset(0 0 0 0);
 }
@@ -711,6 +718,7 @@
 
 @media (prefers-reduced-motion: reduce) {
   .henry-proj__grid,
+  .henry-proj__col3,
   .henry-proj__panel-inner {
     transition: none;
     transform: none;
