@@ -23,22 +23,20 @@ Repo: https://github.com/wilfred524/portfolio (público, remoto SSH).
 ## Estructura de `web/src`
 
 ```
-main.tsx / App.tsx        Router (react-router-dom v7) + rutas
+main.tsx / App.tsx        monta HenryPage; sin router
 lib/api.ts                cliente HTTP tipado (único punto de contacto con /api)
-content/profile.ts        TODO el contenido (nombre, bio, skills, proyectos, contacto)
-hooks/                    useReveal.ts, useScrollSlide.ts
-components/               DesignSwitcher.tsx (selector flotante de diseños)
+content/profile.ts        TODO el contenido (hero, facts, skills, proyectos, contacto)
+hooks/                    useReveal.ts, useScrollProgress.ts, useScrollSlide.ts
 styles/global.css         reset + @font-face de Switzer
-designs/registry.ts       registro de diseños (slug, nombre, componente lazy)
 designs/henry/            el diseño Henry (design.md, henry.css, HenryPage.tsx, components/)
-pages/GalleryPage.tsx     índice /disenos
 ```
 
 ## Rutas
 
-- `/` → `HenryPage` (presentación principal).
-- `/disenos` → galería de la colección.
-- `/disenos/:slug` → diseño lazy por slug (hoy solo `henry`, que redirige a `/`).
+**Ninguna: el sitio es una sola página.** La colección de diseños (`/disenos`,
+`GalleryPage`, `designs/registry.ts`, `DesignMenu`) se retiró — varias páginas diluían el
+mensaje y sembraban la duda de si el autor es diseñador o backend. Con ella salió
+`react-router-dom`, y el bundle bajó de 252 kB a 208 kB.
 
 ## Comandos
 

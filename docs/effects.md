@@ -8,8 +8,8 @@ El sistema alterna bandas Paper e Ink a sangre completa (spec: *"never gradient-
 between them"*). Las secciones Ink (`.henry-section--ink`) son **ink de principio a fin,
 sin transición de color** — una inversión animada pasaría por grises/marrones y va contra
 la spec. Ritmo actual (paper/ink alternados para no cansar):
-Hero (paper) → Masthead (ink) → **Experiencia + Habilidades (paper)** → Contacto (ink)
-→ footer (paper).
+Hero (paper) → Masthead (ink) → **Experiencia + Habilidades + Perfil (paper)** →
+Contacto (ink) → footer (paper).
 
 Al disolverse «Sobre mí» desaparecía la única banda Paper entre Masthead y Experiencia,
 así que Experiencia y Habilidades comparten ahora una sola banda Paper (separadas por
@@ -44,10 +44,6 @@ qué hacer con `--p`:
   estático en su sitio; la regla crece con `transform: scaleX(var(--p))` (origen
   izquierdo) hasta llenar el borde y se detiene. Es lo que pide el design.md
   ("trailing rule extending to the right edge").
-- **Texto fantasma que se centra** (`.henry-proj__ghost`): el **descriptor** del proyecto
-  (`item.ghost`) repetido en la **misma serif** que el título, desplazado
-  `translateX(calc((1 - var(--p)) * -18%))` → empieza corrido y se centra en foco. El
-  **título de la fila también se mueve** (`.henry-proj__head` translateX por `--p`).
 
 El **masthead** lleva un **parallax corto** (±6%) ligado al scroll: `useScrollSlide.ts`
 (`--slide` en [-1,1]) + CSS scroll-driven nativo donde se soporta
@@ -65,29 +61,33 @@ El titular del hero es ahora **el nombre**, en serif display dimensionada en `cq
 a su columna (`.henry-hero__name`) — Antonio queda reservada a los mastheads gigantes que
 manda la spec. Debajo: rol + stack (`.henry-meta`), la frase de credencial en serif a 24px
 (`.henry-hero__credential`), los enlaces como botones fantasma (`.henry-linkbtn`) y el pie
-con ubicación y disponibilidad. La placa halftone no cambió.
+con la búsqueda declarada y la **línea de trayectoria** (`profile.trajectory`), que sitúa
+el marco temporal dentro del primer viewport. La placa halftone tiene altura propia
+—`clamp(320px, 64dvh, 620px)`— en vez de heredarla del texto, que la dejaba diminuta.
 
 El **slogan** (`profile.heroSlogan { start, link, end }` → Ideas / hechas / Producto) bajó
 a la banda Ink del `Masthead`, donde funciona como respiro editorial. Conserva el gesto de
 firma del original: extremos en romano y versales, nexo en itálica de caja baja
 (`.henry-masthead__word--nexus`).
 
-## 3c. Fila de proyecto: centrada → expandir (título a la izq + barra wipe)
+## 3c. Fila de proyecto: abierta por defecto, sin fantasma
 
-Cada fila (`ProjectRow` en `Projects.tsx`) usa un **grid `1fr auto 1fr`**:
-- **Colapsada**: título **centrado** (col 2) con el **fantasma flanqueándolo** — descriptor
-  repetido (misma serif, mismo tamaño) en la col 1 (`--left`, alineado a la derecha) y en
-  la col 3 (`--right`, absoluto). El fantasma **nunca va detrás del título** (jamás lo
-  solapa). Título + fantasma **se mueven juntos** con el scroll: el grid lleva
-  `translateX(calc((1 - var(--p)) * 6%))` y se asienta en `--p = 1`.
-- **La primera fila abre por defecto** (prop `defaultOpen`): quien escanea sin hacer clic
-  lee al menos un proyecto entero. Las demás siguen cerradas, que es donde el fantasma se ve.
-- **Al expandir** (`useState`, `aria-expanded`): el grid pasa a `0fr auto 1fr` → **solo el
-  título se desliza a la izquierda**; el **fantasma desaparece** (`opacity: 0`, estorba la
-  lectura); y en la col 3 la **barra** (`.henry-proj__panel-inner`, fondo `--paper`) crece
-  (`max-height`) y hace **wipe izquierda→derecha** (`clip-path`), **llegando al borde
-  derecho** de la fila, con **contexto + descripción + tags** dentro. Todo 0.5s mismo easing.
-- En ≤720px: sin fantasma lateral; título arriba y barra debajo.
+Cada fila (`ProjectRow` en `Projects.tsx`) es **una sola columna alineada al margen**.
+
+- **Nace abierta.** El `+` no invitaba a nada: quien no hacía clic se llevaba la impresión
+  de que no había contenido. El toggle sigue (`aria-expanded`) para poder cerrar.
+- **Título, `empresa · rol · periodo` y métrica van fuera del panel plegable**, así se leen
+  siempre. El marco temporal es lo que impide que nueve meses se lean como cuatro años.
+- **El panel abre por fila de grid** (`.henry-proj__panel`, `0fr → 1fr`), no por
+  `max-height`. El `max-height: 26em` anterior recortaba la descripción de TransUnion
+  (~1.100 caracteres) a media línea en cuanto la columna bajaba de ~1000px: se leía
+  tachada, y el corte caía sobre el borde de la fila siguiente. La fila de grid saca la
+  altura del contenido real y no puede recortar.
+- **El texto fantasma se retiró por completo** (12 instancias, `item.ghost` y
+  `.henry-proj__ghost*`). Cancelaba las dos capas —ni se leía el fondo ni el título
+  centrado encima— y enterraba en decoración los datos más útiles, que ahora son metadato
+  legible. La marquesina «seis años, sin apagar nada» no se recuperó en ninguna forma: era
+  la antigüedad del sistema refactorizado, pero se leía como la del autor.
 - Respeta `prefers-reduced-motion` (sin transición).
 
 ## 4. Reveal tipográfico
