@@ -1,0 +1,12 @@
+# Dependencias del backend Python (api/). Vercel las resuelve desde la raíz del proyecto.
+#
+# En local:  python -m venv .venv
+#            .venv/Scripts/pip install -r requirements.txt   (Windows)
+#
+# Las versiones van fijadas: un despliegue que ayer funcionaba y hoy no, por una versión
+# nueva de una dependencia, es exactamente el tipo de error que docs/deployment.md ya
+# documenta haber pagado una vez.
+fastapi==0.141.1
+
+# Solo para desarrollo local; Vercel no lo usa (ejecuta la app ASGI por su cuenta).
+uvicorn[standard]==0.52.1
