@@ -6,8 +6,9 @@
 ## Qué es
 
 Sitio personal de presentación de **una sola página**, construido sobre una
-reconstrucción fiel del sistema de diseño **Henry** (editorial monocromático). Monorepo
-TypeScript. **Idioma de trabajo: español.**
+reconstrucción fiel del sistema de diseño **Henry** (editorial monocromático). Monorepo:
+frontend TypeScript, **backend Python** (FastAPI en Vercel) con un agente de IA que
+conversa con el visitante y le agenda llamadas. **Idioma de trabajo: español.**
 
 La colección de diseños que había en `/disenos` se retiró: varias páginas diluían el
 mensaje del portafolio. El objetivo del sitio es que un evaluador técnico entienda en
@@ -23,6 +24,15 @@ tres o cuatro pantallas qué se ha construido, en qué dominio y desde cuándo.
   una clave, `typecheck` falla. **El idioma por defecto es el inglés.**
 - **Separación frontend/backend estricta**: el frontend solo llama al backend por
   `web/src/lib/api.ts` (tipado con `@portfolio/shared`). Secretos solo en `api/.env`.
+  `shared/` es un contrato **acordado, no compartido**: el backend es Python y no importa
+  esos tipos, así que al tocar `shared/src/index.ts` hay que tocar `api/_lib/modelos.py`.
+- **El agente no inventa**: todo lo que sabe está en `api/_context/` (markdown, editable
+  sin saber Python). Si un dato no está ahí, no lo sabe. Lo que cambie en la página hay
+  que reflejarlo ahí a mano — ver `api/_context/README.md`.
+- **Nada que el sistema no pueda cumplir**: el agente solo ofrece horarios que le da el
+  backend tras consultar el calendario real, y solo anuncia una cita ya creada.
+- **Toda integración se degrada sola**: si falta una credencial, esa pieza se apaga y el
+  chat sigue. Un portafolio no se cae porque expiró una clave de correo.
 - **Dependencias de build en `dependencies`, no `devDependencies`** (lección de deploy;
   ver [`docs/deployment.md`](docs/deployment.md)).
 - **Accesibilidad**: elementos decorativos con `aria-hidden`; toda animación respeta
@@ -45,4 +55,9 @@ tres o cuatro pantallas qué se ha construido, en qué dominio y desde cuándo.
 npm run dev                          # web (5173) + api (3001)
 npm run build -w @portfolio/web      # bundle de producción (vite)
 npm run typecheck -w @portfolio/web  # chequeo de tipos (tsc)
+npm run build:cv -w @portfolio/cv    # regenera los PDF del CV
+pip install -r requirements.txt      # dependencias del backend Python
 ```
+
+Para cambiar cuándo se atienden las llamadas (duración, franja, antelación):
+`api/_lib/agenda.py`, y nada más — el prompt las lee de ahí.

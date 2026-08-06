@@ -63,8 +63,12 @@ export const es = {
     },
     {
       label: 'Modalidad',
+      /* El orden importa: mencionar Deel sin declarar el estatus hacía leer lo contrario
+         de lo que es —que se recurre a contractor por no poder ser contratado en
+         planta—. Con los documentos por delante, Deel pasa a ser una opción extra para
+         clientes de fuera. */
       value:
-        'Empleo de planta —remoto, híbrido o presencial— o contractor vía Deel · Colombia (GMT-5)',
+        'Documentos colombianos, sin requisitos de visado ni patrocinio. Empleo de planta, remoto o híbrido en Colombia; también contratación internacional vía Deel (GMT-5).',
     },
     {
       label: 'Dominio',
@@ -247,6 +251,17 @@ export const es = {
     },
     blocks: { problem: 'Problema', hard: 'Lo difícil', result: 'Resultado' },
     viewCode: 'Ver el código',
+    chat: {
+      title: 'Pregunta lo que la página no cuenta',
+      intro:
+        'Un agente con el contexto de Wilfred: por qué tomó cada decisión, cómo trabaja y qué hay detrás de cada proyecto. Si tienes una vacante o un problema concreto, puede agendarte una llamada.',
+      placeholder: 'Escribe tu pregunta',
+      send: 'Enviar',
+      thinking: 'Pensando',
+      error: 'No he podido responder. Escríbele directamente a wilfred3019@gmail.com.',
+      logLabel: 'Conversación con el agente',
+      disclaimer: 'Responde un agente, no Wilfred. Puede equivocarse.',
+    },
     credit: {
       intro: 'Interpretación del sistema de diseño',
       author: '«Henry» de Henry Desroches',

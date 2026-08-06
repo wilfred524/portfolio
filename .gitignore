@@ -3,3 +3,11 @@ dist/
 *.local
 .env
 .DS_Store
+
+# Backend Python
+.venv/
+__pycache__/
+*.pyc
+
+.vercel
+.env*

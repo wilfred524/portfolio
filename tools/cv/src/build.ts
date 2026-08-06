@@ -1,20 +1,20 @@
 /**
  * Generador del CV en PDF-listo (HTML imprimible), en español e inglés.
  *
- *   npm run build:cv -w @portfolio/api
+ *   npm run build:cv            (o: npm run build:cv -w @portfolio/cv)
  *
  * Escribe cv-es y cv-en en web/public/, como HTML y como PDF. El PDF lo imprime Chrome
  * headless si está instalado; si no, quedan los HTML para imprimirlos a mano.
  *
  * POR QUÉ ASÍ:
  * - Los datos duros (empresas, periodos, habilidades, formación, contacto) se leen de
- *   `web/src/content/profile.ts`, la misma fuente que alimenta la web. El CV anterior,
- *   mantenido aparte, acabó contradiciéndola en fechas, alcance y nivel de inglés.
- * - La salida es estática y va a `web/public/` porque Vercel despliega solo el
- *   workspace `web` (ver docs/deployment.md); un endpoint no estaría disponible en
- *   producción. Cuando el backend se despliegue, `renderCv()` puede exponerse tal cual.
- * - `profile.ts` se lee transpilándolo con esbuild, no con un import directo: el
- *   backend no debe acoplarse al frontend, y aquí solo consume un archivo de datos.
+ *   `web/src/content/profile.{es,en}.ts`, la misma fuente que alimenta la web. El CV
+ *   anterior, mantenido aparte, acabó contradiciéndola en fechas, alcance y nivel de inglés.
+ * - Esto es *tooling*, no backend: se ejecuta a mano en local y su salida es estática.
+ *   Vivía en `api/` cuando el backend era Express; al pasar `api/` a Python se mudó aquí,
+ *   porque un script de build y un servidor no tienen por qué compartir carpeta.
+ * - El profile se lee transpilándolo con esbuild, no con un import directo: aquí solo se
+ *   consume un archivo de datos, sin acoplarse al resto del frontend.
  */
 
 import { execFile } from 'node:child_process';
