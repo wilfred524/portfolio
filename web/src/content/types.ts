@@ -74,6 +74,20 @@ export interface UiStrings {
   sections: { experience: string; skills: string; contact: string; colophon: string };
   blocks: { problem: string; hard: string; result: string };
   viewCode: string;
+  /** Chat del agente. Su lógica vive en el backend; aquí solo está lo que se lee. */
+  chat: {
+    title: string;
+    intro: string;
+    placeholder: string;
+    send: string;
+    thinking: string;
+    /** Se muestra cuando el backend no responde o rechaza la petición. */
+    error: string;
+    /** Etiqueta accesible de la zona donde aparecen las respuestas. */
+    logLabel: string;
+    /** Aviso de que responde un agente y no Wilfred. */
+    disclaimer: string;
+  };
   credit: {
     intro: string;
     author: string;

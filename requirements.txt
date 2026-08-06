@@ -8,5 +8,23 @@
 # documenta haber pagado una vez.
 fastapi==0.141.1
 
+# Cliente HTTP asíncrono. Con él se hablan DeepSeek, Google, Telegram y Resend por REST
+# directo, en vez de arrastrar LiteLLM y `google-api-python-client`.
+#
+# El plan preveía LiteLLM y se descartó al medirlo: 133 MB de los 199 que ocupaban las
+# dependencias, contra un límite de 250 MB descomprimidos por función en Vercel. Un
+# despliegue a 20 MB del techo se rompe solo con la siguiente actualización, y su
+# importación alargaba cada arranque en frío. La API de DeepSeek es compatible con la de
+# OpenAI, así que hablarla directamente cuesta ~40 líneas en `_lib/llm.py`. Si algún día
+# hacen falta varios proveedores a la vez, LiteLLM vuelve a tener sentido.
+httpx==0.28.1
+
+# Firma del JWT de la cuenta de servicio de Google (Sheets y Calendar).
+google-auth==2.56.2
+
+# Base de datos de zonas horarias para `zoneinfo`. Linux la trae del sistema, Windows no,
+# y sin ella `ZoneInfo("America/Bogota")` revienta al calcular los huecos de la agenda.
+tzdata==2026.3
+
 # Solo para desarrollo local; Vercel no lo usa (ejecuta la app ASGI por su cuenta).
 uvicorn[standard]==0.52.1
