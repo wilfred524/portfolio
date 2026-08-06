@@ -93,7 +93,7 @@
 
     <section>
       <h2>Perfil</h2>
-      <p>Desarrollador backend en una fintech de crédito por libranza —préstamos con descuento directo de nómina, un sector regulado en Colombia—, donde trabajo desde octubre de 2025.</p>
+      <p>Desarrollador backend. Entre octubre de 2025 y julio de 2026 trabajé en una fintech de crédito por libranza —préstamos con descuento directo de nómina, un sector regulado en Colombia—. Disponible de inmediato.</p>
       <p>He construido y puesto en producción el motor de reglas de crédito, la firma electrónica con validación de identidad contra buró y el proceso mensual de puntaje crediticio que procesa unos 300.000 registros por corrida. También dirigí la migración de la plataforma a una arquitectura por capas.</p>
       <p>Cursando Ingeniería Informática en la UNET. Documentos colombianos, sin requisitos de visado ni patrocinio. Empleo de planta, remoto o híbrido en Colombia; también contratación internacional vía Deel (GMT-5).</p>
     </section>
@@ -104,12 +104,12 @@
       <div class="job">
         <p class="job-head">
           <span class="role">Desarrollador backend</span> <span class="company">GAF Technology Solutions</span> · <span class="mode">Jornada completa · Remoto, Colombia</span>
-          <span class="period">Oct 2025 – actualidad</span>
+          <span class="period">Oct 2025 – Jul 2026</span>
         </p>
         <p class="tagline">Fintech de crédito por libranza, respaldada por un fondo de inversión.</p>
         
         <div class="entry">
-          <p class="entry-title">Motor de reglas de crédito <span class="note">CK Comercializadora, filial de GAF</span></p>
+          <p class="entry-title">Motor de reglas de crédito <span class="note">CK Comercializadora</span></p>
           <ul>
             <li>Modelé los datos y traduje las reglas de negocio a un esquema de políticas en PostgreSQL: elegibilidad, embargos, límites de plazo y requisitos laborales y financieros por pagaduría. El área de negocio ajusta parámetros sin desplegar código.</li>
             <li>Implementé la evaluación completa: cálculo de capacidad de endeudamiento según Ley 1527 y Ley 50 para activos y pensionados, criterios de decisión, reglas especiales y reevaluación de solicitudes.</li>
@@ -119,7 +119,7 @@
         </div>
 
         <div class="entry">
-          <p class="entry-title">Firma electrónica con validación de identidad</p>
+          <p class="entry-title">Firma electrónica con validación de identidad <span class="note">Plataforma GAF</span></p>
           <ul>
             <li>Implementé la máquina de estados que sigue la cola del proveedor de validación de identidad, preservando la integridad del XML entre peticiones encadenadas.</li>
             <li>Entregué el módulo de libranzas de punta a punta: formulario multipaso con autoguardado, borrador en PDF, historial de correos y reintentos de subida a S3.</li>
@@ -129,7 +129,7 @@
         </div>
 
         <div class="entry">
-          <p class="entry-title">Proceso mensual de puntaje crediticio</p>
+          <p class="entry-title">Proceso mensual de puntaje crediticio <span class="note">Plataforma GAF</span></p>
           <ul>
             <li>Llevé a producción un modelo de riesgo que vivía en el cuaderno de un analista: contenedor con cron mensual que extrae de PostgreSQL, ejecuta el modelo y persiste los resultados. Antes no se calculaba de forma automática.</li>
             <li>Procesa unos 300.000 registros por corrida, con carga en bloques de cinco mil, control de estado en disco para no reprocesar el mismo artefacto y descarte de filas inválidas sin abortar la carga.</li>
@@ -139,7 +139,7 @@
         </div>
 
         <div class="entry">
-          <p class="entry-title">Control de accesos y auditoría</p>
+          <p class="entry-title">Control de accesos y auditoría <span class="note">Plataforma GAF</span></p>
           <ul>
             <li>Consolidé el control de accesos sobre Spatie —guards, middleware y policies— con una migración que llevó usuarios y roles existentes al esquema nuevo sin interrumpir la operación.</li>
             <li>Trabajé en el endurecimiento de la autenticación y en la trazabilidad de eventos críticos de cara a una auditoría de seguridad.</li>
@@ -148,7 +148,7 @@
         </div>
 
         <div class="entry">
-          <p class="entry-title">Migración a arquitectura por capas</p>
+          <p class="entry-title">Migración a arquitectura por capas <span class="note">Plataforma GAF</span></p>
           <ul>
             <li>Dirigí y verifiqué la migración de una plataforma de seis años —más de doscientos modelos Eloquent mezclados con controladores, colas y providers— a una arquitectura por capas.</li>
             <li>Sin suite de pruebas de la que fiarse, la migración fue módulo a módulo con verificación en cada paso. Tres meses, con revisión del líder técnico.</li>
@@ -159,30 +159,22 @@
 
       <div class="job">
         <p class="job-head">
-          <span class="role">Freelance, media jornada</span> <span class="company">Autónomo</span> · <span class="mode">Media jornada</span>
-          <span class="period">Ene 2026 – actualidad</span>
+          <span class="role">Proyectos propios</span>
+          
         </p>
         
         
         <div class="entry">
-          <p class="entry-title">Automatización de procesos con IA</p>
+          <p class="entry-title">Automatización de procesos con IA <span class="note">Freelance, media jornada · Ene 2026 – actualidad</span></p>
           <ul>
             <li>Procesos automatizados con n8n y la API de OpenAI para generación de contenido.</li>
             <li>Bot conversacional de Telegram integrado con n8n y PostgreSQL que atiende solicitudes de punta a punta.</li>
           </ul>
           <p class="stack">n8n · OpenAI API · PostgreSQL</p>
         </div>
-      </div>
 
-      <div class="job">
-        <p class="job-head">
-          <span class="role">Proyectos propios</span>
-          <span class="period">Jul 2026 – en curso</span>
-        </p>
-        
-        
         <div class="entry">
-          <p class="entry-title">CLI de recorte de vídeo</p>
+          <p class="entry-title">CLI de recorte de vídeo <span class="note">Proyecto propio · Jul 2026 – en curso</span></p>
           <ul>
             <li>Herramienta de línea de comandos en TypeScript que parte un vídeo largo en clips verticales: transcripción con Whisper, guion generado por un modelo cuya salida se valida contra un esquema, síntesis de voz y montaje de subtítulos con Remotion.</li>
             <li>Cada paso persiste su resultado en disco y el proceso es reanudable, para no repetir llamadas al modelo ya pagadas.</li>
