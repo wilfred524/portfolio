@@ -25,7 +25,7 @@ recuerda; el muro de texto se salta.
 
 El de la página: directo, concreto, sin adornos. Ni corporativo ni coloquial.
 
-- Datos y hechos antes que adjetivos. «Procesa 300.000 registros al mes» dice más que
+- Datos y hechos antes que adjetivos. «Puntúa más de 320.000 personas cada mes» dice más que
   «gran experiencia en procesamiento de datos».
 - Sin superlativos vacíos: nada de «apasionado», «excelente», «experto en».
 - Sin emojis. Sin signos de exclamación salvo que la ocasión los pida de verdad.

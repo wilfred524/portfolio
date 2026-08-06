@@ -9,7 +9,7 @@ export const es = {
   name: 'Wilfred Morales',
   role: 'Desarrollador backend',
   /** Stack de cabecera: lo que un reclutador técnico busca en los primeros dos segundos. */
-  stack: 'PHP/Laravel · PostgreSQL · seguridad de plataforma',
+  stack: 'PHP/Laravel · PostgreSQL · Fintech de crédito',
   /** La credencial: sistemas en producción y en qué dominio. Es la frase que convierte. */
   credential:
     'Firma electrónica, motor de reglas y puntaje crediticio en producción para crédito por libranza.',
@@ -24,6 +24,8 @@ export const es = {
   phone: '+57 301 737 4234',
   /** Repositorio de este sitio: evidencia inspeccionable sin firmar nada. */
   repoUrl: 'https://github.com/wilfred524/portfolio',
+  /* PENDIENTE: dominio público del sitio. Vacío = no se imprime en el CV. */
+  siteUrl: '',
   /**
    * CV en dos idiomas. Los genera `npm run build:cv -w @portfolio/api` desde este mismo
    * archivo, así que no pueden contradecir a la web. El script exporta también el PDF
@@ -56,19 +58,20 @@ export const es = {
         'Ingeniería Informática, Universidad Nacional Experimental del Táchira (UNET). Cursando 7.º semestre.',
     },
     {
-      label: 'Idiomas',
-      /* Sin enlace al certificado: el examen se va a repetir. Cuando haya nota nueva,
-         volver a publicar el PDF en web/public/ y restaurar href + hrefLabel. */
-      value: 'Español nativo · Inglés B2, con lectura C2',
+      label: 'Idiomas y certificaciones',
+      /* Idiomas y certificaciones fusionados: dos líneas para tres datos cortos partían
+         el bloque sin ganar nada. Sin enlace al certificado: el examen se va a repetir.
+         Cuando haya nota nueva, publicar el PDF en web/public/ y restaurar href. */
+      value:
+        'Español nativo · Inglés B2, lectura C2 (EF SET) · Google IT Automation with Python — Coursera (en curso)',
     },
     {
       label: 'Modalidad',
-      /* El orden importa: mencionar Deel sin declarar el estatus hacía leer lo contrario
-         de lo que es —que se recurre a contractor por no poder ser contratado en
-         planta—. Con los documentos por delante, Deel pasa a ser una opción extra para
-         clientes de fuera. */
+      /* Sin mención a documentos, visado ni patrocinio: son datos que no se piden y que
+         invitan a filtrar por nacionalidad antes de leer nada técnico. Lo que importa es
+         cómo se contrata y en qué franja horaria se trabaja. */
       value:
-        'Documentos colombianos, sin requisitos de visado ni patrocinio. Empleo de planta, remoto o híbrido en Colombia; también contratación internacional vía Deel (GMT-5).',
+        'Remoto o híbrido · GMT-5 · Contratación local en Colombia o internacional vía Deel.',
     },
     {
       label: 'Dominio',
@@ -79,6 +82,14 @@ export const es = {
        y los consumidores dejan de ver los campos opcionales. */
   ],
   /** Sin niveles: el ORDEN comunica el dominio (spec Henry: énfasis por escala, no por etiqueta). */
+  /*
+   * Solo lo que tiene respaldo demostrable en la experiencia o en un proyecto público.
+   * Se retiraron Arquitectura Hexagonal, DDD, MFA y gestión de sesiones, SAST y
+   * detección de secretos, pytest y CI/CD con GitHub Actions: nada de eso está
+   * sostenido por trabajo entregado, y una habilidad que no se puede defender en una
+   * entrevista cuesta más de lo que suma. La categoría «Seguridad» desaparece por lo
+   * mismo; lo que sí hubo (roles y permisos, reCAPTCHA) vive en «Control de accesos».
+   */
   skillGroups: [
     {
       area: 'Backend',
@@ -86,24 +97,22 @@ export const es = {
         'PHP / Laravel',
         'PostgreSQL / SQL',
         'MySQL',
-        'Arquitectura Hexagonal / DDD',
-        'Pruebas (PHPUnit / pytest)',
         'Python',
         'Node.js',
+        'Pruebas (PHPUnit)',
       ],
     },
     {
-      area: 'Seguridad',
-      items: [
-        'Roles y permisos (Spatie)',
-        'MFA / gestión de sesiones',
-        'SAST y detección de secretos',
-        'reCAPTCHA Enterprise',
-      ],
+      area: 'Arquitectura',
+      items: ['Arquitectura por capas (dominio, aplicación, persistencia)'],
+    },
+    {
+      area: 'Control de accesos',
+      items: ['Roles y permisos (Spatie)', 'reCAPTCHA Enterprise'],
     },
     {
       area: 'Automatización e IA',
-      items: ['n8n', 'OpenAI API', 'Integración de APIs / Webhooks'],
+      items: ['litellm', 'OpenAI API', 'n8n', 'Integración de APIs y webhooks'],
     },
     {
       area: 'Frontend',
@@ -111,36 +120,29 @@ export const es = {
     },
     {
       area: 'Infraestructura',
-      items: [
-        'Docker',
-        'Linux / Nginx',
-        'CI/CD (GitHub Actions)',
-        'Google Cloud Platform',
-        'AWS S3',
-      ],
+      items: ['Docker', 'Linux / Nginx', 'GCP', 'AWS S3', 'Certbot'],
     },
-    /*
-     * PENDIENTE: qué estás aprendiendo AHORA.
-     * TypeScript, React y Node salieron de aquí: ya hay evidencia enviada con los tres
-     * —este sitio y el CLI de vídeo—, así que listarlos como «aprendiendo» contradecía
-     * la propia página. La línea vuelve cuando haya algo real que poner.
-     */
   ],
   employments: [
     {
       id: 'gaf',
       employer: 'GAF Technology Solutions',
-      tagline: 'Fintech de crédito por libranza, respaldada por un fondo de inversión.',
+      /* Sitúa la empresa y el tamaño del equipo: en una plantilla de 4, «desarrollador
+         backend» significa tocar infraestructura y despliegue, no solo endpoints. */
+      tagline:
+        'Fintech de crédito por libranza. Equipo de tecnología de 4 personas: 2 desarrolladores, líder técnico y responsable de infraestructura y seguridad. Las solicitudes las origina CK Comercializadora, empresa del mismo grupo.',
       role: 'Desarrollador backend',
       period: 'Oct 2025 – Jul 2026',
-      mode: 'Jornada completa · Remoto, Colombia',
+      mode: 'Contrato por obra o labor · Remoto, Colombia',
     },
   ],
   projectGroups: [
     {
       category: 'CK Comercializadora',
       employmentId: 'gaf',
-      note: 'Filial de GAF',
+      /* Una sola forma de nombrar la relación con CK, aquí y en el tagline del empleo:
+         alternar «filial» y «empresa del grupo» hacía dudar de si eran dos cosas. */
+      note: 'Empresa del grupo',
       items: [
         {
           id: 'rules-engine',
@@ -149,7 +151,7 @@ export const es = {
             problem:
               'Cambiar una política de crédito exigía un despliegue: el área de negocio no podía ajustar un límite de plazo o una condición de embargo sin pasar por desarrollo.',
             hard:
-              'Modelé los datos y traduje las reglas de negocio a un esquema de políticas en PostgreSQL (elegibilidad, embargos, límites de plazo, requisitos laborales y financieros por pagaduría), de modo que el código no sabe cuáles son las reglas, solo cómo aplicarlas. Sobre esa base implementé la evaluación completa: cálculo de capacidad de endeudamiento según Ley 1527 y Ley 50 para activos y pensionados, criterios de decisión, reglas especiales, reevaluación de solicitudes y las validaciones de front y backend.',
+              'Modelé los datos y traduje las reglas de negocio a un esquema de políticas en PostgreSQL (elegibilidad, embargos, límites de plazo, requisitos laborales y financieros por pagaduría), de modo que el código no sabe cuáles son las reglas, solo cómo aplicarlas. Sobre esa base implementé la evaluación completa: cálculo de capacidad de endeudamiento según la Ley 1527 (libranzas) y la Ley 50 para activos y pensionados, criterios de decisión, reglas especiales, reevaluación de solicitudes y las validaciones de front-end y back-end.',
             result:
               'El área de negocio ajusta parámetros sin tocar código ni esperar despliegue, y cada solicitud queda trazada al asesor que la originó. La API de envío la construyó un compañero; reestructuré el cuerpo de sus peticiones varias veces conforme cambiaba el modelo.',
           },
@@ -166,55 +168,70 @@ export const es = {
           title: 'Firma electrónica con validación de identidad',
           body: {
             problem:
-              'Firmar documentos validando la identidad de quien firma contra un buró de crédito: un formulario llena una plantilla, la plantilla viaja a TransUnion, y vuelve un documento con un hash verificable contra el propio proveedor.',
+              'El módulo anterior estaba en desuso y el documento —24 páginas— se llenaba a mano. Construí el módulo desde cero: ahora se genera automáticamente desde plantillas, con una plantilla distinta por producto.',
             hard:
-              'Lo difícil no es firmar: es que todo encaje antes de firmar. La validación de identidad depende de un conjunto amplio de condiciones que deben cumplirse en orden, y el documento viaja entre varias peticiones encadenadas. Implementé la máquina de estados que sigue la cola del proveedor y preserva la integridad del XML de punta a punta, para que un proceso largo termine siempre en un documento válido o en un error que el usuario pueda resolver.',
+              'Lo difícil no es firmar: es que todo encaje antes de firmar. El asesor aprueba un borrador, se validan los datos del cliente contra TransUnion y la identidad se verifica por OTP o KBA. Diseñé el flujo como una máquina de estados sobre las respuestas asíncronas del proveedor, para que un proceso largo termine siempre en un documento válido o en un error que el usuario pueda resolver.',
             result:
-              'Entregué primero el módulo de libranzas (formulario multipaso con autoguardado por sección, borrador en PDF, historial de correos y reintentos de subida a S3) y después extraje el patrón de firma genérica, de modo que el siguiente módulo lo implementara en vez de repetir el flujo. Equipo pequeño, con revisión del líder técnico.',
+              'El proveedor devuelve el documento firmado con su hash, queda la trazabilidad de la transacción y el respaldo en S3. El trámite completo se cierra en unos 20 minutos, frente a un llenado manual de 24 páginas. Equipo pequeño, con revisión del líder técnico.',
           },
-          tags: ['Laravel', 'Vue.js', 'TransUnion', 'AWS S3'],
+          tags: ['Laravel', 'Vue.js', 'Python', 'TransUnion', 'AWS S3'],
         },
         {
           id: 'scoring',
           title: 'Proceso mensual de puntaje crediticio',
-          metric: '~300.000 registros por corrida, una vez al mes',
+          metric: 'Más de 320.000 personas distintas por corrida, una vez al mes',
           body: {
             problem:
-              'Un modelo de riesgo vivía en el cuaderno de un analista de datos, sin forma de llegar a producción.',
+              'Un modelo de riesgo vivía en un script del área de riesgo, sin forma de llegar a producción.',
             hard:
-              'Lo empaqueté en un contenedor con cron mensual: extrae de PostgreSQL, ejecuta el modelo, comprueba que el artefacto se haya regenerado antes de seguir adelante y carga en bloques de cinco mil para acotar el tamaño de cada sentencia. Guarda el estado en disco para no reprocesar dos veces el mismo artefacto y descarta las filas inválidas sin abortar la carga entera.',
+              'Lo empaqueté en un contenedor con cron mensual: extrae de PostgreSQL, ejecuta el modelo, comprueba que el artefacto se haya regenerado antes de seguir adelante y carga en bloques de 5.000 para acotar el tamaño de cada sentencia. El proceso es idempotente y reanudable, y descarta las filas inválidas sin abortar la carga entera.',
             result:
-              'El modelo no es mío; la tubería que lo pone en producción sí. Añadí además la consulta en vivo: un servicio que pide el puntaje de una cédula a la API y lo muestra en la pantalla de visado.',
+              'El modelo no es mío; la tubería que lo pone en producción sí. Más de 320.000 personas distintas quedan puntuadas en cada corrida, sin intervención manual.',
           },
           tags: ['Python', 'PostgreSQL', 'Docker', 'Laravel'],
         },
         {
           id: 'access-control',
-          title: 'Control de accesos y auditoría',
+          title: 'Control de accesos y permisos',
           brief:
-            'Consolidé el control de accesos sobre Spatie (guards, middleware y policies), con una migración que llevó los usuarios y roles existentes al esquema nuevo sin interrumpir a quien estaba trabajando dentro. Trabajé además en el endurecimiento de la autenticación y en la trazabilidad de eventos críticos, de cara a una auditoría de seguridad.',
-          tags: ['Spatie Permission', 'Autenticación', 'Auditoría', 'Laravel'],
+            'Construí el árbol de permisos de la plataforma sobre 17 módulos, con permisos a nivel de opción y de subproceso, blindé ruta a ruta y migré los usuarios y roles existentes al esquema nuevo sin interrumpir la operación.',
+          tags: ['Spatie Permission', 'Laravel', 'PostgreSQL'],
         },
         {
           id: 'layered-migration',
           title: 'Migración a arquitectura por capas',
           brief:
-            'Dirigí y verifiqué la migración de una plataforma de seis años a una arquitectura por capas, con más de doscientos modelos Eloquent revueltos con controladores, colas y providers. Sin suite de pruebas de la que fiarse, fue módulo a módulo en lugar de todo de golpe. Tres meses, con revisión del líder técnico.',
-          tags: ['Arquitectura Hexagonal', 'DDD', 'Laravel'],
+            'Participé en la primera etapa de la migración de la plataforma —seis años de código— hacia una arquitectura por capas, verificando módulo a módulo cada cambio antes de continuar y eliminando por completo las consultas SQL en crudo de los controladores. Tres meses de trabajo, con revisión del líder técnico en cada paso; no existía suite de pruebas en ese momento. La segunda etapa se ejecutó tras mi salida.',
+          tags: ['Arquitectura por capas', 'Laravel', 'PostgreSQL'],
+        },
+        {
+          id: 'infrastructure',
+          title: 'Infraestructura y despliegue',
+          body: {
+            problem:
+              'La aplicación corría de forma nativa sobre la máquina, sin aislamiento entre el entorno y el código.',
+            hard:
+              'Dockericé la aplicación y la desplegué en una instancia nueva de GCP, con nginx como proxy inverso entre los contenedores y el host.',
+            result:
+              'Ejecuté la migración en paralelo: levanté y validé la instancia nueva con la anterior aún en producción, configuré el DNS del dominio y emití los certificados con Certbot hasta dejar la aplicación operando íntegramente sobre HTTPS. Sin interrupción del servicio.',
+          },
+          tags: ['Docker', 'Linux / Nginx', 'GCP', 'Certbot'],
         },
       ],
     },
     {
-      category: 'Fuera del trabajo',
+      category: 'Proyectos',
       items: [
         {
-          id: 'ai-automation',
-          title: 'Automatización de procesos con IA',
-          role: 'Freelance, media jornada',
-          period: 'Ene 2026 – actualidad',
+          id: 'portfolio-agent',
+          title: 'Asistente del portfolio',
+          role: 'Proyecto propio',
+          period: 'En curso',
           brief:
-            'Procesos automatizados con n8n y la API de OpenAI para generación de contenido, y un bot conversacional de Telegram integrado con n8n y PostgreSQL que atiende solicitudes de punta a punta.',
-          tags: ['n8n', 'OpenAI API', 'PostgreSQL'],
+            'Construí un asistente conversacional que responde sobre mi trayectoria y las decisiones detrás de cada proyecto, con aviso explícito de que responde un agente y puede equivocarse. Lo monté primero con n8n y la API de OpenAI, y al desplegarlo rehíce la orquestación con litellm porque el plan gratuito de Vercel no soporta n8n.',
+          /* Sin `url`: el asistente ES esta página, así que enlazarla desde dentro no
+             lleva a ninguna parte. En el CV sí aparece, en la línea de contacto. */
+          tags: ['Python', 'FastAPI', 'litellm', 'Vercel'],
         },
         {
           id: 'video-cli',
@@ -222,8 +239,18 @@ export const es = {
           role: 'Proyecto propio',
           period: 'Jul 2026 – en curso',
           brief:
-            'Herramienta de línea de comandos en TypeScript que parte un vídeo largo en clips verticales: transcribe con Whisper, escribe el guion con un modelo cuya salida se valida contra un esquema antes de usarla, narra con síntesis de voz y monta los subtítulos con Remotion. Cada paso deja su resultado en disco y el proceso es reanudable, para no repetir llamadas al modelo ya pagadas.',
+            'Construí una herramienta de línea de comandos en TypeScript que parte un vídeo largo en clips verticales: transcribe con Whisper, escribe el guion con un modelo cuya salida se valida contra un esquema antes de usarla, narra con síntesis de voz y monta los subtítulos con Remotion. Cada paso persiste su resultado en disco y el proceso es reanudable, para no repetir llamadas al modelo ya pagadas.',
           tags: ['TypeScript', 'Node.js', 'Remotion', 'ffmpeg'],
+        },
+        {
+          id: 'portfolio-site',
+          title: 'Portfolio',
+          role: 'Proyecto propio',
+          period: '2026',
+          brief:
+            'Construí este sitio con React y TypeScript, con tipografía variable y animaciones sin librería, reinterpretando un sistema de diseño ajeno y acreditándolo en el pie.',
+          tags: ['React', 'TypeScript', 'Vite'],
+          url: 'https://github.com/wilfred524/portfolio',
         },
       ],
     },
