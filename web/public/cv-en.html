@@ -73,6 +73,9 @@
       .period::before { content: ' · '; }
       .tagline { margin: 0 0 4pt; font-size: 9pt; font-style: italic; color: #555; }
       .entry { margin: 0 0 6pt; page-break-inside: avoid; }
+      /* Dos páginas es el formato asumido (legibilidad por encima de encajar en una):
+         lo que no se admite es una cabecera de sección huérfana al pie. */
+      h2 { break-after: avoid-page; }
       .entry-title { margin: 0 0 1pt; font-weight: 600; }
       .note { font-weight: 400; font-size: 9pt; color: #555; }
       ul { margin: 0; padding-left: 14pt; }
@@ -86,16 +89,14 @@
   <body>
     <header>
       <h1>Wilfred Morales</h1>
-      <p class="headline">Backend Developer · PHP/Laravel · PostgreSQL · Platform Security</p>
+      <p class="headline">Backend Developer — PHP/Laravel · PostgreSQL · Credit Fintech</p>
       <p class="contact">wilfred3019@gmail.com&nbsp;&nbsp;·&nbsp;&nbsp;+57 301 737 4234&nbsp;&nbsp;·&nbsp;&nbsp;Colombia (GMT-5)</p>
       <p class="contact">github.com/wilfred524&nbsp;&nbsp;·&nbsp;&nbsp;linkedin.com/in/wilfred-morales-3220b2126</p>
     </header>
 
     <section>
       <h2>Profile</h2>
-      <p>Backend developer. From October 2025 to July 2026 I worked at a payroll-deduction lending fintech, a regulated sector in Colombia. Available immediately.</p>
-      <p>I built and shipped the credit rules engine, the electronic signature flow with credit-bureau identity validation, and the monthly scoring pipeline that processes around 300,000 records per run. I also led the migration of the platform to a layered architecture.</p>
-      <p>Currently studying Computer Engineering at UNET. Colombian documents: no visa or sponsorship required. Open to full-time roles in Colombia, remote or hybrid; also international contracting via Deel (GMT-5).</p>
+      <p>Backend developer at a payroll-deduction lending fintech — loans repaid through automatic salary deductions, a regulated sector in Colombia. I work across the credit lifecycle, from origination to identity validation and scoring, and on the platform underneath it: containerisation, layered architecture and access control.</p>
     </section>
 
     <section>
@@ -103,85 +104,113 @@
       
       <div class="job">
         <p class="job-head">
-          <span class="role">Backend developer</span> <span class="company">GAF Technology Solutions</span> · <span class="mode">Full-time · Remote, Colombia</span>
+          <span class="role">Backend developer</span> <span class="company">GAF Technology Solutions</span> · <span class="mode">Fixed-term project contract · Remote, Colombia</span>
           <span class="period">Oct 2025 – Jul 2026</span>
         </p>
-        <p class="tagline">Payroll-deduction lending fintech, backed by an investment fund.</p>
+        <p class="tagline">Payroll-deduction lending fintech. Technology team of 4: 2 developers, a tech lead, and an infrastructure and security lead. Applications are originated by CK Comercializadora, a company in the same group.</p>
         
         <div class="entry">
           <p class="entry-title">Credit rules engine <span class="note">CK Comercializadora</span></p>
           <ul>
             <li>Modelled the data and translated business policy into a rules schema in PostgreSQL: eligibility, garnishments, term limits, and employment and financial requirements per payer. The business team now adjusts parameters without a deployment.</li>
-            <li>Implemented the full evaluation logic: borrowing-capacity calculation under Colombian Law 1527 and Law 50 for active employees and pensioners, decision criteria, special rules, and application re-evaluation.</li>
-            <li>Built the public application portal and its front-end and back-end validation, with per-advisor traceability and bot protection.</li>
+            <li>Implemented the full evaluation logic: borrowing-capacity calculation under Law 1527 (payroll-deduction lending) and Law 50 for active employees and pensioners, decision criteria, special rules, and application re-evaluation.</li>
+            <li>Built the public application portal and its front-end and back-end validation, with per-advisor traceability and reCAPTCHA Enterprise. A colleague built the submission API; I restructured its request body as the model changed.</li>
           </ul>
           <p class="stack">Laravel · Vue.js · Inertia.js · PostgreSQL</p>
         </div>
 
         <div class="entry">
-          <p class="entry-title">Electronic signature with identity validation <span class="note">GAF platform</span></p>
+          <p class="entry-title">Electronic signature with identity validation</p>
           <ul>
-            <li>Implemented the state machine that tracks the identity-validation provider queue, preserving XML integrity across chained requests.</li>
-            <li>Delivered the payroll-lending module end to end: multi-step form with section autosave, PDF draft, email history, and S3 upload retries.</li>
-            <li>Extracted a generic signing pattern so later modules could implement it instead of duplicating the flow.</li>
+            <li>Built the electronic signature module from scratch, replacing a disused legacy one: the document is 24 pages that used to be filled in by hand and are now generated automatically from templates, with a different template per product.</li>
+            <li>Designed the flow as a state machine over the asynchronous responses from the provider: an advisor approves a draft, customer data is validated against TransUnion, and identity is verified by OTP or KBA.</li>
+            <li>Closed the whole procedure in about 20 minutes, with the signed document returned with its hash, full transaction traceability and a copy kept in S3.</li>
           </ul>
-          <p class="stack">Laravel · Vue.js · TransUnion · AWS S3</p>
+          <p class="stack">Laravel · Vue.js · Python · TransUnion · AWS S3</p>
         </div>
 
         <div class="entry">
-          <p class="entry-title">Monthly credit scoring process <span class="note">GAF platform</span></p>
+          <p class="entry-title">Monthly credit scoring process</p>
           <ul>
-            <li>Took a risk model living in a data analyst notebook to production: a containerised monthly cron job that reads from PostgreSQL, runs the model and persists results. Scoring was not automated before this.</li>
-            <li>Processes around 300,000 records per run, loading in batches of five thousand, with on-disk state tracking to avoid reprocessing the same artifact and invalid-row handling that does not abort the load.</li>
-            <li>Added a live API lookup so a customer score can be shown on the underwriting screen.</li>
+            <li>Took a risk model living in a script owned by the risk team to production: a containerised monthly cron job that reads from PostgreSQL, runs the model and persists results. Scoring was not automated before this.</li>
+            <li>Processed over 320,000 distinct people per run, loading in batches of 5,000, with an idempotent and resumable process and invalid-row handling that does not abort the load.</li>
           </ul>
           <p class="stack">Python · PostgreSQL · Docker · Laravel</p>
         </div>
 
         <div class="entry">
-          <p class="entry-title">Access control and auditing <span class="note">GAF platform</span></p>
+          <p class="entry-title">Access control and permissions</p>
           <ul>
-            <li>Consolidated access control on Spatie (guards, middleware and policies) with a migration that moved existing users and roles to the new schema without interrupting operations.</li>
-            <li>Worked on authentication hardening and on traceability of business-critical events ahead of a security audit.</li>
+            <li>Built the platform permission tree across 17 modules, with permissions down to the option and sub-process level, locked down every route, and migrated existing users and roles to the new schema without interrupting operations.</li>
           </ul>
-          <p class="stack">Spatie Permission · Authentication · Auditing · Laravel</p>
+          <p class="stack">Spatie Permission · Laravel · PostgreSQL</p>
         </div>
 
         <div class="entry">
-          <p class="entry-title">Migration to a layered architecture <span class="note">GAF platform</span></p>
+          <p class="entry-title">Migration to a layered architecture</p>
           <ul>
-            <li>Led and verified the migration of a six-year-old platform to a layered architecture, with over two hundred Eloquent models mixed with controllers, queues and providers.</li>
-            <li>With no test suite to rely on, the migration went module by module with verification at each step. Three months, reviewed by the tech lead.</li>
+            <li>Took part in the first stage of migrating the platform — six years of code — to a layered architecture, verifying every change module by module before moving on and removing raw SQL queries from controllers entirely. Three months of work, reviewed by the tech lead at each step; there was no test suite at the time. The second stage ran after I left.</li>
           </ul>
-          <p class="stack">Hexagonal Architecture · DDD · Laravel</p>
+          <p class="stack">Layered architecture · Laravel · PostgreSQL</p>
+        </div>
+
+        <div class="entry">
+          <p class="entry-title">Infrastructure and deployment</p>
+          <ul>
+            <li>Containerised the application with Docker, which had been running natively on the machine, and deployed it on a new GCP instance with nginx as a reverse proxy between the containers and the host.</li>
+            <li>Ran the migration in parallel: brought up and validated the new instance while the old one was still in production, configured the domain DNS and issued the certificates with Certbot until the application ran entirely over HTTPS. No service interruption.</li>
+          </ul>
+          <p class="stack">Docker · Linux / Nginx · GCP · Certbot</p>
         </div>
       </div>
+    </section>
 
+    <section>
+      <h2>Projects</h2>
+      
       <div class="job">
         <p class="job-head">
-          <span class="role">Personal projects</span>
+          <span class="role"></span>
           
         </p>
         
         
         <div class="entry">
-          <p class="entry-title">AI process automation <span class="note">Freelance, part-time · Jan 2026 – Present</span></p>
+          <p class="entry-title">Portfolio assistant <span class="note">Personal project · Ongoing</span></p>
           <ul>
-            <li>Automation pipelines built with n8n and the OpenAI API for content generation.</li>
-            <li>Conversational Telegram bot integrated with n8n and PostgreSQL handling requests end to end.</li>
+            <li>Built a conversational assistant that answers questions about my background and the decisions behind each project, with an explicit notice that an agent is answering and can be wrong.</li>
+            <li>First assembled it with n8n and the OpenAI API, and on deploying it rebuilt the orchestration with litellm, because the Vercel free plan does not support n8n.</li>
           </ul>
-          <p class="stack">n8n · OpenAI API · PostgreSQL</p>
+          <p class="stack">Python · FastAPI · litellm · Vercel</p>
         </div>
 
         <div class="entry">
           <p class="entry-title">Video clipping CLI <span class="note">Personal project · Jul 2026 – ongoing</span></p>
           <ul>
-            <li>TypeScript command-line tool that splits long video into vertical clips: Whisper transcription, script generation by a model whose output is schema-validated, speech synthesis, and subtitle rendering with Remotion.</li>
-            <li>Every step persists its result to disk and the process is resumable, so already-paid model calls are never repeated.</li>
+            <li>Built a TypeScript command-line tool that splits long video into vertical clips: Whisper transcription, script generation by a model whose output is schema-validated, speech synthesis, and subtitle rendering with Remotion.</li>
+            <li>Persisted every step to disk and made the process resumable, so already-paid model calls are never repeated.</li>
           </ul>
           <p class="stack">TypeScript · Node.js · Remotion · ffmpeg</p>
         </div>
+
+        <div class="entry">
+          <p class="entry-title">Portfolio <span class="note">Personal project · 2026</span></p>
+          <ul>
+            <li>Built this site with React and TypeScript, with variable type and animations written by hand, reinterpreting an existing design system and crediting it in the footer.</li>
+          </ul>
+          <p class="stack">React · TypeScript · Vite</p>
+        </div>
       </div>
+    </section>
+
+    <section>
+      <h2>Skills</h2>
+      <p class="skill"><span class="skill-area">Backend</span> PHP / Laravel · PostgreSQL / SQL · MySQL · Python · Node.js · Testing (PHPUnit)</p>
+      <p class="skill"><span class="skill-area">Architecture</span> Layered architecture (domain, application, persistence)</p>
+      <p class="skill"><span class="skill-area">Access control</span> Roles and permissions (Spatie) · reCAPTCHA Enterprise</p>
+      <p class="skill"><span class="skill-area">Automation &amp; AI</span> litellm · OpenAI API · n8n · API and webhook integration</p>
+      <p class="skill"><span class="skill-area">Frontend</span> Vue.js · Inertia.js · Blade · Tailwind CSS · React · TypeScript</p>
+      <p class="skill"><span class="skill-area">Infrastructure</span> Docker · Linux / Nginx · GCP · AWS S3 · Certbot</p>
     </section>
 
     <section>
@@ -190,27 +219,8 @@
     </section>
 
     <section>
-      <h2>Skills</h2>
-      <p class="skill"><span class="skill-area">Backend</span> PHP / Laravel · PostgreSQL / SQL · MySQL · Hexagonal Architecture / DDD · Testing (PHPUnit / pytest) · Python · Node.js</p>
-      <p class="skill"><span class="skill-area">Security</span> Roles and permissions (Spatie) · MFA / session management · SAST and secret detection · reCAPTCHA Enterprise</p>
-      <p class="skill"><span class="skill-area">Automation &amp; AI</span> n8n · OpenAI API · API / webhook integration</p>
-      <p class="skill"><span class="skill-area">Frontend</span> Vue.js · Inertia.js · Blade · Tailwind CSS · React · TypeScript</p>
-      <p class="skill"><span class="skill-area">Infrastructure</span> Docker · Linux / Nginx · CI/CD (GitHub Actions) · Google Cloud Platform · AWS S3</p>
-    </section>
-
-    <section>
-      <h2>Languages</h2>
-      <p>Spanish (native) · English B2, C2 reading</p>
-    </section>
-
-    <section>
-      <h2>Certifications</h2>
-      <ul>
-        <li>Generative AI Fundamentals &amp; Prompt Engineering for Developers · Coursera</li>
-        <li>Intensive Python Programming Certification · Coursera</li>
-        <li>Google IT Automation with Python Professional Certificate · Coursera (in progress)</li>
-        <li>EF SET English Certificate · B2 overall, C2 reading</li>
-      </ul>
+      <h2>Languages and certifications</h2>
+      <p>Spanish (native) · English B2, C2 reading (EF SET) · Google IT Automation with Python — Coursera (in progress)</p>
     </section>
   </body>
 </html>
