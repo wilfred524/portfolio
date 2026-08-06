@@ -125,7 +125,7 @@ export const en = {
             problem:
               'Signing documents while validating the signer\'s identity against a credit bureau: a form fills a template, the template travels to TransUnion, and a document comes back with a hash verifiable against the provider itself.',
             hard:
-              'The hard part is not signing, it is surviving the third party. I implemented the state machine that follows the provider queue and restarts when it returns an unhandled state, preserving XML integrity across requests and translating its errors into something the user can act on.',
+              'The hard part is not signing, it is getting everything to line up before signing. Identity validation depends on a broad set of conditions that must be met in order, and the document travels across several chained requests. I implemented the state machine that follows the provider queue and preserves XML integrity end to end, so that a long process always ends in a valid document, or in an error the user can act on.',
             result:
               'I delivered the payroll-lending module first —multi-step form with per-section autosave, PDF draft, email history and S3 upload retries— and then extracted the generic signing pattern, so the next module could implement it instead of repeating the flow. Small team, reviewed by the tech lead.',
           },
@@ -220,14 +220,17 @@ export const en = {
     viewCode: 'View the code',
     chat: {
       title: 'Ask what the page leaves out',
-      intro:
-        "An agent with Wilfred's context: why he made each decision, how he works, and what sits behind each project. If you have a role or a specific problem, it can book a call.",
+      intro: 'Why he made each decision, how he works, and what sits behind each project.',
       placeholder: 'Type your question',
       send: 'Send',
       thinking: 'Thinking',
       error: "I couldn't answer. Write to wilfred3019@gmail.com instead.",
       logLabel: 'Conversation with the agent',
       disclaimer: "You're talking to an agent, not to Wilfred. It can be wrong.",
+      launcher: 'Ask the agent',
+      closeLabel: 'Close the chat',
+      invite: "Something the page doesn't cover? Ask me.",
+      inviteDismiss: 'Dismiss',
     },
     credit: {
       intro: 'An interpretation of the design system',
