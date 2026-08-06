@@ -46,8 +46,24 @@ def _leer(nombre: str) -> str:
     return ruta.read_text(encoding="utf-8").strip()
 
 
-@lru_cache(maxsize=2)
-def _base_cacheada(con_agenda: bool) -> str:
+def _firma_del_disco() -> tuple:
+    """
+    Marca de modificación de cada archivo de contexto.
+
+    Va dentro de la clave de la caché para que **editar un `.md` se note sin reiniciar
+    nada**. Sin esto, el prompt se congelaba en memoria al primer uso: se corregía el
+    contexto, se recargaba la página, y el agente seguía afirmando lo antiguo con total
+    seguridad — que es exactamente la forma de fallar que su propio README prohíbe.
+
+    En producción los archivos no cambian entre invocaciones, así que la clave es estable
+    y la caché sigue funcionando igual: es una llamada a `stat` por turno, nada más.
+    """
+    nombres = BASE + ((AGENDA,) if config().agenda_activa else ())
+    return tuple((n, (CONTEXT_DIR / n).stat().st_mtime_ns) for n in nombres)
+
+
+@lru_cache(maxsize=4)
+def _base_cacheada(con_agenda: bool, _firma: tuple) -> str:
     partes = [_leer(nombre) for nombre in BASE]
     if con_agenda:
         # Import local: `agenda` importa `calendario`, que solo hace falta en Fase 5.
@@ -68,7 +84,10 @@ def system_prompt(bloque_situacion: str = "") -> str:
     lo más reciente y lo más concreto.
     """
     hoy = datetime.now().astimezone().strftime("%d/%m/%Y")
-    partes = [_base_cacheada(config().agenda_activa), _RECORDATORIO.format(hoy=hoy)]
+    partes = [
+        _base_cacheada(config().agenda_activa, _firma_del_disco()),
+        _RECORDATORIO.format(hoy=hoy),
+    ]
     if bloque_situacion:
         partes.append(bloque_situacion.strip())
     return "\n\n---\n\n".join(partes)

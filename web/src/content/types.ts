@@ -4,6 +4,25 @@
  * le falta una clave. Es lo que impide que una traducción quede a medias sin avisar.
  */
 
+/**
+ * Un contrato: dónde, con qué rol y entre qué fechas. Es el nivel que faltaba.
+ *
+ * Antes cada tarea repetía empresa, rol y periodo, y cinco tareas seguidas del mismo
+ * empleo se leían como cinco trabajos distintos. La verdad es más simple: **un empleo,
+ * unos cuantos proyectos dentro, y tareas dentro de cada proyecto**. Dicho una vez.
+ */
+export interface Employment {
+  /** Estable entre idiomas; es la clave que enlaza los grupos de proyectos con su empleo. */
+  id: string;
+  employer: string;
+  /** Una línea que sitúa a la empresa: quien lee puede no conocerla. */
+  tagline?: string;
+  role: string;
+  period: string;
+  /** Modalidad (jornada, remoto), como en un CV convencional. */
+  mode?: string;
+}
+
 export interface ProjectItem {
   /**
    * Identificador estable, idéntico en los dos idiomas. Es la clave con la que el
@@ -11,19 +30,15 @@ export interface ProjectItem {
    * título, que al traducirse dejaba de coincidir.
    */
   id: string;
-  /**
-   * Empleador al que pertenece el proyecto, también estable entre idiomas. El CV agrupa
-   * la experiencia por contrato, no por marca.
-   */
-  employer?: string;
   /** Título corto (una palabra o dos). */
   title: string;
-  /** Marca o plataforma. Ausente en proyectos propios. */
-  company?: string;
-  /** Rol desempeñado en el proyecto. */
-  role: string;
-  /** Marco temporal. Sin él, nueve meses de trabajo se leen como cuatro años. */
-  period: string;
+  /**
+   * Rol y periodo **solo cuando la tarea no cuelga de un empleo**: los proyectos propios
+   * los necesitan; las tareas de un contrato los heredan de su `Employment` y repetirlos
+   * es justo el ruido que se quiso quitar.
+   */
+  role?: string;
+  period?: string;
   /** Dato de escala, legible junto al título (antes enterrado en el texto fantasma). */
   metric?: string;
   /**
@@ -44,8 +59,17 @@ export interface ProjectItem {
   url?: string;
 }
 
+/**
+ * Un proyecto, con las tareas que se hicieron dentro.
+ *
+ * `employmentId` dice de qué contrato cuelga. Sin él, el grupo es trabajo propio y se
+ * renderiza aparte, sin cabecera de empleo.
+ */
 export interface ProjectGroup {
   category: string;
+  employmentId?: string;
+  /** Aclaración de la marca cuando no coincide con el empleador (una filial, un cliente). */
+  note?: string;
   items: ProjectItem[];
 }
 
@@ -120,6 +144,8 @@ export interface Profile {
   closing: string;
   facts: Fact[];
   skillGroups: SkillGroup[];
+  /** Los contratos, en orden. Cada grupo de proyectos apunta al suyo por `id`. */
+  employments: Employment[];
   projectGroups: ProjectGroup[];
   social: { label: string; url: string }[];
   ui: UiStrings;

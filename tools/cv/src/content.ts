@@ -47,7 +47,7 @@ export const TEXT = {
     },
     present: 'actualidad',
     summary: [
-      'Desarrollador backend en una fintech de crédito por libranza —préstamos con descuento directo de nómina, un sector regulado en Colombia—, donde trabajo desde octubre de 2025.',
+      'Desarrollador backend. Entre octubre de 2025 y julio de 2026 trabajé en una fintech de crédito por libranza —préstamos con descuento directo de nómina, un sector regulado en Colombia—. Disponible de inmediato.',
       'He construido y puesto en producción el motor de reglas de crédito, la firma electrónica con validación de identidad contra buró y el proceso mensual de puntaje crediticio que procesa unos 300.000 registros por corrida. También dirigí la migración de la plataforma a una arquitectura por capas.',
       'Cursando Ingeniería Informática en la UNET. Documentos colombianos, sin requisitos de visado ni patrocinio. Empleo de planta, remoto o híbrido en Colombia; también contratación internacional vía Deel (GMT-5).',
     ],
@@ -100,7 +100,7 @@ export const TEXT = {
     },
     present: 'Present',
     summary: [
-      'Backend developer at a payroll-deduction lending fintech — a regulated sector in Colombia — where I have worked since October 2025.',
+      'Backend developer. From October 2025 to July 2026 I worked at a payroll-deduction lending fintech — a regulated sector in Colombia. Available immediately.',
       'I built and shipped the credit rules engine, the electronic signature flow with credit-bureau identity validation, and the monthly scoring pipeline that processes around 300,000 records per run. I also led the migration of the platform to a layered architecture.',
       'Currently studying Computer Engineering at UNET. Colombian documents — no visa or sponsorship required. Open to full-time roles in Colombia, remote or hybrid; also international contracting via Deel (GMT-5).',
     ],

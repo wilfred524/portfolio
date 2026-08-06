@@ -475,6 +475,33 @@
    Proyectos — tarjetas austeras, hover de inversión
    ------------------------------------------------------------ */
 
+/* Cabecera de contrato: dónde, de qué y cuándo, UNA vez, con los proyectos debajo.
+   Antes cada tarea repetía empresa, rol y periodo, y cinco tareas del mismo puesto se
+   leían como cinco empleos simultáneos. */
+.henry-job {
+  margin-bottom: calc(var(--space) * 8);
+  padding-bottom: calc(var(--space) * 4);
+  border-bottom: 1px solid var(--hairline);
+}
+
+.henry-job__employer {
+  font-family: var(--font-serif-display);
+  font-variation-settings: 'wght' 480, 'opsz' 96, 'SOFT' 0, 'WONK' 0;
+  font-size: var(--text-lg);
+  line-height: 1.1;
+}
+
+.henry-job__line {
+  margin-top: calc(var(--space) * 2);
+}
+
+.henry-job__tagline {
+  margin-top: calc(var(--space) * 1);
+  max-width: 52ch;
+  font-size: var(--text-sm);
+  color: var(--ash);
+}
+
 /* Grupo por categoría: label + regla, y su lista de filas compactas */
 .henry-catgroup {
   margin-top: calc(var(--space) * 12);
@@ -482,6 +509,15 @@
 
 .henry-catgroup:first-of-type {
   margin-top: 0;
+}
+
+/* Un grupo que abre contrato no necesita separarse del anterior: ya lo hace su cabecera. */
+.henry-catgroup:has(> .henry-job) {
+  margin-top: calc(var(--space) * 16);
+}
+
+.henry-catgroup__note {
+  opacity: 0.7;
 }
 
 .henry-catgroup__label {
@@ -743,7 +779,12 @@
 }
 
 /* Altura fija para que la página no dé saltos mientras el agente escribe: sin esto, cada
-   token que llega empuja hacia abajo todo el contacto. */
+   token que llega empuja hacia abajo todo el contacto.
+
+   La conversación va en **papel dentro del panel de tinta**, que es la misma alternancia
+   Paper/Ink con la que está construida toda la página. Un primer intento la puso en
+   `--sepia`: se separaba del panel solo 1,33:1, es decir, seguía siendo marrón sobre
+   marrón. Papel sobre tinta son 14,25:1, y ahí sí se ve dónde empieza la conversación. */
 .henry-chat__log {
   display: flex;
   flex-direction: column;
@@ -751,7 +792,10 @@
   min-height: 120px;
   max-height: 340px;
   overflow-y: auto;
-  padding-right: calc(var(--space) * 2);
+  padding: calc(var(--space) * 4);
+  color: var(--ink);
+  background: var(--paper);
+  border-radius: var(--radius);
   font-size: var(--text-base);
   line-height: 1.55;
 }
@@ -765,13 +809,16 @@
   white-space: pre-wrap;
 }
 
-/* El mensaje del visitante se distingue por sangrado y filete, no por burbuja de color:
-   una burbuja teñida rompería el monocromo del sistema. */
+/* Sobre el papel de la conversación, el mensaje del visitante se invierte a tinta: quién
+   habla se distingue por la misma inversión que usa el resto del sistema, sin teñir nada
+   y sin necesidad de etiquetas. */
 .henry-chat__msg--user {
   align-self: flex-end;
-  padding-left: calc(var(--space) * 3);
-  border-left: 1px solid var(--pebble);
+  max-width: 46ch;
+  padding: calc(var(--space) * 2) calc(var(--space) * 3);
   color: var(--paper);
+  background: var(--ink);
+  border-radius: var(--radius);
 }
 
 .henry-chat__msg--assistant {
@@ -779,10 +826,12 @@
   font-variation-settings: 'wght' 360, 'opsz' 20;
 }
 
+/* Van dentro del hilo, que ahora es papel: los grises claros ahí desaparecen. `--ash`
+   sobre papel da 5,5:1. */
 .henry-chat__msg--pending,
 .henry-chat__msg--error {
   font-size: var(--text-sm);
-  color: var(--midstone);
+  color: var(--ash);
 }
 
 .henry-chat__msg--pending::after {
@@ -807,26 +856,31 @@
   gap: calc(var(--space) * 2);
 }
 
+/* El campo era transparente sobre el panel: un rectángulo marrón dentro de otro marrón,
+   que no se leía como algo donde se pueda escribir. En papel, como el hilo, se ve de
+   inmediato dónde hay que pulsar para escribir. */
 .henry-chat__input {
   flex: 1 1 260px;
   min-width: 0;
-  padding: calc(var(--space) * 2) calc(var(--space) * 3);
+  padding: calc(var(--space) * 3);
   font-family: inherit;
   font-size: var(--text-base);
-  color: var(--paper);
-  background: transparent;
-  border: 1px solid var(--pebble);
+  color: var(--ink);
+  background: var(--paper);
+  border: 1px solid var(--paper);
   border-radius: var(--radius);
   transition: border-color 0.2s ease;
 }
 
 .henry-chat__input::placeholder {
-  color: var(--midstone);
+  color: var(--ash);
 }
 
+/* El borde de foco tiene que verse SOBRE el campo, que ahora es papel: en papel, un
+   borde de papel no existe. */
 .henry-chat__input:focus-visible {
   outline: none;
-  border-color: var(--paper);
+  border-color: var(--ink);
 }
 
 .henry-chat__input:disabled,
