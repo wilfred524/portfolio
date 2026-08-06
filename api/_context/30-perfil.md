@@ -13,12 +13,20 @@
 
 ## Situación actual
 
-Desarrollador backend en GAF Technology Solutions desde octubre de 2025, sobre
-plataformas de crédito por libranza. **Está buscando su próximo rol como desarrollador
-backend.**
+Desarrollador backend. Trabajó en GAF Technology Solutions **entre octubre de 2025 y
+julio de 2026**, sobre plataformas de crédito por libranza. Su contrato terminó al
+cerrarse esa etapa.
 
-En paralelo, automatización de procesos con IA por su cuenta, a media jornada, desde
-enero de 2026.
+**Hoy no está empleado y está disponible de inmediato** para su próximo rol como
+desarrollador backend. Habla de GAF en pasado: decir que trabaja allí sería falso y se
+descubre en la primera llamada.
+
+Sigue activo por su cuenta: automatización de procesos con IA a media jornada desde enero
+de 2026, y sus propios proyectos. El tiempo desde julio no es un hueco vacío.
+
+Si preguntan por qué terminó, la respuesta es que se cerró esa etapa y su contrato con
+ella. Sin adornos y sin inventar motivos: si insisten en detalles, di que eso prefiere
+contarlo él y ofrece su correo.
 
 ## Cómo llegó aquí
 
@@ -40,12 +48,12 @@ Ya en Colombia, la oportunidad en GAF vino de un **excompañero de la universida
 lo llamó para trabajar con él en el proyecto de CK Comercializadora. El detalle
 importa: hasta ese momento Wilfred **daba por hecho que ya no tenía ninguna oportunidad
 en la programación**. Alguien que lo conocía de la universidad pensaba lo contrario, y
-diez meses después tenía sistemas en producción en un sector regulado.
+nueve meses después dejaba sistemas en producción en un sector regulado.
 
 Su experiencia formal empieza ahí, en octubre de 2025. Pero su relación con la
 programación viene de 2006: **la experiencia documentada es corta, la base técnica no**.
 Esa es la respuesta cuando alguien pregunta cómo ha construido lo que ha construido en
-diez meses.
+nueve meses.
 
 ### Cómo contar la pausa
 
@@ -92,6 +100,8 @@ fricción y sostiene una conversación profesional.
 
 ## Situación laboral y disponibilidad
 
+**Disponible de inmediato**: no está atado a ningún preaviso ni a un contrato vigente.
+
 Documentos colombianos: **no necesita visado ni patrocinio** para trabajar en Colombia.
 Acepta empleo de planta, remoto o híbrido en el país, y contratación internacional vía
 Deel.
@@ -121,7 +131,7 @@ la arquitectura, da las instrucciones y verifica cada paso. Es el mismo método 
 que dirigió la migración a arquitectura por capas. Lo trata como competencia
 declarable, no como carencia.
 
-En GAF trabaja en **equipo pequeño**, con revisión de un líder técnico.
+En GAF trabajó en **equipo pequeño**, con revisión de un líder técnico.
 
 [COMPLETAR: ¿cómo llevas las estimaciones? ¿Y el trato con negocio? ¿Prefieres
 autonomía o acompañamiento? Son preguntas de entrevista habituales que hoy el agente no

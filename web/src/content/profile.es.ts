@@ -14,7 +14,7 @@ export const es = {
   credential:
     'Firma electrónica, motor de reglas y puntaje crediticio en producción para crédito por libranza.',
   /* "Disponible para nuevos proyectos" leía freelance; la búsqueda es de empleo. */
-  availability: 'Buscando mi próximo rol como desarrollador backend',
+  availability: 'Disponible de inmediato · Buscando mi próximo rol como desarrollador backend',
   /** Marco temporal, bajo el hero. Es lo que evita que el contenido se lea como 4 años. */
   trajectory: 'Desarrollo backend desde octubre de 2025 · Colombia (GMT-5)',
   /** Slogan editorial: vive en la banda Ink (Masthead), no en el hero. */
@@ -126,17 +126,25 @@ export const es = {
      * la propia página. La línea vuelve cuando haya algo real que poner.
      */
   ],
+  employments: [
+    {
+      id: 'gaf',
+      employer: 'GAF Technology Solutions',
+      tagline: 'Fintech de crédito por libranza, respaldada por un fondo de inversión.',
+      role: 'Desarrollador backend',
+      period: 'Oct 2025 – Jul 2026',
+      mode: 'Jornada completa · Remoto, Colombia',
+    },
+  ],
   projectGroups: [
     {
-      category: 'En producción',
+      category: 'CK Comercializadora',
+      employmentId: 'gaf',
+      note: 'Filial de GAF',
       items: [
         {
           id: 'rules-engine',
-          employer: 'gaf',
           title: 'Motor de reglas de crédito',
-          company: 'CK Comercializadora, filial de GAF',
-          role: 'Desarrollador backend',
-          period: 'Oct 2025 – actualidad',
           body: {
             problem:
               'Cambiar una política de crédito exigía un despliegue: el área de negocio no podía ajustar un límite de plazo o una condición de embargo sin pasar por desarrollo.',
@@ -147,13 +155,15 @@ export const es = {
           },
           tags: ['Laravel', 'Vue.js', 'Inertia.js', 'PostgreSQL'],
         },
+      ],
+    },
+    {
+      category: 'Plataforma GAF',
+      employmentId: 'gaf',
+      items: [
         {
           id: 'esignature',
-          employer: 'gaf',
           title: 'Firma electrónica con validación de identidad',
-          company: 'GAF Technology Solutions',
-          role: 'Desarrollador backend',
-          period: 'Oct 2025 – actualidad',
           body: {
             problem:
               'Firmar documentos validando la identidad de quien firma contra un buró de crédito: un formulario llena una plantilla, la plantilla viaja a TransUnion, y vuelve un documento con un hash verificable contra el propio proveedor.',
@@ -166,11 +176,7 @@ export const es = {
         },
         {
           id: 'scoring',
-          employer: 'gaf',
           title: 'Proceso mensual de puntaje crediticio',
-          company: 'GAF Technology Solutions',
-          role: 'Desarrollador backend',
-          period: 'Oct 2025 – actualidad',
           metric: '~300.000 registros por corrida, una vez al mes',
           body: {
             problem:
@@ -184,22 +190,14 @@ export const es = {
         },
         {
           id: 'access-control',
-          employer: 'gaf',
           title: 'Control de accesos y auditoría',
-          company: 'GAF Technology Solutions',
-          role: 'Desarrollador backend',
-          period: 'Oct 2025 – actualidad',
           brief:
             'Consolidé el control de accesos sobre Spatie —guards, middleware y policies—, con una migración que llevó los usuarios y roles existentes al esquema nuevo sin interrumpir a quien estaba trabajando dentro. Trabajé además en el endurecimiento de la autenticación y en la trazabilidad de eventos críticos, de cara a una auditoría de seguridad.',
           tags: ['Spatie Permission', 'Autenticación', 'Auditoría', 'Laravel'],
         },
         {
           id: 'layered-migration',
-          employer: 'gaf',
           title: 'Migración a arquitectura por capas',
-          company: 'GAF Technology Solutions',
-          role: 'Desarrollador backend',
-          period: 'Oct 2025 – actualidad',
           brief:
             'Dirigí y verifiqué la migración de una plataforma de seis años —más de doscientos modelos Eloquent revueltos con controladores, colas y providers— a una arquitectura por capas. Sin suite de pruebas de la que fiarse, fue módulo a módulo en lugar de todo de golpe. Tres meses, con revisión del líder técnico.',
           tags: ['Arquitectura Hexagonal', 'DDD', 'Laravel'],
@@ -211,9 +209,7 @@ export const es = {
       items: [
         {
           id: 'ai-automation',
-          employer: 'self',
           title: 'Automatización de procesos con IA',
-          company: 'Autónomo',
           role: 'Freelance, media jornada',
           period: 'Ene 2026 – actualidad',
           brief:

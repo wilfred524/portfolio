@@ -8,18 +8,26 @@
 
 ## Contexto del dominio
 
-Trabaja en **crédito por libranza**: préstamos con descuento directo de nómina, un
-sector regulado en Colombia por la Ley 1527. Que el descuento lo aplique la pagaduría
+Su experiencia es en **crédito por libranza**: préstamos con descuento directo de nómina,
+un sector regulado en Colombia por la Ley 1527. Que el descuento lo aplique la pagaduría
 —no el deudor— cambia por completo el modelo de riesgo y las reglas de capacidad de
 endeudamiento. Es un dominio de nicho, y conocerlo es parte de su valor.
 
 ---
 
-## GAF Technology Solutions · desarrollador backend · oct 2025 – actualidad
+## GAF Technology Solutions · desarrollador backend · oct 2025 – jul 2026
 
-Equipo pequeño, con revisión de un líder técnico. Cinco frentes en producción.
+**Un solo empleo**, con dos proyectos dentro y varias tareas en cada uno. Si alguien
+pregunta por su experiencia, esta es la estructura: *fue desarrollador backend en GAF, y
+entre lo que hizo allí está…*. No presentes cada tarea como si fuera un trabajo aparte.
 
-### Motor de reglas de crédito (CK Comercializadora, filial de GAF)
+Equipo pequeño, con revisión de un líder técnico. Su contrato terminó en julio de 2026 al
+cerrarse esa etapa; **hoy no trabaja allí y está disponible de inmediato**. Habla de ese
+periodo en pasado.
+
+### Proyecto: CK Comercializadora (filial de GAF)
+
+#### Motor de reglas de crédito
 
 Cambiar una política de crédito exigía un despliegue: negocio no podía ajustar un límite
 de plazo o una condición de embargo sin pasar por desarrollo.
@@ -38,7 +46,11 @@ asesor que la originó. La API de envío la construyó un compañero.
 [AMPLIAR: ¿qué alternativa descartaste al modelar las reglas como datos? ¿Cuánto se
 tardaba antes en cambiar una política y cuánto ahora? Ese contraste es lo que convence.]
 
-### Firma electrónica con validación de identidad
+### Proyecto: plataforma GAF
+
+Las cuatro tareas que siguen son de la plataforma principal de GAF, no de CK.
+
+#### Firma electrónica con validación de identidad
 
 Un formulario llena una plantilla, la plantilla viaja a TransUnion, y vuelve un
 documento con hash verificable contra el propio proveedor.
@@ -66,7 +78,7 @@ de repetir el flujo.
 [AMPLIAR: ¿cuántas condiciones distintas hay que validar antes de poder firmar, y cuál
 fue la más difícil de encajar? Un número concreto convence más que «un conjunto amplio».]
 
-### Proceso mensual de puntaje crediticio · ~300.000 registros por corrida
+#### Proceso mensual de puntaje crediticio · ~300.000 registros por corrida
 
 Un modelo de riesgo vivía en el cuaderno de un analista, sin forma de llegar a
 producción. Lo empaquetó en un contenedor con cron mensual: extrae de PostgreSQL,
@@ -84,7 +96,7 @@ API, visible en la pantalla de visado.
 [AMPLIAR: ¿por qué bloques de cinco mil y no otro tamaño? ¿Qué pasó la primera vez que
 falló una corrida?]
 
-### Control de accesos y auditoría
+#### Control de accesos y auditoría
 
 Consolidó el control de accesos sobre Spatie —guards, middleware y policies— con una
 migración que llevó usuarios y roles existentes al esquema nuevo **sin interrumpir a
@@ -95,7 +107,7 @@ trazabilidad de eventos críticos, de cara a una auditoría de seguridad.
 
 [AMPLIAR: ¿la auditoría se llegó a pasar? ¿Qué encontró?]
 
-### Migración a arquitectura por capas
+#### Migración a arquitectura por capas
 
 Dirigió y verificó la migración de una plataforma de **seis años y más de doscientos
 modelos Eloquent** revueltos con controladores, colas y providers, a una arquitectura

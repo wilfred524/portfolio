@@ -93,7 +93,7 @@
 
     <section>
       <h2>Profile</h2>
-      <p>Backend developer at a payroll-deduction lending fintech — a regulated sector in Colombia — where I have worked since October 2025.</p>
+      <p>Backend developer. From October 2025 to July 2026 I worked at a payroll-deduction lending fintech — a regulated sector in Colombia. Available immediately.</p>
       <p>I built and shipped the credit rules engine, the electronic signature flow with credit-bureau identity validation, and the monthly scoring pipeline that processes around 300,000 records per run. I also led the migration of the platform to a layered architecture.</p>
       <p>Currently studying Computer Engineering at UNET. Colombian documents — no visa or sponsorship required. Open to full-time roles in Colombia, remote or hybrid; also international contracting via Deel (GMT-5).</p>
     </section>
@@ -104,12 +104,12 @@
       <div class="job">
         <p class="job-head">
           <span class="role">Backend developer</span> <span class="company">GAF Technology Solutions</span> · <span class="mode">Full-time · Remote, Colombia</span>
-          <span class="period">Oct 2025 – Present</span>
+          <span class="period">Oct 2025 – Jul 2026</span>
         </p>
         <p class="tagline">Payroll-deduction lending fintech, backed by an investment fund.</p>
         
         <div class="entry">
-          <p class="entry-title">Credit rules engine <span class="note">CK Comercializadora, a GAF subsidiary</span></p>
+          <p class="entry-title">Credit rules engine <span class="note">CK Comercializadora</span></p>
           <ul>
             <li>Modelled the data and translated business policy into a rules schema in PostgreSQL: eligibility, garnishments, term limits, and employment and financial requirements per payer. The business team now adjusts parameters without a deployment.</li>
             <li>Implemented the full evaluation logic: borrowing-capacity calculation under Colombian Law 1527 and Law 50 for active employees and pensioners, decision criteria, special rules, and application re-evaluation.</li>
@@ -119,7 +119,7 @@
         </div>
 
         <div class="entry">
-          <p class="entry-title">Electronic signature with identity validation</p>
+          <p class="entry-title">Electronic signature with identity validation <span class="note">GAF platform</span></p>
           <ul>
             <li>Implemented the state machine that tracks the identity-validation provider queue, preserving XML integrity across chained requests.</li>
             <li>Delivered the payroll-lending module end to end: multi-step form with section autosave, PDF draft, email history, and S3 upload retries.</li>
@@ -129,7 +129,7 @@
         </div>
 
         <div class="entry">
-          <p class="entry-title">Monthly credit scoring process</p>
+          <p class="entry-title">Monthly credit scoring process <span class="note">GAF platform</span></p>
           <ul>
             <li>Took a risk model living in a data analyst notebook to production: a containerised monthly cron job that reads from PostgreSQL, runs the model and persists results. Scoring was not automated before this.</li>
             <li>Processes around 300,000 records per run, loading in batches of five thousand, with on-disk state tracking to avoid reprocessing the same artifact and invalid-row handling that does not abort the load.</li>
@@ -139,7 +139,7 @@
         </div>
 
         <div class="entry">
-          <p class="entry-title">Access control and auditing</p>
+          <p class="entry-title">Access control and auditing <span class="note">GAF platform</span></p>
           <ul>
             <li>Consolidated access control on Spatie — guards, middleware and policies — with a migration that moved existing users and roles to the new schema without interrupting operations.</li>
             <li>Worked on authentication hardening and on traceability of business-critical events ahead of a security audit.</li>
@@ -148,7 +148,7 @@
         </div>
 
         <div class="entry">
-          <p class="entry-title">Migration to a layered architecture</p>
+          <p class="entry-title">Migration to a layered architecture <span class="note">GAF platform</span></p>
           <ul>
             <li>Led and verified the migration of a six-year-old platform — over two hundred Eloquent models mixed with controllers, queues and providers — to a layered architecture.</li>
             <li>With no test suite to rely on, the migration went module by module with verification at each step. Three months, reviewed by the tech lead.</li>
@@ -159,30 +159,22 @@
 
       <div class="job">
         <p class="job-head">
-          <span class="role">Freelance, part-time</span> <span class="company">Self-employed</span> · <span class="mode">Part-time</span>
-          <span class="period">Jan 2026 – Present</span>
+          <span class="role">Personal projects</span>
+          
         </p>
         
         
         <div class="entry">
-          <p class="entry-title">AI process automation</p>
+          <p class="entry-title">AI process automation <span class="note">Freelance, part-time · Jan 2026 – Present</span></p>
           <ul>
             <li>Automation pipelines built with n8n and the OpenAI API for content generation.</li>
             <li>Conversational Telegram bot integrated with n8n and PostgreSQL handling requests end to end.</li>
           </ul>
           <p class="stack">n8n · OpenAI API · PostgreSQL</p>
         </div>
-      </div>
 
-      <div class="job">
-        <p class="job-head">
-          <span class="role">Personal projects</span>
-          <span class="period">Jul 2026 – ongoing</span>
-        </p>
-        
-        
         <div class="entry">
-          <p class="entry-title">Video clipping CLI</p>
+          <p class="entry-title">Video clipping CLI <span class="note">Personal project · Jul 2026 – ongoing</span></p>
           <ul>
             <li>TypeScript command-line tool that splits long video into vertical clips: Whisper transcription, script generation by a model whose output is schema-validated, speech synthesis, and subtitle rendering with Remotion.</li>
             <li>Every step persists its result to disk and the process is resumable, so already-paid model calls are never repeated.</li>
