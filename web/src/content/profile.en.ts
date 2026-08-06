@@ -26,8 +26,8 @@ export const en = {
   email: 'wilfred3019@gmail.com',
   phone: '+57 301 737 4234',
   repoUrl: 'https://github.com/wilfred524/portfolio',
-  /* PENDIENTE: dominio público del sitio. Vacío = no se imprime en el CV. */
-  siteUrl: '',
+  /** Dominio de producción en Vercel; sin dominio propio todavía. */
+  siteUrl: 'https://portfolio-wilfred524.vercel.app',
   cv: { label: 'Download CV', url: '/cv-en.pdf' },
   colophon:
     'This site is React and TypeScript, with variable type and animations written by hand. I chose that stack precisely because it was new ground: I already know I have the backend. I built it leaning on AI to write code: I define the architecture, give the instructions and verify every step. The code is public.',
@@ -87,7 +87,7 @@ export const en = {
     },
     {
       area: 'Automation & AI',
-      items: ['litellm', 'OpenAI API', 'n8n', 'API and webhook integration'],
+      items: ['DeepSeek API', 'OpenAI API', 'n8n', 'API and webhook integration'],
     },
     {
       area: 'Frontend',
@@ -203,10 +203,10 @@ export const en = {
           role: 'Personal project',
           period: 'Ongoing',
           brief:
-            'I built a conversational assistant that answers questions about my background and the decisions behind each project, with an explicit notice that an agent is answering and can be wrong. I first assembled it with n8n and the OpenAI API, and on deploying it I rebuilt the orchestration with litellm, because the Vercel free plan does not support n8n.',
+            'I built a conversational assistant that answers questions about my background and the decisions behind each project, with an explicit notice that an agent is answering and can be wrong. I first assembled it with n8n and the OpenAI API, and on deploying it I rebuilt the orchestration in Python, because the Vercel free plan does not support n8n. I dropped litellm after measuring it — 133 MB of the 199 the dependencies took, against a 250 MB per-function limit — and talk to the model over plain REST with httpx.',
           /* No `url`: the assistant IS this page, so linking it from inside leads
              nowhere. It does appear on the CV, in the contact line. */
-          tags: ['Python', 'FastAPI', 'litellm', 'Vercel'],
+          tags: ['Python', 'FastAPI', 'DeepSeek', 'Vercel'],
         },
         {
           id: 'video-cli',
