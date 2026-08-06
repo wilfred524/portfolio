@@ -15,6 +15,24 @@ import { api } from '../../../lib/api';
  * siguiente petición: el servidor no tiene memoria entre invocaciones y necesita saber a
  * qué instante se refería «h2» cuando el visitante lo confirma.
  */
+/**
+ * Quita los marcadores de Markdown que el modelo escribe de todas formas.
+ *
+ * El contexto le pide texto corrido, sin negritas ni encabezados, y aun así los cuela:
+ * un modelo entrenado con Markdown lo produce por inercia. Como el chat pinta texto
+ * plano, esos `**` se leían tal cual en pantalla.
+ *
+ * Se limpia al pintar y no al recibir: durante el streaming, un `**` puede llegar partido
+ * entre dos trozos, y aquí siempre se trabaja sobre el texto ya acumulado.
+ */
+function sinMarcas(texto: string): string {
+  return texto
+    .replace(/\*\*(.+?)\*\*/gs, '$1') // **negrita**
+    .replace(/(^|[\s(])\*(\S.*?\S|\S)\*(?=[\s).,;:!?]|$)/gs, '$1$2') // *cursiva*
+    .replace(/`([^`]+)`/g, '$1') // `código`
+    .replace(/^#{1,6}\s+/gm, ''); // ## encabezados
+}
+
 export function Chat() {
   const { ui } = useContent();
   const [mensajes, setMensajes] = useState<ChatMessage[]>([]);
@@ -24,10 +42,36 @@ export function Chat() {
   const [error, setError] = useState('');
   const huecos = useRef<Slot[]>([]);
   const abortar = useRef<AbortController | null>(null);
+  const hilo = useRef<HTMLDivElement>(null);
+  // Si el visitante ha subido a releer algo, no se le arrastra de vuelta abajo.
+  const siguiendo = useRef(true);
 
   // Al desmontar (cambio de idioma incluido) se corta el flujo abierto: sin esto, React
   // seguiría recibiendo trozos para un componente que ya no existe.
   useEffect(() => () => abortar.current?.abort(), []);
+
+  /**
+   * El hilo baja solo mientras el agente escribe.
+   *
+   * Sin esto, la respuesta crecía fuera de la vista: quien acababa de preguntar se
+   * quedaba mirando su propio mensaje, sin saber que abajo ya le estaban contestando.
+   *
+   * Salto instantáneo y no suave: con un texto que llega token a token, cada animación
+   * arrancaría antes de que termine la anterior y el hilo temblaría. Y `scrollTop` no
+   * anima, así que respeta `prefers-reduced-motion` por construcción.
+   */
+  useEffect(() => {
+    const el = hilo.current;
+    if (el && siguiendo.current) el.scrollTop = el.scrollHeight;
+  }, [mensajes, parcial, enCurso, error]);
+
+  function alDesplazar() {
+    const el = hilo.current;
+    if (!el) return;
+    // Margen de holgura: pegado al fondo casi nunca es exacto, y con una línea a medio
+    // renderizar la cuenta se queda corta por unos píxeles.
+    siguiendo.current = el.scrollHeight - el.scrollTop - el.clientHeight <= 48;
+  }
 
   async function enviar(evento: React.FormEvent) {
     evento.preventDefault();
@@ -39,6 +83,8 @@ export function Chat() {
     setEntrada('');
     setError('');
     setEnCurso(true);
+    // Acaba de preguntar: quiere ver la respuesta, aunque antes hubiera subido a releer.
+    siguiendo.current = true;
 
     let respuesta = '';
     abortar.current = new AbortController();
@@ -85,6 +131,8 @@ export function Chat() {
 
       {/* aria-live: el lector de pantalla anuncia cada respuesta según se completa. */}
       <div
+        ref={hilo}
+        onScroll={alDesplazar}
         className="henry-chat__log"
         role="log"
         aria-label={ui.chat.logLabel}
@@ -96,11 +144,13 @@ export function Chat() {
             key={`${indice}-${mensaje.role}`}
             className={`henry-chat__msg henry-chat__msg--${mensaje.role}`}
           >
-            {mensaje.content}
+            {mensaje.role === 'assistant' ? sinMarcas(mensaje.content) : mensaje.content}
           </p>
         ))}
 
-        {parcial && <p className="henry-chat__msg henry-chat__msg--assistant">{parcial}</p>}
+        {parcial && (
+          <p className="henry-chat__msg henry-chat__msg--assistant">{sinMarcas(parcial)}</p>
+        )}
 
         {enCurso && !parcial && (
           <p className="henry-chat__msg henry-chat__msg--pending">{ui.chat.thinking}…</p>

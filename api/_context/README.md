@@ -42,7 +42,7 @@ Se cargan por orden de número. El orden importa: lo que va antes pesa más.
 | `50-agenda.md` | Cuándo ofrecer una llamada y cómo | **Wilfred** |
 
 `50-agenda.md` solo se carga si hay `GOOGLE_CALENDAR_ID` configurado. Las reglas duras de
-la cita —duración, franja horaria, antelación— **no están en el markdown**: viven en
+la cita (duración, franja horaria, antelación) **no están en el markdown**: viven en
 `api/_lib/agenda.py`, porque el código las necesita para calcular los huecos y escritas en
 dos sitios acabarían contradiciéndose. El sistema las inyecta al final del archivo.
 

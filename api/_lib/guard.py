@@ -104,7 +104,12 @@ def comprobar_conversacion(mensajes: list) -> None:
 
     total = 0
     for mensaje in mensajes:
-        if len(mensaje.content) > MAX_CARACTERES_MENSAJE:
+        # El tope por mensaje es para lo que escribe el visitante. Aplicarlo también a las
+        # respuestas del agente bloqueaba la conversación entera en cuanto una salía larga:
+        # el historial vuelve en la siguiente petición, la respuesta anterior pasaba de
+        # 1.200 caracteres, y el visitante recibía "tu mensaje es demasiado largo" habiendo
+        # escrito cuatro palabras. Lo que acota el tamaño total es el techo de más abajo.
+        if mensaje.role == "user" and len(mensaje.content) > MAX_CARACTERES_MENSAJE:
             raise LimiteSuperado(
                 f"El mensaje es demasiado largo (máximo {MAX_CARACTERES_MENSAJE} caracteres)."
             )

@@ -12,7 +12,7 @@ Hablas con quien visita su página personal. Normalmente es una de estas persona
 
 Para responder lo que la página no alcanza a contar. El visitante **ya tiene delante el
 CV, los proyectos y las tecnologías**: repetirle esa lista no le sirve de nada. Tu valor
-está en el porqué — por qué se tomó una decisión técnica, qué había detrás de un
+está en el porqué: por qué se tomó una decisión técnica, qué había detrás de un
 proyecto, cómo trabaja.
 
 Y, cuando alguien quiera hablar con él, en **ponerlo en contacto**: su correo y su

@@ -36,7 +36,7 @@ export const es = {
    * trabaja hoy y es una competencia declarable, no una carencia.
    */
   colophon:
-    'Este sitio es React y TypeScript, con tipografía variable y animaciones sin librería. Elegí ese stack precisamente porque era territorio nuevo: el backend ya sé que lo tengo. Lo construí apoyándome en IA para codificar — yo defino la arquitectura, doy las instrucciones y verifico cada paso—, que es el mismo método con el que dirigí la migración a arquitectura por capas. El código está público.',
+    'Este sitio es React y TypeScript, con tipografía variable y animaciones sin librería. Elegí ese stack precisamente porque era territorio nuevo: el backend ya sé que lo tengo. Lo construí apoyándome en IA para codificar: yo defino la arquitectura, doy las instrucciones y verifico cada paso. El código está público.',
   /** Cierre de la página: lo único de la antigua sección «Sobre mí» que se conserva. */
   closing:
     'Lo que me engancha es siempre lo mismo: un proceso que alguien hace a mano y no debería, o un sistema desordenado que se puede dejar mejor de como lo encontré.',
@@ -149,7 +149,7 @@ export const es = {
             problem:
               'Cambiar una política de crédito exigía un despliegue: el área de negocio no podía ajustar un límite de plazo o una condición de embargo sin pasar por desarrollo.',
             hard:
-              'Modelé los datos y traduje las reglas de negocio a un esquema de políticas en PostgreSQL —elegibilidad, embargos, límites de plazo, requisitos laborales y financieros por pagaduría—, de modo que el código no sabe cuáles son las reglas, solo cómo aplicarlas. Sobre esa base implementé la evaluación completa: cálculo de capacidad de endeudamiento según Ley 1527 y Ley 50 para activos y pensionados, criterios de decisión, reglas especiales, reevaluación de solicitudes y las validaciones de front y backend.',
+              'Modelé los datos y traduje las reglas de negocio a un esquema de políticas en PostgreSQL (elegibilidad, embargos, límites de plazo, requisitos laborales y financieros por pagaduría), de modo que el código no sabe cuáles son las reglas, solo cómo aplicarlas. Sobre esa base implementé la evaluación completa: cálculo de capacidad de endeudamiento según Ley 1527 y Ley 50 para activos y pensionados, criterios de decisión, reglas especiales, reevaluación de solicitudes y las validaciones de front y backend.',
             result:
               'El área de negocio ajusta parámetros sin tocar código ni esperar despliegue, y cada solicitud queda trazada al asesor que la originó. La API de envío la construyó un compañero; reestructuré el cuerpo de sus peticiones varias veces conforme cambiaba el modelo.',
           },
@@ -170,7 +170,7 @@ export const es = {
             hard:
               'Lo difícil no es firmar: es que todo encaje antes de firmar. La validación de identidad depende de un conjunto amplio de condiciones que deben cumplirse en orden, y el documento viaja entre varias peticiones encadenadas. Implementé la máquina de estados que sigue la cola del proveedor y preserva la integridad del XML de punta a punta, para que un proceso largo termine siempre en un documento válido o en un error que el usuario pueda resolver.',
             result:
-              'Entregué primero el módulo de libranzas —formulario multipaso con autoguardado por sección, borrador en PDF, historial de correos y reintentos de subida a S3— y después extraje el patrón de firma genérica, de modo que el siguiente módulo lo implementara en vez de repetir el flujo. Equipo pequeño, con revisión del líder técnico.',
+              'Entregué primero el módulo de libranzas (formulario multipaso con autoguardado por sección, borrador en PDF, historial de correos y reintentos de subida a S3) y después extraje el patrón de firma genérica, de modo que el siguiente módulo lo implementara en vez de repetir el flujo. Equipo pequeño, con revisión del líder técnico.',
           },
           tags: ['Laravel', 'Vue.js', 'TransUnion', 'AWS S3'],
         },
@@ -192,14 +192,14 @@ export const es = {
           id: 'access-control',
           title: 'Control de accesos y auditoría',
           brief:
-            'Consolidé el control de accesos sobre Spatie —guards, middleware y policies—, con una migración que llevó los usuarios y roles existentes al esquema nuevo sin interrumpir a quien estaba trabajando dentro. Trabajé además en el endurecimiento de la autenticación y en la trazabilidad de eventos críticos, de cara a una auditoría de seguridad.',
+            'Consolidé el control de accesos sobre Spatie (guards, middleware y policies), con una migración que llevó los usuarios y roles existentes al esquema nuevo sin interrumpir a quien estaba trabajando dentro. Trabajé además en el endurecimiento de la autenticación y en la trazabilidad de eventos críticos, de cara a una auditoría de seguridad.',
           tags: ['Spatie Permission', 'Autenticación', 'Auditoría', 'Laravel'],
         },
         {
           id: 'layered-migration',
           title: 'Migración a arquitectura por capas',
           brief:
-            'Dirigí y verifiqué la migración de una plataforma de seis años —más de doscientos modelos Eloquent revueltos con controladores, colas y providers— a una arquitectura por capas. Sin suite de pruebas de la que fiarse, fue módulo a módulo en lugar de todo de golpe. Tres meses, con revisión del líder técnico.',
+            'Dirigí y verifiqué la migración de una plataforma de seis años a una arquitectura por capas, con más de doscientos modelos Eloquent revueltos con controladores, colas y providers. Sin suite de pruebas de la que fiarse, fue módulo a módulo en lugar de todo de golpe. Tres meses, con revisión del líder técnico.',
           tags: ['Arquitectura Hexagonal', 'DDD', 'Laravel'],
         },
       ],
