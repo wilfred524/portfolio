@@ -15,27 +15,27 @@
 
 export const CERTIFICATIONS = [
   {
-    es: 'Generative AI Fundamentals & Prompt Engineering for Developers — Coursera',
-    en: 'Generative AI Fundamentals & Prompt Engineering for Developers — Coursera',
+    es: 'Generative AI Fundamentals & Prompt Engineering for Developers · Coursera',
+    en: 'Generative AI Fundamentals & Prompt Engineering for Developers · Coursera',
   },
   {
-    es: 'Programación Intensiva en Python — Coursera',
-    en: 'Intensive Python Programming Certification — Coursera',
+    es: 'Programación Intensiva en Python · Coursera',
+    en: 'Intensive Python Programming Certification · Coursera',
   },
   {
-    es: 'Google IT Automation with Python Professional Certificate — Coursera (en curso)',
-    en: 'Google IT Automation with Python Professional Certificate — Coursera (in progress)',
+    es: 'Google IT Automation with Python Professional Certificate · Coursera (en curso)',
+    en: 'Google IT Automation with Python Professional Certificate · Coursera (in progress)',
   },
   {
-    es: 'EF SET English Certificate — B2 global, lectura C2',
-    en: 'EF SET English Certificate — B2 overall, C2 reading',
+    es: 'EF SET English Certificate · B2 global, lectura C2',
+    en: 'EF SET English Certificate · B2 overall, C2 reading',
   },
 ];
 
 export const TEXT = {
   es: {
     lang: 'es',
-    docTitle: 'Wilfred Morales — Desarrollador backend',
+    docTitle: 'Wilfred Morales · Desarrollador backend',
     headline: 'Desarrollador backend · PHP/Laravel · PostgreSQL · Seguridad de plataforma',
     sections: {
       summary: 'Perfil',
@@ -47,7 +47,7 @@ export const TEXT = {
     },
     present: 'actualidad',
     summary: [
-      'Desarrollador backend. Entre octubre de 2025 y julio de 2026 trabajé en una fintech de crédito por libranza —préstamos con descuento directo de nómina, un sector regulado en Colombia—. Disponible de inmediato.',
+      'Desarrollador backend. Entre octubre de 2025 y julio de 2026 trabajé en una fintech de crédito por libranza: préstamos con descuento directo de nómina, un sector regulado en Colombia. Disponible de inmediato.',
       'He construido y puesto en producción el motor de reglas de crédito, la firma electrónica con validación de identidad contra buró y el proceso mensual de puntaje crediticio que procesa unos 300.000 registros por corrida. También dirigí la migración de la plataforma a una arquitectura por capas.',
       'Cursando Ingeniería Informática en la UNET. Documentos colombianos, sin requisitos de visado ni patrocinio. Empleo de planta, remoto o híbrido en Colombia; también contratación internacional vía Deel (GMT-5).',
     ],
@@ -68,11 +68,11 @@ export const TEXT = {
         'Añadí la consulta en vivo por API para mostrar el puntaje de una cédula en la pantalla de visado.',
       ],
       'access-control': [
-        'Consolidé el control de accesos sobre Spatie —guards, middleware y policies— con una migración que llevó usuarios y roles existentes al esquema nuevo sin interrumpir la operación.',
+        'Consolidé el control de accesos sobre Spatie (guards, middleware y policies) con una migración que llevó usuarios y roles existentes al esquema nuevo sin interrumpir la operación.',
         'Trabajé en el endurecimiento de la autenticación y en la trazabilidad de eventos críticos de cara a una auditoría de seguridad.',
       ],
       'layered-migration': [
-        'Dirigí y verifiqué la migración de una plataforma de seis años —más de doscientos modelos Eloquent mezclados con controladores, colas y providers— a una arquitectura por capas.',
+        'Dirigí y verifiqué la migración de una plataforma de seis años a una arquitectura por capas, con más de doscientos modelos Eloquent mezclados con controladores, colas y providers.',
         'Sin suite de pruebas de la que fiarse, la migración fue módulo a módulo con verificación en cada paso. Tres meses, con revisión del líder técnico.',
       ],
       'ai-automation': [
@@ -88,7 +88,7 @@ export const TEXT = {
 
   en: {
     lang: 'en',
-    docTitle: 'Wilfred Morales — Backend Developer',
+    docTitle: 'Wilfred Morales · Backend Developer',
     headline: 'Backend Developer · PHP/Laravel · PostgreSQL · Platform Security',
     sections: {
       summary: 'Profile',
@@ -100,9 +100,9 @@ export const TEXT = {
     },
     present: 'Present',
     summary: [
-      'Backend developer. From October 2025 to July 2026 I worked at a payroll-deduction lending fintech — a regulated sector in Colombia. Available immediately.',
+      'Backend developer. From October 2025 to July 2026 I worked at a payroll-deduction lending fintech, a regulated sector in Colombia. Available immediately.',
       'I built and shipped the credit rules engine, the electronic signature flow with credit-bureau identity validation, and the monthly scoring pipeline that processes around 300,000 records per run. I also led the migration of the platform to a layered architecture.',
-      'Currently studying Computer Engineering at UNET. Colombian documents — no visa or sponsorship required. Open to full-time roles in Colombia, remote or hybrid; also international contracting via Deel (GMT-5).',
+      'Currently studying Computer Engineering at UNET. Colombian documents: no visa or sponsorship required. Open to full-time roles in Colombia, remote or hybrid; also international contracting via Deel (GMT-5).',
     ],
     bullets: {
       'rules-engine': [
@@ -121,11 +121,11 @@ export const TEXT = {
         'Added a live API lookup so a customer score can be shown on the underwriting screen.',
       ],
       'access-control': [
-        'Consolidated access control on Spatie — guards, middleware and policies — with a migration that moved existing users and roles to the new schema without interrupting operations.',
+        'Consolidated access control on Spatie (guards, middleware and policies) with a migration that moved existing users and roles to the new schema without interrupting operations.',
         'Worked on authentication hardening and on traceability of business-critical events ahead of a security audit.',
       ],
       'layered-migration': [
-        'Led and verified the migration of a six-year-old platform — over two hundred Eloquent models mixed with controllers, queues and providers — to a layered architecture.',
+        'Led and verified the migration of a six-year-old platform to a layered architecture, with over two hundred Eloquent models mixed with controllers, queues and providers.',
         'With no test suite to rely on, the migration went module by module with verification at each step. Three months, reviewed by the tech lead.',
       ],
       'ai-automation': [

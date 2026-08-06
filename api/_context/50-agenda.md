@@ -4,7 +4,7 @@
 > `GOOGLE_CALENDAR_ID` configurado). Si no lo está, el agente no lo ve y no menciona
 > llamadas: da el correo y el teléfono, que están publicados en la página.
 >
-> Las reglas concretas —duración, franja horaria, antelación— **no se escriben aquí**:
+> Las reglas concretas (duración, franja horaria, antelación) **no se escriben aquí**:
 > viven en `api/_lib/agenda.py` y el sistema las inyecta al final de este archivo ya
 > renderizadas. Se hace así porque esas mismas reglas las usa el código para calcular los
 > huecos, y escritas en dos sitios acabarían contradiciéndose.
