@@ -847,7 +847,7 @@
 }
 
 /* ------------------------------------------------------------
-   Widget flotante del chat — abajo a la izquierda
+   Widget flotante del chat — abajo a la derecha
 
    Es el ÚNICO position:fixed y el ÚNICO z-index de todo el sistema. Si algún día
    aparece otro elemento flotante, este es el valor con el que tiene que negociar.
@@ -858,14 +858,16 @@
 
 .henry-chatwidget {
   position: fixed;
-  left: var(--gutter);
+  right: var(--gutter);
   /* `max()` con el área segura: en iPhone, `--gutter` solo no basta para librar la
      barra de gestos. */
   bottom: max(var(--gutter), env(safe-area-inset-bottom));
   z-index: 20;
   display: flex;
   flex-direction: column;
-  align-items: flex-start;
+  /* Alineado a la derecha: el botón y el bocadillo crecen hacia dentro de la página,
+     nunca hacia fuera del borde. */
+  align-items: flex-end;
   gap: calc(var(--space) * 2);
 }
 
