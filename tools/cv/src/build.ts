@@ -68,53 +68,54 @@ function renderCv(profile: any, lang: Lang): string {
   const en = lang === 'en';
 
   // Un CV se organiza por EMPLEO, no por proyecto: cinco entradas con el mismo periodo
-  // se leen como cinco trabajos simultáneos. Se agrupan por empresa conservando el orden.
-  const items = profile.projectGroups.flatMap((group: any) => group.items);
-  const jobs = new Map<
-    string,
-    {
-      company: string;
-      role: string;
-      period: string;
-      employer?: string;
-      hasCompany: boolean;
-      items: any[];
-    }
-  >();
+  // se leen como cinco trabajos simultáneos.
+  //
+  // El empleo ya viene declarado en el contenido (`employments`), así que aquí solo se
+  // agrupa. Antes se deducía —el periodo del contrato era el del primer proyecto que
+  // apareciera—, que funcionaba por casualidad mientras todos compartieran fechas.
+  const jobs = profile.employments.map((empleo: any) => ({
+    company: empleo.employer,
+    role: empleo.role,
+    period: empleo.period,
+    mode: empleo.mode,
+    tagline: empleo.tagline,
+    hasCompany: true,
+    groups: profile.projectGroups.filter((g: any) => g.employmentId === empleo.id),
+  }));
 
-  for (const item of items) {
-    const fallback = en ? 'Personal projects' : 'Proyectos propios';
-    const company = item.employer
-      ? EMPLOYERS[item.employer]?.name[lang] ?? item.company ?? fallback
-      : fallback;
-    // Agrupa por empleador, no por marca ni periodo: dentro de un mismo contrato puede
-    // haber proyectos para varias marcas del grupo.
-    if (!jobs.has(company)) {
-      jobs.set(company, {
-        company,
-        role: item.role,
-        period: item.period,
-        employer: item.employer,
-        hasCompany: Boolean(item.company),
-        items: [],
-      });
-    }
-    jobs.get(company)!.items.push(item);
+  // Lo que no cuelga de ningún contrato va al final, bajo un único encabezado.
+  const propios = profile.projectGroups.filter((g: any) => !g.employmentId);
+  if (propios.length > 0) {
+    jobs.push({
+      company: en ? 'Personal projects' : 'Proyectos propios',
+      role: '',
+      period: '',
+      mode: undefined,
+      tagline: undefined,
+      hasCompany: false,
+      groups: propios,
+    });
   }
 
-  const experience = [...jobs.values()]
-    .map((job) => {
+  const experience = jobs
+    .map((job: any) => {
       const company = escape(job.company);
       const role = escape(job.role);
-      const period = escape(job.period.replace('actualidad', t.present));
-      const mode = job.employer ? WORK_MODE[job.employer]?.[lang] : undefined;
-      const tagline = job.employer ? EMPLOYER_TAGLINE[job.employer]?.[lang] : undefined;
+      const period = escape(job.period);
+      const mode = job.mode;
+      const tagline = job.tagline;
 
-      const entries = job.items
-        .map((item: any) => {
-          // Si la marca del proyecto no es la del empleador, se anota junto al título.
-          const brand =
-            item.company && item.company !== job.company ? item.company : undefined;
+      const entries = job.groups
+        .flatMap((group: any) =>
+          group.items.map((item: any) => ({ item, group })),
+        )
+        .map(({ item, group }: any) => {
+          // Dentro de un contrato se anota el proyecto al que pertenece la tarea, para no
+          // perder de vista para qué se hizo cada cosa. Fuera de un contrato no hay
+          // cabecera con fechas, así que lo que se anota es el periodo de cada proyecto.
+          const brand = job.hasCompany
+            ? group.category
+            : [item.role, item.period].filter(Boolean).join(' · ') || undefined;
           const title =
             escape(item.title) +
             (brand ? ` <span class="note">${escape(brand)}</span>` : '');
@@ -142,7 +143,7 @@ function renderCv(profile: any, lang: Lang): string {
       <div class="job">
         <p class="job-head">
           ${head}${mode ? ` · <span class="mode">${escape(mode)}</span>` : ''}
-          <span class="period">${period}</span>
+          ${period ? `<span class="period">${period}</span>` : ''}
         </p>
         ${tagline ? `<p class="tagline">${escape(tagline)}</p>` : ''}
         ${entries}

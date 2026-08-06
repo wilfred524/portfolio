@@ -17,7 +17,7 @@ export const en = {
   stack: 'PHP/Laravel · PostgreSQL · platform security',
   credential:
     'Electronic signature, credit rules engine and credit scoring, in production for payroll-deduction lending.',
-  availability: 'Looking for my next role as a backend developer',
+  availability: 'Available now · Looking for my next role as a backend developer',
   trajectory: 'Backend development since October 2025 · Colombia (GMT-5)',
   /* Kept as a three-beat lockup with the nexus in italics, like the Spanish original.
      A literal "Ideas made Product" reads wrong in English. */
@@ -93,17 +93,25 @@ export const en = {
       ],
     },
   ],
+  employments: [
+    {
+      id: 'gaf',
+      employer: 'GAF Technology Solutions',
+      tagline: 'Payroll-deduction lending fintech, backed by an investment fund.',
+      role: 'Backend developer',
+      period: 'Oct 2025 – Jul 2026',
+      mode: 'Full-time · Remote, Colombia',
+    },
+  ],
   projectGroups: [
     {
-      category: 'In production',
+      category: 'CK Comercializadora',
+      employmentId: 'gaf',
+      note: 'A GAF subsidiary',
       items: [
         {
           id: 'rules-engine',
-          employer: 'gaf',
           title: 'Credit rules engine',
-          company: 'CK Comercializadora, a GAF subsidiary',
-          role: 'Backend developer',
-          period: 'Oct 2025 – Present',
           body: {
             problem:
               'Changing a credit policy meant a deployment: the business team could not adjust a term limit or a garnishment condition without going through development.',
@@ -114,13 +122,15 @@ export const en = {
           },
           tags: ['Laravel', 'Vue.js', 'Inertia.js', 'PostgreSQL'],
         },
+      ],
+    },
+    {
+      category: 'GAF platform',
+      employmentId: 'gaf',
+      items: [
         {
           id: 'esignature',
-          employer: 'gaf',
           title: 'Electronic signature with identity validation',
-          company: 'GAF Technology Solutions',
-          role: 'Backend developer',
-          period: 'Oct 2025 – Present',
           body: {
             problem:
               'Signing documents while validating the signer\'s identity against a credit bureau: a form fills a template, the template travels to TransUnion, and a document comes back with a hash verifiable against the provider itself.',
@@ -133,11 +143,7 @@ export const en = {
         },
         {
           id: 'scoring',
-          employer: 'gaf',
           title: 'Monthly credit scoring process',
-          company: 'GAF Technology Solutions',
-          role: 'Backend developer',
-          period: 'Oct 2025 – Present',
           metric: '~300,000 records per run, once a month',
           body: {
             problem:
@@ -151,22 +157,14 @@ export const en = {
         },
         {
           id: 'access-control',
-          employer: 'gaf',
           title: 'Access control and auditing',
-          company: 'GAF Technology Solutions',
-          role: 'Backend developer',
-          period: 'Oct 2025 – Present',
           brief:
             'I consolidated access control on Spatie —guards, middleware and policies— with a migration that moved existing users and roles to the new schema without interrupting anyone already working inside. I also worked on hardening authentication and on traceability of business-critical events, ahead of a security audit.',
           tags: ['Spatie Permission', 'Authentication', 'Auditing', 'Laravel'],
         },
         {
           id: 'layered-migration',
-          employer: 'gaf',
           title: 'Migration to a layered architecture',
-          company: 'GAF Technology Solutions',
-          role: 'Backend developer',
-          period: 'Oct 2025 – Present',
           brief:
             'I led and verified the migration of a six-year-old platform —over two hundred Eloquent models tangled with controllers, queues and providers— to a layered architecture. With no test suite to rely on, it went module by module instead of all at once. Three months, reviewed by the tech lead.',
           tags: ['Hexagonal Architecture', 'DDD', 'Laravel'],
@@ -178,9 +176,7 @@ export const en = {
       items: [
         {
           id: 'ai-automation',
-          employer: 'self',
           title: 'AI process automation',
-          company: 'Self-employed',
           role: 'Freelance, part-time',
           period: 'Jan 2026 – Present',
           brief:
