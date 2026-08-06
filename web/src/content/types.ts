@@ -138,6 +138,12 @@ export interface Profile {
   email: string;
   phone: string;
   repoUrl: string;
+  /**
+   * URL pública del sitio. Va en la línea de contacto del CV, junto a GitHub y LinkedIn:
+   * es la pieza que demuestra el trabajo. Si queda vacía no se pinta — mejor omitirla
+   * que imprimir en un PDF una dirección que no resuelve.
+   */
+  siteUrl: string;
   /** Un solo documento por idioma: el botón no obliga a elegir idioma dos veces. */
   cv: { label: string; url: string };
   colophon: string;
