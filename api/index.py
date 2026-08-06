@@ -26,7 +26,7 @@ from pathlib import Path
 # repetirlo aquí es inofensivo y deja el arranque igual en los dos sitios.
 sys.path.insert(0, str(Path(__file__).resolve().parent))
 
-from fastapi import FastAPI, Request  # noqa: E402
+from fastapi import APIRouter, FastAPI, Request  # noqa: E402
 from fastapi.responses import JSONResponse, StreamingResponse  # noqa: E402
 
 from _lib import guard  # noqa: E402
@@ -43,8 +43,17 @@ app = FastAPI(
     openapi_url=None,
 )
 
+# Las rutas se declaran una vez y se registran DOS: con `/api` y sin él.
+#
+# Vercel publica `api/index.py` en `/api`, no en `/api/*`: sin el `rewrite` de
+# `vercel.json`, una petición a `/api/health` ni siquiera llega a la función (404 del
+# enrutador, comprobado en producción). Y con el rewrite puesto, que la función reciba el
+# path original o el reescrito depende de la plataforma. Registrando el router por
+# duplicado, cualquiera de los dos casos responde igual, en local y desplegado.
+rutas = APIRouter()
 
-@app.get("/api/health")
+
+@rutas.get("/health")
 def health() -> dict[str, str]:
     """Sonda de vida. Mantiene el mismo contrato que el antiguo endpoint de Express."""
     return {
@@ -56,7 +65,7 @@ def health() -> dict[str, str]:
     }
 
 
-@app.post("/api/chat")
+@rutas.post("/chat")
 async def chat(peticion: ChatRequest, request: Request):
     """
     Un turno de conversación, devuelto como flujo de eventos.
@@ -87,3 +96,7 @@ async def chat(peticion: ChatRequest, request: Request):
             "X-Accel-Buffering": "no",
         },
     )
+
+
+app.include_router(rutas, prefix="/api")
+app.include_router(rutas)
