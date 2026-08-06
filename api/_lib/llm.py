@@ -36,7 +36,11 @@ URL = "https://api.deepseek.com/chat/completions"
 
 TEMPERATURA_CHAT = 0.4  # concreto y estable; el tono lo fija el contexto, no el azar
 TEMPERATURA_JSON = 0.0  # una clasificación no debe cambiar entre dos ejecuciones iguales
-MAX_TOKENS_RESPUESTA = 500  # `20-respuestas.md` pide brevedad; el techo la hace cumplir
+# La brevedad la pide `20-respuestas.md`; este techo solo evita que una respuesta se
+# desboque. Estaba en 500 y cortaba a media frase cuando alguien pedía detalle de varios
+# proyectos —comprobado en el navegador—, y una respuesta truncada da peor impresión que
+# una larga.
+MAX_TOKENS_RESPUESTA = 900
 
 # El primer token puede tardar; a partir de ahí, un silencio largo es que algo se cayó.
 TIEMPO_LIMITE = httpx.Timeout(connect=10.0, read=45.0, write=10.0, pool=10.0)

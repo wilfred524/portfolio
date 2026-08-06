@@ -28,7 +28,7 @@ export const en = {
   repoUrl: 'https://github.com/wilfred524/portfolio',
   cv: { label: 'Download CV', url: '/cv-en.pdf' },
   colophon:
-    'This site is React and TypeScript, with variable type and animations written by hand. I chose that stack precisely because it was new ground: I already know I have the backend. I built it leaning on AI to write code — I define the architecture, give the instructions and verify every step — the same method I used to lead the migration to a layered architecture. The code is public.',
+    'This site is React and TypeScript, with variable type and animations written by hand. I chose that stack precisely because it was new ground: I already know I have the backend. I built it leaning on AI to write code: I define the architecture, give the instructions and verify every step. The code is public.',
   closing:
     'What draws me in is always the same thing: a process someone does by hand and shouldn\'t, or a messy system that can be left better than I found it.',
   facts: [
@@ -44,7 +44,7 @@ export const en = {
     {
       label: 'Availability',
       value:
-        'Colombian documents — no visa or sponsorship required. Open to full-time roles in Colombia, remote or hybrid; also international contracting via Deel (GMT-5).',
+        'Colombian documents: no visa or sponsorship required. Open to full-time roles in Colombia, remote or hybrid; also international contracting via Deel (GMT-5).',
     },
     {
       label: 'Domain',
@@ -116,7 +116,7 @@ export const en = {
             problem:
               'Changing a credit policy meant a deployment: the business team could not adjust a term limit or a garnishment condition without going through development.',
             hard:
-              'I modelled the data and translated business policy into a rules schema in PostgreSQL —eligibility, garnishments, term limits, employment and financial requirements per payer— so the code does not know what the rules are, only how to apply them. On top of that I implemented the full evaluation: borrowing-capacity calculation under Law 1527 and Law 50 for active employees and pensioners, decision criteria, special rules, application re-evaluation, and the front-end and back-end validation.',
+              'I modelled the data and translated business policy into a rules schema in PostgreSQL (eligibility, garnishments, term limits, employment and financial requirements per payer), so the code does not know what the rules are, only how to apply them. On top of that I implemented the full evaluation: borrowing-capacity calculation under Law 1527 and Law 50 for active employees and pensioners, decision criteria, special rules, application re-evaluation, and the front-end and back-end validation.',
             result:
               'The business team adjusts parameters without touching code or waiting for a deployment, and every application is traced back to the advisor who filed it. A colleague built the submission API; I restructured its request body several times as the model changed.',
           },
@@ -137,7 +137,7 @@ export const en = {
             hard:
               'The hard part is not signing, it is getting everything to line up before signing. Identity validation depends on a broad set of conditions that must be met in order, and the document travels across several chained requests. I implemented the state machine that follows the provider queue and preserves XML integrity end to end, so that a long process always ends in a valid document, or in an error the user can act on.',
             result:
-              'I delivered the payroll-lending module first —multi-step form with per-section autosave, PDF draft, email history and S3 upload retries— and then extracted the generic signing pattern, so the next module could implement it instead of repeating the flow. Small team, reviewed by the tech lead.',
+              'I delivered the payroll-lending module first (multi-step form with per-section autosave, PDF draft, email history and S3 upload retries) and then extracted the generic signing pattern, so the next module could implement it instead of repeating the flow. Small team, reviewed by the tech lead.',
           },
           tags: ['Laravel', 'Vue.js', 'TransUnion', 'AWS S3'],
         },
@@ -159,14 +159,14 @@ export const en = {
           id: 'access-control',
           title: 'Access control and auditing',
           brief:
-            'I consolidated access control on Spatie —guards, middleware and policies— with a migration that moved existing users and roles to the new schema without interrupting anyone already working inside. I also worked on hardening authentication and on traceability of business-critical events, ahead of a security audit.',
+            'I consolidated access control on Spatie (guards, middleware and policies) with a migration that moved existing users and roles to the new schema without interrupting anyone already working inside. I also worked on hardening authentication and on traceability of business-critical events, ahead of a security audit.',
           tags: ['Spatie Permission', 'Authentication', 'Auditing', 'Laravel'],
         },
         {
           id: 'layered-migration',
           title: 'Migration to a layered architecture',
           brief:
-            'I led and verified the migration of a six-year-old platform —over two hundred Eloquent models tangled with controllers, queues and providers— to a layered architecture. With no test suite to rely on, it went module by module instead of all at once. Three months, reviewed by the tech lead.',
+            'I led and verified the migration of a six-year-old platform to a layered architecture, with over two hundred Eloquent models tangled with controllers, queues and providers. With no test suite to rely on, it went module by module instead of all at once. Three months, reviewed by the tech lead.',
           tags: ['Hexagonal Architecture', 'DDD', 'Laravel'],
         },
       ],
