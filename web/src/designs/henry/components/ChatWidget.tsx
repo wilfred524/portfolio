@@ -3,7 +3,7 @@ import { useContent } from '../../../i18n/LanguageProvider';
 import { Chat } from './Chat';
 
 /**
- * Envoltorio flotante del chat: botón abajo a la izquierda, panel y bocadillo de
+ * Envoltorio flotante del chat: botón abajo a la derecha, panel y bocadillo de
  * invitación. `Chat` no sabe que flota; aquí solo se decide cuándo se ve.
  *
  * POR QUÉ NO ES MODAL:
