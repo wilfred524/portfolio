@@ -158,7 +158,7 @@ export const es = {
             problem:
               'Firmar documentos validando la identidad de quien firma contra un buró de crédito: un formulario llena una plantilla, la plantilla viaja a TransUnion, y vuelve un documento con un hash verificable contra el propio proveedor.',
             hard:
-              'Lo difícil no es firmar, es sobrevivir al tercero. Implementé la máquina de estados que sigue la cola del proveedor y se reinicia cuando devuelve un estado no contemplado, preservando la integridad del XML entre peticiones y traduciendo sus errores a algo que el usuario pueda resolver.',
+              'Lo difícil no es firmar: es que todo encaje antes de firmar. La validación de identidad depende de un conjunto amplio de condiciones que deben cumplirse en orden, y el documento viaja entre varias peticiones encadenadas. Implementé la máquina de estados que sigue la cola del proveedor y preserva la integridad del XML de punta a punta, para que un proceso largo termine siempre en un documento válido o en un error que el usuario pueda resolver.',
             result:
               'Entregué primero el módulo de libranzas —formulario multipaso con autoguardado por sección, borrador en PDF, historial de correos y reintentos de subida a S3— y después extraje el patrón de firma genérica, de modo que el siguiente módulo lo implementara en vez de repetir el flujo. Equipo pequeño, con revisión del líder técnico.',
           },
@@ -254,13 +254,17 @@ export const es = {
     chat: {
       title: 'Pregunta lo que la página no cuenta',
       intro:
-        'Un agente con el contexto de Wilfred: por qué tomó cada decisión, cómo trabaja y qué hay detrás de cada proyecto. Si tienes una vacante o un problema concreto, puede agendarte una llamada.',
+        'Por qué tomó cada decisión, cómo trabaja y qué hay detrás de cada proyecto.',
       placeholder: 'Escribe tu pregunta',
       send: 'Enviar',
       thinking: 'Pensando',
       error: 'No he podido responder. Escríbele directamente a wilfred3019@gmail.com.',
       logLabel: 'Conversación con el agente',
       disclaimer: 'Responde un agente, no Wilfred. Puede equivocarse.',
+      launcher: 'Pregunta al agente',
+      closeLabel: 'Cerrar el chat',
+      invite: '¿Algo que la página no cuenta? Pregúntamelo.',
+      inviteDismiss: 'Descartar',
     },
     credit: {
       intro: 'Interpretación del sistema de diseño',

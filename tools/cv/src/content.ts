@@ -58,7 +58,7 @@ export const TEXT = {
         'Construí el portal público de solicitudes y sus validaciones de front y backend, con trazabilidad por asesor y protección antibot.',
       ],
       'esignature': [
-        'Implementé la máquina de estados que sigue la cola del proveedor de validación de identidad y se recupera de estados no contemplados, preservando la integridad del XML entre peticiones.',
+        'Implementé la máquina de estados que sigue la cola del proveedor de validación de identidad, preservando la integridad del XML entre peticiones encadenadas.',
         'Entregué el módulo de libranzas de punta a punta: formulario multipaso con autoguardado, borrador en PDF, historial de correos y reintentos de subida a S3.',
         'Extraje un patrón de firma genérico para que los módulos siguientes lo implementaran en vez de repetir el flujo.',
       ],
@@ -111,7 +111,7 @@ export const TEXT = {
         'Built the public application portal and its front-end and back-end validation, with per-advisor traceability and bot protection.',
       ],
       'esignature': [
-        'Implemented the state machine that tracks the identity-validation provider queue and recovers from unhandled states, preserving XML integrity across requests.',
+        'Implemented the state machine that tracks the identity-validation provider queue, preserving XML integrity across chained requests.',
         'Delivered the payroll-lending module end to end: multi-step form with section autosave, PDF draft, email history, and S3 upload retries.',
         'Extracted a generic signing pattern so later modules could implement it instead of duplicating the flow.',
       ],

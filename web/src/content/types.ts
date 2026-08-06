@@ -87,6 +87,12 @@ export interface UiStrings {
     logLabel: string;
     /** Aviso de que responde un agente y no Wilfred. */
     disclaimer: string;
+    /** Texto del botón flotante que abre el chat. */
+    launcher: string;
+    closeLabel: string;
+    /** Bocadillo de invitación, que se muestra una sola vez. */
+    invite: string;
+    inviteDismiss: string;
   };
   credit: {
     intro: string;

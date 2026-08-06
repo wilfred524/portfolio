@@ -4,7 +4,8 @@ import { useContent } from '../../../i18n/LanguageProvider';
 import { api } from '../../../lib/api';
 
 /**
- * Chat del agente, dentro de la banda Ink de Contacto.
+ * Chat del agente. Vive dentro del panel flotante (`ChatWidget`), del que no sabe nada:
+ * aquí solo se pinta la conversación.
  *
  * Deliberadamente delgado: pinta mensajes y consume el flujo, nada más. Toda la lógica
  * —qué sabe el agente, cuándo ofrece una llamada, qué se registra— vive en Python. Si
@@ -72,8 +73,15 @@ export function Chat() {
 
   return (
     <div className="henry-chat">
-      <h3 className="henry-chat__title">{ui.chat.title}</h3>
-      <p className="henry-chat__intro">{ui.chat.intro}</p>
+      {/* h2 y no h3: ya no cuelga del encabezado de Contacto, y hace de nombre accesible
+          del panel (`aria-labelledby`). */}
+      <h2 id="henry-chat-titulo" className="henry-chat__title">
+        {ui.chat.title}
+      </h2>
+
+      {/* La intro solo mientras no hay conversación: en un panel estrecho, dejarla fija
+          se come el espacio de lo que de verdad importa. */}
+      {mensajes.length === 0 && <p className="henry-chat__intro">{ui.chat.intro}</p>}
 
       {/* aria-live: el lector de pantalla anuncia cada respuesta según se completa. */}
       <div

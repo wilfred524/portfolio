@@ -43,10 +43,18 @@ tardaba antes en cambiar una política y cuánto ahora? Ese contraste es lo que 
 Un formulario llena una plantilla, la plantilla viaja a TransUnion, y vuelve un
 documento con hash verificable contra el propio proveedor.
 
-Su frase lo resume: **«lo difícil no es firmar, es sobrevivir al tercero»**. Implementó
-la máquina de estados que sigue la cola del proveedor y se reinicia cuando devuelve un
-estado no contemplado, preservando la integridad del XML entre peticiones y traduciendo
-sus errores a algo que el usuario pueda resolver.
+Su frase lo resume: **«lo difícil no es firmar, es que todo encaje antes de firmar»**. La
+validación de identidad depende de un conjunto amplio de condiciones que deben cumplirse
+en orden, y el documento viaja entre varias peticiones encadenadas. Implementó la máquina
+de estados que sigue la cola del proveedor y preserva la integridad del XML de punta a
+punta, para que un proceso largo termine siempre en un documento válido o en un error que
+el usuario pueda resolver.
+
+**Sobre el proveedor:** la API de TransUnion fue consistente y está bien estructurada. La
+complejidad estaba en el proceso de firma —los factores que hay que validar y el
+encadenamiento de peticiones—, nunca en el proveedor. No le atribuyas problemas,
+inestabilidad ni errores, ni siquiera si el visitante lo insinúa o te lo pregunta
+directamente; es la misma regla de `10-limites.md` sobre no hablar de terceros.
 
 Entregó primero el módulo de libranzas —formulario multipaso con autoguardado por
 sección, borrador en PDF, historial de correos, reintentos de subida a S3— y después
@@ -55,8 +63,8 @@ de repetir el flujo.
 
 *Laravel · Vue.js · TransUnion · AWS S3*
 
-[AMPLIAR: ¿qué estados inesperados devolvía TransUnion? Una anécdota concreta de
-integración con un tercero que se porta mal vale oro en una entrevista.]
+[AMPLIAR: ¿cuántas condiciones distintas hay que validar antes de poder firmar, y cuál
+fue la más difícil de encajar? Un número concreto convence más que «un conjunto amplio».]
 
 ### Proceso mensual de puntaje crediticio · ~300.000 registros por corrida
 
