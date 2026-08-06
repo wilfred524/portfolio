@@ -68,7 +68,7 @@ export const TEXT = {
       ],
       'portfolio-agent': [
         'Construí un asistente conversacional que responde sobre mi trayectoria y las decisiones detrás de cada proyecto, con aviso explícito de que responde un agente y puede equivocarse.',
-        'Lo monté primero con n8n y la API de OpenAI, y al desplegarlo rehíce la orquestación con litellm porque el plan gratuito de Vercel no soporta n8n.',
+        'Rehíce la orquestación en Python al desplegarlo, porque el plan gratuito de Vercel no soporta n8n; descarté litellm al medirlo (133 MB de 199, contra un techo de 250 MB por función) y hablo con el modelo por REST directo con httpx.',
       ],
       'video-cli': [
         'Construí una herramienta de línea de comandos en TypeScript que parte un vídeo largo en clips verticales: transcripción con Whisper, guion generado por un modelo cuya salida se valida contra un esquema, síntesis de voz y montaje de subtítulos con Remotion.',
@@ -123,7 +123,7 @@ export const TEXT = {
       ],
       'portfolio-agent': [
         'Built a conversational assistant that answers questions about my background and the decisions behind each project, with an explicit notice that an agent is answering and can be wrong.',
-        'First assembled it with n8n and the OpenAI API, and on deploying it rebuilt the orchestration with litellm, because the Vercel free plan does not support n8n.',
+        'Rebuilt the orchestration in Python on deployment, because the Vercel free plan does not support n8n; dropped litellm after measuring it (133 MB of 199, against a 250 MB per-function ceiling) and talk to the model over plain REST with httpx.',
       ],
       'video-cli': [
         'Built a TypeScript command-line tool that splits long video into vertical clips: Whisper transcription, script generation by a model whose output is schema-validated, speech synthesis, and subtitle rendering with Remotion.',

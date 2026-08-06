@@ -24,8 +24,8 @@ export const es = {
   phone: '+57 301 737 4234',
   /** Repositorio de este sitio: evidencia inspeccionable sin firmar nada. */
   repoUrl: 'https://github.com/wilfred524/portfolio',
-  /* PENDIENTE: dominio público del sitio. Vacío = no se imprime en el CV. */
-  siteUrl: '',
+  /** Dominio de producción en Vercel; sin dominio propio todavía. */
+  siteUrl: 'https://portfolio-wilfred524.vercel.app',
   /**
    * CV en dos idiomas. Los genera `npm run build:cv -w @portfolio/api` desde este mismo
    * archivo, así que no pueden contradecir a la web. El script exporta también el PDF
@@ -112,7 +112,7 @@ export const es = {
     },
     {
       area: 'Automatización e IA',
-      items: ['litellm', 'OpenAI API', 'n8n', 'Integración de APIs y webhooks'],
+      items: ['API de DeepSeek', 'OpenAI API', 'n8n', 'Integración de APIs y webhooks'],
     },
     {
       area: 'Frontend',
@@ -228,10 +228,10 @@ export const es = {
           role: 'Proyecto propio',
           period: 'En curso',
           brief:
-            'Construí un asistente conversacional que responde sobre mi trayectoria y las decisiones detrás de cada proyecto, con aviso explícito de que responde un agente y puede equivocarse. Lo monté primero con n8n y la API de OpenAI, y al desplegarlo rehíce la orquestación con litellm porque el plan gratuito de Vercel no soporta n8n.',
+            'Construí un asistente conversacional que responde sobre mi trayectoria y las decisiones detrás de cada proyecto, con aviso explícito de que responde un agente y puede equivocarse. Lo monté primero con n8n y la API de OpenAI, y al desplegarlo rehíce la orquestación en Python porque el plan gratuito de Vercel no soporta n8n. Descarté litellm al medirlo —pesaba 133 MB de los 199 que ocupaban las dependencias, contra un límite de 250 MB por función— y hablo con el modelo por REST directo con httpx.',
           /* Sin `url`: el asistente ES esta página, así que enlazarla desde dentro no
              lleva a ninguna parte. En el CV sí aparece, en la línea de contacto. */
-          tags: ['Python', 'FastAPI', 'litellm', 'Vercel'],
+          tags: ['Python', 'FastAPI', 'DeepSeek', 'Vercel'],
         },
         {
           id: 'video-cli',

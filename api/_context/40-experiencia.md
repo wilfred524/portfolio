@@ -166,9 +166,20 @@ detrás de cada proyecto, **con aviso explícito de que responde un agente y pue
 equivocarse** —eso eres tú—.
 
 Lo montó primero con **n8n y la API de OpenAI**, y al desplegarlo **rehízo la
-orquestación con litellm**, porque el plan gratuito de Vercel no soporta n8n.
+orquestación en Python**, porque el plan gratuito de Vercel no soporta n8n.
 
-*Python · FastAPI · litellm · Vercel*
+**Descartó litellm al medirlo**: pesaba 133 MB de los 199 que ocupaban las dependencias,
+contra un límite de 250 MB por función en Vercel, y su importación alargaba cada arranque
+en frío. Como la API de DeepSeek es compatible con la de OpenAI, hablarla directamente
+son ~40 líneas con `httpx`, que ya estaba entre las dependencias.
+
+Detalle que sí es suyo y merece contarse: **son dos llamadas al modelo, no una**. La
+primera responde en streaming (lo que lee el visitante); la segunda devuelve JSON
+validado con Pydantic (lo que el backend usa para decidir si crea una cita). Separadas,
+cada una hace una sola cosa; juntas, habría que esperar al JSON completo antes de pintar
+la primera palabra.
+
+*Python · FastAPI · DeepSeek · Vercel*
 
 ### CLI de recorte de vídeo · jul 2026 – en curso
 
@@ -199,7 +210,7 @@ Eligió ese stack porque era territorio nuevo: el backend ya sabía que lo tení
 - **Backend:** PHP/Laravel, PostgreSQL/SQL, MySQL, Python, Node.js, pruebas (PHPUnit)
 - **Arquitectura:** arquitectura por capas (dominio, aplicación, persistencia)
 - **Control de accesos:** roles y permisos con Spatie, reCAPTCHA Enterprise
-- **Automatización e IA:** litellm, API de OpenAI, n8n, integración de APIs y webhooks
+- **Automatización e IA:** API de DeepSeek, API de OpenAI, n8n, integración de APIs y webhooks
 - **Frontend:** Vue.js, Inertia.js, Blade, Tailwind, React, TypeScript
 - **Infraestructura:** Docker, Linux/Nginx, GCP, AWS S3, Certbot
 
