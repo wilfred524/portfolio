@@ -44,7 +44,7 @@ export const en = {
     {
       label: 'Availability',
       value:
-        'Full-time employment —remote, hybrid or on-site— or contracting via Deel · Colombia (GMT-5)',
+        'Colombian documents — no visa or sponsorship required. Open to full-time roles in Colombia, remote or hybrid; also international contracting via Deel (GMT-5).',
     },
     {
       label: 'Domain',
@@ -218,6 +218,17 @@ export const en = {
     },
     blocks: { problem: 'Problem', hard: 'The hard part', result: 'Outcome' },
     viewCode: 'View the code',
+    chat: {
+      title: 'Ask what the page leaves out',
+      intro:
+        "An agent with Wilfred's context: why he made each decision, how he works, and what sits behind each project. If you have a role or a specific problem, it can book a call.",
+      placeholder: 'Type your question',
+      send: 'Send',
+      thinking: 'Thinking',
+      error: "I couldn't answer. Write to wilfred3019@gmail.com instead.",
+      logLabel: 'Conversation with the agent',
+      disclaimer: "You're talking to an agent, not to Wilfred. It can be wrong.",
+    },
     credit: {
       intro: 'An interpretation of the design system',
       author: '“Henry” by Henry Desroches',

@@ -35,8 +35,11 @@ así que Experiencia y Habilidades comparten ahora una sola banda Paper (separad
 ## 3. Efectos de scroll con "reposo" (driver: `useScrollProgress`)
 
 `web/src/hooks/useScrollProgress.ts` escribe una variable CSS `--p` en [0, 1]:
-0 al entrar por abajo, 1 al llegar a la línea de reposo (~55% del viewport) y **se
+0 al entrar por abajo, 1 al llegar a la línea de reposo (**~12% del viewport**) y **se
 mantiene en 1** (el efecto se asienta y NO sigue moviéndose → nada de sobrecarga).
+La línea de reposo estaba al 55%, lo que dejaba solo 45vh de recorrido y hacía la
+transición casi imperceptible; al 12% el recorrido es de 88vh y el efecto se completa
+cuando el encabezado llega arriba del todo, que es donde la vista se para a leerlo.
 El progreso **no retrocede** —conserva el máximo alcanzado— y **se completa al tocar
 fondo del documento**: un encabezado cercano al pie nunca alcanzaba la línea de reposo
 porque el scroll se agota antes, y su regla quedaba congelada a un tercio mientras las
