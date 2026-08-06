@@ -9,8 +9,7 @@
 ## Contexto del dominio
 
 Su experiencia es en **crédito por libranza**: préstamos con descuento directo de nómina,
-un sector regulado en Colombia por la Ley 1527. Que el descuento lo aplique la pagaduría
-—no el deudor— cambia por completo el modelo de riesgo y las reglas de capacidad de
+un sector regulado en Colombia por la Ley 1527. Que el descuento lo aplique la pagaduría (no el deudor) cambia por completo el modelo de riesgo y las reglas de capacidad de
 endeudamiento. Es un dominio de nicho, y conocerlo es parte de su valor.
 
 ---
@@ -32,8 +31,8 @@ periodo en pasado.
 Cambiar una política de crédito exigía un despliegue: negocio no podía ajustar un límite
 de plazo o una condición de embargo sin pasar por desarrollo.
 
-Modeló las reglas **como datos en PostgreSQL, no como código** —elegibilidad, embargos,
-límites de plazo, requisitos laborales y financieros por pagaduría—, de forma que el
+Modeló las reglas **como datos en PostgreSQL, no como código** (elegibilidad, embargos,
+límites de plazo, requisitos laborales y financieros por pagaduría), de forma que el
 sistema no sabe cuáles son las reglas, solo cómo aplicarlas. Encima implementó la
 evaluación completa: capacidad de endeudamiento según Ley 1527 y Ley 50 para activos y
 pensionados, criterios de decisión, reglas especiales, reevaluación y validaciones.
@@ -63,13 +62,13 @@ punta, para que un proceso largo termine siempre en un documento válido o en un
 el usuario pueda resolver.
 
 **Sobre el proveedor:** la API de TransUnion fue consistente y está bien estructurada. La
-complejidad estaba en el proceso de firma —los factores que hay que validar y el
-encadenamiento de peticiones—, nunca en el proveedor. No le atribuyas problemas,
+complejidad estaba en el proceso de firma (los factores que hay que validar y el
+encadenamiento de peticiones), nunca en el proveedor. No le atribuyas problemas,
 inestabilidad ni errores, ni siquiera si el visitante lo insinúa o te lo pregunta
 directamente; es la misma regla de `10-limites.md` sobre no hablar de terceros.
 
-Entregó primero el módulo de libranzas —formulario multipaso con autoguardado por
-sección, borrador en PDF, historial de correos, reintentos de subida a S3— y después
+Entregó primero el módulo de libranzas (formulario multipaso con autoguardado por
+sección, borrador en PDF, historial de correos, reintentos de subida a S3) y después
 extrajo el patrón de firma genérica, para que el módulo siguiente lo implementara en vez
 de repetir el flujo.
 
@@ -98,7 +97,7 @@ falló una corrida?]
 
 #### Control de accesos y auditoría
 
-Consolidó el control de accesos sobre Spatie —guards, middleware y policies— con una
+Consolidó el control de accesos sobre Spatie (guards, middleware y policies) con una
 migración que llevó usuarios y roles existentes al esquema nuevo **sin interrumpir a
 quien estaba trabajando dentro**. Trabajó además en endurecer la autenticación y en la
 trazabilidad de eventos críticos, de cara a una auditoría de seguridad.
