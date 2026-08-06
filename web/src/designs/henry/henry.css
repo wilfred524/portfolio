@@ -139,7 +139,9 @@
   color: var(--ash);
 }
 
-.henry-section--ink .henry-meta {
+/* El panel del chat es Ink aunque no sea una banda, así que hereda estas mismas reglas. */
+.henry-section--ink .henry-meta,
+.henry-chatwidget__panel .henry-meta {
   color: var(--midstone);
 }
 
@@ -844,6 +846,169 @@
   color: var(--midstone);
 }
 
+/* ------------------------------------------------------------
+   Widget flotante del chat — abajo a la izquierda
+
+   Es el ÚNICO position:fixed y el ÚNICO z-index de todo el sistema. Si algún día
+   aparece otro elemento flotante, este es el valor con el que tiene que negociar.
+
+   La llamada de atención se consigue con contraste (una pastilla de tinta sobre
+   papel) y no con color ni sombra, que la spec de Henry prohíbe.
+   ------------------------------------------------------------ */
+
+.henry-chatwidget {
+  position: fixed;
+  left: var(--gutter);
+  /* `max()` con el área segura: en iPhone, `--gutter` solo no basta para librar la
+     barra de gestos. */
+  bottom: max(var(--gutter), env(safe-area-inset-bottom));
+  z-index: 20;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: calc(var(--space) * 2);
+}
+
+.henry-chatwidget__launcher {
+  font-family: var(--font-condensed);
+  font-size: var(--text-sm);
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  padding: calc(var(--space) * 3) calc(var(--space) * 5);
+  color: var(--paper);
+  background: var(--ink);
+  border: 1px solid var(--ink);
+  border-radius: var(--radius);
+  cursor: pointer;
+  animation: henry-widget-in 240ms ease-out both;
+  transition: background-color 0.2s ease, color 0.2s ease, border-color 0.2s ease;
+}
+
+/* Inversión al hover, igual que .henry-linkbtn pero al revés: aquí se parte de tinta. */
+.henry-chatwidget__launcher:hover {
+  background: var(--paper);
+  color: var(--ink);
+  border-color: var(--ink);
+}
+
+.henry-chatwidget__hint {
+  display: flex;
+  align-items: flex-start;
+  gap: calc(var(--space) * 2);
+  max-width: 30ch;
+  padding: calc(var(--space) * 3) calc(var(--space) * 4);
+  font-size: var(--text-sm);
+  line-height: 1.4;
+  color: var(--ink);
+  background: var(--paper);
+  border: 1px solid var(--pebble);
+  border-radius: var(--radius);
+  animation: henry-widget-in 240ms ease-out both;
+}
+
+.henry-chatwidget__hint-close,
+.henry-chatwidget__close {
+  padding: 0;
+  font-size: var(--text-sm);
+  line-height: 1;
+  color: inherit;
+  background: transparent;
+  border: 0;
+  cursor: pointer;
+  opacity: 0.6;
+  transition: opacity 0.2s ease;
+}
+
+.henry-chatwidget__hint-close:hover,
+.henry-chatwidget__close:hover {
+  opacity: 1;
+}
+
+.henry-chatwidget__panel {
+  display: flex;
+  flex-direction: column;
+  width: min(400px, calc(100vw - var(--gutter) * 2));
+  /* `dvh` y no `vh`: en móvil, `vh` no descuenta la barra de direcciones y el panel se
+     sale por abajo. */
+  max-height: min(70dvh, 640px);
+  padding: calc(var(--space) * 5);
+  color: var(--paper);
+  background: var(--ink);
+  border: 1px solid var(--sepia);
+  border-radius: var(--radius);
+  overflow: hidden;
+  animation: henry-widget-in 240ms ease-out both;
+}
+
+/* Obligatorio: la regla de arriba (display:flex) le gana al `[hidden]` del navegador,
+   así que sin esto el panel no se cerraría nunca. */
+.henry-chatwidget__panel[hidden] {
+  display: none;
+}
+
+.henry-chatwidget__close {
+  align-self: flex-end;
+  margin-bottom: calc(var(--space) * 2);
+}
+
+/* El chat se diseñó para cerrar la banda de contacto: dentro del panel sobran el filete
+   separador y la altura fija, que ahora la manda el panel. */
+.henry-chatwidget__panel .henry-chat {
+  flex: 1;
+  min-height: 0;
+  max-width: none;
+  padding-top: 0;
+  border-top: 0;
+  gap: calc(var(--space) * 3);
+}
+
+.henry-chatwidget__panel .henry-chat__log {
+  flex: 1;
+  min-height: 0;
+  max-height: none;
+  /* Al llegar al final de la conversación, la rueda deja de arrastrar la página. */
+  overscroll-behavior: contain;
+}
+
+@keyframes henry-widget-in {
+  from {
+    opacity: 0;
+    transform: translateY(8px);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .henry-chatwidget__launcher,
+  .henry-chatwidget__hint,
+  .henry-chatwidget__panel {
+    animation: none;
+  }
+}
+
+@media (max-width: 620px) {
+  .henry-chatwidget {
+    left: calc(var(--space) * 2);
+    right: calc(var(--space) * 2);
+  }
+
+  .henry-chatwidget__panel {
+    width: auto;
+    max-height: 80dvh;
+  }
+
+  /* Área táctil cómoda; el lanzador NO se oculta al abrir: el panel lo tapa, y
+     esconderlo dejaría el foco en un elemento invisible al cerrar. */
+  .henry-chatwidget__launcher {
+    min-height: 44px;
+  }
+
+  .henry-chatwidget__hint-close,
+  .henry-chatwidget__close {
+    min-width: 44px;
+    min-height: 44px;
+  }
+}
+
 /* Botón fantasma compartido (hero y contacto): sin relleno de color ni sombra,
    el énfasis llega por inversión al hover. Único radius del sistema. */
 .henry-linkbtn {
@@ -862,7 +1027,8 @@
 }
 
 /* Sobre banda Ink la inversión va al revés: el hover llena de papel. */
-.henry-section--ink .henry-linkbtn:hover {
+.henry-section--ink .henry-linkbtn:hover,
+.henry-chatwidget__panel .henry-linkbtn:hover {
   background: var(--paper);
   color: var(--ink);
   border-color: var(--paper);

@@ -1,5 +1,4 @@
 import { useContent } from '../../../i18n/LanguageProvider';
-import { Chat } from './Chat';
 import { InkSection } from './InkSection';
 import { SectionHeader } from './SectionHeader';
 
@@ -19,11 +18,6 @@ export function Contact() {
 
       <div className="henry-contact">
         <p className="henry-contact__closing">{profile.closing}</p>
-
-        {/* El chat va justo después del cierre y antes de los datos: quien ha llegado
-            hasta aquí ya decidió que le interesa, y preguntar cuesta menos que escribir
-            un correo. El correo y el teléfono siguen debajo para quien los prefiera. */}
-        <Chat />
 
         {facts.length > 0 && (
           <dl className="henry-skills henry-contact__facts">
