@@ -711,6 +711,139 @@
   gap: calc(var(--space) * 3);
 }
 
+/* ------------------------------------------------------------
+   Chat del agente — vive dentro de la banda Ink de Contacto
+   Sin color, sin sombra, radius único: la jerarquía la dan el
+   filete, la tipografía y la opacidad, como en el resto del sistema.
+   ------------------------------------------------------------ */
+
+.henry-chat {
+  display: flex;
+  flex-direction: column;
+  gap: calc(var(--space) * 4);
+  max-width: 68ch;
+  padding-top: calc(var(--space) * 6);
+  border-top: 1px solid var(--sepia);
+}
+
+.henry-chat__title {
+  font-family: var(--font-condensed);
+  font-size: var(--text-md);
+  text-transform: uppercase;
+  letter-spacing: 0.02em;
+}
+
+.henry-chat__intro {
+  max-width: 58ch;
+  font-size: var(--text-sm);
+  /* --midstone sobre ink queda en 5.2:1: pasa AA sin competir con el cuerpo. */
+  color: var(--midstone);
+}
+
+/* Altura fija para que la página no dé saltos mientras el agente escribe: sin esto, cada
+   token que llega empuja hacia abajo todo el contacto. */
+.henry-chat__log {
+  display: flex;
+  flex-direction: column;
+  gap: calc(var(--space) * 3);
+  min-height: 120px;
+  max-height: 340px;
+  overflow-y: auto;
+  padding-right: calc(var(--space) * 2);
+  font-size: var(--text-base);
+  line-height: 1.55;
+}
+
+.henry-chat__log:empty {
+  display: none;
+}
+
+.henry-chat__msg {
+  max-width: 54ch;
+  white-space: pre-wrap;
+}
+
+/* El mensaje del visitante se distingue por sangrado y filete, no por burbuja de color:
+   una burbuja teñida rompería el monocromo del sistema. */
+.henry-chat__msg--user {
+  align-self: flex-end;
+  padding-left: calc(var(--space) * 3);
+  border-left: 1px solid var(--pebble);
+  color: var(--paper);
+}
+
+.henry-chat__msg--assistant {
+  font-family: var(--font-serif);
+  font-variation-settings: 'wght' 360, 'opsz' 20;
+}
+
+.henry-chat__msg--pending,
+.henry-chat__msg--error {
+  font-size: var(--text-sm);
+  color: var(--midstone);
+}
+
+.henry-chat__msg--pending::after {
+  content: '';
+  animation: henry-chat-pulse 1.4s ease-in-out infinite;
+}
+
+@keyframes henry-chat-pulse {
+  0%, 100% { opacity: 0.35; }
+  50% { opacity: 1; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .henry-chat__msg--pending::after {
+    animation: none;
+  }
+}
+
+.henry-chat__form {
+  display: flex;
+  flex-wrap: wrap;
+  gap: calc(var(--space) * 2);
+}
+
+.henry-chat__input {
+  flex: 1 1 260px;
+  min-width: 0;
+  padding: calc(var(--space) * 2) calc(var(--space) * 3);
+  font-family: inherit;
+  font-size: var(--text-base);
+  color: var(--paper);
+  background: transparent;
+  border: 1px solid var(--pebble);
+  border-radius: var(--radius);
+  transition: border-color 0.2s ease;
+}
+
+.henry-chat__input::placeholder {
+  color: var(--midstone);
+}
+
+.henry-chat__input:focus-visible {
+  outline: none;
+  border-color: var(--paper);
+}
+
+.henry-chat__input:disabled,
+.henry-chat__send:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.henry-chat__send {
+  background: transparent;
+  color: inherit;
+  font-family: inherit;
+  cursor: pointer;
+}
+
+.henry-chat__disclaimer {
+  color: var(--midstone);
+}
+
 /* Botón fantasma compartido (hero y contacto): sin relleno de color ni sombra,
    el énfasis llega por inversión al hover. Único radius del sistema. */
 .henry-linkbtn {

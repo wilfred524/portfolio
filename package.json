@@ -11,7 +11,7 @@
   "scripts": {
     "dev": "concurrently -n api,web -c yellow,cyan \"npm run dev:api\" \"npm run dev:web\"",
     "dev:web": "npm run dev -w @portfolio/web",
-    "dev:api": "python -m uvicorn index:app --app-dir api --reload --port 3001",
+    "dev:api": "node tools/dev-api.mjs",
     "build": "npm run build -w @portfolio/web",
     "build:web": "npm run build -w @portfolio/web",
     "build:cv": "npm run build:cv -w @portfolio/cv"
