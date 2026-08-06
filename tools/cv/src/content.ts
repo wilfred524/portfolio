@@ -2,86 +2,80 @@
  * Prosa del CV, en los dos idiomas.
  *
  * Los DATOS DUROS —nombre, contacto, empresas, periodos, habilidades, formación,
- * idiomas— NO viven aquí: los lee `build.mjs` desde `web/src/content/profile.ts`, que
- * es la misma fuente que alimenta la web. Así el CV no puede volver a contradecirla,
+ * idiomas— NO viven aquí: los lee `build.ts` desde `web/src/content/profile.{es,en}.ts`,
+ * que es la misma fuente que alimenta la web. Así el CV no puede volver a contradecirla,
  * que es justo lo que pasaba con la versión anterior (fechas y alcance distintos).
  *
- * Aquí va solo lo que el CV necesita y la web no: titular, resumen, viñetas de logros
- * —el formato de CV pide frases cortas, no los bloques Problema/Lo difícil/Resultado—
- * y las certificaciones.
+ * Aquí va solo lo que el CV necesita y la web no: titular, perfil y viñetas de logros
+ * —el formato de CV pide frases cortas, no los bloques Problema/Lo difícil/Resultado—.
  *
- * Las viñetas se emparejan con los proyectos de profile.ts por su `title`.
+ * Las viñetas se emparejan con los proyectos de profile.ts por su `id`.
+ *
+ * REGLAS DE REDACCIÓN (aplican a todas las viñetas, en los dos idiomas):
+ * - Primera persona y pasado, con un verbo de acción al principio. Nada de estilo
+ *   nominal («Implementación de…»): un CV lo lee una persona buscando qué hiciste tú.
+ * - Cifras en dígitos.
+ *
+ * REGLA DE VERACIDAD, por encima de cualquier otra. No se le atribuyen a Wilfred:
+ * la API de envío (la construyó un compañero), el modelo de scoring (venía del área de
+ * riesgo), la segunda etapa de la migración por capas (la hizo el otro desarrollador)
+ * ni el apagado de la instancia antigua (lo hizo el responsable de infraestructura).
  */
-
-export const CERTIFICATIONS = [
-  {
-    es: 'Generative AI Fundamentals & Prompt Engineering for Developers · Coursera',
-    en: 'Generative AI Fundamentals & Prompt Engineering for Developers · Coursera',
-  },
-  {
-    es: 'Programación Intensiva en Python · Coursera',
-    en: 'Intensive Python Programming Certification · Coursera',
-  },
-  {
-    es: 'Google IT Automation with Python Professional Certificate · Coursera (en curso)',
-    en: 'Google IT Automation with Python Professional Certificate · Coursera (in progress)',
-  },
-  {
-    es: 'EF SET English Certificate · B2 global, lectura C2',
-    en: 'EF SET English Certificate · B2 overall, C2 reading',
-  },
-];
 
 export const TEXT = {
   es: {
     lang: 'es',
     docTitle: 'Wilfred Morales · Desarrollador backend',
-    headline: 'Desarrollador backend · PHP/Laravel · PostgreSQL · Seguridad de plataforma',
+    headline: 'Desarrollador backend — PHP/Laravel · PostgreSQL · Fintech de crédito',
     sections: {
       summary: 'Perfil',
       experience: 'Experiencia',
-      education: 'Formación',
+      projects: 'Proyectos',
       skills: 'Habilidades',
-      languages: 'Idiomas',
-      certifications: 'Certificaciones',
+      education: 'Formación',
+      languages: 'Idiomas y certificaciones',
     },
     present: 'actualidad',
+    /* Un solo párrafo: sin fechas (ya están en la experiencia), sin repetir el cargo
+       (está en el titular) y sin logística (está en el encabezado). */
     summary: [
-      'Desarrollador backend. Entre octubre de 2025 y julio de 2026 trabajé en una fintech de crédito por libranza: préstamos con descuento directo de nómina, un sector regulado en Colombia. Disponible de inmediato.',
-      'He construido y puesto en producción el motor de reglas de crédito, la firma electrónica con validación de identidad contra buró y el proceso mensual de puntaje crediticio que procesa unos 300.000 registros por corrida. También dirigí la migración de la plataforma a una arquitectura por capas.',
-      'Cursando Ingeniería Informática en la UNET. Documentos colombianos, sin requisitos de visado ni patrocinio. Empleo de planta, remoto o híbrido en Colombia; también contratación internacional vía Deel (GMT-5).',
+      'Desarrollador backend en fintech de crédito por libranza —préstamos con descuento directo de nómina, un sector regulado en Colombia—. Trabajo sobre el ciclo del crédito, de la originación a la validación de identidad y el puntaje, y sobre la plataforma que lo sostiene: dockerización, arquitectura por capas y control de accesos.',
     ],
     bullets: {
       'rules-engine': [
         'Modelé los datos y traduje las reglas de negocio a un esquema de políticas en PostgreSQL: elegibilidad, embargos, límites de plazo y requisitos laborales y financieros por pagaduría. El área de negocio ajusta parámetros sin desplegar código.',
-        'Implementé la evaluación completa: cálculo de capacidad de endeudamiento según Ley 1527 y Ley 50 para activos y pensionados, criterios de decisión, reglas especiales y reevaluación de solicitudes.',
-        'Construí el portal público de solicitudes y sus validaciones de front y backend, con trazabilidad por asesor y protección antibot.',
+        'Implementé la evaluación completa: cálculo de capacidad de endeudamiento según la Ley 1527 (libranzas) y la Ley 50 para activos y pensionados, criterios de decisión, reglas especiales y reevaluación de solicitudes.',
+        'Construí el portal público de solicitudes y sus validaciones de front-end y back-end, con trazabilidad por asesor y reCAPTCHA Enterprise. La API de envío la construyó un compañero; reestructuré el cuerpo de sus peticiones conforme cambiaba el modelo.',
       ],
-      'esignature': [
-        'Implementé la máquina de estados que sigue la cola del proveedor de validación de identidad, preservando la integridad del XML entre peticiones encadenadas.',
-        'Entregué el módulo de libranzas de punta a punta: formulario multipaso con autoguardado, borrador en PDF, historial de correos y reintentos de subida a S3.',
-        'Extraje un patrón de firma genérico para que los módulos siguientes lo implementaran en vez de repetir el flujo.',
+      esignature: [
+        'Construí desde cero el módulo de firma electrónica que sustituyó a uno legacy en desuso: el documento son 24 páginas que antes se llenaban a mano y ahora se generan automáticamente desde plantillas, con una plantilla distinta por producto.',
+        'Diseñé el flujo como una máquina de estados sobre las respuestas asíncronas del proveedor: el asesor aprueba un borrador, se validan los datos del cliente contra TransUnion y la identidad se verifica por OTP o KBA.',
+        'Cerré el trámite completo en unos 20 minutos, con el documento firmado devuelto con hash, trazabilidad de la transacción y respaldo en S3.',
       ],
-      'scoring': [
-        'Llevé a producción un modelo de riesgo que vivía en el cuaderno de un analista: contenedor con cron mensual que extrae de PostgreSQL, ejecuta el modelo y persiste los resultados. Antes no se calculaba de forma automática.',
-        'Procesa unos 300.000 registros por corrida, con carga en bloques de cinco mil, control de estado en disco para no reprocesar el mismo artefacto y descarte de filas inválidas sin abortar la carga.',
-        'Añadí la consulta en vivo por API para mostrar el puntaje de una cédula en la pantalla de visado.',
+      scoring: [
+        'Llevé a producción un modelo de riesgo que vivía en un script del área de riesgo: contenedor con cron mensual que extrae de PostgreSQL, ejecuta el modelo y persiste los resultados. Antes no se calculaba de forma automática.',
+        'Procesé más de 320.000 personas distintas por corrida, con carga en bloques de 5.000, proceso idempotente y reanudable, y descarte de filas inválidas sin abortar la carga.',
       ],
       'access-control': [
-        'Consolidé el control de accesos sobre Spatie (guards, middleware y policies) con una migración que llevó usuarios y roles existentes al esquema nuevo sin interrumpir la operación.',
-        'Trabajé en el endurecimiento de la autenticación y en la trazabilidad de eventos críticos de cara a una auditoría de seguridad.',
+        'Construí el árbol de permisos de la plataforma sobre 17 módulos, con permisos a nivel de opción y de subproceso, blindé ruta a ruta y migré los usuarios y roles existentes al esquema nuevo sin interrumpir la operación.',
       ],
       'layered-migration': [
-        'Dirigí y verifiqué la migración de una plataforma de seis años a una arquitectura por capas, con más de doscientos modelos Eloquent mezclados con controladores, colas y providers.',
-        'Sin suite de pruebas de la que fiarse, la migración fue módulo a módulo con verificación en cada paso. Tres meses, con revisión del líder técnico.',
+        'Participé en la primera etapa de la migración de la plataforma —seis años de código— hacia una arquitectura por capas, verificando módulo a módulo cada cambio antes de continuar y eliminando por completo las consultas SQL en crudo de los controladores. Tres meses de trabajo, con revisión del líder técnico en cada paso; no existía suite de pruebas en ese momento. La segunda etapa se ejecutó tras mi salida.',
       ],
-      'ai-automation': [
-        'Procesos automatizados con n8n y la API de OpenAI para generación de contenido.',
-        'Bot conversacional de Telegram integrado con n8n y PostgreSQL que atiende solicitudes de punta a punta.',
+      infrastructure: [
+        'Dockericé la aplicación, que corría de forma nativa sobre la máquina, y la desplegué en una instancia nueva de GCP con nginx como proxy inverso entre los contenedores y el host.',
+        'Ejecuté la migración en paralelo: levanté y validé la instancia nueva con la anterior aún en producción, configuré el DNS del dominio y emití los certificados con Certbot hasta dejar la aplicación operando íntegramente sobre HTTPS. Sin interrupción del servicio.',
+      ],
+      'portfolio-agent': [
+        'Construí un asistente conversacional que responde sobre mi trayectoria y las decisiones detrás de cada proyecto, con aviso explícito de que responde un agente y puede equivocarse.',
+        'Lo monté primero con n8n y la API de OpenAI, y al desplegarlo rehíce la orquestación con litellm porque el plan gratuito de Vercel no soporta n8n.',
       ],
       'video-cli': [
-        'Herramienta de línea de comandos en TypeScript que parte un vídeo largo en clips verticales: transcripción con Whisper, guion generado por un modelo cuya salida se valida contra un esquema, síntesis de voz y montaje de subtítulos con Remotion.',
-        'Cada paso persiste su resultado en disco y el proceso es reanudable, para no repetir llamadas al modelo ya pagadas.',
+        'Construí una herramienta de línea de comandos en TypeScript que parte un vídeo largo en clips verticales: transcripción con Whisper, guion generado por un modelo cuya salida se valida contra un esquema, síntesis de voz y montaje de subtítulos con Remotion.',
+        'Persistí el resultado de cada paso en disco y dejé el proceso reanudable, para no repetir llamadas al modelo ya pagadas.',
+      ],
+      'portfolio-site': [
+        'Construí este sitio con React y TypeScript, con tipografía variable y animaciones sin librería, reinterpretando un sistema de diseño ajeno y acreditándolo en el pie.',
       ],
     },
   },
@@ -89,52 +83,54 @@ export const TEXT = {
   en: {
     lang: 'en',
     docTitle: 'Wilfred Morales · Backend Developer',
-    headline: 'Backend Developer · PHP/Laravel · PostgreSQL · Platform Security',
+    headline: 'Backend Developer — PHP/Laravel · PostgreSQL · Credit Fintech',
     sections: {
       summary: 'Profile',
       experience: 'Experience',
-      education: 'Education',
+      projects: 'Projects',
       skills: 'Skills',
-      languages: 'Languages',
-      certifications: 'Certifications',
+      education: 'Education',
+      languages: 'Languages and certifications',
     },
     present: 'Present',
     summary: [
-      'Backend developer. From October 2025 to July 2026 I worked at a payroll-deduction lending fintech, a regulated sector in Colombia. Available immediately.',
-      'I built and shipped the credit rules engine, the electronic signature flow with credit-bureau identity validation, and the monthly scoring pipeline that processes around 300,000 records per run. I also led the migration of the platform to a layered architecture.',
-      'Currently studying Computer Engineering at UNET. Colombian documents: no visa or sponsorship required. Open to full-time roles in Colombia, remote or hybrid; also international contracting via Deel (GMT-5).',
+      'Backend developer at a payroll-deduction lending fintech — loans repaid through automatic salary deductions, a regulated sector in Colombia. I work across the credit lifecycle, from origination to identity validation and scoring, and on the platform underneath it: containerisation, layered architecture and access control.',
     ],
     bullets: {
       'rules-engine': [
         'Modelled the data and translated business policy into a rules schema in PostgreSQL: eligibility, garnishments, term limits, and employment and financial requirements per payer. The business team now adjusts parameters without a deployment.',
-        'Implemented the full evaluation logic: borrowing-capacity calculation under Colombian Law 1527 and Law 50 for active employees and pensioners, decision criteria, special rules, and application re-evaluation.',
-        'Built the public application portal and its front-end and back-end validation, with per-advisor traceability and bot protection.',
+        'Implemented the full evaluation logic: borrowing-capacity calculation under Law 1527 (payroll-deduction lending) and Law 50 for active employees and pensioners, decision criteria, special rules, and application re-evaluation.',
+        'Built the public application portal and its front-end and back-end validation, with per-advisor traceability and reCAPTCHA Enterprise. A colleague built the submission API; I restructured its request body as the model changed.',
       ],
-      'esignature': [
-        'Implemented the state machine that tracks the identity-validation provider queue, preserving XML integrity across chained requests.',
-        'Delivered the payroll-lending module end to end: multi-step form with section autosave, PDF draft, email history, and S3 upload retries.',
-        'Extracted a generic signing pattern so later modules could implement it instead of duplicating the flow.',
+      esignature: [
+        'Built the electronic signature module from scratch, replacing a disused legacy one: the document is 24 pages that used to be filled in by hand and are now generated automatically from templates, with a different template per product.',
+        'Designed the flow as a state machine over the asynchronous responses from the provider: an advisor approves a draft, customer data is validated against TransUnion, and identity is verified by OTP or KBA.',
+        'Closed the whole procedure in about 20 minutes, with the signed document returned with its hash, full transaction traceability and a copy kept in S3.',
       ],
-      'scoring': [
-        'Took a risk model living in a data analyst notebook to production: a containerised monthly cron job that reads from PostgreSQL, runs the model and persists results. Scoring was not automated before this.',
-        'Processes around 300,000 records per run, loading in batches of five thousand, with on-disk state tracking to avoid reprocessing the same artifact and invalid-row handling that does not abort the load.',
-        'Added a live API lookup so a customer score can be shown on the underwriting screen.',
+      scoring: [
+        'Took a risk model living in a script owned by the risk team to production: a containerised monthly cron job that reads from PostgreSQL, runs the model and persists results. Scoring was not automated before this.',
+        'Processed over 320,000 distinct people per run, loading in batches of 5,000, with an idempotent and resumable process and invalid-row handling that does not abort the load.',
       ],
       'access-control': [
-        'Consolidated access control on Spatie (guards, middleware and policies) with a migration that moved existing users and roles to the new schema without interrupting operations.',
-        'Worked on authentication hardening and on traceability of business-critical events ahead of a security audit.',
+        'Built the platform permission tree across 17 modules, with permissions down to the option and sub-process level, locked down every route, and migrated existing users and roles to the new schema without interrupting operations.',
       ],
       'layered-migration': [
-        'Led and verified the migration of a six-year-old platform to a layered architecture, with over two hundred Eloquent models mixed with controllers, queues and providers.',
-        'With no test suite to rely on, the migration went module by module with verification at each step. Three months, reviewed by the tech lead.',
+        'Took part in the first stage of migrating the platform — six years of code — to a layered architecture, verifying every change module by module before moving on and removing raw SQL queries from controllers entirely. Three months of work, reviewed by the tech lead at each step; there was no test suite at the time. The second stage ran after I left.',
       ],
-      'ai-automation': [
-        'Automation pipelines built with n8n and the OpenAI API for content generation.',
-        'Conversational Telegram bot integrated with n8n and PostgreSQL handling requests end to end.',
+      infrastructure: [
+        'Containerised the application with Docker, which had been running natively on the machine, and deployed it on a new GCP instance with nginx as a reverse proxy between the containers and the host.',
+        'Ran the migration in parallel: brought up and validated the new instance while the old one was still in production, configured the domain DNS and issued the certificates with Certbot until the application ran entirely over HTTPS. No service interruption.',
+      ],
+      'portfolio-agent': [
+        'Built a conversational assistant that answers questions about my background and the decisions behind each project, with an explicit notice that an agent is answering and can be wrong.',
+        'First assembled it with n8n and the OpenAI API, and on deploying it rebuilt the orchestration with litellm, because the Vercel free plan does not support n8n.',
       ],
       'video-cli': [
-        'TypeScript command-line tool that splits long video into vertical clips: Whisper transcription, script generation by a model whose output is schema-validated, speech synthesis, and subtitle rendering with Remotion.',
-        'Every step persists its result to disk and the process is resumable, so already-paid model calls are never repeated.',
+        'Built a TypeScript command-line tool that splits long video into vertical clips: Whisper transcription, script generation by a model whose output is schema-validated, speech synthesis, and subtitle rendering with Remotion.',
+        'Persisted every step to disk and made the process resumable, so already-paid model calls are never repeated.',
+      ],
+      'portfolio-site': [
+        'Built this site with React and TypeScript, with variable type and animations written by hand, reinterpreting an existing design system and crediting it in the footer.',
       ],
     },
   },
@@ -142,25 +138,16 @@ export const TEXT = {
 
 /**
  * Empleador real de cada marca. En un CV la experiencia se agrupa por CONTRATO: CK es
- * filial de GAF, así que sus proyectos van bajo GAF y no como un empleo paralelo —dos
- * entradas con el mismo periodo se leen como dos trabajos a la vez.
- * `note` acompaña al proyecto para no perder de vista para qué marca se hizo.
+ * del mismo grupo que GAF, así que sus proyectos van bajo GAF y no como un empleo
+ * paralelo —dos entradas con el mismo periodo se leen como dos trabajos a la vez.
  */
 export const EMPLOYERS: Record<string, { name: { es: string; en: string } }> = {
   gaf: { name: { es: 'GAF Technology Solutions', en: 'GAF Technology Solutions' } },
   self: { name: { es: 'Autónomo', en: 'Self-employed' } },
 };
 
-/** Una línea que sitúa al empleador: quien lea el CV puede no conocerlo. */
-export const EMPLOYER_TAGLINE: Record<string, { es: string; en: string }> = {
-  gaf: {
-    es: 'Fintech de crédito por libranza, respaldada por un fondo de inversión.',
-    en: 'Payroll-deduction lending fintech, backed by an investment fund.',
-  },
-};
-
-/** Modalidad de trabajo, junto a las fechas, como en un CV convencional. */
-export const WORK_MODE: Record<string, { es: string; en: string }> = {
-  gaf: { es: 'Jornada completa · Remoto, Colombia', en: 'Full-time · Remote, Colombia' },
-  self: { es: 'Media jornada', en: 'Part-time' },
-};
+/**
+ * La línea que sitúa al empleador se lee del propio profile (`employments[].tagline`),
+ * que es la misma que muestra la web. Mantenerla aquí duplicada fue lo que permitió que
+ * el CV y el sitio dijeran cosas distintas sobre la empresa.
+ */

@@ -25,7 +25,7 @@ import { mkdtemp, readFile, rm, writeFile } from 'node:fs/promises';
 import { tmpdir } from 'node:os';
 import { dirname, join, resolve } from 'node:path';
 import { fileURLToPath, pathToFileURL } from 'node:url';
-import { CERTIFICATIONS, EMPLOYERS, EMPLOYER_TAGLINE, TEXT, WORK_MODE } from './content.js';
+import { TEXT } from './content.js';
 
 const HERE = dirname(fileURLToPath(import.meta.url));
 const ROOT = resolve(HERE, '../../..');
@@ -83,21 +83,14 @@ function renderCv(profile: any, lang: Lang): string {
     groups: profile.projectGroups.filter((g: any) => g.employmentId === empleo.id),
   }));
 
-  // Lo que no cuelga de ningún contrato va al final, bajo un único encabezado.
-  const propios = profile.projectGroups.filter((g: any) => !g.employmentId);
-  if (propios.length > 0) {
-    jobs.push({
-      company: en ? 'Personal projects' : 'Proyectos propios',
-      role: '',
-      period: '',
-      mode: undefined,
-      tagline: undefined,
-      hasCompany: false,
-      groups: propios,
-    });
-  }
+  // Lo que no cuelga de un contrato ya no se cuela dentro de Experiencia disfrazado de
+  // empleo: es su propia sección de primer nivel (ver el orden al final del documento).
+  // Mezclarlo restaba credibilidad a los dos lados — el trabajo remunerado parecía
+  // tener una entrada sin fechas, y los proyectos propios parecían un empleo más.
+  const ownProjects = profile.projectGroups.filter((g: any) => !g.employmentId);
 
-  const experience = jobs
+  const renderJobs = (list: any[]) =>
+    list
     .map((job: any) => {
       const company = escape(job.company);
       const role = escape(job.role);
@@ -110,11 +103,17 @@ function renderCv(profile: any, lang: Lang): string {
           group.items.map((item: any) => ({ item, group })),
         )
         .map(({ item, group }: any) => {
-          // Dentro de un contrato se anota el proyecto al que pertenece la tarea, para no
-          // perder de vista para qué se hizo cada cosa. Fuera de un contrato no hay
-          // cabecera con fechas, así que lo que se anota es el periodo de cada proyecto.
+          // Dentro de un contrato se anota la marca para la que se hizo el trabajo, pero
+          // SOLO cuando aporta algo: repetir "Plataforma GAF" bajo el empleo en GAF era
+          // una etiqueta gris en cada entrada que no distinguía nada. La de CK sí, porque
+          // es otra empresa. Fuera de un contrato no hay cabecera con fechas, así que lo
+          // que se anota es el periodo de cada proyecto.
+          const marcaPropia =
+            group.category &&
+            !job.company.toLowerCase().includes(String(group.category).toLowerCase()) &&
+            !String(group.category).toLowerCase().includes(job.company.split(' ')[0].toLowerCase());
           const brand = job.hasCompany
-            ? group.category
+            ? (marcaPropia ? group.category : undefined)
             : [item.role, item.period].filter(Boolean).join(' · ') || undefined;
           const title =
             escape(item.title) +
@@ -149,7 +148,22 @@ function renderCv(profile: any, lang: Lang): string {
         ${entries}
       </div>`;
     })
-    .join('\n');
+      .join('\n');
+
+  const experience = renderJobs(jobs);
+  // Los proyectos propios se renderizan con la misma maquinaria, sin cabecera de empresa:
+  // cada uno lleva su rol y periodo junto al título.
+  const projects = renderJobs(
+    ownProjects.map((group: any) => ({
+      company: '',
+      role: '',
+      period: '',
+      mode: undefined,
+      tagline: undefined,
+      hasCompany: false,
+      groups: [group],
+    })),
+  );
 
   const skills = profile.skillGroups
     .map(
@@ -167,15 +181,20 @@ function renderCv(profile: any, lang: Lang): string {
   const languages = fact(1);
   const location = `${profile.location} (GMT-5)`;
 
-  const certs = CERTIFICATIONS.map((c) => `<li>${escape(c[lang])}</li>`).join('\n        ');
   const summary = t.summary.map((x) => `<p>${escape(x)}</p>`).join('\n      ');
 
   // El export de LinkedIn del que parte esta plantilla no incluía ni email ni teléfono:
   // un CV sin vía de contacto en la primera pantalla es un CV que no sirve.
   const join = (parts: string[]) => parts.map(escape).join('&nbsp;&nbsp;·&nbsp;&nbsp;');
   const contact = join([profile.email, profile.phone, location]);
+  // El portfolio va con GitHub y LinkedIn: es la pieza que demuestra el trabajo, así que
+  // omitirla del PDF dejaba fuera justo lo que se quiere que abran. Si `siteUrl` está
+  // vacío no se pinta — mejor omitir que publicar una URL que no resuelve.
   const links = join(
-    profile.social.map((x: any) => x.url.replace(/^https?:\/\/(www\.)?/, '')),
+    [
+      ...(profile.siteUrl ? [profile.siteUrl] : []),
+      ...profile.social.map((x: any) => x.url),
+    ].map((u: string) => u.replace(/^https?:\/\/(www\.)?/, '')),
   );
 
   const section = (title: string, body: string) => `
@@ -259,6 +278,9 @@ function renderCv(profile: any, lang: Lang): string {
       .period::before { content: ' · '; }
       .tagline { margin: 0 0 4pt; font-size: 9pt; font-style: italic; color: #555; }
       .entry { margin: 0 0 6pt; page-break-inside: avoid; }
+      /* Dos páginas es el formato asumido (legibilidad por encima de encajar en una):
+         lo que no se admite es una cabecera de sección huérfana al pie. */
+      h2 { break-after: avoid-page; }
       .entry-title { margin: 0 0 1pt; font-weight: 600; }
       .note { font-weight: 400; font-size: 9pt; color: #555; }
       ul { margin: 0; padding-left: 14pt; }
@@ -278,10 +300,10 @@ function renderCv(profile: any, lang: Lang): string {
     </header>
 ${section(t.sections.summary, summary)}
 ${section(t.sections.experience, experience)}
-${section(t.sections.education, `<p>${escape(education)}</p>`)}
+${section(t.sections.projects, projects)}
 ${section(t.sections.skills, skills)}
+${section(t.sections.education, `<p>${escape(education)}</p>`)}
 ${section(t.sections.languages, `<p>${escape(languages)}</p>`)}
-${section(t.sections.certifications, `<ul>\n        ${certs}\n      </ul>`)}
   </body>
 </html>
 `;

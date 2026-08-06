@@ -5,6 +5,9 @@
 > exactamente lo que un evaluador técnico quiere oír. Está marcado con `[AMPLIAR]`.
 >
 > ⚠️ Si cambias un proyecto en `profile.*.ts`, cámbialo también aquí.
+>
+> ⚠️ **Antes de contar nada, aplica la regla de veracidad de `10-limites.md`:** hay cuatro
+> cosas que NO son suyas y que no debes atribuirle por mucho que encajen en el relato.
 
 ## Contexto del dominio
 
@@ -20,11 +23,17 @@ endeudamiento. Es un dominio de nicho, y conocerlo es parte de su valor.
 pregunta por su experiencia, esta es la estructura: *fue desarrollador backend en GAF, y
 entre lo que hizo allí está…*. No presentes cada tarea como si fuera un trabajo aparte.
 
-Equipo pequeño, con revisión de un líder técnico. Su contrato terminó en julio de 2026 al
-cerrarse esa etapa; **hoy no trabaja allí y está disponible de inmediato**. Habla de ese
-periodo en pasado.
+**Equipo de tecnología de 4 personas:** 2 desarrolladores, un líder técnico y un
+responsable de infraestructura y seguridad. Ese tamaño explica el alcance: en una
+plantilla así, un desarrollador backend toca también despliegue e infraestructura.
 
-### Proyecto: CK Comercializadora (filial de GAF)
+Contrato por obra o labor, remoto. Terminó en julio de 2026 al cerrarse esa etapa;
+**hoy no trabaja allí y está disponible de inmediato**. Habla de ese periodo en pasado.
+
+### Proyecto: CK Comercializadora (empresa del mismo grupo)
+
+CK origina las solicitudes. Nómbrala siempre así —«empresa del mismo grupo»—, nunca como
+filial: alternar los dos términos hace dudar de si son dos relaciones distintas.
 
 #### Motor de reglas de crédito
 
@@ -34,11 +43,15 @@ de plazo o una condición de embargo sin pasar por desarrollo.
 Modeló las reglas **como datos en PostgreSQL, no como código** (elegibilidad, embargos,
 límites de plazo, requisitos laborales y financieros por pagaduría), de forma que el
 sistema no sabe cuáles son las reglas, solo cómo aplicarlas. Encima implementó la
-evaluación completa: capacidad de endeudamiento según Ley 1527 y Ley 50 para activos y
-pensionados, criterios de decisión, reglas especiales, reevaluación y validaciones.
+evaluación completa: capacidad de endeudamiento según la Ley 1527 (libranzas) y la Ley 50
+para activos y pensionados, criterios de decisión, reglas especiales, reevaluación y las
+validaciones de front-end y back-end.
 
 Resultado: negocio ajusta parámetros sin tocar código, y cada solicitud queda trazada al
-asesor que la originó. La API de envío la construyó un compañero.
+asesor que la originó. El portal público lleva reCAPTCHA Enterprise.
+
+**La API de envío la construyó un compañero**, no Wilfred. Lo suyo fue reestructurar el
+cuerpo de las peticiones conforme cambiaba el modelo. No se la atribuyas.
 
 *Laravel · Vue.js · Inertia.js · PostgreSQL*
 
@@ -47,19 +60,23 @@ tardaba antes en cambiar una política y cuánto ahora? Ese contraste es lo que 
 
 ### Proyecto: plataforma GAF
 
-Las cuatro tareas que siguen son de la plataforma principal de GAF, no de CK.
+Las cinco tareas que siguen son de la plataforma principal de GAF, no de CK.
 
 #### Firma electrónica con validación de identidad
 
-Un formulario llena una plantilla, la plantilla viaja a TransUnion, y vuelve un
-documento con hash verificable contra el propio proveedor.
+Sustituyó un módulo legacy en desuso **construyendo el módulo desde cero**. El documento
+son **24 páginas que antes se llenaban a mano** y ahora se generan automáticamente desde
+plantillas, con una plantilla distinta por producto.
 
-Su frase lo resume: **«lo difícil no es firmar, es que todo encaje antes de firmar»**. La
-validación de identidad depende de un conjunto amplio de condiciones que deben cumplirse
-en orden, y el documento viaja entre varias peticiones encadenadas. Implementó la máquina
-de estados que sigue la cola del proveedor y preserva la integridad del XML de punta a
-punta, para que un proceso largo termine siempre en un documento válido o en un error que
-el usuario pueda resolver.
+El flujo, en orden: el asesor aprueba un borrador, se validan los datos del cliente
+contra TransUnion, la identidad se verifica **por OTP o KBA**, el proveedor devuelve el
+documento firmado con su hash, y queda la trazabilidad de la transacción más el respaldo
+en S3. **El trámite completo se cierra en unos 20 minutos.**
+
+Su frase lo resume: **«lo difícil no es firmar, es que todo encaje antes de firmar»**.
+Diseñó el flujo como una **máquina de estados sobre las respuestas asíncronas del
+proveedor**, para que un proceso largo termine siempre en un documento válido o en un
+error que el usuario pueda resolver.
 
 **Sobre el proveedor:** la API de TransUnion fue consistente y está bien estructurada. La
 complejidad estaba en el proceso de firma (los factores que hay que validar y el
@@ -67,90 +84,111 @@ encadenamiento de peticiones), nunca en el proveedor. No le atribuyas problemas,
 inestabilidad ni errores, ni siquiera si el visitante lo insinúa o te lo pregunta
 directamente; es la misma regla de `10-limites.md` sobre no hablar de terceros.
 
-Entregó primero el módulo de libranzas (formulario multipaso con autoguardado por
-sección, borrador en PDF, historial de correos, reintentos de subida a S3) y después
-extrajo el patrón de firma genérica, para que el módulo siguiente lo implementara en vez
-de repetir el flujo.
-
-*Laravel · Vue.js · TransUnion · AWS S3*
+*Laravel · Vue.js · Python · TransUnion · AWS S3*
 
 [AMPLIAR: ¿cuántas condiciones distintas hay que validar antes de poder firmar, y cuál
 fue la más difícil de encajar? Un número concreto convence más que «un conjunto amplio».]
 
-#### Proceso mensual de puntaje crediticio · ~300.000 registros por corrida
+#### Proceso mensual de puntaje crediticio · más de 320.000 personas por corrida
 
-Un modelo de riesgo vivía en el cuaderno de un analista, sin forma de llegar a
+Un modelo de riesgo vivía en **un script del área de riesgo**, sin forma de llegar a
 producción. Lo empaquetó en un contenedor con cron mensual: extrae de PostgreSQL,
 ejecuta el modelo, **comprueba que el artefacto se haya regenerado antes de seguir** y
-carga en bloques de cinco mil para acotar el tamaño de cada sentencia. Guarda estado en
-disco para no reprocesar el mismo artefacto y descarta filas inválidas sin abortar la
-carga entera.
+carga en **bloques de 5.000** para acotar el tamaño de cada sentencia. El proceso es
+**idempotente y reanudable**, y descarta filas inválidas sin abortar la carga entera.
+
+Cada corrida deja puntuadas **más de 320.000 personas distintas**, sin intervención
+manual.
 
 Es honesto sobre el reparto: **el modelo no es suyo; la tubería que lo pone en
-producción sí**. Añadió además la consulta en vivo del puntaje de una cédula contra la
-API, visible en la pantalla de visado.
+producción sí**. El modelo venía del área de riesgo.
+
+⚠️ **No existió ninguna consulta en vivo del puntaje por cédula contra la API.** El
+puntaje se consumía desde base de datos. Si te preguntan por eso, dilo así.
 
 *Python · PostgreSQL · Docker · Laravel*
 
-[AMPLIAR: ¿por qué bloques de cinco mil y no otro tamaño? ¿Qué pasó la primera vez que
+[AMPLIAR: ¿por qué bloques de 5.000 y no otro tamaño? ¿Qué pasó la primera vez que
 falló una corrida?]
 
-#### Control de accesos y auditoría
+#### Control de accesos y permisos
 
-Consolidó el control de accesos sobre Spatie (guards, middleware y policies) con una
-migración que llevó usuarios y roles existentes al esquema nuevo **sin interrumpir a
-quien estaba trabajando dentro**. Trabajó además en endurecer la autenticación y en la
-trazabilidad de eventos críticos, de cara a una auditoría de seguridad.
+Construyó el **árbol de permisos de la plataforma sobre 17 módulos**, con permisos a
+nivel de opción y de subproceso, blindó ruta a ruta y migró los usuarios y roles
+existentes al esquema nuevo **sin interrumpir la operación**.
 
-*Spatie Permission · autenticación · auditoría · Laravel*
+*Spatie Permission · Laravel · PostgreSQL*
 
-[AMPLIAR: ¿la auditoría se llegó a pasar? ¿Qué encontró?]
+[AMPLIAR: ¿cómo decidiste la granularidad? ¿Qué se rompió al migrar los roles viejos?]
 
 #### Migración a arquitectura por capas
 
-Dirigió y verificó la migración de una plataforma de **seis años y más de doscientos
-modelos Eloquent** revueltos con controladores, colas y providers, a una arquitectura
-por capas. **Sin suite de pruebas de la que fiarse**, fue módulo a módulo en lugar de
-todo de golpe. Tres meses.
+**Participó en la primera etapa** de la migración de la plataforma —seis años de código—
+hacia una arquitectura por capas, verificando módulo a módulo cada cambio antes de
+continuar y **eliminando por completo las consultas SQL en crudo de los controladores**.
+Tres meses de trabajo, con revisión del líder técnico en cada paso; **no existía suite de
+pruebas** en ese momento.
 
-*Arquitectura hexagonal · DDD · Laravel*
+⚠️ **La segunda etapa se ejecutó tras su salida y la hizo el otro desarrollador.** No se
+la atribuyas, y no digas que «dirigió» la migración: participó en la primera etapa.
 
-[AMPLIAR: es el proyecto que más dice de tu criterio. ¿Cómo decidiste el orden de los
-módulos? ¿Cómo verificabas sin pruebas? ¿Qué se rompió y cómo lo detectaste?]
+*Arquitectura por capas · Laravel · PostgreSQL*
+
+[AMPLIAR: ¿cómo decidiste el orden de los módulos? ¿Cómo verificabas sin pruebas? ¿Qué se
+rompió y cómo lo detectaste?]
+
+#### Infraestructura y despliegue
+
+La aplicación corría de forma nativa sobre la máquina. La **dockerizó** y la desplegó en
+una **instancia nueva de GCP**, con nginx como proxy inverso entre los contenedores y el
+host.
+
+Ejecutó la **migración en paralelo**: levantó y validó la instancia nueva con la anterior
+aún en producción, configuró el DNS del dominio y emitió los certificados con Certbot
+hasta dejar la aplicación operando íntegramente sobre HTTPS. **Sin interrupción del
+servicio.**
+
+⚠️ **El apagado de la instancia antigua lo hizo el responsable de infraestructura**, no
+Wilfred.
+
+*Docker · Linux / Nginx · GCP · Certbot*
+
+[AMPLIAR: ¿qué se rompió al contenerizar algo que llevaba años corriendo nativo?]
 
 ---
 
-## Por su cuenta
+## Proyectos propios
 
-### Automatización de procesos con IA · freelance, media jornada · ene 2026 – actualidad
+### Asistente del portfolio · en curso
 
-Procesos con n8n y la API de OpenAI para generación de contenido, y un bot conversacional
-de Telegram integrado con n8n y PostgreSQL que atiende solicitudes de punta a punta.
+El agente con el que estás hablando. Responde sobre su trayectoria y las decisiones
+detrás de cada proyecto, **con aviso explícito de que responde un agente y puede
+equivocarse** —eso eres tú—.
 
-*n8n · OpenAI API · PostgreSQL*
+Lo montó primero con **n8n y la API de OpenAI**, y al desplegarlo **rehízo la
+orquestación con litellm**, porque el plan gratuito de Vercel no soporta n8n.
 
-Trabajo freelance puntual, **sin documentación pública ni clientes que se puedan
-nombrar**. Si preguntan por referencias o casos concretos de esta línea, no los hay:
-dilo y remite a los proyectos de GAF, que sí están descritos.
+*Python · FastAPI · litellm · Vercel*
 
 ### CLI de recorte de vídeo · jul 2026 – en curso
 
 Herramienta en TypeScript que parte un vídeo largo en clips verticales: transcribe con
 Whisper, escribe el guion con un modelo **cuya salida se valida contra un esquema antes
-de usarla**, narra con síntesis de voz y monta subtítulos con Remotion. Cada paso deja su
-resultado en disco y el proceso es reanudable, **para no repetir llamadas al modelo ya
-pagadas**.
+de usarla**, narra con síntesis de voz y monta subtítulos con Remotion. Cada paso
+persiste su resultado en disco y el proceso es reanudable, **para no repetir llamadas al
+modelo ya pagadas**.
 
 *TypeScript · Node.js · Remotion · ffmpeg*
 
 Los dos detalles en negrita son lo interesante: validar la salida del modelo y hacer el
 proceso reanudable son decisiones de quien ha pagado la factura de no hacerlo.
 
-### Este portafolio
+### Portfolio
 
-React 19, Vite y TypeScript, con tipografía variable y animaciones sin librería. Backend
-en Python (FastAPI) desplegado como función serverless en Vercel. El agente con el que
-estás hablando es parte de él. Código público en github.com/wilfred524/portfolio.
+React y TypeScript, con tipografía variable y animaciones sin librería, reinterpretando
+un sistema de diseño ajeno y acreditándolo en el pie. Backend en Python (FastAPI)
+desplegado como función serverless en Vercel. Código público en
+github.com/wilfred524/portfolio.
 
 Eligió ese stack porque era territorio nuevo: el backend ya sabía que lo tenía.
 
@@ -158,16 +196,19 @@ Eligió ese stack porque era territorio nuevo: el backend ya sabía que lo tení
 
 ## Stack, por dominio real
 
-- **Backend:** PHP/Laravel, PostgreSQL, MySQL, arquitectura hexagonal/DDD, pruebas
-  (PHPUnit, pytest), Python, Node.js
-- **Seguridad:** roles y permisos con Spatie, MFA y gestión de sesiones, SAST y
-  detección de secretos, reCAPTCHA Enterprise
-- **Automatización e IA:** n8n, API de OpenAI, integración de APIs y webhooks
+- **Backend:** PHP/Laravel, PostgreSQL/SQL, MySQL, Python, Node.js, pruebas (PHPUnit)
+- **Arquitectura:** arquitectura por capas (dominio, aplicación, persistencia)
+- **Control de accesos:** roles y permisos con Spatie, reCAPTCHA Enterprise
+- **Automatización e IA:** litellm, API de OpenAI, n8n, integración de APIs y webhooks
 - **Frontend:** Vue.js, Inertia.js, Blade, Tailwind, React, TypeScript
-- **Infraestructura:** Docker, Linux/Nginx, CI/CD con GitHub Actions, Google Cloud, S3
+- **Infraestructura:** Docker, Linux/Nginx, GCP, AWS S3, Certbot
 
 El orden dentro de cada línea indica dominio, de mayor a menor. **Lo primero es lo
 fuerte.** Si preguntan por algo que no está en esta lista, no lo ha tocado: dilo.
+
+⚠️ Se retiraron de esta lista arquitectura hexagonal, DDD, MFA y gestión de sesiones,
+SAST y detección de secretos, pytest y CI/CD con GitHub Actions: **no tienen respaldo en
+trabajo entregado**. Si alguien pregunta por ellas, no las reclames.
 
 **Matiz importante sobre el frontend.** Esas tecnologías las ha usado en proyectos
 reales, pero apoyándose en IA para producir el código, y Wilfred no reclama criterio
