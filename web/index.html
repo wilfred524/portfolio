@@ -5,11 +5,13 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
+    <link rel="canonical" href="https://portfolio-wilfred524.vercel.app/" />
 
     <title>Wilfred Morales — Backend Developer</title>
     <meta
       name="description"
-      content="Backend developer. Electronic signature, credit rules engine and credit scoring, in production for payroll-deduction lending. PHP/Laravel, PostgreSQL and platform security."
+      content="Backend developer — PHP/Laravel, PostgreSQL, Python. In production: a rules engine the business team adjusts without a deploy, e-signature with identity verification, and a monthly pipeline that scores over 320,000 people."
     />
 
     <!-- Open Graph: sharing the link on Slack or LinkedIn should show name, role and image.
@@ -18,9 +20,21 @@
     <meta property="og:title" content="Wilfred Morales — Backend Developer" />
     <meta
       property="og:description"
-      content="Electronic signature, credit rules engine and credit scoring, in production for payroll-deduction lending. PHP/Laravel, PostgreSQL and platform security."
+      content="Backend developer — PHP/Laravel, PostgreSQL, Python. Rules engine, e-signature and a monthly pipeline that scores over 320,000 people, in production."
     />
-    <meta property="og:image" content="/davinci.webp" />
+    <!-- Absoluta y obligatoriamente: con una ruta relativa LinkedIn no resuelve la imagen
+         y la tarjeta sale sin nada. La fuente de esta imagen es tools/og/og.html; antes
+         aquí iba davinci.webp, 826 kB de un grabado que no decía ni quién eres ni qué
+         has hecho, y en un formato que varios previsualizadores no renderizan. -->
+    <meta
+      property="og:image"
+      content="https://portfolio-wilfred524.vercel.app/og.png"
+    />
+    <meta property="og:image:width" content="1200" />
+    <meta property="og:image:height" content="630" />
+    <meta property="og:url" content="https://portfolio-wilfred524.vercel.app/" />
+    <!-- en_US porque este HTML se sirve en inglés; el conmutador cambia el contenido en
+         cliente, no el documento. Revisar si algún día hay una URL por idioma. -->
     <meta property="og:locale" content="en_US" />
     <meta property="og:locale:alternate" content="es_CO" />
 
@@ -28,9 +42,12 @@
     <meta name="twitter:title" content="Wilfred Morales — Backend Developer" />
     <meta
       name="twitter:description"
-      content="Electronic signature, credit rules engine and credit scoring, in production for payroll-deduction lending."
+      content="Rules engine, e-signature and a monthly pipeline that scores over 320,000 people, in production."
     />
-    <meta name="twitter:image" content="/davinci.webp" />
+    <meta
+      name="twitter:image"
+      content="https://portfolio-wilfred524.vercel.app/og.png"
+    />
   </head>
   <body>
     <div id="root"></div>
