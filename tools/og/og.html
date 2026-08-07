@@ -1,0 +1,63 @@
+<!doctype html>
+<!--
+  Fuente de la tarjeta social (og:image). No se despliega: se rasteriza a
+  web/public/og.png, que es lo que consumen LinkedIn, Slack y X.
+
+  Antes la tarjeta era davinci.webp: un grabado de Leonardo de 826 kB, con la URL
+  relativa (así que LinkedIn ni la resolvía) y en un formato que varios previsualizadores
+  no renderizan. Una tarjeta tiene que decir quién eres y qué has hecho; el retrato no
+  decía ninguna de las dos cosas.
+
+  Regenerar tras cualquier cambio:
+    chrome --headless --disable-gpu --hide-scrollbars --window-size=1200,630 \
+      --screenshot=web/public/og.png tools/og/og.html
+-->
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <style>
+      @font-face {
+        font-family: 'Fraunces';
+        src: url('../../web/public/fonts/fraunces-latin-wght-normal.woff2') format('woff2-variations');
+        font-weight: 100 900;
+      }
+      * { margin: 0; box-sizing: border-box; }
+      body {
+        width: 1200px; height: 630px;
+        display: flex; flex-direction: column; justify-content: space-between;
+        padding: 76px 84px;
+        /* Paleta Henry: papel y tinta, sin color. */
+        background: #fafafa; color: #2a2722;
+        font-family: Arial, Helvetica, sans-serif;
+      }
+      h1 {
+        font-family: 'Fraunces', Georgia, serif;
+        font-variation-settings: 'wght' 560, 'opsz' 144;
+        font-size: 116px; line-height: 0.94; letter-spacing: -0.02em;
+      }
+      .role {
+        margin-top: 26px; font-size: 30px; letter-spacing: 0.01em; color: #3e3b36;
+      }
+      .rule { height: 1px; background: #2a2722; opacity: 0.28; }
+      .foot { display: flex; align-items: flex-end; justify-content: space-between; gap: 40px; }
+      .claim { font-size: 27px; line-height: 1.45; max-width: 700px; color: #3e3b36; }
+      .claim b { font-variation-settings: 'wght' 600; color: #2a2722; }
+      .url { font-size: 22px; letter-spacing: 0.06em; text-transform: uppercase; color: #666; white-space: nowrap; }
+    </style>
+  </head>
+  <body>
+    <div>
+      <h1>Wilfred Morales</h1>
+      <p class="role">Backend developer — PHP/Laravel · PostgreSQL · Python · Docker</p>
+    </div>
+    <div class="rule"></div>
+    <div class="foot">
+      <p class="claim">
+        Rules engine, e-signature and a monthly pipeline that scores
+        <b>over 320,000 people</b> — in production.
+      </p>
+      <!-- La URL real, no una bonita que no resuelve. Cambiar cuando haya dominio propio. -->
+      <p class="url">portfolio-wilfred524.vercel.app</p>
+    </div>
+  </body>
+</html>
