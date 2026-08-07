@@ -20,6 +20,8 @@ así que Experiencia y Habilidades comparten ahora una sola banda Paper (separad
 
 `components/HalftonePlate.tsx` — el gancho técnico. Pipeline:
 1. Carga `/davinci.webp` (grabado de da Vinci, dominio público, en `web/public/`).
+   El archivo está a 460×600 y ~126 kB: el destino es un buffer de 224×224, así que el
+   original de 1228×1600 y 826 kB se descargaba entero para pintar 50.176 píxeles.
 2. La dibuja *cover-fit* con zoom 1.15 y encuadre a la derecha en un canvas offscreen
    (W×H = 224×224).
 3. Escala de grises + gamma 0.62 (aclara el fondo) + contraste 1.3 (define el rostro).
