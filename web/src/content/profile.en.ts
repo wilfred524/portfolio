@@ -16,7 +16,7 @@ export const en = {
   role: 'Backend developer',
   stack: 'PHP/Laravel · PostgreSQL · Python',
   credential:
-    'In production: a rules engine the business team adjusts without a deploy, e-signature with identity verification, and a monthly pipeline that scores over 320,000 people.',
+    'Configurable business logic, integrations with external services and batch processing, in production.',
   availability: 'Available now · Looking for my next role as a backend developer',
   trajectory: 'Remote · Colombia (GMT-5)',
   /* Kept as a three-beat lockup with the nexus in italics, like the Spanish original.

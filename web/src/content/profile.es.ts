@@ -16,12 +16,15 @@ export const es = {
    */
   stack: 'PHP/Laravel · PostgreSQL · Python',
   /**
-   * La credencial: qué hay en producción. Termina en la escala, no en el sector, y es
-   * donde vive la única cifra grande del sitio —antes estaba enterrada a dos tercios de
-   * la página, dentro del tercer proyecto—.
+   * La credencial: qué clase de problemas resuelve, no cuáles. Nombrar aquí el motor de
+   * reglas, la firma y el scoring era repetir media pantalla antes lo que la sección de
+   * experiencia cuenta entero, con su nombre y su contexto; y una lista de tres sistemas
+   * de crédito encasilla en el sector donde se hicieron.
+   * Categorías, no logros: son las mismas en cualquier sector, y hacen que el lector
+   * llegue a la experiencia sabiendo qué va a encontrar.
    */
   credential:
-    'En producción: un motor de reglas que el área de negocio ajusta sin desplegar, firma electrónica con validación de identidad y un proceso mensual que puntúa más de 320.000 personas.',
+    'Lógica de negocio configurable, integraciones con servicios externos y procesos por lotes, en producción.',
   /* "Disponible para nuevos proyectos" leía freelance; la búsqueda es de empleo. */
   availability: 'Disponible de inmediato · Buscando mi próximo rol como desarrollador backend',
   /**
@@ -42,7 +45,7 @@ export const es = {
   /** Dominio de producción en Vercel; sin dominio propio todavía. */
   siteUrl: 'https://portfolio-wilfred524.vercel.app',
   /**
-   * CV en dos idiomas. Los genera `npm run build:cv -w @portfolio/api` desde este mismo
+   * CV en dos idiomas. Los genera `npm run build:cv` (workspace @portfolio/cv) desde este mismo
    * archivo, así que no pueden contradecir a la web. El script exporta también el PDF
    * con Chrome headless; si no hay Chrome, quedan solo los .html y hay que imprimirlos.
    */
