@@ -185,16 +185,28 @@ function renderCv(profile: any, lang: Lang): string {
 
   // El export de LinkedIn del que parte esta plantilla no incluía ni email ni teléfono:
   // un CV sin vía de contacto en la primera pantalla es un CV que no sirve.
-  const join = (parts: string[]) => parts.map(escape).join('&nbsp;&nbsp;·&nbsp;&nbsp;');
-  const contact = join([profile.email, profile.phone, location]);
+  const join = (parts: string[]) => parts.join('&nbsp;&nbsp;·&nbsp;&nbsp;');
+  // La modalidad va aquí, junto a la franja horaria, y no en el titular: el titular se
+  // gasta en qué eres, no en cómo trabajas. Solo remoto — el híbrido está descartado.
+  const contact = join([
+    `<a href="mailto:${escape(profile.email)}">${escape(profile.email)}</a>`,
+    ...[profile.phone, location, t.remote].map(escape),
+  ]);
   // El portfolio va con GitHub y LinkedIn: es la pieza que demuestra el trabajo, así que
   // omitirla del PDF dejaba fuera justo lo que se quiere que abran. Si `siteUrl` está
   // vacío no se pinta — mejor omitir que publicar una URL que no resuelve.
+  //
+  // Y van como enlaces reales: en el PDF anterior eran texto muerto, así que para abrir
+  // el repositorio había que teclear la URL a mano. En un CV cuyo argumento es «mira el
+  // trabajo», esa era la fricción más cara del documento.
   const links = join(
     [
       ...(profile.siteUrl ? [profile.siteUrl] : []),
       ...profile.social.map((x: any) => x.url),
-    ].map((u: string) => u.replace(/^https?:\/\/(www\.)?/, '')),
+    ].map(
+      (u: string) =>
+        `<a href="${escape(u)}">${escape(u.replace(/^https?:\/\/(www\.)?/, ''))}</a>`,
+    ),
   );
 
   const section = (title: string, body: string) => `
@@ -213,17 +225,31 @@ function renderCv(profile: any, lang: Lang): string {
          ojos humanos, y cualquier maquetación en columnas los confunde.
          Estructura heredada del export de LinkedIn —nombre centrado, secciones en
          versales con regla— porque es un formato que los reclutadores reconocen. */
-      /* Misma tipografía que el sitio, para que CV y web se lean como una sola cosa:
-         Fraunces (serif variable) en los titulares y Switzer (sans variable) en el
-         cuerpo. Las rutas son relativas porque el CV se imprime desde file:// y también
-         se sirve desde la raíz: fonts/… funciona en ambos casos.
-         No afecta a los lectores ATS: extraen texto, no tipografía. */
-      @font-face {
-        font-family: 'Switzer';
-        src: url('fonts/Switzer-Variable.woff2') format('woff2-variations');
-        font-weight: 100 900;
-        font-display: swap;
-      }
+      /* Fraunces (la serif del sitio) en los titulares, para que CV y web se lean como
+         una sola cosa. El cuerpo, en cambio, NO usa Switzer, y esto no es una decisión
+         estética:
+
+         Switzer-Variable.woff2 rompe la extracción de texto del PDF. Chrome la vectoriza
+         y el resultado es que un lector de PDF —o el parser de un ATS— lee
+         "wilfred3019@ gmail.com", "AW S", "CK Com ercializadora", "M igración": 42
+         palabras partidas en la versión española. El email queda inservible y "AWS"
+         desaparece como término buscable.
+
+         Está aislado y medido: en el mismo PDF, con el mismo Chrome, Fraunces (también
+         variable, también woff2) extrae perfecto y Switzer no. No lo arregla
+         font-kerning:none, ni desactivar ligaduras, ni letter-spacing:0 — es el propio
+         archivo. Por eso el cuerpo va en una sans del sistema, que Chrome sí embebe
+         (/FontFile2) y que ningún lector interpreta mal. En papel la diferencia no se
+         ve; en un ATS, sí.
+
+         Antes aquí ponía "no afecta a los lectores ATS: extraen texto, no tipografía".
+         Es falso y era la premisa que sostenía el fallo.
+
+         Para comprobarlo tras cualquier cambio de tipografía:
+           python -c "import pypdf; t=''.join(p.extract_text() for p in
+             pypdf.PdfReader('web/public/cv-es.pdf').pages);
+             print('wilfred3019@gmail.com' in t, 'AWS' in t)"
+         Las dos deben dar True. */
       @font-face {
         font-family: 'Fraunces CV';
         src: url('fonts/fraunces-latin-wght-normal.woff2') format('woff2-variations');
@@ -237,7 +263,7 @@ function renderCv(profile: any, lang: Lang): string {
         margin: 0 auto;
         max-width: 200mm;
         padding: 10mm 12mm;
-        font-family: 'Switzer', 'Inter', 'Helvetica Neue', Arial, sans-serif;
+        font-family: Arial, 'Helvetica Neue', Helvetica, sans-serif;
         font-size: 10pt;
         line-height: 1.45;
         letter-spacing: -0.005em;
@@ -256,6 +282,12 @@ function renderCv(profile: any, lang: Lang): string {
       }
       .headline { margin: 3pt 0 0; font-size: 9.5pt; color: #333; }
       .contact { margin: 4pt 0 0; font-size: 8.5pt; color: #444; }
+      /* Enlaces sin subrayado ni color: son clicables en el PDF, pero un CV con seis
+         trozos de texto azul subrayado en la cabecera parece una plantilla de 2009. */
+      a { color: inherit; text-decoration: none; }
+      /* Palabras clave a la altura del perfil. La sección Habilidades cae en la página 2
+         y es donde salta el reclutador tras leer el titular. */
+      .stackline { margin-top: 3pt; font-size: 9pt; color: #555; }
       h2 {
         margin: 14pt 0 0;
         padding-bottom: 2pt;
@@ -298,7 +330,7 @@ function renderCv(profile: any, lang: Lang): string {
       <p class="contact">${contact}</p>
       <p class="contact">${links}</p>
     </header>
-${section(t.sections.summary, summary)}
+${section(t.sections.summary, `${summary}\n      <p class="stackline">${escape(t.stackLine)}</p>`)}
 ${section(t.sections.experience, experience)}
 ${section(t.sections.projects, projects)}
 ${section(t.sections.skills, skills)}
@@ -337,12 +369,13 @@ async function main() {
 
   for (const lang of ['es', 'en'] as Lang[]) {
     const profile = await loadProfile(lang);
-    const html = join(OUT_DIR, `cv-${lang}.html`);
+    const base = TEXT[lang].fileName;
+    const html = join(OUT_DIR, `${base}.html`);
     await writeFile(html, renderCv(profile, lang), 'utf8');
-    console.log(`✓ web/public/cv-${lang}.html`);
+    console.log(`✓ web/public/${base}.html`);
 
     if (chrome) {
-      const pdf = join(OUT_DIR, `cv-${lang}.pdf`);
+      const pdf = join(OUT_DIR, `${base}.pdf`);
       // Rutas absolutas en los dos lados: con la ruta relativa Chrome toma "web" como
       // dominio, y el destino relativo le da acceso denegado.
       await run(chrome, [
@@ -353,7 +386,7 @@ async function main() {
         pathToFileURL(html).href,
       ]);
       const size = (await readFile(pdf)).length;
-      console.log(`✓ web/public/cv-${lang}.pdf (${(size / 1024).toFixed(0)} kB)`);
+      console.log(`✓ web/public/${base}.pdf (${(size / 1024).toFixed(0)} kB)`);
     }
   }
 

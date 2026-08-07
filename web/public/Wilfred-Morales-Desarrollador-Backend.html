@@ -8,17 +8,31 @@
          ojos humanos, y cualquier maquetación en columnas los confunde.
          Estructura heredada del export de LinkedIn —nombre centrado, secciones en
          versales con regla— porque es un formato que los reclutadores reconocen. */
-      /* Misma tipografía que el sitio, para que CV y web se lean como una sola cosa:
-         Fraunces (serif variable) en los titulares y Switzer (sans variable) en el
-         cuerpo. Las rutas son relativas porque el CV se imprime desde file:// y también
-         se sirve desde la raíz: fonts/… funciona en ambos casos.
-         No afecta a los lectores ATS: extraen texto, no tipografía. */
-      @font-face {
-        font-family: 'Switzer';
-        src: url('fonts/Switzer-Variable.woff2') format('woff2-variations');
-        font-weight: 100 900;
-        font-display: swap;
-      }
+      /* Fraunces (la serif del sitio) en los titulares, para que CV y web se lean como
+         una sola cosa. El cuerpo, en cambio, NO usa Switzer, y esto no es una decisión
+         estética:
+
+         Switzer-Variable.woff2 rompe la extracción de texto del PDF. Chrome la vectoriza
+         y el resultado es que un lector de PDF —o el parser de un ATS— lee
+         "wilfred3019@ gmail.com", "AW S", "CK Com ercializadora", "M igración": 42
+         palabras partidas en la versión española. El email queda inservible y "AWS"
+         desaparece como término buscable.
+
+         Está aislado y medido: en el mismo PDF, con el mismo Chrome, Fraunces (también
+         variable, también woff2) extrae perfecto y Switzer no. No lo arregla
+         font-kerning:none, ni desactivar ligaduras, ni letter-spacing:0 — es el propio
+         archivo. Por eso el cuerpo va en una sans del sistema, que Chrome sí embebe
+         (/FontFile2) y que ningún lector interpreta mal. En papel la diferencia no se
+         ve; en un ATS, sí.
+
+         Antes aquí ponía "no afecta a los lectores ATS: extraen texto, no tipografía".
+         Es falso y era la premisa que sostenía el fallo.
+
+         Para comprobarlo tras cualquier cambio de tipografía:
+           python -c "import pypdf; t=''.join(p.extract_text() for p in
+             pypdf.PdfReader('web/public/cv-es.pdf').pages);
+             print('wilfred3019@gmail.com' in t, 'AWS' in t)"
+         Las dos deben dar True. */
       @font-face {
         font-family: 'Fraunces CV';
         src: url('fonts/fraunces-latin-wght-normal.woff2') format('woff2-variations');
@@ -32,7 +46,7 @@
         margin: 0 auto;
         max-width: 200mm;
         padding: 10mm 12mm;
-        font-family: 'Switzer', 'Inter', 'Helvetica Neue', Arial, sans-serif;
+        font-family: Arial, 'Helvetica Neue', Helvetica, sans-serif;
         font-size: 10pt;
         line-height: 1.45;
         letter-spacing: -0.005em;
@@ -51,6 +65,12 @@
       }
       .headline { margin: 3pt 0 0; font-size: 9.5pt; color: #333; }
       .contact { margin: 4pt 0 0; font-size: 8.5pt; color: #444; }
+      /* Enlaces sin subrayado ni color: son clicables en el PDF, pero un CV con seis
+         trozos de texto azul subrayado en la cabecera parece una plantilla de 2009. */
+      a { color: inherit; text-decoration: none; }
+      /* Palabras clave a la altura del perfil. La sección Habilidades cae en la página 2
+         y es donde salta el reclutador tras leer el titular. */
+      .stackline { margin-top: 3pt; font-size: 9pt; color: #555; }
       h2 {
         margin: 14pt 0 0;
         padding-bottom: 2pt;
@@ -89,14 +109,15 @@
   <body>
     <header>
       <h1>Wilfred Morales</h1>
-      <p class="headline">Desarrollador backend — PHP/Laravel · PostgreSQL · Fintech de crédito</p>
-      <p class="contact">wilfred3019@gmail.com&nbsp;&nbsp;·&nbsp;&nbsp;+57 301 737 4234&nbsp;&nbsp;·&nbsp;&nbsp;Colombia (GMT-5)</p>
-      <p class="contact">portfolio-wilfred524.vercel.app&nbsp;&nbsp;·&nbsp;&nbsp;github.com/wilfred524&nbsp;&nbsp;·&nbsp;&nbsp;linkedin.com/in/wilfred-morales-3220b2126</p>
+      <p class="headline">Desarrollador backend — PHP/Laravel · PostgreSQL · Python</p>
+      <p class="contact"><a href="mailto:wilfred3019@gmail.com">wilfred3019@gmail.com</a>&nbsp;&nbsp;·&nbsp;&nbsp;+57 301 737 4234&nbsp;&nbsp;·&nbsp;&nbsp;Colombia (GMT-5)&nbsp;&nbsp;·&nbsp;&nbsp;Remoto</p>
+      <p class="contact"><a href="https://portfolio-wilfred524.vercel.app">portfolio-wilfred524.vercel.app</a>&nbsp;&nbsp;·&nbsp;&nbsp;<a href="https://github.com/wilfred524">github.com/wilfred524</a>&nbsp;&nbsp;·&nbsp;&nbsp;<a href="https://www.linkedin.com/in/wilfred-morales-3220b2126">linkedin.com/in/wilfred-morales-3220b2126</a></p>
     </header>
 
     <section>
       <h2>Perfil</h2>
-      <p>Desarrollador backend en fintech de crédito por libranza —préstamos con descuento directo de nómina, un sector regulado en Colombia—. Trabajo sobre el ciclo del crédito, de la originación a la validación de identidad y el puntaje, y sobre la plataforma que lo sostiene: dockerización, arquitectura por capas y control de accesos.</p>
+      <p>Desarrollador backend en PHP/Laravel y Python, sobre PostgreSQL. Trabajo en lógica de negocio configurable, integraciones con servicios externos, procesos por lotes, control de accesos y despliegue en Docker sobre Linux. Toda mi experiencia de producción viene de una fintech de crédito.</p>
+      <p class="stackline">Laravel · PHP · PostgreSQL · Python · Docker · GCP</p>
     </section>
 
     <section>
@@ -149,7 +170,8 @@
         <div class="entry">
           <p class="entry-title">Migración a arquitectura por capas</p>
           <ul>
-            <li>Participé en la primera etapa de la migración de la plataforma —seis años de código— hacia una arquitectura por capas, verificando módulo a módulo cada cambio antes de continuar y eliminando por completo las consultas SQL en crudo de los controladores. Tres meses de trabajo, con revisión del líder técnico en cada paso; no existía suite de pruebas en ese momento. La segunda etapa se ejecutó tras mi salida.</li>
+            <li>Participé en la primera etapa de la migración de la plataforma —seis años de código— hacia una arquitectura por capas, eliminando por completo las consultas SQL en crudo de los controladores.</li>
+            <li>Verifiqué módulo a módulo cada cambio antes de continuar, con revisión del líder técnico en cada paso. Tres meses de trabajo.</li>
           </ul>
           <p class="stack">Arquitectura por capas · Laravel · PostgreSQL</p>
         </div>
@@ -205,11 +227,11 @@
 
     <section>
       <h2>Habilidades</h2>
-      <p class="skill"><span class="skill-area">Backend</span> PHP / Laravel · PostgreSQL / SQL · MySQL · Python · Node.js · Pruebas (PHPUnit)</p>
+      <p class="skill"><span class="skill-area">Backend</span> PHP / Laravel · PostgreSQL / SQL · MySQL · Python · Node.js</p>
       <p class="skill"><span class="skill-area">Arquitectura</span> Arquitectura por capas (dominio, aplicación, persistencia)</p>
       <p class="skill"><span class="skill-area">Control de accesos</span> Roles y permisos (Spatie) · reCAPTCHA Enterprise</p>
       <p class="skill"><span class="skill-area">Automatización e IA</span> API de DeepSeek · OpenAI API · n8n · Integración de APIs y webhooks</p>
-      <p class="skill"><span class="skill-area">Frontend</span> Vue.js · Inertia.js · Blade · Tailwind CSS · React · TypeScript</p>
+      <p class="skill"><span class="skill-area">Frontend</span> Vue.js · Inertia.js · Blade</p>
       <p class="skill"><span class="skill-area">Infraestructura</span> Docker · Linux / Nginx · GCP · AWS S3 · Certbot</p>
     </section>
 
@@ -220,7 +242,7 @@
 
     <section>
       <h2>Idiomas y certificaciones</h2>
-      <p>Español nativo · Inglés B2, lectura C2 (EF SET) · Google IT Automation with Python — Coursera (en curso)</p>
+      <p>Español nativo · Inglés B2 (EF SET) · Google IT Automation with Python — Coursera (en curso)</p>
     </section>
   </body>
 </html>

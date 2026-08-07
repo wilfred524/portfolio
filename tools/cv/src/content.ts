@@ -26,7 +26,15 @@ export const TEXT = {
   es: {
     lang: 'es',
     docTitle: 'Wilfred Morales · Desarrollador backend',
-    headline: 'Desarrollador backend — PHP/Laravel · PostgreSQL · Fintech de crédito',
+    /* Sin el dominio en el titular: el nicho es la prueba, no la identidad. Aparece una
+       vez en el perfil y con todo su detalle en la experiencia, que es donde un
+       reclutador de fintech lo busca; en el titular solo cierra puertas fuera del
+       sector. */
+    headline: 'Desarrollador backend — PHP/Laravel · PostgreSQL · Python',
+    /* Línea de palabras clave bajo el perfil: el reclutador que escanea salta del
+       titular a buscar tecnologías, y la sección Habilidades cae en la página 2. Seis,
+       no doce: es un ancla de escaneo, no un inventario. */
+    stackLine: 'Laravel · PHP · PostgreSQL · Python · Docker · GCP',
     sections: {
       summary: 'Perfil',
       experience: 'Experiencia',
@@ -36,10 +44,23 @@ export const TEXT = {
       languages: 'Idiomas y certificaciones',
     },
     present: 'actualidad',
+    /** Modalidad buscada, en la línea de contacto. */
+    remote: 'Remoto',
+    /* Nombre del archivo descargado. «cv-es.pdf» no dice nada en la carpeta de un
+       reclutador que guarda doscientos; con el nombre delante, el archivo se identifica
+       y se encuentra al buscar. */
+    fileName: 'Wilfred-Morales-Desarrollador-Backend',
     /* Un solo párrafo: sin fechas (ya están en la experiencia), sin repetir el cargo
-       (está en el titular) y sin logística (está en el encabezado). */
+       (está en el titular) y sin logística (está en el encabezado).
+       Tampoco resume los logros: están en los bullets, cuatro líneas más abajo, y
+       repetirlos aquí gasta la única frase que enmarca la lectura. Lo que hace este
+       párrafo es abrir: categorías de problema —configurable, integraciones, lotes,
+       accesos, contenedores— que existen en cualquier sector y que el lector va a
+       reconocer una por una al llegar a la experiencia.
+       Sin duración («en diez meses»): caduca y hay que mantenerla en dos idiomas, y las
+       fechas ya están en la entrada de empleo. Sin adjetivos de valor. */
     summary: [
-      'Desarrollador backend en fintech de crédito por libranza —préstamos con descuento directo de nómina, un sector regulado en Colombia—. Trabajo sobre el ciclo del crédito, de la originación a la validación de identidad y el puntaje, y sobre la plataforma que lo sostiene: dockerización, arquitectura por capas y control de accesos.',
+      'Desarrollador backend en PHP/Laravel y Python, sobre PostgreSQL. Trabajo en lógica de negocio configurable, integraciones con servicios externos, procesos por lotes, control de accesos y despliegue en Docker sobre Linux. Toda mi experiencia de producción viene de una fintech de crédito.',
     ],
     bullets: {
       'rules-engine': [
@@ -59,8 +80,14 @@ export const TEXT = {
       'access-control': [
         'Construí el árbol de permisos de la plataforma sobre 17 módulos, con permisos a nivel de opción y de subproceso, blindé ruta a ruta y migré los usuarios y roles existentes al esquema nuevo sin interrumpir la operación.',
       ],
+      /* Antes era un solo bullet de 62 palabras con tres atenuaciones encadenadas: en la
+         web eran bloques respirados, comprimidos aquí la densidad de disculpas se
+         disparaba. Se conserva la que delimita autoría —la revisión del líder técnico,
+         que es la única evidencia de que el código pasó por code review— y se retiran
+         las que justifican el contexto. */
       'layered-migration': [
-        'Participé en la primera etapa de la migración de la plataforma —seis años de código— hacia una arquitectura por capas, verificando módulo a módulo cada cambio antes de continuar y eliminando por completo las consultas SQL en crudo de los controladores. Tres meses de trabajo, con revisión del líder técnico en cada paso; no existía suite de pruebas en ese momento. La segunda etapa se ejecutó tras mi salida.',
+        'Participé en la primera etapa de la migración de la plataforma —seis años de código— hacia una arquitectura por capas, eliminando por completo las consultas SQL en crudo de los controladores.',
+        'Verifiqué módulo a módulo cada cambio antes de continuar, con revisión del líder técnico en cada paso. Tres meses de trabajo.',
       ],
       infrastructure: [
         'Dockericé la aplicación, que corría de forma nativa sobre la máquina, y la desplegué en una instancia nueva de GCP con nginx como proxy inverso entre los contenedores y el host.',
@@ -83,7 +110,8 @@ export const TEXT = {
   en: {
     lang: 'en',
     docTitle: 'Wilfred Morales · Backend Developer',
-    headline: 'Backend Developer — PHP/Laravel · PostgreSQL · Credit Fintech',
+    headline: 'Backend Developer — PHP/Laravel · PostgreSQL · Python',
+    stackLine: 'Laravel · PHP · PostgreSQL · Python · Docker · GCP',
     sections: {
       summary: 'Profile',
       experience: 'Experience',
@@ -93,8 +121,10 @@ export const TEXT = {
       languages: 'Languages and certifications',
     },
     present: 'Present',
+    remote: 'Remote',
+    fileName: 'Wilfred-Morales-Backend-Developer',
     summary: [
-      'Backend developer at a payroll-deduction lending fintech — loans repaid through automatic salary deductions, a regulated sector in Colombia. I work across the credit lifecycle, from origination to identity validation and scoring, and on the platform underneath it: containerisation, layered architecture and access control.',
+      'Backend developer working with PHP/Laravel and Python on PostgreSQL. I work on configurable business logic, integrations with external services, batch processing, access control, and deployment with Docker on Linux. All my production experience comes from a credit fintech.',
     ],
     bullets: {
       'rules-engine': [
@@ -115,7 +145,8 @@ export const TEXT = {
         'Built the platform permission tree across 17 modules, with permissions down to the option and sub-process level, locked down every route, and migrated existing users and roles to the new schema without interrupting operations.',
       ],
       'layered-migration': [
-        'Took part in the first stage of migrating the platform — six years of code — to a layered architecture, verifying every change module by module before moving on and removing raw SQL queries from controllers entirely. Three months of work, reviewed by the tech lead at each step; there was no test suite at the time. The second stage ran after I left.',
+        'Took part in the first stage of migrating the platform — six years of code — to a layered architecture, removing raw SQL queries from controllers entirely.',
+        'Verified every change module by module before moving on, reviewed by the tech lead at each step. Three months of work.',
       ],
       infrastructure: [
         'Containerised the application with Docker, which had been running natively on the machine, and deployed it on a new GCP instance with nginx as a reverse proxy between the containers and the host.',
