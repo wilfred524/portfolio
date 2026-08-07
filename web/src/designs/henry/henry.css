@@ -11,8 +11,19 @@
   --sepia: #3e3b36;
   --ash: #666666;
   --midstone: #9f9f9f;
-  --pebble: #b3b3b3;
-  --hairline: #eeeeee;
+  /* #b3b3b3 daba 2,01:1 sobre el papel y es el borde de los botones del hero —CV,
+     GitHub, LinkedIn, email—: un control interactivo cuyo contorno no llega a 3:1
+     incumple WCAG 1.4.11. #8a8a8a da 3,31:1, y es prácticamente el gris más claro que
+     todavía pasa (el umbral está en ~#919191). */
+  --pebble: #8a8a8a;
+  /* #eeeeee daba 1,11:1: los filetes que separan filas de habilidades y cabeceras de
+     empleo eran, en la práctica, invisibles. Y con `--sepia` (10,68:1) separando filas
+     de proyecto, la jerarquía estaba invertida: la unidad pequeña gritaba y la grande no
+     se veía. Ahora el filete estructural se percibe y el fuerte queda para `.henry-job`. */
+  --hairline: #d0d0d0;
+  /* Filete para las bandas de tinta: sobre `--ink`, `--sepia` da 1,33:1 y desaparece —la
+     tabla de Perfil en Contacto no tenía filas visibles—. Este da 2,0:1. */
+  --rule-ink: #57534a;
 
   /* --- Tipografía (sustitutos libres cercanos a las comerciales) --- */
   --font-sans: 'Switzer', 'Inter', system-ui, sans-serif;      /* ← Neue Montreal */
@@ -88,7 +99,7 @@
 }
 
 .henry-section--ink .henry-hairline {
-  border-color: var(--sepia);
+  border-color: var(--rule-ink);
 }
 
 /* ------------------------------------------------------------
@@ -211,6 +222,11 @@
   text-decoration: none;
   color: var(--ash);
   transition: color 0.2s ease;
+  /* A 12px en versales la caja medía ~14px de alto: por debajo del mínimo de 24x24.
+     El padding amplía el área pulsable y el margen negativo lo compensa, así que la
+     composición no se mueve. */
+  padding-block: calc(var(--space) * 3);
+  margin-block: calc(var(--space) * -3);
 }
 
 .henry-nav a:hover {
@@ -231,6 +247,10 @@
   color: var(--ash);
   cursor: pointer;
   transition: color 0.2s ease;
+  /* «ES»/«EN» medían ~20x14: el control más pequeño de la página. Mismo truco que la
+     nav — más área, misma composición. */
+  padding: calc(var(--space) * 3) calc(var(--space) * 2);
+  margin: calc(var(--space) * -3) calc(var(--space) * -2);
 }
 
 .henry-langswitch__btn:hover {
@@ -267,8 +287,13 @@
   align-content: center; /* el bloque completo centrado en el alto del hero */
   gap: clamp(24px, 4vw, 64px);
   /* La manda la placa, no un alto fijo: con el hero de credencial, 82dvh dejaba
-     aire muerto bajo el bloque. */
-  min-height: 72dvh;
+     aire muerto bajo el bloque.
+     El tope en píxeles no es decorativo: `.henry-section` ya aporta hasta 120px de
+     padding arriba y abajo, así que 72dvh en 1440x900 daba 864px de hero sobre ~810px
+     útiles y las dos últimas líneas —disponibilidad y modalidad— caían bajo el pliegue.
+     Justo las que tienen que verse sin desplazar. */
+  min-height: min(72dvh, 620px);
+  padding-block: clamp(48px, 7vh, 88px);
 }
 
 .henry-hero__left {
@@ -551,7 +576,9 @@
   grid-template-columns: minmax(0, 14rem) minmax(0, 1fr);
   gap: calc(var(--space) * 8);
   padding: calc(var(--space) * 8) 0;
-  border-top: 1px solid var(--sepia);
+  /* El filete de proyecto baja de `--sepia` (casi negro) a `--hairline`: separa filas
+     dentro de un empleo, es la unidad pequeña. El fuerte queda para `.henry-job`. */
+  border-top: 1px solid var(--hairline);
 }
 
 .henry-proj__aside {
@@ -582,7 +609,10 @@
 
 /* Tres bloques rotulados en vez de un solo párrafo largo, que se leía como muro. */
 .henry-proj__block {
-  margin-top: calc(var(--space) * 5);
+  /* 20px quedaba por debajo de los 27,2px de interlineado del propio cuerpo: la
+     separación entre bloques era menor que la que hay entre dos renglones, así que los
+     tres se volvían a leer como uno. */
+  margin-top: calc(var(--space) * 7);
 }
 
 .henry-proj__block-label {
@@ -691,7 +721,7 @@
 }
 
 .henry-contact__facts .henry-skills__row {
-  border-bottom-color: var(--sepia);
+  border-bottom-color: var(--rule-ink);
 }
 
 .henry-section--ink .henry-skills__area {
@@ -878,8 +908,12 @@
 
 /* El borde de foco tiene que verse SOBRE el campo, que ahora es papel: en papel, un
    borde de papel no existe. */
+/* Un cambio de color de borde de 1px es el mínimo del mínimo para señalar el foco. La
+   spec prohíbe sombras, así que el anillo va hacia dentro con offset negativo: se ve,
+   y no desplaza nada. */
 .henry-chat__input:focus-visible {
-  outline: none;
+  outline: 2px solid var(--ink);
+  outline-offset: -2px;
   border-color: var(--ink);
 }
 
@@ -938,6 +972,15 @@
   cursor: pointer;
   animation: henry-widget-in 240ms ease-out both;
   transition: background-color 0.2s ease, color 0.2s ease, border-color 0.2s ease;
+}
+
+/* El foco global es `outline: 2px solid currentColor` con `outline-offset: 3px`. Aquí
+   `currentColor` es papel y el anillo se dibuja FUERA del botón, sobre el fondo de
+   página, que también es papel: contorno invisible, 1:1, en el único control flotante
+   del sitio. Con tinta y el anillo pegado al borde, 14,25:1. */
+.henry-chatwidget__launcher:focus-visible {
+  outline: 2px solid var(--ink);
+  outline-offset: 2px;
 }
 
 /* Inversión al hover, igual que .henry-linkbtn pero al revés: aquí se parte de tinta. */
