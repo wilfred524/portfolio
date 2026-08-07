@@ -11,21 +11,22 @@ Estructura de proyectos: `projectGroups` = lista de `{ category, items[] }`, y c
 `{ title, context, description, tags[] }`. Se renderizan agrupados y compactos en
 `Projects.tsx`.
 
-## Añadir un diseño nuevo a la colección (método refero)
+## Diseños
 
-1. En la ficha del estilo en styles.refero.design, copiar el **`design.md`** (spec) y las
-   **CSS custom properties** (tokens).
-2. Crear `web/src/designs/<slug>/` con:
-   - `design.md` — la spec pegada tal cual (fuente de verdad).
-   - `<slug>.css` — tokens como variables CSS **scoped bajo `.design-<slug>`** + estilos
-     que usen SOLO esas variables (nunca valores sueltos).
-   - `<Slug>Page.tsx` + `components/` — maquetación siguiendo las do/don't del design.md.
-3. Registrar en `web/src/designs/registry.ts` (slug, nombre, descripción, `preview`
-   {background, foreground}, `component` lazy).
-4. Aparece solo en el selector flotante (`DesignSwitcher`) y en `/disenos`.
+**La colección de diseños se retiró** (ver `docs/architecture.md`): varias páginas
+diluían el mensaje del portafolio. Ya no existen `registry.ts`, `DesignSwitcher`,
+`GalleryPage` ni la ruta `/disenos`, así que no hay "añadir un diseño nuevo": hay un
+solo diseño, **Henry**, y es la página.
 
-Cada carpeta de diseño es **autocontenida**; los estilos no se filtran porque todo va
-scoped a su clase raíz.
+Lo que sí sigue en pie, porque es lo que mantiene Henry coherente:
+
+- La spec vive en `web/src/designs/henry/design.md`, pegada tal cual desde la ficha de
+  styles.refero.design. Es la fuente de verdad; si el código y la spec discrepan, manda
+  la spec o se documenta por qué no.
+- Los tokens son variables CSS **scoped bajo `.design-henry`**, y los estilos usan solo
+  esas variables, nunca valores sueltos.
+- La carpeta del diseño es autocontenida: los estilos no se filtran porque todo cuelga
+  de su clase raíz.
 
 ## Estilo de código
 
