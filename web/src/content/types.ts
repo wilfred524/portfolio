@@ -147,7 +147,6 @@ export interface Profile {
   /** Un solo documento por idioma: el botón no obliga a elegir idioma dos veces. */
   cv: { label: string; url: string };
   colophon: string;
-  closing: string;
   facts: Fact[];
   skillGroups: SkillGroup[];
   /** Los contratos, en orden. Cada grupo de proyectos apunta al suyo por `id`. */

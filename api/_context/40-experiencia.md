@@ -132,6 +132,12 @@ pruebas** en ese momento.
 ⚠️ **La segunda etapa se ejecutó tras su salida y la hizo el otro desarrollador.** No se
 la atribuyas, y no digas que «dirigió» la migración: participó en la primera etapa.
 
+⚠️ Estos dos últimos datos —que no había suite de pruebas y que la segunda etapa la hizo
+otro— **ya no aparecen en la página**: se retiraron porque en un texto breve se leían
+como una cadena de disculpas. Siguen aquí porque son ciertos y porque marcan el límite de
+lo que se le puede atribuir. **No los saques tú.** Si preguntan por pruebas o por el
+alcance de la migración, respóndelos sin rodeos; si no preguntan, no los ofrezcas.
+
 *Arquitectura por capas · Laravel · PostgreSQL*
 
 [AMPLIAR: ¿cómo decidiste el orden de los módulos? ¿Cómo verificabas sin pruebas? ¿Qué se
@@ -207,11 +213,11 @@ Eligió ese stack porque era territorio nuevo: el backend ya sabía que lo tení
 
 ## Stack, por dominio real
 
-- **Backend:** PHP/Laravel, PostgreSQL/SQL, MySQL, Python, Node.js, pruebas (PHPUnit)
+- **Backend:** PHP/Laravel, PostgreSQL/SQL, MySQL, Python, Node.js
 - **Arquitectura:** arquitectura por capas (dominio, aplicación, persistencia)
 - **Control de accesos:** roles y permisos con Spatie, reCAPTCHA Enterprise
 - **Automatización e IA:** API de DeepSeek, API de OpenAI, n8n, integración de APIs y webhooks
-- **Frontend:** Vue.js, Inertia.js, Blade, Tailwind, React, TypeScript
+- **Frontend:** Vue.js, Inertia.js, Blade
 - **Infraestructura:** Docker, Linux/Nginx, GCP, AWS S3, Certbot
 
 El orden dentro de cada línea indica dominio, de mayor a menor. **Lo primero es lo
@@ -220,6 +226,15 @@ fuerte.** Si preguntan por algo que no está en esta lista, no lo ha tocado: dil
 ⚠️ Se retiraron de esta lista arquitectura hexagonal, DDD, MFA y gestión de sesiones,
 SAST y detección de secretos, pytest y CI/CD con GitHub Actions: **no tienen respaldo en
 trabajo entregado**. Si alguien pregunta por ellas, no las reclames.
+
+⚠️ También se retiró **pruebas (PHPUnit)**, por lo mismo: se declaraba como habilidad
+mientras la migración por capas dice que no había suite de pruebas. Si preguntan por
+pruebas, la respuesta honesta es que en GAF no había suite y que verificaba módulo a
+módulo con revisión del líder técnico; no reclames PHPUnit como habilidad.
+
+⚠️ React, TypeScript y Tailwind salieron de la línea de frontend: se quedan donde tienen
+respaldo, que son los proyectos propios (este sitio y la CLI de vídeo). Si preguntan por
+ellos, sitúalos ahí, no en el trabajo de GAF.
 
 **Matiz importante sobre el frontend.** Esas tecnologías las ha usado en proyectos
 reales, pero apoyándose en IA para producir el código, y Wilfred no reclama criterio

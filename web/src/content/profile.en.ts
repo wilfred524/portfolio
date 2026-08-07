@@ -14,11 +14,11 @@ import type { Profile } from './types';
 export const en = {
   name: 'Wilfred Morales',
   role: 'Backend developer',
-  stack: 'PHP/Laravel · PostgreSQL · credit fintech',
+  stack: 'PHP/Laravel · PostgreSQL · Python',
   credential:
-    'Electronic signature, credit rules engine and credit scoring, in production for payroll-deduction lending.',
+    'In production: a rules engine the business team adjusts without a deploy, e-signature with identity verification, and a monthly pipeline that scores over 320,000 people.',
   availability: 'Available now · Looking for my next role as a backend developer',
-  trajectory: 'Backend development since October 2025 · Colombia (GMT-5)',
+  trajectory: 'Remote · Colombia (GMT-5)',
   /* Kept as a three-beat lockup with the nexus in italics, like the Spanish original.
      A literal "Ideas made Product" reads wrong in English. */
   heroSlogan: { start: 'Ideas', link: 'into', end: 'Product' },
@@ -28,11 +28,9 @@ export const en = {
   repoUrl: 'https://github.com/wilfred524/portfolio',
   /** Dominio de producción en Vercel; sin dominio propio todavía. */
   siteUrl: 'https://portfolio-wilfred524.vercel.app',
-  cv: { label: 'Download CV', url: '/cv-en.pdf' },
+  cv: { label: 'Download CV', url: '/Wilfred-Morales-Backend-Developer.pdf' },
   colophon:
-    'This site is React and TypeScript, with variable type and animations written by hand. I chose that stack precisely because it was new ground: I already know I have the backend. I built it leaning on AI to write code: I define the architecture, give the instructions and verify every step. The code is public.',
-  closing:
-    'What draws me in is always the same thing: a process someone does by hand and shouldn\'t, or a messy system that can be left better than I found it.',
+    'This site is React and TypeScript, with variable type and animations written by hand. The assistant runs on Python in serverless functions, with its knowledge base in versioned text files. I write leaning on AI: I define the architecture, give the instructions and verify every step. The code is public.',
   facts: [
     {
       label: 'Education',
@@ -43,14 +41,14 @@ export const en = {
       label: 'Languages and certifications',
       /* Merged: two rows for three short facts split the block for nothing. */
       value:
-        'Spanish (native) · English B2, C2 reading (EF SET) · Google IT Automation with Python — Coursera (in progress)',
+        'Spanish (native) · English B2 (EF SET) · Google IT Automation with Python — Coursera (in progress)',
     },
     {
       label: 'Work mode',
       /* No mention of documents, visas or sponsorship: unrequested data that invites
          filtering by nationality before reading anything technical. */
       value:
-        'Remote or hybrid · GMT-5 · Local employment in Colombia or international contracting via Deel.',
+        'Remote · GMT-5 · Local employment in Colombia or international contracting via Deel.',
     },
     {
       label: 'Domain',
@@ -74,7 +72,6 @@ export const en = {
         'MySQL',
         'Python',
         'Node.js',
-        'Testing (PHPUnit)',
       ],
     },
     {
@@ -91,7 +88,7 @@ export const en = {
     },
     {
       area: 'Frontend',
-      items: ['Vue.js', 'Inertia.js', 'Blade', 'Tailwind CSS', 'React', 'TypeScript'],
+      items: ['Vue.js', 'Inertia.js', 'Blade'],
     },
     {
       area: 'Infrastructure',
@@ -147,7 +144,7 @@ export const en = {
             hard:
               'The hard part is not signing, it is getting everything to line up before signing. An advisor approves a draft, customer data is validated against TransUnion, and identity is verified by OTP or KBA. I designed the flow as a state machine over the asynchronous responses from the provider, so a long process always ends in a valid document, or in an error the user can act on.',
             result:
-              'The provider returns the signed document with its hash, the transaction is fully traceable, and a copy is kept in S3. The whole procedure closes in about 20 minutes, against a manual fill-in of 24 pages. Small team, reviewed by the tech lead.',
+              'The provider returns the signed document with its hash, the transaction is fully traceable, and a copy is kept in S3. The whole procedure closes in about 20 minutes, against a manual fill-in of 24 pages.',
           },
           tags: ['Laravel', 'Vue.js', 'Python', 'TransUnion', 'AWS S3'],
         },
@@ -176,7 +173,7 @@ export const en = {
           id: 'layered-migration',
           title: 'Migration to a layered architecture',
           brief:
-            'I took part in the first stage of migrating the platform — six years of code — to a layered architecture, verifying every change module by module before moving on and removing raw SQL queries from controllers entirely. Three months of work, reviewed by the tech lead at each step; there was no test suite at the time. The second stage ran after I left.',
+            'I took part in the first stage of migrating the platform — six years of code — to a layered architecture, verifying every change module by module before moving on and removing raw SQL queries from controllers entirely. Three months of work, reviewed by the tech lead at each step.',
           tags: ['Layered architecture', 'Laravel', 'PostgreSQL'],
         },
         {
