@@ -3,8 +3,10 @@
  *
  *   npm run build:cv            (o: npm run build:cv -w @portfolio/cv)
  *
- * Escribe cv-es y cv-en en web/public/, como HTML y como PDF. El PDF lo imprime Chrome
- * headless si está instalado; si no, quedan los HTML para imprimirlos a mano.
+ * Escribe en web/public/, como HTML y como PDF, un archivo por idioma:
+ * `Wilfred-Morales-Desarrollador-Backend` y `Wilfred-Morales-Backend-Developer` (los
+ * nombres salen de `fileName`, en content.ts). El PDF lo imprime Chrome headless si
+ * está instalado; si no, quedan los HTML para imprimirlos a mano.
  *
  * POR QUÉ ASÍ:
  * - Los datos duros (empresas, periodos, habilidades, formación, contacto) se leen de
@@ -247,7 +249,7 @@ function renderCv(profile: any, lang: Lang): string {
 
          Para comprobarlo tras cualquier cambio de tipografía:
            python -c "import pypdf; t=''.join(p.extract_text() for p in
-             pypdf.PdfReader('web/public/cv-es.pdf').pages);
+             pypdf.PdfReader('web/public/Wilfred-Morales-Desarrollador-Backend.pdf').pages);
              print('wilfred3019@gmail.com' in t, 'AWS' in t)"
          Las dos deben dar True. */
       @font-face {
