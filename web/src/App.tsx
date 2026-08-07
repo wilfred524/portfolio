@@ -1,3 +1,4 @@
+import { Analytics } from '@vercel/analytics/react';
 import { LanguageProvider } from './i18n/LanguageProvider';
 import HenryPage from './designs/henry/HenryPage';
 
@@ -9,6 +10,8 @@ export default function App() {
   return (
     <LanguageProvider>
       <HenryPage />
+      {/* Sin cookies y sin datos personales; ver lib/analytics.ts. */}
+      <Analytics />
     </LanguageProvider>
   );
 }

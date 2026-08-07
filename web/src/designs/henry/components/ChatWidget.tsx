@@ -1,5 +1,6 @@
 import { useEffect, useRef, useState } from 'react';
 import { useContent } from '../../../i18n/LanguageProvider';
+import { track } from '../../../lib/analytics';
 import { Chat } from './Chat';
 
 /**
@@ -64,6 +65,7 @@ export function ChatWidget({ visible }: { visible: boolean }) {
     setMontado(true);
     setAbierto(true);
     descartarInvitacion();
+    track('chat-abierto');
   }
 
   function cerrar() {
