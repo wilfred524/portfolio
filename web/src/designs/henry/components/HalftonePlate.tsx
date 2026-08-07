@@ -151,6 +151,19 @@ export function HalftonePlate({ src = '/davinci.webp' }: { src?: string }) {
     };
     const onMove = (e: PointerEvent) => {
       const rect = canvas.getBoundingClientRect();
+      // Fuera de la placa no hay foco que seguir: si el puntero está en otra parte de la
+      // página, se apaga en vez de calcular un spotlight que nadie va a ver.
+      const dentro =
+        e.clientX >= rect.left &&
+        e.clientX <= rect.right &&
+        e.clientY >= rect.top &&
+        e.clientY <= rect.bottom;
+      if (!dentro) {
+        if (!pointer.current.active) return;
+        pointer.current.active = false;
+        schedule();
+        return;
+      }
       pointer.current = {
         x: (e.clientX - rect.left) / rect.width,
         y: (e.clientY - rect.top) / rect.height,
@@ -163,6 +176,11 @@ export function HalftonePlate({ src = '/davinci.webp' }: { src?: string }) {
       schedule();
     };
 
+    // El listener sigue en `window` y no en el canvas —el spotlight tiene que reaccionar
+    // al acercarse, no solo al entrar—, pero `onMove` descarta lo que cae fuera antes de
+    // repintar. Antes, cualquier movimiento del ratón en cualquier punto de la página, con
+    // el hero a cinco pantallas de distancia, recorría los 50.176 píxeles del buffer con
+    // una raíz cuadrada por píxel. Durante toda la sesión.
     window.addEventListener('pointermove', onMove);
     canvas.addEventListener('pointerleave', onLeave);
     return () => {

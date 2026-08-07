@@ -1,5 +1,6 @@
 import { useContent } from '../../../i18n/LanguageProvider';
 import { useReveal } from '../../../hooks/useReveal';
+import { track } from '../../../lib/analytics';
 import { HalftonePlate } from './HalftonePlate';
 
 /**
@@ -24,7 +25,12 @@ export function Hero() {
         <div className="henry-hero__links">
           {/* El CV primero: sin documento que reenviar, muchos procesos ni empiezan.
               `download` para que se guarde, no para abrirse en una pestaña. */}
-          <a className="henry-linkbtn" href={profile.cv.url} download>
+          <a
+            className="henry-linkbtn"
+            href={profile.cv.url}
+            download
+            onClick={() => track('cv-descargado', { origen: 'hero' })}
+          >
             {profile.cv.label} ↓
           </a>
           {profile.social.map((link) => (
@@ -34,6 +40,12 @@ export function Hero() {
               href={link.url}
               target="_blank"
               rel="noreferrer"
+              onClick={() =>
+                track(
+                  link.url.includes('github') ? 'repositorio-abierto' : 'linkedin-abierto',
+                  { origen: 'hero' },
+                )
+              }
             >
               {link.label} ↗
             </a>

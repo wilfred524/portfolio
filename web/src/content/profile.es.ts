@@ -8,15 +8,30 @@ export const es = {
 
   name: 'Wilfred Morales',
   role: 'Desarrollador backend',
-  /** Stack de cabecera: lo que un reclutador técnico busca en los primeros dos segundos. */
-  stack: 'PHP/Laravel · PostgreSQL · Fintech de crédito',
-  /** La credencial: sistemas en producción y en qué dominio. Es la frase que convierte. */
+  /**
+   * Stack de cabecera: lo que un reclutador técnico busca en los primeros dos segundos.
+   * Sin el dominio. El nicho es la prueba, no la identidad: en el titular solo cierra
+   * puertas fuera del sector, y dentro del sector lo van a encontrar igual porque está
+   * en la entrada de empleo, en los proyectos y en la ficha Dominio de Contacto.
+   */
+  stack: 'PHP/Laravel · PostgreSQL · Python',
+  /**
+   * La credencial: qué hay en producción. Termina en la escala, no en el sector, y es
+   * donde vive la única cifra grande del sitio —antes estaba enterrada a dos tercios de
+   * la página, dentro del tercer proyecto—.
+   */
   credential:
-    'Firma electrónica, motor de reglas y puntaje crediticio en producción para crédito por libranza.',
+    'En producción: un motor de reglas que el área de negocio ajusta sin desplegar, firma electrónica con validación de identidad y un proceso mensual que puntúa más de 320.000 personas.',
   /* "Disponible para nuevos proyectos" leía freelance; la búsqueda es de empleo. */
   availability: 'Disponible de inmediato · Buscando mi próximo rol como desarrollador backend',
-  /** Marco temporal, bajo el hero. Es lo que evita que el contenido se lea como 4 años. */
-  trajectory: 'Desarrollo backend desde octubre de 2025 · Colombia (GMT-5)',
+  /**
+   * Logística, bajo el hero. Ya no lleva el marco temporal: las fechas están en la
+   * entrada de empleo, que es donde se buscan, y adelantarlas al primer viewport solo
+   * pone un número en la cabeza del lector antes de que haya leído qué hay dentro de
+   * esos meses. No es ocultarlo —está en el documento— es no subrayarlo.
+   * En su lugar, la modalidad: remoto, que es el dato que sí filtra.
+   */
+  trajectory: 'Remoto · Colombia (GMT-5)',
   /** Slogan editorial: vive en la banda Ink (Masthead), no en el hero. */
   heroSlogan: { start: 'Ideas', link: 'hechas', end: 'Producto' },
   location: 'Colombia',
@@ -31,17 +46,18 @@ export const es = {
    * archivo, así que no pueden contradecir a la web. El script exporta también el PDF
    * con Chrome headless; si no hay Chrome, quedan solo los .html y hay que imprimirlos.
    */
-  cv: { label: 'Descargar CV', url: '/cv-es.pdf' },
+  cv: { label: 'Descargar CV', url: '/Wilfred-Morales-Desarrollador-Backend.pdf' },
   /**
    * «Cómo está hecho»: a nivel JR/intermedio, la prueba de que se aprende solo pesa
    * tanto como el stack. Incluye el uso de IA como herramienta, que es cómo se
    * trabaja hoy y es una competencia declarable, no una carencia.
    */
   colophon:
-    'Este sitio es React y TypeScript, con tipografía variable y animaciones sin librería. Elegí ese stack precisamente porque era territorio nuevo: el backend ya sé que lo tengo. Lo construí apoyándome en IA para codificar: yo defino la arquitectura, doy las instrucciones y verifico cada paso. El código está público.',
-  /** Cierre de la página: lo único de la antigua sección «Sobre mí» que se conserva. */
-  closing:
-    'Lo que me engancha es siempre lo mismo: un proceso que alguien hace a mano y no debería, o un sistema desordenado que se puede dejar mejor de como lo encontré.',
+    'Este sitio es React y TypeScript, con tipografía variable y animaciones sin librería. El asistente corre sobre Python en funciones serverless, con su base de conocimiento en archivos de texto versionados. Escribo apoyándome en IA: defino la arquitectura, doy las instrucciones y verifico cada paso. El código está público.',
+  /* Aquí había un `closing`, el cierre de la página. Se retira, no se reescribe: esa
+     frase la generó una IA y Wilfred no la reconocía como suya. Si algún día hay una
+     escrita por él, vuelve; una frase de relleno en el cierre resta más de lo que aporta
+     una sección que termine directamente en los datos de contacto. */
   /**
    * Sección Perfil: responde de una vez lo que un evaluador se pregunta en los primeros
    * segundos y hoy no tenía respuesta en ninguna parte de la página.
@@ -60,10 +76,13 @@ export const es = {
     {
       label: 'Idiomas y certificaciones',
       /* Idiomas y certificaciones fusionados: dos líneas para tres datos cortos partían
-         el bloque sin ganar nada. Sin enlace al certificado: el examen se va a repetir.
-         Cuando haya nota nueva, publicar el PDF en web/public/ y restaurar href. */
+         el bloque sin ganar nada. Sin enlace al certificado y sin desglose por destreza:
+         el resultado real es B2 global con lectura C2 pero B1 en comprensión oral, habla
+         y escritura, así que publicar el desglose invita a una auditoría que no
+         acompaña, y citar solo el C2 sería escoger el dato favorable. El nivel global es
+         el que se declara en un CV. El examen se va a repetir; revisar entonces. */
       value:
-        'Español nativo · Inglés B2, lectura C2 (EF SET) · Google IT Automation with Python — Coursera (en curso)',
+        'Español nativo · Inglés B2 (EF SET) · Google IT Automation with Python — Coursera (en curso)',
     },
     {
       label: 'Modalidad',
@@ -71,7 +90,7 @@ export const es = {
          invitan a filtrar por nacionalidad antes de leer nada técnico. Lo que importa es
          cómo se contrata y en qué franja horaria se trabaja. */
       value:
-        'Remoto o híbrido · GMT-5 · Contratación local en Colombia o internacional vía Deel.',
+        'Remoto · GMT-5 · Contratación local en Colombia o internacional vía Deel.',
     },
     {
       label: 'Dominio',
@@ -85,7 +104,10 @@ export const es = {
   /*
    * Solo lo que tiene respaldo demostrable en la experiencia o en un proyecto público.
    * Se retiraron Arquitectura Hexagonal, DDD, MFA y gestión de sesiones, SAST y
-   * detección de secretos, pytest y CI/CD con GitHub Actions: nada de eso está
+   * detección de secretos, pytest y CI/CD con GitHub Actions, y por el mismo criterio
+   * «Pruebas (PHPUnit)»: se declaraba arriba mientras la entrada de migración dice que
+   * no existía suite de pruebas, que es la contradicción que un lead ve en diez
+   * segundos. Vuelve cuando haya pruebas escritas que la sostengan. Nada de eso está
    * sostenido por trabajo entregado, y una habilidad que no se puede defender en una
    * entrevista cuesta más de lo que suma. La categoría «Seguridad» desaparece por lo
    * mismo; lo que sí hubo (roles y permisos, reCAPTCHA) vive en «Control de accesos».
@@ -99,7 +121,6 @@ export const es = {
         'MySQL',
         'Python',
         'Node.js',
-        'Pruebas (PHPUnit)',
       ],
     },
     {
@@ -115,8 +136,11 @@ export const es = {
       items: ['API de DeepSeek', 'OpenAI API', 'n8n', 'Integración de APIs y webhooks'],
     },
     {
+      /* Solo lo tocado en producción. Seis tecnologías de frontend en un perfil que se
+         titula backend diluyen el foco; React y TypeScript siguen visibles donde tienen
+         respaldo, en los proyectos propios. */
       area: 'Frontend',
-      items: ['Vue.js', 'Inertia.js', 'Blade', 'Tailwind CSS', 'React', 'TypeScript'],
+      items: ['Vue.js', 'Inertia.js', 'Blade'],
     },
     {
       area: 'Infraestructura',
@@ -172,7 +196,7 @@ export const es = {
             hard:
               'Lo difícil no es firmar: es que todo encaje antes de firmar. El asesor aprueba un borrador, se validan los datos del cliente contra TransUnion y la identidad se verifica por OTP o KBA. Diseñé el flujo como una máquina de estados sobre las respuestas asíncronas del proveedor, para que un proceso largo termine siempre en un documento válido o en un error que el usuario pueda resolver.',
             result:
-              'El proveedor devuelve el documento firmado con su hash, queda la trazabilidad de la transacción y el respaldo en S3. El trámite completo se cierra en unos 20 minutos, frente a un llenado manual de 24 páginas. Equipo pequeño, con revisión del líder técnico.',
+              'El proveedor devuelve el documento firmado con su hash, queda la trazabilidad de la transacción y el respaldo en S3. El trámite completo se cierra en unos 20 minutos, frente a un llenado manual de 24 páginas.',
           },
           tags: ['Laravel', 'Vue.js', 'Python', 'TransUnion', 'AWS S3'],
         },
@@ -201,7 +225,7 @@ export const es = {
           id: 'layered-migration',
           title: 'Migración a arquitectura por capas',
           brief:
-            'Participé en la primera etapa de la migración de la plataforma —seis años de código— hacia una arquitectura por capas, verificando módulo a módulo cada cambio antes de continuar y eliminando por completo las consultas SQL en crudo de los controladores. Tres meses de trabajo, con revisión del líder técnico en cada paso; no existía suite de pruebas en ese momento. La segunda etapa se ejecutó tras mi salida.',
+            'Participé en la primera etapa de la migración de la plataforma —seis años de código— hacia una arquitectura por capas, verificando módulo a módulo cada cambio antes de continuar y eliminando por completo las consultas SQL en crudo de los controladores. Tres meses de trabajo, con revisión del líder técnico en cada paso.',
           tags: ['Arquitectura por capas', 'Laravel', 'PostgreSQL'],
         },
         {

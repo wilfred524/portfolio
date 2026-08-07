@@ -129,14 +129,18 @@ export function Chat() {
           se come el espacio de lo que de verdad importa. */}
       {mensajes.length === 0 && <p className="henry-chat__intro">{ui.chat.intro}</p>}
 
-      {/* aria-live: el lector de pantalla anuncia cada respuesta según se completa. */}
+      {/* aria-live: el lector de pantalla anuncia cada respuesta cuando está COMPLETA.
+          Mientras dura el streaming se apaga: el texto parcial se reescribe en cada
+          fragmento que llega, y con `polite` el lector intentaba anunciar la misma
+          respuesta decenas de veces mientras se escribía. `aria-busy` ya comunica que
+          hay algo en curso. */}
       <div
         ref={hilo}
         onScroll={alDesplazar}
         className="henry-chat__log"
         role="log"
         aria-label={ui.chat.logLabel}
-        aria-live="polite"
+        aria-live={enCurso ? 'off' : 'polite'}
         aria-busy={enCurso}
       >
         {mensajes.map((mensaje, indice) => (

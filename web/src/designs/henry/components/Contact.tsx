@@ -1,4 +1,5 @@
 import { useContent } from '../../../i18n/LanguageProvider';
+import { track } from '../../../lib/analytics';
 import { InkSection } from './InkSection';
 import { SectionHeader } from './SectionHeader';
 
@@ -16,9 +17,10 @@ export function Contact() {
       <h2 className="henry-sr-only">{profile.ui.sections.contact}</h2>
       <SectionHeader word={profile.ui.sections.contact} />
 
+      {/* Sin frase de cierre: la que había («un proceso que alguien hace a mano y no
+          debería…») la generó una IA y Wilfred no la reconocía como suya, así que se
+          retira en vez de reescribirse. La sección abre directamente con los datos. */}
       <div className="henry-contact">
-        <p className="henry-contact__closing">{profile.closing}</p>
-
         {facts.length > 0 && (
           <dl className="henry-skills henry-contact__facts">
             {facts.map((fact) => (
@@ -51,7 +53,12 @@ export function Contact() {
         <span className="henry-meta">{profile.phone}</span>
         <div className="henry-contact__links">
           {/* Un solo documento, el del idioma activo, y se descarga en vez de abrirse. */}
-          <a className="henry-linkbtn" href={profile.cv.url} download>
+          <a
+            className="henry-linkbtn"
+            href={profile.cv.url}
+            download
+            onClick={() => track('cv-descargado', { origen: 'contacto' })}
+          >
             {profile.cv.label} ↓
           </a>
           {profile.social.map((link) => (
@@ -61,6 +68,12 @@ export function Contact() {
               href={link.url}
               target="_blank"
               rel="noreferrer"
+              onClick={() =>
+                track(
+                  link.url.includes('github') ? 'repositorio-abierto' : 'linkedin-abierto',
+                  { origen: 'contacto' },
+                )
+              }
             >
               {link.label} ↗
             </a>
