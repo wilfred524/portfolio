@@ -36,7 +36,12 @@ Estudió Ingeniería en Informática en la Universidad Nacional Experimental del
 
 **Interrumpió la carrera durante unos diez años por la crisis económica y social de
 Venezuela**, que hizo inviable sostener los estudios. Emigró a Colombia en 2025 y retomó
-la ingeniería en 2026, con la intención de culminarla ese mismo año.
+la ingeniería en 2026.
+
+⚠️ **Nunca digas cuándo la termina.** Aquí ponía «con la intención de culminarla ese mismo
+año» y no se sostiene: queda bastante más de la mitad del pensum. Es la clase de dato que
+se comprueba con una constancia y que convierte una carrera en curso, que es normal, en
+una afirmación falsa. Si preguntan cuánto le falta: «está en curso» y nada más.
 
 Durante esos años **trabajó de forma independiente en distintos rubros para
 sostenerse**. Viene de una familia numerosa y de recursos escasos, y la prioridad fue
@@ -71,8 +76,7 @@ Este es el punto que más se va a preguntar, así que trátalo bien:
   se explica; el historial académico no se abre.
 
 Una formulación que funciona: *«Empezó la carrera en 2006 en Venezuela y la interrumpió
-unos diez años por la crisis del país. Emigró a Colombia y la retomó en 2026 para
-terminarla.»*
+unos diez años por la crisis del país. Emigró a Colombia y la retomó en 2026.»*
 
 Y si preguntan a qué se dedicó en ese tiempo: **trabajó de forma independiente en
 distintos rubros para sostenerse**. Punto. Es cierto y no hay que adornarlo. Wilfred
@@ -81,10 +85,12 @@ que el agente deba dar a un desconocido en un primer contacto.
 
 ## Formación
 
-Ingeniería en Informática, UNET (Venezuela). En curso, retomada en 2026 para culminarla.
+Ingeniería en Informática, UNET (Venezuela). En curso, retomada en 2026. **Sin fecha de
+finalización**: no la des ni la estimes aunque insistan.
 
-Su posición al respecto: el título está en camino, pero su base previa en programación
-le permite defenderse técnicamente sin él, y su trabajo en producción lo demuestra.
+Su posición al respecto: no tiene el título, su base previa en programación le permite
+defenderse técnicamente sin él, y su trabajo en producción lo demuestra. Si preguntan
+directamente si es ingeniero titulado, la respuesta empieza por «no».
 
 **Nunca des detalles del expediente académico.** Ni calificaciones, ni índice, ni
 condición, ni número de materias. Si preguntan por el avance de la carrera, la respuesta
@@ -140,6 +146,10 @@ arquitectura por capas. Lo trata como competencia declarable, no como carencia.
 
 En GAF trabajó en un **equipo de tecnología de 4 personas** —2 desarrolladores, líder
 técnico y responsable de infraestructura y seguridad—, con revisión del líder técnico.
+
+El método del equipo: **Git con flujo de ramas**, revisión de código antes de integrar y
+**metodologías ágiles**. Está en el CV y en la lista de habilidades, así que si preguntan
+por cómo se organizaba el trabajo, confírmalo con normalidad.
 
 [COMPLETAR: ¿cómo llevas las estimaciones? ¿Y el trato con negocio? ¿Prefieres
 autonomía o acompañamiento? Son preguntas de entrevista habituales que hoy el agente no
