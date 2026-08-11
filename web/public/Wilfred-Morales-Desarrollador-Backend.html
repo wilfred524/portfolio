@@ -8,9 +8,18 @@
          ojos humanos, y cualquier maquetación en columnas los confunde.
          Estructura heredada del export de LinkedIn —nombre centrado, secciones en
          versales con regla— porque es un formato que los reclutadores reconocen. */
-      /* Fraunces (la serif del sitio) en los titulares, para que CV y web se lean como
-         una sola cosa. El cuerpo, en cambio, NO usa Switzer, y esto no es una decisión
-         estética:
+      /* TODO el documento va en una sans del sistema. Fraunces (la serif del sitio) se
+         usaba en el <h1> para que CV y web se leyeran como una sola cosa, y se ha
+         retirado: era el ÚNICO elemento del PDF que Chrome no embebía como /FontFile2,
+         sino que vectorizaba como fuente /Type3 con /CharProcs. Type3 es justo la clase
+         de fuente que peor manejan los extractores baratos, y lo que se pierde cuando
+         fallan es el nombre del candidato: el campo más caro del documento.
+
+         Es el mismo fallo que ya costó Switzer (abajo), con la diferencia de que aquí sí
+         había /ToUnicode y por eso pypdf lo leía bien. No basta: la garantía la da la
+         fuente embebida, no la suerte del extractor.
+
+         Nota histórica sobre el cuerpo, que NO usa Switzer, y no por estética:
 
          Switzer-Variable.woff2 rompe la extracción de texto del PDF. Chrome la vectoriza
          y el resultado es que un lector de PDF —o el parser de un ATS— lee
@@ -31,16 +40,18 @@
          Para comprobarlo tras cualquier cambio de tipografía:
            python -c "import pypdf; t=''.join(p.extract_text() for p in
              pypdf.PdfReader('web/public/Wilfred-Morales-Desarrollador-Backend.pdf').pages);
-             print('wilfred3019@gmail.com' in t, 'AWS' in t)"
-         Las dos deben dar True. */
-      @font-face {
-        font-family: 'Fraunces CV';
-        src: url('fonts/fraunces-latin-wght-normal.woff2') format('woff2-variations');
-        font-weight: 100 900;
-        font-display: swap;
-      }
+             print('wilfred3019@gmail.com' in t, 'AWS' in t, 'Wilfred Morales' in t)"
+         Las tres deben dar True. Y para verificar que no ha vuelto a colarse una fuente
+         sin embeber, que es la comprobación de fondo:
+           python -c "import pypdf; d=pypdf.PdfReader('...pdf');
+             print([f for f in d.pages[0]['/Resources']['/Font'].values()])"
+         Ninguna debe ser /Type3. */
 
-      @page { size: A4; margin: 13mm 14mm; }
+      /* Márgenes ajustados para que el documento siga cabiendo en DOS páginas tras
+         desplegar la cabecera de empleo a cuatro líneas y añadir la entrada de
+         optimización de consultas. Un CV de tres páginas con diez meses de experiencia
+         se lee como relleno, y la tercera página eran dos líneas huérfanas. */
+      @page { size: A4; margin: 11mm 13mm; }
       * { box-sizing: border-box; }
       body {
         margin: 0 auto;
@@ -56,8 +67,7 @@
       header { text-align: center; border-bottom: 2px solid #1c4a5a; padding-bottom: 6pt; }
       h1 {
         margin: 0;
-        font-family: 'Fraunces CV', Georgia, serif;
-        font-variation-settings: 'wght' 600, 'opsz' 144, 'SOFT' 0, 'WONK' 0;
+        font-weight: 700;
         font-size: 23pt;
         line-height: 1.05;
         letter-spacing: -0.015em;
@@ -72,7 +82,7 @@
          y es donde salta el reclutador tras leer el titular. */
       .stackline { margin-top: 3pt; font-size: 9pt; color: #555; }
       h2 {
-        margin: 14pt 0 0;
+        margin: 11pt 0 0;
         padding-bottom: 2pt;
         border-bottom: 1px solid #b8c4c9;
         font-size: 9.5pt;
@@ -86,11 +96,13 @@
       /* Sin page-break-inside aquí: un empleo con varios proyectos no cabe en lo que
          queda de página y saltaba entero, dejando media hoja en blanco. */
       .job { margin-top: 8pt; }
-      .job-head { margin-bottom: 1pt; }
-      .role { font-weight: 700; }
-      .company { font-style: italic; }
-      .mode, .period { color: #555; font-size: 9pt; }
-      .period::before { content: ' · '; }
+      /* Un dato por línea, muy juntas: visualmente siguen leyéndose como un bloque de
+         cabecera, pero en el PDF son párrafos independientes y cada uno se extrae en su
+         propia línea. */
+      .job-role { margin: 0; font-weight: 700; }
+      .job-company { margin: 0; font-style: italic; }
+      .job-meta { margin: 0; color: #555; font-size: 9pt; }
+      .job-meta + .tagline { margin-top: 3pt; }
       .tagline { margin: 0 0 4pt; font-size: 9pt; font-style: italic; color: #555; }
       .entry { margin: 0 0 6pt; page-break-inside: avoid; }
       /* Dos páginas es el formato asumido (legibilidad por encima de encajar en una):
@@ -100,7 +112,8 @@
       .note { font-weight: 400; font-size: 9pt; color: #555; }
       ul { margin: 0; padding-left: 14pt; }
       li { margin-bottom: 1.5pt; }
-      .stack { margin-top: 2pt; font-size: 8.5pt; color: #555; }
+      /* En línea con el título, no en un párrafo al pie del bloque. */
+      .stack { font-weight: 400; font-size: 8.5pt; color: #555; }
       .skill { margin-bottom: 2pt; }
       .skill-area { font-weight: 700; }
       @media print { body { padding: 0; max-width: none; } }
@@ -111,78 +124,80 @@
       <h1>Wilfred Morales</h1>
       <p class="headline">Desarrollador backend — PHP/Laravel · PostgreSQL · Python</p>
       <p class="contact"><a href="mailto:wilfred3019@gmail.com">wilfred3019@gmail.com</a>&nbsp;&nbsp;·&nbsp;&nbsp;+57 301 737 4234&nbsp;&nbsp;·&nbsp;&nbsp;Colombia (GMT-5)&nbsp;&nbsp;·&nbsp;&nbsp;Remoto</p>
-      <p class="contact"><a href="https://portfolio-wilfred524.vercel.app">portfolio-wilfred524.vercel.app</a>&nbsp;&nbsp;·&nbsp;&nbsp;<a href="https://github.com/wilfred524">github.com/wilfred524</a>&nbsp;&nbsp;·&nbsp;&nbsp;<a href="https://www.linkedin.com/in/wilfred-morales-3220b2126">linkedin.com/in/wilfred-morales-3220b2126</a></p>
+      <p class="contact"><a href="https://portfolio-wilfred524.vercel.app">https://portfolio-wilfred524.vercel.app</a>&nbsp;&nbsp;·&nbsp;&nbsp;<a href="https://github.com/wilfred524">https://github.com/wilfred524</a>&nbsp;&nbsp;·&nbsp;&nbsp;<a href="https://www.linkedin.com/in/wilfred-morales-3220b2126">https://www.linkedin.com/in/wilfred-morales-3220b2126</a></p>
     </header>
 
     <section>
-      <h2>Perfil</h2>
-      <p>Desarrollador backend en PHP/Laravel y Python, sobre PostgreSQL. Trabajo en lógica de negocio configurable, integraciones con servicios externos, procesos por lotes, control de accesos y despliegue en Docker sobre Linux. Toda mi experiencia de producción viene de una fintech de crédito.</p>
-      <p class="stackline">Laravel · PHP · PostgreSQL · Python · Docker · GCP</p>
+      <h2>Resumen profesional</h2>
+      <p>Desarrollador backend en PHP/Laravel y Python, sobre PostgreSQL. Trabajo en lógica de negocio configurable, APIs REST, integraciones con servicios externos, procesos por lotes, optimización de consultas, control de accesos y despliegue en Docker sobre Linux. Toda mi experiencia de producción viene de una fintech de crédito.</p>
+      <p class="stackline">Laravel · PHP · PostgreSQL · APIs REST · Python · Docker</p>
     </section>
 
     <section>
-      <h2>Experiencia</h2>
+      <h2>Experiencia profesional</h2>
       
       <div class="job">
-        <p class="job-head">
-          <span class="role">Desarrollador backend</span> <span class="company">GAF Technology Solutions</span> · <span class="mode">Contrato por obra o labor · Remoto, Colombia</span>
-          <span class="period">Oct 2025 – Jul 2026</span>
-        </p>
+        <p class="job-role">Desarrollador backend</p>
+        <p class="job-company">GAF Technology Solutions</p>
+        <p class="job-meta">Oct 2025 - Jul 2026</p>
+        <p class="job-meta">Contrato por obra o labor · Remoto, Colombia</p>
         <p class="tagline">Fintech de crédito por libranza. Equipo de tecnología de 4 personas: 2 desarrolladores, líder técnico y responsable de infraestructura y seguridad. Las solicitudes las origina CK Comercializadora, empresa del mismo grupo.</p>
         
         <div class="entry">
-          <p class="entry-title">Motor de reglas de crédito <span class="note">CK Comercializadora</span></p>
+          <p class="entry-title">Motor de reglas de crédito <span class="note">CK Comercializadora</span> <span class="stack">Laravel, Vue.js, Inertia.js, PostgreSQL</span></p>
           <ul>
             <li>Modelé los datos y traduje las reglas de negocio a un esquema de políticas en PostgreSQL: elegibilidad, embargos, límites de plazo y requisitos laborales y financieros por pagaduría. El área de negocio ajusta parámetros sin desplegar código.</li>
             <li>Implementé la evaluación completa: cálculo de capacidad de endeudamiento según la Ley 1527 (libranzas) y la Ley 50 para activos y pensionados, criterios de decisión, reglas especiales y reevaluación de solicitudes.</li>
             <li>Construí el portal público de solicitudes y sus validaciones de front-end y back-end, con trazabilidad por asesor y reCAPTCHA Enterprise. La API de envío la construyó un compañero; reestructuré el cuerpo de sus peticiones conforme cambiaba el modelo.</li>
           </ul>
-          <p class="stack">Laravel · Vue.js · Inertia.js · PostgreSQL</p>
         </div>
 
         <div class="entry">
-          <p class="entry-title">Firma electrónica con validación de identidad</p>
+          <p class="entry-title">Firma electrónica con validación de identidad <span class="stack">Laravel, Vue.js, Python, TransUnion, AWS S3</span></p>
           <ul>
             <li>Construí desde cero el módulo de firma electrónica que sustituyó a uno legacy en desuso: el documento son 24 páginas que antes se llenaban a mano y ahora se generan automáticamente desde plantillas, con una plantilla distinta por producto.</li>
             <li>Diseñé el flujo como una máquina de estados sobre las respuestas asíncronas del proveedor: el asesor aprueba un borrador, se validan los datos del cliente contra TransUnion y la identidad se verifica por OTP o KBA.</li>
             <li>Cerré el trámite completo en unos 20 minutos, con el documento firmado devuelto con hash, trazabilidad de la transacción y respaldo en S3.</li>
           </ul>
-          <p class="stack">Laravel · Vue.js · Python · TransUnion · AWS S3</p>
         </div>
 
         <div class="entry">
-          <p class="entry-title">Proceso mensual de puntaje crediticio</p>
+          <p class="entry-title">Proceso mensual de puntaje crediticio <span class="stack">Python, PostgreSQL, Docker, Laravel</span></p>
           <ul>
             <li>Llevé a producción un modelo de riesgo que vivía en un script del área de riesgo: contenedor con cron mensual que extrae de PostgreSQL, ejecuta el modelo y persiste los resultados. Antes no se calculaba de forma automática.</li>
             <li>Procesé más de 320.000 personas distintas por corrida, con carga en bloques de 5.000, proceso idempotente y reanudable, y descarte de filas inválidas sin abortar la carga.</li>
           </ul>
-          <p class="stack">Python · PostgreSQL · Docker · Laravel</p>
         </div>
 
         <div class="entry">
-          <p class="entry-title">Control de accesos y permisos</p>
+          <p class="entry-title">Optimización de consultas en producción <span class="stack">PostgreSQL, SQL, Laravel, Eloquent ORM</span></p>
+          <ul>
+            <li>Reduje de 20-30 segundos a 3-6 el tiempo de una consulta que cruzaba varias tablas y que terminaba en timeout con volúmenes altos, dejando inservible la pantalla que dependía de ella.</li>
+            <li>Apliqué filtros previos para que el cruce no partiera del conjunto completo, creé índices sobre los campos usados en cruces y filtros, y paginé la respuesta para que la carga dejara de traerlo todo de golpe.</li>
+          </ul>
+        </div>
+
+        <div class="entry">
+          <p class="entry-title">Control de accesos y permisos <span class="stack">Spatie Permission, Laravel, PostgreSQL</span></p>
           <ul>
             <li>Construí el árbol de permisos de la plataforma sobre 17 módulos, con permisos a nivel de opción y de subproceso, blindé ruta a ruta y migré los usuarios y roles existentes al esquema nuevo sin interrumpir la operación.</li>
           </ul>
-          <p class="stack">Spatie Permission · Laravel · PostgreSQL</p>
         </div>
 
         <div class="entry">
-          <p class="entry-title">Migración a arquitectura por capas</p>
+          <p class="entry-title">Migración a arquitectura por capas <span class="stack">Arquitectura por capas, Laravel, PostgreSQL</span></p>
           <ul>
             <li>Participé en la primera etapa de la migración de la plataforma —seis años de código— hacia una arquitectura por capas, eliminando por completo las consultas SQL en crudo de los controladores.</li>
             <li>Verifiqué módulo a módulo cada cambio antes de continuar, con revisión del líder técnico en cada paso. Tres meses de trabajo.</li>
           </ul>
-          <p class="stack">Arquitectura por capas · Laravel · PostgreSQL</p>
         </div>
 
         <div class="entry">
-          <p class="entry-title">Infraestructura y despliegue</p>
+          <p class="entry-title">Infraestructura y despliegue <span class="stack">Docker, Linux, Nginx, GCP, Certbot</span></p>
           <ul>
             <li>Dockericé la aplicación, que corría de forma nativa sobre la máquina, y la desplegué en una instancia nueva de GCP con nginx como proxy inverso entre los contenedores y el host.</li>
             <li>Ejecuté la migración en paralelo: levanté y validé la instancia nueva con la anterior aún en producción, configuré el DNS del dominio y emití los certificados con Certbot hasta dejar la aplicación operando íntegramente sobre HTTPS. Sin interrupción del servicio.</li>
           </ul>
-          <p class="stack">Docker · Linux / Nginx · GCP · Certbot</p>
         </div>
       </div>
     </section>
@@ -191,53 +206,47 @@
       <h2>Proyectos</h2>
       
       <div class="job">
-        <p class="job-head">
-          <span class="role"></span>
-          
-        </p>
         
         
         <div class="entry">
-          <p class="entry-title">Asistente del portfolio <span class="note">Proyecto propio · En curso</span></p>
+          <p class="entry-title">Asistente del portfolio <span class="note">Proyecto propio · En curso</span> <span class="stack">Python, FastAPI, DeepSeek, Vercel</span></p>
           <ul>
             <li>Construí un asistente conversacional que responde sobre mi trayectoria y las decisiones detrás de cada proyecto, con aviso explícito de que responde un agente y puede equivocarse.</li>
             <li>Rehíce la orquestación en Python al desplegarlo, porque el plan gratuito de Vercel no soporta n8n; descarté litellm al medirlo (133 MB de 199, contra un techo de 250 MB por función) y hablo con el modelo por REST directo con httpx.</li>
           </ul>
-          <p class="stack">Python · FastAPI · DeepSeek · Vercel</p>
         </div>
 
         <div class="entry">
-          <p class="entry-title">CLI de recorte de vídeo <span class="note">Proyecto propio · Jul 2026 – en curso</span></p>
+          <p class="entry-title">CLI de recorte de vídeo <span class="note">Proyecto propio · Jul 2026 – en curso</span> <span class="stack">TypeScript, Node.js, Remotion, ffmpeg</span></p>
           <ul>
             <li>Construí una herramienta de línea de comandos en TypeScript que parte un vídeo largo en clips verticales: transcripción con Whisper, guion generado por un modelo cuya salida se valida contra un esquema, síntesis de voz y montaje de subtítulos con Remotion.</li>
             <li>Persistí el resultado de cada paso en disco y dejé el proceso reanudable, para no repetir llamadas al modelo ya pagadas.</li>
           </ul>
-          <p class="stack">TypeScript · Node.js · Remotion · ffmpeg</p>
         </div>
 
         <div class="entry">
-          <p class="entry-title">Portfolio <span class="note">Proyecto propio · 2026</span></p>
+          <p class="entry-title">Portfolio <span class="note">Proyecto propio · 2026</span> <span class="stack">React, TypeScript, Vite</span></p>
           <ul>
             <li>Construí este sitio con React y TypeScript, con tipografía variable y animaciones sin librería, reinterpretando un sistema de diseño ajeno y acreditándolo en el pie.</li>
           </ul>
-          <p class="stack">React · TypeScript · Vite</p>
         </div>
       </div>
     </section>
 
     <section>
-      <h2>Habilidades</h2>
-      <p class="skill"><span class="skill-area">Backend</span> PHP / Laravel · PostgreSQL / SQL · MySQL · Python · Node.js</p>
-      <p class="skill"><span class="skill-area">Arquitectura</span> Arquitectura por capas (dominio, aplicación, persistencia)</p>
-      <p class="skill"><span class="skill-area">Control de accesos</span> Roles y permisos (Spatie) · reCAPTCHA Enterprise</p>
-      <p class="skill"><span class="skill-area">Automatización e IA</span> API de DeepSeek · OpenAI API · n8n · Integración de APIs y webhooks</p>
-      <p class="skill"><span class="skill-area">Frontend</span> Vue.js · Inertia.js · Blade</p>
-      <p class="skill"><span class="skill-area">Infraestructura</span> Docker · Linux / Nginx · GCP · AWS S3 · Certbot</p>
+      <h2>Habilidades técnicas</h2>
+      <p class="skill"><span class="skill-area">Backend</span> PHP, Laravel, Eloquent ORM, APIs REST, Python, Node.js, Arquitectura por capas (dominio, aplicación, persistencia), Pruebas (PHPUnit)</p>
+      <p class="skill"><span class="skill-area">Bases de datos</span> PostgreSQL, SQL, MySQL, Modelado de datos y migraciones, Optimización de consultas e índices</p>
+      <p class="skill"><span class="skill-area">Seguridad y control de accesos</span> Roles y permisos (Spatie), MFA y gestión de sesiones, SAST y detección de secretos (Snyk, gitleaks), reCAPTCHA Enterprise</p>
+      <p class="skill"><span class="skill-area">Automatización e IA</span> API de DeepSeek, OpenAI API, n8n, Integración de APIs y webhooks</p>
+      <p class="skill"><span class="skill-area">Frontend</span> Vue.js, Inertia.js, Blade</p>
+      <p class="skill"><span class="skill-area">Infraestructura</span> Docker, Linux, Nginx, GCP, AWS S3, Certbot</p>
+      <p class="skill"><span class="skill-area">Proceso</span> Git, GitHub Actions, CI/CD, Metodologías ágiles</p>
     </section>
 
     <section>
-      <h2>Formación</h2>
-      <p>Ingeniería Informática, Universidad Nacional Experimental del Táchira (UNET). Cursando 7.º semestre.</p>
+      <h2>Educación</h2>
+      <p>Ingeniería Informática, Universidad Nacional Experimental del Táchira (UNET).</p>
     </section>
 
     <section>

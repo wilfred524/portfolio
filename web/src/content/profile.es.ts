@@ -73,8 +73,12 @@ export const es = {
   facts: [
     {
       label: 'Formación',
+      /* Sin el estado de la carrera, por decisión suya. Antes decía «Cursando 7.º
+         semestre», que no cuadra con el expediente real y quedaba expuesto si alguien
+         pedía el certificado. La contrapartida de quitarlo es que sin estado se lee como
+         título obtenido: eso lo aclara él en la primera conversación, no la página. */
       value:
-        'Ingeniería Informática, Universidad Nacional Experimental del Táchira (UNET). Cursando 7.º semestre.',
+        'Ingeniería Informática, Universidad Nacional Experimental del Táchira (UNET).',
     },
     {
       label: 'Idiomas y certificaciones',
@@ -106,33 +110,69 @@ export const es = {
   /** Sin niveles: el ORDEN comunica el dominio (spec Henry: énfasis por escala, no por etiqueta). */
   /*
    * Solo lo que tiene respaldo demostrable en la experiencia o en un proyecto público.
-   * Se retiraron Arquitectura Hexagonal, DDD, MFA y gestión de sesiones, SAST y
-   * detección de secretos, pytest y CI/CD con GitHub Actions, y por el mismo criterio
-   * «Pruebas (PHPUnit)»: se declaraba arriba mientras la entrada de migración dice que
-   * no existía suite de pruebas, que es la contradicción que un lead ve en diez
-   * segundos. Vuelve cuando haya pruebas escritas que la sostengan. Nada de eso está
-   * sostenido por trabajo entregado, y una habilidad que no se puede defender en una
-   * entrevista cuesta más de lo que suma. La categoría «Seguridad» desaparece por lo
-   * mismo; lo que sí hubo (roles y permisos, reCAPTCHA) vive en «Control de accesos».
+   * Una habilidad que no se puede defender en una entrevista cuesta más de lo que suma.
+   *
+   * Lo que se retira, se retira preguntándole a él. Deducirlo del resto del contenido no
+   * funciona: que la plataforma no tuviera suite de pruebas al empezar la migración no
+   * dice nada sobre si escribió pruebas después, y no dijo.
+   *
+   * Fuera, por no tener respaldo: DDD, pytest, colas y trabajos en segundo plano,
+   * JWT/OAuth2/SSO, cifrado, pandas, NumPy y SQLAlchemy. Una ausencia de esta lista nunca
+   * autoriza a negar que lo haya hecho.
+   *
+   * CI/CD volvió: se había retirado por decisión suya y el efecto fue perder uno de los
+   * literales más buscados sin ganar nada a cambio.
+   */
+  /*
+   * Cada elemento es UN literal buscable. Antes había ítems compuestos —«PHP / Laravel»,
+   * «PostgreSQL / SQL», «Linux / Nginx»— que se leían bien pero no se tokenizaban: un
+   * filtro que parte la lista por su separador produce el token «PHP / Laravel» y nunca
+   * «PHP» ni «Laravel» sueltos, así que la coincidencia con la vacante no ocurre. Se
+   * parten. El coste es una lista más larga; la ganancia es que puntúa.
+   *
+   * Las incorporaciones (APIs REST, Eloquent ORM, Git, CI/CD, ágiles, optimización de
+   * consultas) son cosas que ya hacía y que simplemente no estaban escritas. No reclamar
+   * algo cierto no es prudencia: es puntuación regalada.
    */
   skillGroups: [
     {
       area: 'Backend',
       items: [
-        'PHP / Laravel',
-        'PostgreSQL / SQL',
-        'MySQL',
+        'PHP',
+        'Laravel',
+        'Eloquent ORM',
+        'APIs REST',
         'Python',
         'Node.js',
+        'Arquitectura por capas (dominio, aplicación, persistencia)',
+        'Pruebas (PHPUnit)',
       ],
     },
     {
-      area: 'Arquitectura',
-      items: ['Arquitectura por capas (dominio, aplicación, persistencia)'],
+      /* Grupo propio: era la única familia con proyectos que la respaldaban —el motor de
+         reglas, el scoring, la optimización de consultas— y aparecía diluida dentro de
+         Backend. MySQL, además, seguía en la lista sin ningún proyecto detrás. */
+      area: 'Bases de datos',
+      items: [
+        'PostgreSQL',
+        'SQL',
+        'MySQL',
+        'Modelado de datos y migraciones',
+        'Optimización de consultas e índices',
+      ],
     },
     {
-      area: 'Control de accesos',
-      items: ['Roles y permisos (Spatie)', 'reCAPTCHA Enterprise'],
+      /* Seguridad y control de accesos van juntos: cuatro elementos en un grupo se leen
+         mejor que dos grupos de dos, y en una plataforma de crédito son el mismo
+         trabajo. MFA y gestión de sesiones fue una tarea sostenida durante el contrato,
+         no puntual. */
+      area: 'Seguridad y control de accesos',
+      items: [
+        'Roles y permisos (Spatie)',
+        'MFA y gestión de sesiones',
+        'SAST y detección de secretos (Snyk, gitleaks)',
+        'reCAPTCHA Enterprise',
+      ],
     },
     {
       area: 'Automatización e IA',
@@ -147,7 +187,16 @@ export const es = {
     },
     {
       area: 'Infraestructura',
-      items: ['Docker', 'Linux / Nginx', 'GCP', 'AWS S3', 'Certbot'],
+      items: ['Docker', 'Linux', 'Nginx', 'GCP', 'AWS S3', 'Certbot'],
+    },
+    {
+      /* CI/CD vuelve. Se había retirado por decisión suya —lo trabajó de forma sostenida
+         pero no quería venderlo como especialidad—, y el efecto real fue perder uno de
+         los literales más buscados sin ganar nada: nadie lee una ausencia como modestia.
+         Va aquí, junto a Git y al método de trabajo, y no en Infraestructura, que es
+         donde se leería como especialidad. */
+      area: 'Proceso',
+      items: ['Git', 'GitHub Actions', 'CI/CD', 'Metodologías ágiles'],
     },
   ],
   employments: [
@@ -180,7 +229,7 @@ export const es = {
             hard:
               'Modelé los datos y traduje las reglas de negocio a un esquema de políticas en PostgreSQL (elegibilidad, embargos, límites de plazo, requisitos laborales y financieros por pagaduría), de modo que el código no sabe cuáles son las reglas, solo cómo aplicarlas. Sobre esa base implementé la evaluación completa: cálculo de capacidad de endeudamiento según la Ley 1527 (libranzas) y la Ley 50 para activos y pensionados, criterios de decisión, reglas especiales, reevaluación de solicitudes y las validaciones de front-end y back-end.',
             result:
-              'El área de negocio ajusta parámetros sin tocar código ni esperar despliegue, y cada solicitud queda trazada al asesor que la originó. La API de envío la construyó un compañero; reestructuré el cuerpo de sus peticiones varias veces conforme cambiaba el modelo.',
+              'El área de negocio ajusta parámetros sin tocar código ni esperar despliegue, y cada solicitud queda trazada al asesor que la originó. La API REST de envío la construyó un compañero; reestructuré el cuerpo de sus peticiones varias veces conforme cambiaba el modelo.',
           },
           tags: ['Laravel', 'Vue.js', 'Inertia.js', 'PostgreSQL'],
         },
@@ -197,7 +246,7 @@ export const es = {
             problem:
               'El módulo anterior estaba en desuso y el documento —24 páginas— se llenaba a mano. Construí el módulo desde cero: ahora se genera automáticamente desde plantillas, con una plantilla distinta por producto.',
             hard:
-              'Lo difícil no es firmar: es que todo encaje antes de firmar. El asesor aprueba un borrador, se validan los datos del cliente contra TransUnion y la identidad se verifica por OTP o KBA. Diseñé el flujo como una máquina de estados sobre las respuestas asíncronas del proveedor, para que un proceso largo termine siempre en un documento válido o en un error que el usuario pueda resolver.',
+              'Lo difícil no es firmar: es que todo encaje antes de firmar. El asesor aprueba un borrador, se validan los datos del cliente contra TransUnion y la identidad se verifica por OTP o KBA. Diseñé el flujo como una máquina de estados sobre las respuestas asíncronas de la API REST del proveedor, para que un proceso largo termine siempre en un documento válido o en un error que el usuario pueda resolver.',
             result:
               'El proveedor devuelve el documento firmado con su hash, queda la trazabilidad de la transacción y el respaldo en S3. El trámite completo se cierra en unos 20 minutos, frente a un llenado manual de 24 páginas.',
           },
@@ -216,6 +265,24 @@ export const es = {
               'El modelo no es mío; la tubería que lo pone en producción sí. Más de 320.000 personas distintas quedan puntuadas en cada corrida, sin intervención manual.',
           },
           tags: ['Python', 'PostgreSQL', 'Docker', 'Laravel'],
+        },
+        {
+          /* Entrada nueva. El trabajo existía desde el principio y no estaba escrito en
+             ninguna parte, pese a ser la segunda cifra más fuerte del perfil después del
+             scoring: un antes y un después medidos, que es exactamente lo que un
+             evaluador técnico busca y casi nadie aporta. */
+          id: 'query-optimization',
+          title: 'Optimización de consultas en producción',
+          metric: 'De 20-30 s con timeouts a 3-6 s',
+          body: {
+            problem:
+              'Una consulta que cruzaba varias tablas tardaba entre 20 y 30 segundos en devolver los datos, y con volúmenes altos terminaba en timeout: la pantalla que dependía de ella quedaba inservible justo cuando más registros había.',
+            hard:
+              'No reescribí la consulta entera: separé las tres causas y ataqué cada una. Apliqué filtros previos para que el cruce no partiera del conjunto completo, creé índices sobre los campos que participaban en los cruces y en los filtros, y paginé la respuesta para que la carga dejara de traerlo todo de golpe.',
+            result:
+              'Los tiempos bajaron a entre 3 y 6 segundos según el tamaño de la respuesta, y los timeouts desaparecieron.',
+          },
+          tags: ['PostgreSQL', 'SQL', 'Laravel', 'Eloquent ORM'],
         },
         {
           id: 'access-control',
@@ -242,7 +309,7 @@ export const es = {
             result:
               'Ejecuté la migración en paralelo: levanté y validé la instancia nueva con la anterior aún en producción, configuré el DNS del dominio y emití los certificados con Certbot hasta dejar la aplicación operando íntegramente sobre HTTPS. Sin interrupción del servicio.',
           },
-          tags: ['Docker', 'Linux / Nginx', 'GCP', 'Certbot'],
+          tags: ['Docker', 'Linux', 'Nginx', 'GCP', 'Certbot'],
         },
       ],
     },
