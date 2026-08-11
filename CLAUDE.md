@@ -47,6 +47,7 @@ tres o cuatro pantallas qué se ha construido, en qué dominio y desde cuándo.
 | Qué hace cada componente y dónde está | [`docs/components.md`](docs/components.md) |
 | Cómo funcionan las interacciones (halftone, scroll, reveal, inversión) | [`docs/effects.md`](docs/effects.md) |
 | Config de Vercel y errores ya resueltos | [`docs/deployment.md`](docs/deployment.md) |
+| Credenciales de Google (Calendar y Sheets) | [`docs/credenciales-google.md`](docs/credenciales-google.md) |
 | Convenciones: contenido, añadir un diseño, git | [`docs/conventions.md`](docs/conventions.md) |
 | Copys aprobados, datos verificados y qué no publicar | [`docs/perfil-publico.md`](docs/perfil-publico.md) |
 | Texto del perfil de LinkedIn | [`docs/linkedin.md`](docs/linkedin.md) |
