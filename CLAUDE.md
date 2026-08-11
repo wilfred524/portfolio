@@ -48,6 +48,15 @@ tres o cuatro pantallas qué se ha construido, en qué dominio y desde cuándo.
 | Cómo funcionan las interacciones (halftone, scroll, reveal, inversión) | [`docs/effects.md`](docs/effects.md) |
 | Config de Vercel y errores ya resueltos | [`docs/deployment.md`](docs/deployment.md) |
 | Convenciones: contenido, añadir un diseño, git | [`docs/conventions.md`](docs/conventions.md) |
+| Copys aprobados, datos verificados y qué no publicar | [`docs/perfil-publico.md`](docs/perfil-publico.md) |
+| Texto del perfil de LinkedIn | [`docs/linkedin.md`](docs/linkedin.md) |
+| Perfil de GitHub: qué corregir | [`docs/github.md`](docs/github.md) |
+| Dónde postular y cómo responder los filtros | [`docs/postulaciones.md`](docs/postulaciones.md) |
+
+**Las cuatro superficies se mueven juntas.** El CV (`profile.*.ts` + `tools/cv/`), la
+página, LinkedIn y `api/_context/` cuentan lo mismo a la misma persona: un evaluador
+coteja el PDF con el sitio y con el chat. Si cambias una habilidad, un proyecto o una
+métrica en un sitio, cámbiala en los cuatro.
 
 ## Comandos rápidos
 
@@ -55,7 +64,9 @@ tres o cuatro pantallas qué se ha construido, en qué dominio y desde cuándo.
 npm run dev                          # web (5173) + api (3001)
 npm run build -w @portfolio/web      # bundle de producción (vite)
 npm run typecheck -w @portfolio/web  # chequeo de tipos (tsc)
-npm run build:cv -w @portfolio/cv    # regenera los PDF del CV
+npm run build:cv -w @portfolio/cv    # regenera los PDF del CV (web/public, se publican)
+npm run build:cv -w @portfolio/cv -- --variante=laravel   # versión para enviar, NO se publica
+npm run build:cv -w @portfolio/cv -- --variante=datos     # ídem; salen a tools/cv/out/
 pip install -r requirements.txt      # dependencias del backend Python
 ```
 
