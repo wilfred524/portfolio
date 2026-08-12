@@ -34,13 +34,20 @@ export const TEXT = {
     /* Línea de palabras clave bajo el perfil: el reclutador que escanea salta del
        titular a buscar tecnologías, y la sección Habilidades cae en la página 2. Seis,
        no doce: es un ancla de escaneo, no un inventario. */
-    stackLine: 'Laravel · PHP · PostgreSQL · Python · Docker · GCP',
+    /* GCP sale y «APIs REST» entra: un filtro de palabras clave busca REST en casi toda
+       vacante backend, y GCP en muy pocas. Siguen siendo seis. */
+    stackLine: 'Laravel · PHP · PostgreSQL · APIs REST · Python · Docker',
+    /* Encabezados canónicos, no editoriales. Un extractor de CV reconoce las secciones
+       por su literal contra una lista de sinónimos; lo que no reconoce lo tira a «otros»
+       y deja de contarlo como experiencia o como formación. «Perfil» y «Formación» son
+       correctos en español pero están más abajo en esas listas que «Resumen profesional»
+       y «Educación», y no ganamos nada eligiendo el sinónimo minoritario. */
     sections: {
-      summary: 'Perfil',
-      experience: 'Experiencia',
+      summary: 'Resumen profesional',
+      experience: 'Experiencia profesional',
       projects: 'Proyectos',
-      skills: 'Habilidades',
-      education: 'Formación',
+      skills: 'Habilidades técnicas',
+      education: 'Educación',
       languages: 'Idiomas y certificaciones',
     },
     present: 'actualidad',
@@ -60,7 +67,7 @@ export const TEXT = {
        Sin duración («en diez meses»): caduca y hay que mantenerla en dos idiomas, y las
        fechas ya están en la entrada de empleo. Sin adjetivos de valor. */
     summary: [
-      'Desarrollador backend en PHP/Laravel y Python, sobre PostgreSQL. Trabajo en lógica de negocio configurable, integraciones con servicios externos, procesos por lotes, control de accesos y despliegue en Docker sobre Linux. Toda mi experiencia de producción viene de una fintech de crédito.',
+      'Desarrollador backend en PHP/Laravel y Python, sobre PostgreSQL. Trabajo en lógica de negocio configurable, APIs REST, integraciones con servicios externos, procesos por lotes, optimización de consultas, control de accesos y despliegue en Docker sobre Linux. Toda mi experiencia de producción viene de una fintech de crédito.',
     ],
     bullets: {
       'rules-engine': [
@@ -76,6 +83,10 @@ export const TEXT = {
       scoring: [
         'Llevé a producción un modelo de riesgo que vivía en un script del área de riesgo: contenedor con cron mensual que extrae de PostgreSQL, ejecuta el modelo y persiste los resultados. Antes no se calculaba de forma automática.',
         'Procesé más de 320.000 personas distintas por corrida, con carga en bloques de 5.000, proceso idempotente y reanudable, y descarte de filas inválidas sin abortar la carga.',
+      ],
+      'query-optimization': [
+        'Reduje de 20-30 segundos a 3-6 el tiempo de una consulta que cruzaba varias tablas y que terminaba en timeout con volúmenes altos, dejando inservible la pantalla que dependía de ella.',
+        'Apliqué filtros previos para que el cruce no partiera del conjunto completo, creé índices sobre los campos usados en cruces y filtros, y paginé la respuesta para que la carga dejara de traerlo todo de golpe.',
       ],
       'access-control': [
         'Construí el árbol de permisos de la plataforma sobre 17 módulos, con permisos a nivel de opción y de subproceso, blindé ruta a ruta y migré los usuarios y roles existentes al esquema nuevo sin interrumpir la operación.',
@@ -111,12 +122,12 @@ export const TEXT = {
     lang: 'en',
     docTitle: 'Wilfred Morales · Backend Developer',
     headline: 'Backend Developer — PHP/Laravel · PostgreSQL · Python',
-    stackLine: 'Laravel · PHP · PostgreSQL · Python · Docker · GCP',
+    stackLine: 'Laravel · PHP · PostgreSQL · REST APIs · Python · Docker',
     sections: {
-      summary: 'Profile',
-      experience: 'Experience',
+      summary: 'Professional summary',
+      experience: 'Professional experience',
       projects: 'Projects',
-      skills: 'Skills',
+      skills: 'Technical skills',
       education: 'Education',
       languages: 'Languages and certifications',
     },
@@ -124,7 +135,7 @@ export const TEXT = {
     remote: 'Remote',
     fileName: 'Wilfred-Morales-Backend-Developer',
     summary: [
-      'Backend developer working with PHP/Laravel and Python on PostgreSQL. I work on configurable business logic, integrations with external services, batch processing, access control, and deployment with Docker on Linux. All my production experience comes from a credit fintech.',
+      'Backend developer working with PHP/Laravel and Python on PostgreSQL. I work on configurable business logic, REST APIs, integrations with external services, batch processing, query optimisation, access control, and deployment with Docker on Linux. All my production experience comes from a credit fintech.',
     ],
     bullets: {
       'rules-engine': [
@@ -140,6 +151,10 @@ export const TEXT = {
       scoring: [
         'Took a risk model living in a script owned by the risk team to production: a containerised monthly cron job that reads from PostgreSQL, runs the model and persists results. Scoring was not automated before this.',
         'Processed over 320,000 distinct people per run, loading in batches of 5,000, with an idempotent and resumable process and invalid-row handling that does not abort the load.',
+      ],
+      'query-optimization': [
+        'Cut a multi-table query from 20-30 seconds down to 3-6, removing the timeouts that made the screen depending on it unusable under high volume.',
+        'Applied filters upfront so the join would not start from the full set, added indexes on the fields used in joins and filters, and paginated the response so the page stopped loading everything at once.',
       ],
       'access-control': [
         'Built the platform permission tree across 17 modules, with permissions down to the option and sub-process level, locked down every route, and migrated existing users and roles to the new schema without interrupting operations.',
@@ -166,6 +181,70 @@ export const TEXT = {
     },
   },
 };
+
+/**
+ * VARIANTES DEL CV, para enviar por los portales. NO se publican.
+ *
+ * Un CV que dice «backend PHP/Laravel y Python» puntúa peor en las dos búsquedas que uno
+ * enfocado en cada una: el filtro de la vacante de Laravel ve la mitad del documento
+ * hablando de otra cosa, y el de Python lo mismo al revés. Estas variantes cambian solo
+ * el titular, la línea de palabras clave, el resumen y el ORDEN de las habilidades. La
+ * experiencia no se toca: es la misma en todas, porque es la que es.
+ *
+ * Se generan a `tools/cv/out/<variante>/` y no a `web/public/`, así que no llegan al
+ * despliegue ni son alcanzables por URL directa: la página pública sigue ofreciendo un
+ * solo CV por idioma. El NOMBRE del archivo es idéntico en las tres, a propósito — lo
+ * que cambia es la carpeta, para que el PDF adjunto nunca delate al reclutador que
+ * existe una versión distinta para otra vacante.
+ *
+ *   npm run build:cv                      → la general, a web/public/
+ *   npm run build:cv -- --variante=laravel
+ *   npm run build:cv -- --variante=datos
+ *
+ * `skillOrder` reordena `profile.skillGroups` por el nombre del área; los grupos que no
+ * se nombren van al final en su orden original, así que añadir un grupo nuevo a
+ * `profile.*.ts` no rompe nada ni obliga a tocar este archivo.
+ */
+export const VARIANTS = {
+  laravel: {
+    es: {
+      headline: 'Desarrollador backend PHP/Laravel — PostgreSQL · APIs REST',
+      stackLine: 'PHP · Laravel · PostgreSQL · APIs REST · Eloquent ORM · Docker',
+      summary: [
+        'Desarrollador backend en PHP y Laravel, sobre PostgreSQL. Trabajo en lógica de negocio configurable, APIs REST, integraciones con servicios externos, optimización de consultas, control de accesos con Spatie y despliegue en Docker sobre Linux. Toda mi experiencia de producción viene de una fintech de crédito.',
+      ],
+      skillOrder: ['Backend', 'Bases de datos', 'Seguridad y control de accesos', 'Proceso'],
+    },
+    en: {
+      headline: 'Backend Developer PHP/Laravel — PostgreSQL · REST APIs',
+      stackLine: 'PHP · Laravel · PostgreSQL · REST APIs · Eloquent ORM · Docker',
+      summary: [
+        'Backend developer working with PHP and Laravel on PostgreSQL. I work on configurable business logic, REST APIs, integrations with external services, query optimisation, access control with Spatie, and deployment with Docker on Linux. All my production experience comes from a credit fintech.',
+      ],
+      skillOrder: ['Backend', 'Databases', 'Security and access control', 'Process'],
+    },
+  },
+  datos: {
+    es: {
+      headline: 'Desarrollador backend — Automatización de procesos y datos',
+      stackLine: 'Python · PostgreSQL · SQL · Docker · APIs REST · Linux',
+      summary: [
+        'Desarrollador backend centrado en procesos por lotes, integraciones y automatización, sobre PostgreSQL. Llevé a producción una tubería mensual en Python que puntúa a más de 320.000 personas por corrida, y trabajo en APIs REST, optimización de consultas y despliegue en Docker sobre Linux. Toda mi experiencia de producción viene de una fintech de crédito.',
+      ],
+      skillOrder: ['Bases de datos', 'Backend', 'Infraestructura', 'Automatización e IA', 'Proceso'],
+    },
+    en: {
+      headline: 'Backend Developer — Process automation and data',
+      stackLine: 'Python · PostgreSQL · SQL · Docker · REST APIs · Linux',
+      summary: [
+        'Backend developer focused on batch processing, integrations and automation, on PostgreSQL. I took a monthly Python pipeline to production that scores over 320,000 people per run, and I work on REST APIs, query optimisation and deployment with Docker on Linux. All my production experience comes from a credit fintech.',
+      ],
+      skillOrder: ['Databases', 'Backend', 'Infrastructure', 'Automation & AI', 'Process'],
+    },
+  },
+};
+
+export type VariantName = keyof typeof VARIANTS;
 
 /**
  * Empleador real de cada marca. En un CV la experiencia se agrupa por CONTRATO: CK es

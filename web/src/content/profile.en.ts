@@ -15,9 +15,13 @@ export const en = {
   name: 'Wilfred Morales',
   role: 'Backend developer',
   stack: 'PHP/Laravel · PostgreSQL · Python',
+  /* "in production" dangled at the end of a verbless list and read like a translation.
+     "Shipped to production" is the phrasing an English-speaking reader expects. */
   credential:
-    'Configurable business logic, integrations with external services and batch processing, in production.',
-  availability: 'Available now · Looking for my next role as a backend developer',
+    'Configurable business logic, external service integrations and batch processing, shipped to production.',
+  /* "Available immediately" is the standing formula on English-language job boards;
+     "Available now" is correct but reads as a translation. */
+  availability: 'Available immediately · Looking for my next role as a backend developer',
   trajectory: 'Remote · Colombia (GMT-5)',
   /* Kept as a three-beat lockup with the nexus in italics, like the Spanish original.
      A literal "Ideas made Product" reads wrong in English. */
@@ -30,12 +34,19 @@ export const en = {
   siteUrl: 'https://portfolio-wilfred524.vercel.app',
   cv: { label: 'Download CV', url: '/Wilfred-Morales-Backend-Developer.pdf' },
   colophon:
-    'This site is React and TypeScript, with variable type and animations written by hand. The assistant runs on Python in serverless functions, with its knowledge base in versioned text files. I write leaning on AI: I define the architecture, give the instructions and verify every step. The code is public.',
+    /* Three fixes against the Spanish. "variable type" reads as "variable data type" to
+       an English-speaking developer, which is the opposite of the point: it is
+       typography, so "variable fonts". "animations written by hand" lost the actual
+       claim, which is *no library*. And "leaning on AI" carries a connotation of
+       dependence in English, turning a declarable skill into an apology. */
+    'This site is React and TypeScript, with variable fonts and animations written without a library. The assistant runs on Python in serverless functions, with its knowledge base in versioned text files. I build with AI as a tool: I define the architecture, give the instructions and verify every step. The code is public.',
   facts: [
     {
       label: 'Education',
-      value:
-        'Computer Engineering, Universidad Nacional Experimental del Táchira (UNET). Currently in 7th semester.',
+      /* No degree status, his call. It used to read "Currently in 7th semester", which
+         does not match the actual transcript. The trade-off: with no status it reads as
+         a completed degree, so he clears that up on the first call, not the page. */
+      value: 'Computer Engineering, Universidad Nacional Experimental del Táchira (UNET).',
     },
     {
       label: 'Languages and certifications',
@@ -57,30 +68,49 @@ export const en = {
     },
   ],
   /*
-   * Only what is backed by shipped work or a public project. Hexagonal Architecture,
-   * DDD, MFA and session management, SAST and secret detection, pytest and CI/CD with
-   * GitHub Actions were removed: none of them is supported by delivered work, and a
-   * skill that cannot be defended in an interview costs more than it adds. The
-   * "Security" category goes with them; what did happen lives under "Access control".
+   * Only what is backed by shipped work or a public project. Still out, for lack of
+   * evidence: Hexagonal Architecture, DDD, pytest, queues and background jobs,
+   * JWT/OAuth2/SSO, encryption, pandas, NumPy, SQLAlchemy.
+   *
+   * Every item is ONE searchable literal. Compound items — "PHP / Laravel",
+   * "PostgreSQL / SQL", "Linux / Nginx" — read fine but do not tokenise: a filter that
+   * splits the list on its separator yields the token "PHP / Laravel" and never "PHP"
+   * or "Laravel" on their own, so the match against the posting never happens.
    */
   skillGroups: [
     {
       area: 'Backend',
       items: [
-        'PHP / Laravel',
-        'PostgreSQL / SQL',
-        'MySQL',
+        'PHP',
+        'Laravel',
+        'Eloquent ORM',
+        'REST APIs',
         'Python',
         'Node.js',
+        'Layered architecture (domain, application, persistence)',
+        'Testing (PHPUnit)',
       ],
     },
     {
-      area: 'Architecture',
-      items: ['Layered architecture (domain, application, persistence)'],
+      /* Its own group: the only family with projects behind it — the rules engine, the
+         scoring pipeline, the query optimisation — and it was diluted inside Backend. */
+      area: 'Databases',
+      items: [
+        'PostgreSQL',
+        'SQL',
+        'MySQL',
+        'Data modelling and migrations',
+        'Query and index optimisation',
+      ],
     },
     {
-      area: 'Access control',
-      items: ['Roles and permissions (Spatie)', 'reCAPTCHA Enterprise'],
+      area: 'Security and access control',
+      items: [
+        'Roles and permissions (Spatie)',
+        'MFA and session management',
+        'SAST and secret detection (Snyk, gitleaks)',
+        'reCAPTCHA Enterprise',
+      ],
     },
     {
       area: 'Automation & AI',
@@ -92,7 +122,16 @@ export const en = {
     },
     {
       area: 'Infrastructure',
-      items: ['Docker', 'Linux / Nginx', 'GCP', 'AWS S3', 'Certbot'],
+      items: ['Docker', 'Linux', 'Nginx', 'GCP', 'AWS S3', 'Certbot'],
+    },
+    {
+      /* CI/CD is back. It had been dropped by his own call — sustained work he did not
+         want to sell as a specialty — and the effect was losing one of the most searched
+         literals for nothing: nobody reads an absence as modesty. It sits next to Git
+         and the way of working, not under Infrastructure, where it would read as a
+         specialty. */
+      area: 'Process',
+      items: ['Git', 'GitHub Actions', 'CI/CD', 'Agile methodologies'],
     },
   ],
   employments: [
@@ -123,9 +162,9 @@ export const en = {
             problem:
               'Changing a credit policy meant a deployment: the business team could not adjust a term limit or a garnishment condition without going through development.',
             hard:
-              'I modelled the data and translated business policy into a rules schema in PostgreSQL (eligibility, garnishments, term limits, employment and financial requirements per payer), so the code does not know what the rules are, only how to apply them. On top of that I implemented the full evaluation: borrowing-capacity calculation under Law 1527 (payroll-deduction lending) and Law 50 for active employees and pensioners, decision criteria, special rules, application re-evaluation, and the front-end and back-end validation.',
+              'I modelled the data and translated business policy into a rules schema in PostgreSQL (eligibility, garnishments, term limits, employment and financial requirements per paying entity), so the code does not know what the rules are, only how to apply them. On top of that I implemented the full evaluation: borrowing-capacity calculation under Law 1527 (payroll-deduction lending) and Law 50 for active employees and pensioners, decision criteria, special rules, application re-evaluation, and the front-end and back-end validation.',
             result:
-              'The business team adjusts parameters without touching code or waiting for a deployment, and every application is traced back to the advisor who filed it. A colleague built the submission API; I restructured its request body several times as the model changed.',
+              'The business team adjusts parameters without touching code or waiting for a deployment, and every application is traced back to the advisor who filed it. A colleague built the submission REST API; I restructured its request body several times as the model changed.',
           },
           tags: ['Laravel', 'Vue.js', 'Inertia.js', 'PostgreSQL'],
         },
@@ -142,7 +181,7 @@ export const en = {
             problem:
               'The previous module was disused and the document — 24 pages — was filled in by hand. I built the module from scratch: it is now generated automatically from templates, with a different template per product.',
             hard:
-              'The hard part is not signing, it is getting everything to line up before signing. An advisor approves a draft, customer data is validated against TransUnion, and identity is verified by OTP or KBA. I designed the flow as a state machine over the asynchronous responses from the provider, so a long process always ends in a valid document, or in an error the user can act on.',
+              'The hard part is not signing, it is getting everything to line up before signing. An advisor approves a draft, customer data is validated against TransUnion, and identity is verified by OTP or KBA. I designed the flow as a state machine over the asynchronous responses from the provider REST API, so a long process always ends in a valid document, or in an error the user can act on.',
             result:
               'The provider returns the signed document with its hash, the transaction is fully traceable, and a copy is kept in S3. The whole procedure closes in about 20 minutes, against a manual fill-in of 24 pages.',
           },
@@ -161,6 +200,24 @@ export const en = {
               'The model is not mine; the plumbing that puts it in production is. Over 320,000 distinct people are scored on every run, with no manual step.',
           },
           tags: ['Python', 'PostgreSQL', 'Docker', 'Laravel'],
+        },
+        {
+          /* New entry. The work had been there from the start and was written down
+             nowhere, despite being the second strongest number in the profile after the
+             scoring pipeline: a measured before and after, which is exactly what a
+             technical evaluator looks for and almost nobody provides. */
+          id: 'query-optimization',
+          title: 'Query optimisation in production',
+          metric: 'From 20-30 s with timeouts down to 3-6 s',
+          body: {
+            problem:
+              'A query joining several tables took between 20 and 30 seconds to return, and timed out under high volume: the screen that depended on it was unusable exactly when there were most records to show.',
+            hard:
+              'I did not rewrite the whole query: I separated the three causes and went after each one. I applied filters upfront so the join would not start from the full set, added indexes on the fields taking part in the joins and the filters, and paginated the response so the page stopped loading everything at once.',
+            result:
+              'Response times dropped to between 3 and 6 seconds depending on the size of the result, and the timeouts were gone.',
+          },
+          tags: ['PostgreSQL', 'SQL', 'Laravel', 'Eloquent ORM'],
         },
         {
           id: 'access-control',
@@ -187,7 +244,7 @@ export const en = {
             result:
               'I ran the migration in parallel: I brought up and validated the new instance while the old one was still in production, configured the domain DNS and issued the certificates with Certbot until the application ran entirely over HTTPS. No service interruption.',
           },
-          tags: ['Docker', 'Linux / Nginx', 'GCP', 'Certbot'],
+          tags: ['Docker', 'Linux', 'Nginx', 'GCP', 'Certbot'],
         },
       ],
     },
@@ -220,7 +277,7 @@ export const en = {
           role: 'Personal project',
           period: '2026',
           brief:
-            'I built this site with React and TypeScript, with variable type and animations written by hand, reinterpreting an existing design system and crediting it in the footer.',
+            'I built this site with React and TypeScript, with variable fonts and animations written without a library, reinterpreting an existing design system and crediting it in the footer.',
           tags: ['React', 'TypeScript', 'Vite'],
           url: 'https://github.com/wilfred524/portfolio',
         },
