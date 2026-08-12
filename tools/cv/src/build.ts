@@ -27,7 +27,8 @@ import { mkdtemp, readFile, rm, writeFile } from 'node:fs/promises';
 import { tmpdir } from 'node:os';
 import { dirname, join, resolve } from 'node:path';
 import { fileURLToPath, pathToFileURL } from 'node:url';
-import { TEXT } from './content.js';
+import { TEXT, VARIANTS, type VariantName } from './content.js';
+import { mkdir } from 'node:fs/promises';
 
 const HERE = dirname(fileURLToPath(import.meta.url));
 const ROOT = resolve(HERE, '../../..');
@@ -36,6 +37,8 @@ const PROFILES = {
   en: join(ROOT, 'web/src/content/profile.en.ts'),
 };
 const OUT_DIR = join(ROOT, 'web/public');
+/** Las variantes NO van a web/public: no se publican. Ver el bloque VARIANTS en content.ts. */
+const VARIANT_DIR = join(HERE, '../out');
 
 type Lang = 'es' | 'en';
 
@@ -65,9 +68,28 @@ const escape = (value: string) =>
     .replace(/</g, '&lt;')
     .replace(/>/g, '&gt;');
 
-function renderCv(profile: any, lang: Lang): string {
-  const t = TEXT[lang];
+function renderCv(profile: any, lang: Lang, variant?: VariantName): string {
+  // La variante solo pisa titular, línea de palabras clave, resumen y orden de
+  // habilidades. Todo lo demás —experiencia, proyectos, formación, contacto— es idéntico
+  // en las tres versiones, que es lo que impide que se contradigan entre sí.
+  const v = variant ? VARIANTS[variant][lang] : undefined;
+  const t = { ...TEXT[lang], ...(v ? { headline: v.headline, stackLine: v.stackLine, summary: v.summary } : {}) };
   const en = lang === 'en';
+
+  // Los grupos nombrados en `skillOrder` van primero y en ese orden; el resto conserva
+  // el suyo al final. Un grupo nuevo en profile.*.ts no rompe la variante ni desaparece.
+  if (v) {
+    const rank = (area: string) => {
+      const i = (v.skillOrder as string[]).indexOf(area);
+      return i === -1 ? Number.MAX_SAFE_INTEGER : i;
+    };
+    profile = {
+      ...profile,
+      skillGroups: [...profile.skillGroups].sort(
+        (a: any, b: any) => rank(a.area) - rank(b.area),
+      ),
+    };
+  }
 
   // Un CV se organiza por EMPLEO, no por proyecto: cinco entradas con el mismo periodo
   // se leen como cinco trabajos simultáneos.
@@ -96,7 +118,11 @@ function renderCv(profile: any, lang: Lang): string {
     .map((job: any) => {
       const company = escape(job.company);
       const role = escape(job.role);
-      const period = escape(job.period);
+      // Guion simple en el rango de fechas. El contenido usa la raya tipográfica (–,
+      // U+2013), que es lo correcto en la web; muchos normalizadores de fechas solo
+      // reconocen el guion ASCII y descartan el rango entero. Se convierte aquí y no en
+      // `profile.*.ts` para que la web conserve su tipografía.
+      const period = escape(job.period).replace(/\s*[–—]\s*/g, ' - ');
       const mode = job.mode;
       const tagline = job.tagline;
 
@@ -122,30 +148,46 @@ function renderCv(profile: any, lang: Lang): string {
             (brand ? ` <span class="note">${escape(brand)}</span>` : '');
           const bullets = (t.bullets as Record<string, string[]>)[item.id] ?? [];
           const list = bullets.map((b) => `<li>${escape(b)}</li>`).join('\n            ');
-          const stack = item.tags.map(escape).join(' · ');
+          // Las tecnologías suben a la línea del título, de donde colgaban antes en un
+          // párrafo propio al final del bloque. Dos motivos: los siete títulos de
+          // proyecto bajo GAF iban en negrita, en línea propia y sin fechas, que es
+          // exactamente la firma de un puesto de trabajo —un parser heurístico podía
+          // leerlos como siete empleos y arruinar el historial entero—, y un cargo nunca
+          // arrastra cuatro tecnologías pegadas. De paso, las palabras clave suben a la
+          // altura del título en vez de quedar al pie del bloque.
+          const stack = item.tags.map(escape).join(', ');
           return `
         <div class="entry">
-          <p class="entry-title">${title}</p>
+          <p class="entry-title">${title} <span class="stack">${stack}</span></p>
           <ul>
             ${list}
           </ul>
-          <p class="stack">${stack}</p>
         </div>`;
         })
         .join('\n');
 
-      // Sin empresa real (proyectos propios) el rol ya lo dice todo: repetirlo como
-      // "Proyecto propio · Proyectos propios" sobra.
+      // UNA LÍNEA POR DATO. Antes cargo, empresa, modalidad y periodo iban en un solo
+      // párrafo de 105 caracteres separados por «·», y el cargo pegado a la empresa sin
+      // separador: `Desarrollador backend GAF Technology Solutions · Contrato por obra o
+      // labor · Remoto, Colombia · Oct 2025 - Jul 2026`. Un parser que asocia fechas por
+      // proximidad de línea tiene ahí dos formas de fallar —leer «Desarrollador backend
+      // GAF Technology Solutions» como un único cargo, y perder el vínculo empleo↔fechas—
+      // y las dos salen caras porque de ahí sale el cálculo de años de experiencia.
+      //
+      // El orden es el que esperan los parsers: cargo, empresa, fechas, modalidad.
+      //
+      // Sin empresa real (proyectos propios) no se pinta cabecera: antes se emitía un
+      // `<p class="job-head"><span class="role"></span></p>` vacío.
       const head = job.hasCompany
-        ? `<span class="role">${role}</span> <span class="company">${company}</span>`
-        : `<span class="role">${company}</span>`;
+        ? `
+        <p class="job-role">${role}</p>
+        <p class="job-company">${company}</p>
+        ${period ? `<p class="job-meta">${period}</p>` : ''}
+        ${mode ? `<p class="job-meta">${escape(mode)}</p>` : ''}`
+        : '';
 
       return `
-      <div class="job">
-        <p class="job-head">
-          ${head}${mode ? ` · <span class="mode">${escape(mode)}</span>` : ''}
-          ${period ? `<span class="period">${period}</span>` : ''}
-        </p>
+      <div class="job">${head}
         ${tagline ? `<p class="tagline">${escape(tagline)}</p>` : ''}
         ${entries}
       </div>`;
@@ -172,15 +214,21 @@ function renderCv(profile: any, lang: Lang): string {
       (group: any) =>
         `<p class="skill"><span class="skill-area">${escape(
           group.area,
-        )}</span> ${escape(group.items.join(' · '))}</p>`,
+        )}</span> ${escape(group.items.join(', '))}</p>`,
     )
     .join('\n      ');
 
-  // Las etiquetas de `facts` ya vienen en el idioma correcto; se localizan por
-  // posición para no depender de su texto.
-  const fact = (index: number) => profile.facts[index]?.value ?? '';
-  const education = fact(0);
-  const languages = fact(1);
+  // Los `facts` se localizan por POSICIÓN en el array de `profile.*.ts`, no por su
+  // etiqueta, porque la etiqueta cambia con el idioma. El coste es que reordenar `facts`
+  // imprimía los idiomas bajo «Formación» sin fallar ni avisar, gracias al `?? ''`; por
+  // eso ahora se comprueba y se rompe el build, que es la única forma de enterarse.
+  const fact = (index: number, expected: string) => {
+    const found = profile.facts[index];
+    if (!found) throw new Error(`[cv] falta facts[${index}] (${expected}) en ${lang}`);
+    return found.value as string;
+  };
+  const education = fact(0, 'formación');
+  const languages = fact(1, 'idiomas y certificaciones');
   const location = `${profile.location} (GMT-5)`;
 
   const summary = t.summary.map((x) => `<p>${escape(x)}</p>`).join('\n      ');
@@ -206,8 +254,11 @@ function renderCv(profile: any, lang: Lang): string {
       ...(profile.siteUrl ? [profile.siteUrl] : []),
       ...profile.social.map((x: any) => x.url),
     ].map(
-      (u: string) =>
-        `<a href="${escape(u)}">${escape(u.replace(/^https?:\/\/(www\.)?/, ''))}</a>`,
+      // Con esquema. Antes se imprimían como `github.com/wilfred524`: la URL completa
+      // vivía solo en la anotación /Link del PDF, que muchos ATS ni miran, así que el
+      // extractor de perfiles no reconocía el texto como una URL y el enlace al
+      // repositorio —el argumento entero del CV— no llegaba al formulario.
+      (u: string) => `<a href="${escape(u)}">${escape(u.replace(/\/$/, ''))}</a>`,
     ),
   );
 
@@ -227,9 +278,18 @@ function renderCv(profile: any, lang: Lang): string {
          ojos humanos, y cualquier maquetación en columnas los confunde.
          Estructura heredada del export de LinkedIn —nombre centrado, secciones en
          versales con regla— porque es un formato que los reclutadores reconocen. */
-      /* Fraunces (la serif del sitio) en los titulares, para que CV y web se lean como
-         una sola cosa. El cuerpo, en cambio, NO usa Switzer, y esto no es una decisión
-         estética:
+      /* TODO el documento va en una sans del sistema. Fraunces (la serif del sitio) se
+         usaba en el <h1> para que CV y web se leyeran como una sola cosa, y se ha
+         retirado: era el ÚNICO elemento del PDF que Chrome no embebía como /FontFile2,
+         sino que vectorizaba como fuente /Type3 con /CharProcs. Type3 es justo la clase
+         de fuente que peor manejan los extractores baratos, y lo que se pierde cuando
+         fallan es el nombre del candidato: el campo más caro del documento.
+
+         Es el mismo fallo que ya costó Switzer (abajo), con la diferencia de que aquí sí
+         había /ToUnicode y por eso pypdf lo leía bien. No basta: la garantía la da la
+         fuente embebida, no la suerte del extractor.
+
+         Nota histórica sobre el cuerpo, que NO usa Switzer, y no por estética:
 
          Switzer-Variable.woff2 rompe la extracción de texto del PDF. Chrome la vectoriza
          y el resultado es que un lector de PDF —o el parser de un ATS— lee
@@ -250,16 +310,18 @@ function renderCv(profile: any, lang: Lang): string {
          Para comprobarlo tras cualquier cambio de tipografía:
            python -c "import pypdf; t=''.join(p.extract_text() for p in
              pypdf.PdfReader('web/public/Wilfred-Morales-Desarrollador-Backend.pdf').pages);
-             print('wilfred3019@gmail.com' in t, 'AWS' in t)"
-         Las dos deben dar True. */
-      @font-face {
-        font-family: 'Fraunces CV';
-        src: url('fonts/fraunces-latin-wght-normal.woff2') format('woff2-variations');
-        font-weight: 100 900;
-        font-display: swap;
-      }
+             print('wilfred3019@gmail.com' in t, 'AWS' in t, 'Wilfred Morales' in t)"
+         Las tres deben dar True. Y para verificar que no ha vuelto a colarse una fuente
+         sin embeber, que es la comprobación de fondo:
+           python -c "import pypdf; d=pypdf.PdfReader('...pdf');
+             print([f for f in d.pages[0]['/Resources']['/Font'].values()])"
+         Ninguna debe ser /Type3. */
 
-      @page { size: A4; margin: 13mm 14mm; }
+      /* Márgenes ajustados para que el documento siga cabiendo en DOS páginas tras
+         desplegar la cabecera de empleo a cuatro líneas y añadir la entrada de
+         optimización de consultas. Un CV de tres páginas con diez meses de experiencia
+         se lee como relleno, y la tercera página eran dos líneas huérfanas. */
+      @page { size: A4; margin: 11mm 13mm; }
       * { box-sizing: border-box; }
       body {
         margin: 0 auto;
@@ -275,8 +337,7 @@ function renderCv(profile: any, lang: Lang): string {
       header { text-align: center; border-bottom: 2px solid #1c4a5a; padding-bottom: 6pt; }
       h1 {
         margin: 0;
-        font-family: 'Fraunces CV', Georgia, serif;
-        font-variation-settings: 'wght' 600, 'opsz' 144, 'SOFT' 0, 'WONK' 0;
+        font-weight: 700;
         font-size: 23pt;
         line-height: 1.05;
         letter-spacing: -0.015em;
@@ -291,7 +352,7 @@ function renderCv(profile: any, lang: Lang): string {
          y es donde salta el reclutador tras leer el titular. */
       .stackline { margin-top: 3pt; font-size: 9pt; color: #555; }
       h2 {
-        margin: 14pt 0 0;
+        margin: 11pt 0 0;
         padding-bottom: 2pt;
         border-bottom: 1px solid #b8c4c9;
         font-size: 9.5pt;
@@ -305,11 +366,13 @@ function renderCv(profile: any, lang: Lang): string {
       /* Sin page-break-inside aquí: un empleo con varios proyectos no cabe en lo que
          queda de página y saltaba entero, dejando media hoja en blanco. */
       .job { margin-top: 8pt; }
-      .job-head { margin-bottom: 1pt; }
-      .role { font-weight: 700; }
-      .company { font-style: italic; }
-      .mode, .period { color: #555; font-size: 9pt; }
-      .period::before { content: ' · '; }
+      /* Un dato por línea, muy juntas: visualmente siguen leyéndose como un bloque de
+         cabecera, pero en el PDF son párrafos independientes y cada uno se extrae en su
+         propia línea. */
+      .job-role { margin: 0; font-weight: 700; }
+      .job-company { margin: 0; font-style: italic; }
+      .job-meta { margin: 0; color: #555; font-size: 9pt; }
+      .job-meta + .tagline { margin-top: 3pt; }
       .tagline { margin: 0 0 4pt; font-size: 9pt; font-style: italic; color: #555; }
       .entry { margin: 0 0 6pt; page-break-inside: avoid; }
       /* Dos páginas es el formato asumido (legibilidad por encima de encajar en una):
@@ -319,7 +382,8 @@ function renderCv(profile: any, lang: Lang): string {
       .note { font-weight: 400; font-size: 9pt; color: #555; }
       ul { margin: 0; padding-left: 14pt; }
       li { margin-bottom: 1.5pt; }
-      .stack { margin-top: 2pt; font-size: 8.5pt; color: #555; }
+      /* En línea con el título, no en un párrafo al pie del bloque. */
+      .stack { font-weight: 400; font-size: 8.5pt; color: #555; }
       .skill { margin-bottom: 2pt; }
       .skill-area { font-weight: 700; }
       @media print { body { padding: 0; max-width: none; } }
@@ -369,15 +433,28 @@ async function findChrome(): Promise<string | null> {
 async function main() {
   const chrome = await findChrome();
 
+  // npm run build:cv -- --variante=laravel
+  const arg = process.argv.slice(2).find((a) => a.startsWith('--variante='));
+  const variant = arg?.split('=')[1] as VariantName | undefined;
+  if (variant && !(variant in VARIANTS)) {
+    throw new Error(
+      `[cv] variante desconocida: «${variant}». Disponibles: ${Object.keys(VARIANTS).join(', ')}`,
+    );
+  }
+
+  const dir = variant ? join(VARIANT_DIR, variant) : OUT_DIR;
+  const label = variant ? `tools/cv/out/${variant}` : 'web/public';
+  await mkdir(dir, { recursive: true });
+
   for (const lang of ['es', 'en'] as Lang[]) {
     const profile = await loadProfile(lang);
     const base = TEXT[lang].fileName;
-    const html = join(OUT_DIR, `${base}.html`);
-    await writeFile(html, renderCv(profile, lang), 'utf8');
-    console.log(`✓ web/public/${base}.html`);
+    const html = join(dir, `${base}.html`);
+    await writeFile(html, renderCv(profile, lang, variant), 'utf8');
+    console.log(`✓ ${label}/${base}.html`);
 
     if (chrome) {
-      const pdf = join(OUT_DIR, `${base}.pdf`);
+      const pdf = join(dir, `${base}.pdf`);
       // Rutas absolutas en los dos lados: con la ruta relativa Chrome toma "web" como
       // dominio, y el destino relativo le da acceso denegado.
       await run(chrome, [
@@ -388,7 +465,7 @@ async function main() {
         pathToFileURL(html).href,
       ]);
       const size = (await readFile(pdf)).length;
-      console.log(`✓ web/public/${base}.pdf (${(size / 1024).toFixed(0)} kB)`);
+      console.log(`✓ ${label}/${base}.pdf (${(size / 1024).toFixed(0)} kB)`);
     }
   }
 

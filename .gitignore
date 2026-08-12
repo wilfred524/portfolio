@@ -11,3 +11,7 @@ __pycache__/
 
 .vercel
 .env*
+
+# Variantes del CV para enviar por los portales: se generan en local y no se publican
+# ni se versionan. La versión general sí vive en web/public/ y sí va al repositorio.
+tools/cv/out/
