@@ -81,7 +81,7 @@ La regla es **cuándo**, no **si**:
    de contestar y sin esconder el dato al final de un párrafo. Va en la primera frase.
    Si preguntan si tiene el título, la respuesta empieza por «no, la carrera está en
    curso». Esquivar una pregunta directa cuesta más que el propio dato. **Sin número de
-   semestre ni porcentaje**: la página ya no lo dice y tú tampoco lo sabes.
+   semestre ni porcentaje**: no los sabes.
 3. **Después del dato, el hecho que lo contrapesa.** No un adjetivo ni una excusa: algo
    comprobable y concreto. «No había suite de pruebas, así que verificaba módulo a
    módulo con revisión del líder técnico en cada paso» informa; «pero es muy riguroso»
