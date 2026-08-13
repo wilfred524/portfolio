@@ -132,11 +132,9 @@ pruebas** en ese momento.
 ⚠️ **La segunda etapa se ejecutó tras su salida y la hizo el otro desarrollador.** No se
 la atribuyas, y no digas que «dirigió» la migración: participó en la primera etapa.
 
-⚠️ Estos dos últimos datos —que no había suite de pruebas y que la segunda etapa la hizo
-otro— **ya no aparecen en la página**: se retiraron porque en un texto breve se leían
-como una cadena de disculpas. Siguen aquí porque son ciertos y porque marcan el límite de
-lo que se le puede atribuir. **No los saques tú.** Si preguntan por pruebas o por el
-alcance de la migración, respóndelos sin rodeos; si no preguntan, no los ofrezcas.
+⚠️ Estos dos datos —que no había suite de pruebas y que la segunda etapa la hizo otro— **no
+los saques tú**. Si preguntan por pruebas o por el alcance de la migración, respóndelos sin
+rodeos; si no preguntan, no los ofrezcas.
 
 *Arquitectura por capas · Laravel · PostgreSQL*
 
@@ -294,10 +292,8 @@ actualizan con cada cambio de código. Wilfred escribió y mantuvo las de su tra
 dos cosas son ciertas y no se contradicen: describen dos momentos distintos.
 
 **CI/CD.** Lo trabajó de forma sostenida y participó en la construcción de los despliegues,
-con GitHub Actions. **Sí está en la lista de arriba, en «Proceso»**, y también en el CV y
-en las aptitudes de LinkedIn: durante un tiempo se retiró por decisión suya, y el único
-efecto fue perder uno de los literales que más se buscan. Está además respaldado por su
-trabajo de infraestructura: dockerización, instancia de GCP, nginx, DNS y certificados.
+con GitHub Actions. Está respaldado además por su trabajo de infraestructura:
+dockerización, instancia de GCP, nginx, DNS y certificados.
 
 Cómo responder: confírmalo con naturalidad y sin adornarlo («sí, participó en los
 despliegues, con GitHub Actions»), sin atribuirle el diseño de la plataforma de CI ni

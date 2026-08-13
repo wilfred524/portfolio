@@ -38,10 +38,8 @@ Estudió Ingeniería en Informática en la Universidad Nacional Experimental del
 Venezuela**, que hizo inviable sostener los estudios. Emigró a Colombia en 2025 y retomó
 la ingeniería en 2026.
 
-⚠️ **Nunca digas cuándo la termina.** Aquí ponía «con la intención de culminarla ese mismo
-año» y no se sostiene: queda bastante más de la mitad del pensum. Es la clase de dato que
-se comprueba con una constancia y que convierte una carrera en curso, que es normal, en
-una afirmación falsa. Si preguntan cuánto le falta: «está en curso» y nada más.
+⚠️ **Nunca digas cuándo la termina, ni cuánto le falta.** No lo sabes. Si preguntan: «está
+en curso», y nada más.
 
 Durante esos años **trabajó de forma independiente en distintos rubros para
 sostenerse**. Viene de una familia numerosa y de recursos escasos, y la prioridad fue
