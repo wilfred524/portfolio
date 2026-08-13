@@ -152,14 +152,21 @@ async def _confirmar_cita(peticion: ChatRequest, intencion: Intencion) -> tuple[
         "resumen": intencion.resumen,
     }
 
-    aviso_correo = (
-        "Le llega la confirmación por correo con el enlace."
-        if enviado
-        else (
-            "El correo de confirmación NO ha salido: dile que le llegará el enlace por otra "
-            "vía o que escriba a Wilfred si no lo recibe. No prometas un correo que no se envió."
+    # Dos cosas pueden faltar por separado, y el agente tiene que decir la verdad sobre
+    # cada una: que el correo salga no implica que lleve enlace, porque una cuenta de
+    # servicio sobre un calendario personal no puede crear salas de Meet.
+    if not enviado:
+        aviso_correo = (
+            "El correo de confirmación NO ha salido. No prometas ningún correo: dile que "
+            "Wilfred le escribe a la dirección que dejó para pasarle el enlace."
         )
-    )
+    elif not enlace:
+        aviso_correo = (
+            "Le llega un correo de confirmación, pero SIN enlace de videollamada: dile que "
+            "el enlace se lo pasa Wilfred antes de la reunión. No inventes ningún enlace."
+        )
+    else:
+        aviso_correo = "Le llega la confirmación por correo con el enlace."
     return (
         f"# Situación\n\nLa cita YA está creada en el calendario: {cuando}. "
         f"Anúnciala en una frase. {aviso_correo}",
