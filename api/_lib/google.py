@@ -32,9 +32,15 @@ from google.auth.crypt import RSASigner
 
 from _lib.config import config
 
+# Los tres son el mínimo, y hacen falta los tres: `calendar.events` autoriza crear y leer
+# eventos, pero NO la consulta de ocupación, que en la API de Google es un servicio aparte
+# (`Freebusy.query`) con su propio alcance. Con solo `calendar.events`, `freeBusy` responde
+# 403 `ACCESS_TOKEN_SCOPE_INSUFFICIENT` aunque el calendario esté bien compartido —un error
+# que se lee como si faltara el permiso de compartir, y no lo es.
 ALCANCES = (
     "https://www.googleapis.com/auth/spreadsheets",
     "https://www.googleapis.com/auth/calendar.events",
+    "https://www.googleapis.com/auth/calendar.freebusy",
 )
 
 # Vida del JWT que se cambia por el token. Google no acepta más de una hora.
