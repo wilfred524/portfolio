@@ -23,12 +23,16 @@ from _lib.modelos import Hueco
 class Reglas:
     zona: str = "America/Bogota"
     duracion_minutos: int = 30
-    # Franja de atención, hora local de Wilfred. Por la mañana y la tarde trabaja: ofrecer
-    # horas en las que no va a poder es el fallo que empieza la conversación torcida.
-    hora_inicio: int = 18
+    # Franja de atención, hora local de Wilfred: jornada completa. La ventana estrecha de
+    # antes existía porque tenía un empleo en horario de oficina, y rechazaba justo las
+    # horas a las que llama un reclutador.
+    hora_inicio: int = 9
     hora_fin: int = 21
     dias_laborables: tuple[int, ...] = (0, 1, 2, 3, 4)  # lunes=0 … viernes=4
-    antelacion_minima_horas: int = 24
+    # Margen para verlo y prepararse, no una cuarentena: quien escribe a la una puede tener
+    # la llamada a las tres del mismo día. Con 24 horas, todo el que escribía por la tarde
+    # se iba a mañana, que es perder al que tiene prisa —justamente el que ya decidió.
+    antelacion_minima_horas: int = 2
     antelacion_maxima_dias: int = 14
     idiomas: str = "español o inglés"
     huecos_a_ofrecer: int = 3
