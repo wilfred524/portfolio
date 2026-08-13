@@ -60,6 +60,16 @@ async def crear_evento(
     terceros sin delegación de dominio, y la llamada entera fallaría por eso. La
     confirmación al visitante se manda por correo desde `_lib/correo.py`, con el enlace
     dentro.
+
+    Si Google rechaza la videollamada, **la cita se crea igual, sin Meet**. Una cuenta de
+    servicio sobre un calendario personal no puede generar salas: responde 400 «Invalid
+    conference type value» (comprobado el 2026-08-13). Antes eso tumbaba la petición
+    entera y el visitante se quedaba sin cita por no poder ponerle un enlace, que es
+    perder lo importante por lo accesorio. `correo.py:36-41` ya escribe «el enlace te
+    llegará antes de la reunión» cuando no hay ninguno.
+
+    El intento con Meet se conserva en lugar de quitarlo: en una cuenta de Workspace con
+    delegación sí funciona, y así empezaría a hacerlo sin tocar el código.
     """
     cuerpo = {
         "summary": f"Llamada con {nombre or 'visitante del portafolio'}",
@@ -80,15 +90,40 @@ async def crear_evento(
             }
         },
     }
+    url = f"{BASE}/calendars/{config().google_calendar_id}/events"
     async with httpx.AsyncClient(timeout=TIEMPO_LIMITE) as cliente:
         respuesta = await cliente.post(
-            f"{BASE}/calendars/{config().google_calendar_id}/events",
+            url,
             headers=await cabeceras(),
             params={"conferenceDataVersion": 1},
             json=cuerpo,
         )
+        if _rechazo_de_videollamada(respuesta):
+            log.warning(
+                "Google no permite crear la videollamada; se crea la cita sin Meet"
+            )
+            cuerpo.pop("conferenceData")
+            respuesta = await cliente.post(url, headers=await cabeceras(), json=cuerpo)
+
         respuesta.raise_for_status()
         return respuesta.json()
+
+
+def _rechazo_de_videollamada(respuesta: httpx.Response) -> bool:
+    """
+    ¿Google rechazó la petición *por la videollamada*, y no por otra cosa?
+
+    Se mira el motivo y no solo el 400: reintentar sin `conferenceData` cualquier petición
+    mal formada escondería el error real —un rango de fechas inválido, por ejemplo— detrás
+    de un segundo fallo idéntico.
+    """
+    if respuesta.status_code != 400:
+        return False
+    try:
+        mensaje = respuesta.json().get("error", {}).get("message", "")
+    except ValueError:
+        return False
+    return "conference" in mensaje.lower()
 
 
 def enlace_videollamada(evento: dict) -> str:

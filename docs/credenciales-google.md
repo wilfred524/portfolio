@@ -116,15 +116,19 @@ entera fallaría por intentarlo. Por eso `calendario.py:59-62` lo evita a propó
 confirmación se manda por correo desde `_lib/correo.py`, con el enlace dentro. Que a su vez
 depende de Resend, que hoy tampoco puede escribir a un tercero: ver `api/README.md`.
 
-**El enlace de Meet puede no crearse.** `crear_evento` pide una videollamada con
-`conferenceData`, y crear conferencias desde una cuenta de servicio sobre un calendario
-personal es un caso conocido por fallar con «Invalid conference type value». Si Google lo
-rechaza, no es una degradación suave: `calendario.py:90` hace `raise_for_status()`, la
-excepción sube a `chat.py:131` y **la cita no se crea en absoluto**; el agente dice con
-franqueza que no pudo y ofrece el correo. Compruébalo en el paso 5 antes de encender
-`AGENDA_HABILITADA`. Si falla, la salida es quitar el bloque `conferenceData` y la cita
-queda sin Meet: `correo.py:40` ya contempla ese caso y escribe «el enlace te llegará antes
-de la reunión».
+**La cita no lleva enlace de Meet.** No es una posibilidad: está comprobado el 2026-08-13
+con estas credenciales. `crear_evento` pide la videollamada con `conferenceData` y Google
+responde **400 «Invalid conference type value»**; la misma petición sin ese bloque devuelve
+200. Una cuenta de servicio sobre un calendario personal no puede generar salas, y no hay
+ajuste que lo cambie sin Workspace con delegación de dominio.
+
+`calendario.py` lo detecta y **reintenta sin videollamada**, así que la cita se crea igual
+—perder la cita por no poder ponerle un enlace sería perder lo importante por lo
+accesorio—. El intento con Meet se conserva porque en Workspace sí funciona.
+
+La consecuencia es de trabajo, no de código: **el enlace hay que mandarlo a mano** a cada
+visitante. El agente ya no promete otra cosa, y `correo.py:36-41` escribe «el enlace te
+llegará antes de la reunión».
 
 ## Si algo falla
 
