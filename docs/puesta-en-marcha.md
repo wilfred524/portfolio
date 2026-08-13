@@ -8,17 +8,21 @@ El orden no es arbitrario: va de lo que ya funciona a lo que tiene consecuencias
 chat. Lo último que se enciende es la agenda, que es lo único que crea eventos reales y
 escribe a desconocidos.
 
-| # | Paso | Estado hoy | Sin esto… |
+**Estado al 2026-08-13: todos los pasos están hechos**, en local y en el panel de Vercel.
+Lo que sigue queda como referencia para rehacerlo, para rotar una credencial o para
+levantar el proyecto en otra máquina.
+
+| # | Paso | Estado | Sin esto… |
 |---|---|---|---|
 | 0 | Entorno local | listo | — |
-| 1 | DeepSeek | **puesta** | el chat no responde |
-| 2 | Telegram | falta | no te enteras de quién escribió |
-| 3 | Google: proyecto y cuenta de servicio | falta | ni hoja ni calendario |
-| 4 | Sheets | falta | no queda registro de nada |
-| 5 | Calendar | falta | el agente no menciona llamadas |
-| 6 | Resend | **puesta**, limitada | el visitante no recibe confirmación |
-| 7 | Encender la agenda | apagada | el agente conversa pero no agenda |
-| 8 | Vercel | falta | funciona en local y no en producción |
+| 1 | DeepSeek | puesta | el chat no responde |
+| 2 | Telegram | puesta | no te enteras de quién escribió |
+| 3 | Google: proyecto y cuenta de servicio | puesta | ni hoja ni calendario |
+| 4 | Sheets | puesta | no queda registro de nada |
+| 5 | Calendar | puesta | el agente no menciona llamadas |
+| 6 | Resend | puesta, **limitada** | el visitante no recibe confirmación |
+| 7 | Encender la agenda | **encendida** | el agente conversa pero no agenda |
+| 8 | Vercel | puesta | funciona en local y no en producción |
 
 Todo se escribe en `api/.env`, que **está en `.gitignore` y no se comitea nunca**. La
 plantilla con los nombres exactos es `api/.env.example`.
@@ -207,8 +211,14 @@ verificado** en Resend, con registros DKIM, SPF y MX, normalmente sobre un subdo
 envío tipo `send.tudominio.com`. Un subdominio de `vercel.app` no vale: no se controla su
 zona DNS.
 
-No es urgente mientras la agenda esté apagada. Sí lo es antes del paso 7, porque la
-confirmación de la cita —con el enlace de la videollamada dentro— viaja por ahí.
+**La agenda se encendió igualmente**, por decisión de Wilfred: agendar vale por sí solo, y
+el aviso de Telegram más la fila en la hoja le dan el correo del visitante para responder a
+mano. A cambio, el agente tiene prohibido prometer un correo que no va a salir
+(`_context/50-agenda.md`) y dice que Wilfred escribirá a la dirección que dejaron.
+
+Sumado a lo del Meet, eso significa que **cada cita exige una acción manual**: escribir al
+visitante con el enlace de la videollamada. Con una o dos citas es asumible; si crece, la
+salida es un dominio propio o un enlace de Meet fijo puesto en la descripción del evento.
 
 ---
 
@@ -222,17 +232,14 @@ Antes de encender nada, **prueba el evento**:
 .venv/Scripts/python tools/probar-google.py --evento
 ```
 
-Crea una cita real mañana a esta hora, con Meet. **Bórrala después.**
+Crea una cita real mañana a esta hora. **Bórrala después.**
 
-Ese paso es el que puede fallar: `crear_evento` pide videollamada con `conferenceData`, y
-crear conferencias desde una cuenta de servicio sobre un calendario personal es un caso
-conocido por fallar con «Invalid conference type value». Y ahí **no hay degradación suave**:
-`calendario.py:90` hace `raise_for_status()`, la excepción sube a `chat.py:131` y la cita no
-llega a existir. Si falla, la salida es quitar el bloque `conferenceData` y dejar la cita sin
-Meet — `correo.py:40` ya contempla ese caso y escribe «el enlace te llegará antes de la
-reunión».
+Aquí se comprobó lo que ya está asumido: **la cita no lleva enlace de Meet.** Google
+responde 400 «Invalid conference type value», porque una cuenta de servicio sobre un
+calendario personal no puede crear salas. `calendario.py` lo detecta y reintenta sin
+videollamada, así que la cita se crea igual; el enlace lo mandas tú a mano.
 
-Si el evento se crea bien:
+Si el evento se crea:
 
 ```
 AGENDA_HABILITADA=1
