@@ -1,0 +1,85 @@
+/**
+ * Tokens del tema. Únicos valores de color, tipografía y ritmo de todo el sitio:
+ * ningún componente escribe un color a mano.
+ *
+ * Van en `:root` y no bajo una clase raíz. El diseño anterior los declaraba en
+ * `.design-henry` porque convivían varios diseños; ya no hay colección, y con fondo
+ * oscuro declararlos en un div deja bandas claras en el overscroll.
+ */
+
+:root {
+  /* ── Superficies ────────────────────────────────────────────────────────────
+     Tres niveles y no más. El binario fondo/tarjeta es lo que mantiene la página
+     tranquila; cada gris intermedio nuevo es una decisión que hay que justificar. */
+  --bg: #0a0a0f;
+  --bg-card: #0f0f16;
+  --bg-raised: #12121a;
+  --bg-overlay: rgba(10, 10, 15, 0.85);
+
+  /* ── Texto ──────────────────────────────────────────────────────────────────
+     Escala de cuatro pesos de gris. `--text-dim` es el mínimo que mantiene 4.5:1
+     sobre `--bg`: por debajo de ahí el texto deja de ser accesible, así que los
+     tonos más apagados quedan para bordes y rótulos, nunca para prosa. */
+  --text: #ffffff;
+  --text-soft: #e8e8ec;
+  --text-mute: #a1a1ad;
+  --text-dim: #8b8b98;
+  --text-faint: #6b6b78;
+
+  /* ── Acento ─────────────────────────────────────────────────────────────────
+     El ÚNICO color del sistema. Reservado a la disponibilidad y a los valores de
+     las métricas: repartido por la página deja de significar nada. */
+  --accent: #4ade80;
+  --accent-glow: rgba(74, 222, 128, 0.4);
+
+  /* ── Bordes ─────────────────────────────────────────────────────────────────
+     Blanco con alfa, no grises opacos: así el borde se comporta igual sobre el
+     fondo y sobre una tarjeta, y deja ver el canvas por detrás. */
+  --line: rgba(255, 255, 255, 0.06);
+  --line-soft: rgba(255, 255, 255, 0.1);
+  --line-strong: rgba(255, 255, 255, 0.25);
+
+  /* ── Estrellas del fondo ────────────────────────────────────────────────────
+     Las consume el canvas por `getComputedStyle`, para que el fondo y el texto
+     salgan de la misma paleta. Sin alfa: la opacidad la calcula cada partícula. */
+  --star-core: 235, 235, 245;
+  --star-glow: 220, 220, 235;
+  --star-line: 180, 180, 200;
+
+  /* ── Tipografía ─────────────────────────────────────────────────────────────
+     Una sola familia. El contraste lo dan el tamaño y el peso, no una segunda
+     fuente. Los tamaños fluidos evitan tener un breakpoint por titular. */
+  --font: 'Inter Variable', system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif;
+
+  --text-xs: 0.6875rem; /* 11px, rótulos en versales */
+  --text-sm: 0.8125rem; /* 13px, meta y pies */
+  --text-base: 0.9375rem; /* 15px, cuerpo */
+  --text-md: 1.125rem; /* 18px, títulos de tarjeta */
+  --text-lg: clamp(1.125rem, 2.5vw, 1.75rem); /* subtítulo del hero */
+  --text-xl: clamp(1.5rem, 4vw, 2.25rem); /* encabezados de sección */
+  --display: clamp(2.5rem, 6vw, 4.5rem); /* el nombre */
+
+  --tracking-tight: -0.03em;
+  --tracking-label: 0.15em;
+  --leading-body: 1.7;
+
+  /* ── Ritmo ──────────────────────────────────────────────────────────────────
+     `--measure` limita la línea de texto a ~70 caracteres; `--page` es el ancho
+     del contenido. Son cosas distintas: la columna de lectura no crece porque la
+     página crezca. */
+  --page: 60rem;
+  --measure: 34rem;
+  --gutter: clamp(1.5rem, 5vw, 2.5rem);
+  --section-gap: clamp(4rem, 10vw, 7rem);
+  --nav-h: 4.5rem;
+
+  --radius: 12px;
+  --radius-sm: 8px;
+
+  /* ── Movimiento ─────────────────────────────────────────────────────────────
+     Tres duraciones. `--slow` lleva curva propia porque es la de los cambios de
+     tamaño (tarjetas que se abren), donde una salida lineal se nota. */
+  --fast: 0.2s ease;
+  --medium: 0.3s ease;
+  --slow: 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+}

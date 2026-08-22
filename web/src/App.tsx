@@ -1,6 +1,6 @@
 import { Analytics } from '@vercel/analytics/react';
 import { LanguageProvider } from './i18n/LanguageProvider';
-import HenryPage from './designs/henry/HenryPage';
+import SitePage from './page/SitePage';
 
 /**
  * Una sola página, en dos idiomas. La colección de diseños se retiró: varias páginas
@@ -9,7 +9,7 @@ import HenryPage from './designs/henry/HenryPage';
 export default function App() {
   return (
     <LanguageProvider>
-      <HenryPage />
+      <SitePage />
       {/* Sin cookies y sin datos personales; ver lib/analytics.ts. */}
       <Analytics />
     </LanguageProvider>

@@ -1,10 +1,13 @@
 /* ============================================
    Reset mínimo + fundamentos compartidos.
-   Los estilos de cada diseño viven en su carpeta
-   (src/designs/<slug>/), scoped bajo su clase raíz.
+   Los tokens del tema están en tokens.css; los
+   estilos del sitio, en site.css.
    ============================================ */
 
-/* Switzer (Fontshare) — grotesca variable, sustituta de Neue Montreal */
+@import './tokens.css';
+
+/* Switzer (Fontshare) — grotesca variable, sustituta de Neue Montreal.
+   Solo la usa el diseño Henry, que se retira al final del rediseño; sale con él. */
 @font-face {
   font-family: 'Switzer';
   src: url('/fonts/Switzer-Variable.woff2') format('woff2');
@@ -23,8 +26,14 @@
   margin: 0;
 }
 
+/* El fondo va en html Y body, no en un contenedor: el rebote del scroll (y la franja
+   bajo la barra del navegador en móvil) pinta el fondo del documento, así que ponerlo
+   en un div deja destellos claros al tirar del scroll. `color-scheme` es lo que además
+   oscurece las barras de desplazamiento y los controles nativos. */
 html {
   scroll-behavior: smooth;
+  color-scheme: dark;
+  background-color: var(--bg);
 }
 
 @media (prefers-reduced-motion: reduce) {
@@ -43,6 +52,11 @@ html {
 
 body {
   min-height: 100dvh;
+  background-color: var(--bg);
+  color: var(--text-soft);
+  font-family: var(--font);
+  font-size: var(--text-base);
+  line-height: var(--leading-body);
   -webkit-font-smoothing: antialiased;
   text-rendering: optimizeLegibility;
 }
