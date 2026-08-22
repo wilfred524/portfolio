@@ -1,7 +1,15 @@
 import { en } from './profile.en';
 import { es } from './profile.es';
 
-export type { Profile, ProjectItem, ProjectGroup, SkillGroup, Fact, UiStrings } from './types';
+export type {
+  Profile,
+  Employment,
+  ProjectItem,
+  ProjectGroup,
+  SkillGroup,
+  Fact,
+  UiStrings,
+} from './types';
 
 /** El inglés va primero: es el idioma por defecto del sitio. */
 export const content = { en, es };

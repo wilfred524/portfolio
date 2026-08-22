@@ -1,73 +1,83 @@
+import { useState } from 'react';
+import type { ProjectItem } from '../../content';
 import { useContent } from '../../i18n/LanguageProvider';
 import { SectionHeader } from '../../ui/SectionHeader';
+import { ProjectCard } from '../../ui/ProjectCard';
+import { ProjectModal } from '../../ui/ProjectModal';
 
 /**
- * Experiencia. En la capa 0 el contenido va en bruto: aquí se comprueba que está todo
- * y en el orden correcto, no cómo se ve. Las tarjetas llegan en la capa 3.
+ * Experiencia: una rejilla de tarjetas, y el detalle en un modal.
  *
- * Lo que sí es definitivo es la jerarquía: **un empleo, varios proyectos dentro**. La
- * cabecera del contrato se pinta al llegar al PRIMER grupo que cuelga de él, y no se
- * repite. Sin eso, siete tareas del mismo puesto se leen como siete trabajos distintos,
- * que es exactamente el ruido que este modelo de datos existe para evitar.
+ * La rejilla es lo que mantiene la página corta. Diez proyectos en extenso, uno debajo
+ * de otro, eran cuatro pantallas de scroll antes de llegar al pie; en tarjetas caben en
+ * poco más de una, y quien quiera el detalle lo pide.
+ *
+ * La jerarquía sigue siendo **un empleo, varios proyectos dentro**: la cabecera del
+ * contrato se pinta al llegar al PRIMER grupo que cuelga de él y no se repite. Sin eso,
+ * siete tareas del mismo puesto se leen como siete trabajos distintos.
  */
 export function Projects() {
   const profile = useContent();
+  const [abierto, setAbierto] = useState<ProjectItem | null>(null);
 
+  // De qué empleo cuelga cada proyecto, para que el modal pueda situarlo sin que el
+  // dato se repita diez veces en el contenido.
+  const empleoDe = new Map<string, string>();
   let empleoPintado = '';
 
   return (
     <section className="section" id="experiencia">
       <SectionHeader title={profile.ui.sections.experience} />
 
-      <div className="raw">
-        {profile.projectGroups.map((group) => {
-          const empleo = profile.employments.find((e) => e.id === group.employmentId);
-          const abreEmpleo = empleo !== undefined && empleo.id !== empleoPintado;
-          if (abreEmpleo) empleoPintado = empleo.id;
+      {profile.projectGroups.map((group) => {
+        const empleo = profile.employments.find((e) => e.id === group.employmentId);
+        const abreEmpleo = empleo !== undefined && empleo.id !== empleoPintado;
+        if (abreEmpleo) empleoPintado = empleo.id;
+        if (empleo) group.items.forEach((item) => empleoDe.set(item.id, empleo.id));
 
-          return (
-            <section key={group.category}>
-              {abreEmpleo && empleo && (
-                <header>
-                  <h3>{empleo.employer}</h3>
-                  <p className="meta">
-                    {empleo.role} · {empleo.period}
-                    {empleo.mode && ` · ${empleo.mode}`}
-                  </p>
-                  {empleo.tagline && <p>{empleo.tagline}</p>}
-                </header>
-              )}
+        return (
+          <div key={group.category} className="group">
+            {abreEmpleo && empleo && (
+              <header className="job">
+                <h3 className="job__employer">{empleo.employer}</h3>
+                <p className="meta">
+                  {empleo.role} · {empleo.period}
+                  {empleo.mode && ` · ${empleo.mode}`}
+                </p>
+                {empleo.tagline && <p className="prose job__tagline">{empleo.tagline}</p>}
+              </header>
+            )}
 
-              <p className="label">
-                {group.category}
-                {group.note && ` · ${group.note}`}
-              </p>
+            <p className="label group__label">
+              {group.category}
+              {group.note && ` · ${group.note}`}
+            </p>
 
-              <ul className="raw">
-                {group.items.map((item) => (
-                  <li key={item.id}>
-                    <h4>{item.title}</h4>
-                    {item.role && <p className="meta">{item.role}</p>}
-                    {item.period && <p className="meta">{item.period}</p>}
-                    {item.metric && <p className="meta">{item.metric}</p>}
+            <div className="grid">
+              {group.items.map((item) => (
+                <ProjectCard
+                  key={item.id}
+                  item={item}
+                  labels={profile.ui.project}
+                  onOpen={() => setAbierto(item)}
+                />
+              ))}
+            </div>
+          </div>
+        );
+      })}
 
-                    {item.body
-                      ? (['problem', 'hard', 'result'] as const).map((key) => (
-                          <div key={key}>
-                            <p className="label">{profile.ui.blocks[key]}</p>
-                            <p>{item.body![key]}</p>
-                          </div>
-                        ))
-                      : item.brief && <p>{item.brief}</p>}
-
-                    <p className="meta">{item.tags.join(' · ')}</p>
-                  </li>
-                ))}
-              </ul>
-            </section>
-          );
-        })}
-      </div>
+      {abierto && (
+        <ProjectModal
+          // La clave fuerza un montaje nuevo por proyecto: sin ella, abrir otro reciclaría
+          // el panel y los efectos de foco y scroll no volverían a correr.
+          key={abierto.id}
+          item={abierto}
+          employment={profile.employments.find((e) => e.id === empleoDe.get(abierto.id))}
+          ui={profile.ui}
+          onClose={() => setAbierto(null)}
+        />
+      )}
     </section>
   );
 }

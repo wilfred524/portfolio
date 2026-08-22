@@ -33,14 +33,30 @@ export interface ProjectItem {
   /** Título corto (una palabra o dos). */
   title: string;
   /**
+   * Una línea: qué se construyó y qué cambió. Es lo único que se lee en la tarjeta
+   * cerrada, así que decide si alguien abre el detalle o pasa de largo.
+   *
+   * **Obligatorio a propósito.** Si fuera opcional, las tarjetas sin él quedarían con el
+   * título solo y se leerían como vacías, que es exactamente por lo que se retiró el
+   * acordeón anterior. `satisfies Profile` obliga a que exista en los dos idiomas.
+   */
+  summary: string;
+  /**
    * Rol y periodo **solo cuando la tarea no cuelga de un empleo**: los proyectos propios
    * los necesitan; las tareas de un contrato los heredan de su `Employment` y repetirlos
    * es justo el ruido que se quiso quitar.
    */
   role?: string;
   period?: string;
-  /** Dato de escala, legible junto al título (antes enterrado en el texto fantasma). */
-  metric?: string;
+  /**
+   * Cifras del proyecto, para la fila de métricas del detalle. Separadas en dato y
+   * rótulo porque el dato se pinta aparte y con otro peso: es lo que se retiene.
+   *
+   * Solo cifras **verificables** (ver `docs/perfil-publico.md`). Nunca porcentajes de
+   * mejora ni ahorros estimados: se comprueban en la primera entrevista técnica y no hay
+   * forma de defenderlos. Un proyecto sin cifra real no lleva métricas, y no pasa nada.
+   */
+  metrics?: { value: string; label: string }[];
   /**
    * Cuerpo en tres partes, para los proyectos que van en extenso. La del medio es la
    * que contrata: ahí se demuestra criterio técnico, no ejecución.
@@ -97,6 +113,19 @@ export interface UiStrings {
   nav: { experience: string; skills: string; contact: string; ariaLabel: string };
   sections: { experience: string; skills: string; contact: string; colophon: string };
   blocks: { problem: string; hard: string; result: string };
+  /** Tarjeta de proyecto y su detalle. */
+  project: {
+    /** Invitación a abrir el detalle. Va escrita, no como un signo: un «+» suelto no
+     *  invitó a nada la vez anterior que se probó a esconder contenido tras un clic. */
+    open: string;
+    close: string;
+    /** Rótulo de la fila de cifras del detalle. */
+    metrics: string;
+    /** Rótulo de las tecnologías del detalle. */
+    stack: string;
+    /** Enlace al repositorio del proyecto, cuando lo hay. */
+    visit: string;
+  };
   viewCode: string;
   /** Chat del agente. Su lógica vive en el backend; aquí solo está lo que se lee. */
   chat: {

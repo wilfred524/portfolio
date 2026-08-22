@@ -158,6 +158,8 @@ export const en = {
         {
           id: 'rules-engine',
           title: 'Credit rules engine',
+          summary:
+            'Credit policy lives as data in PostgreSQL, not as code: the business team adjusts a term limit without waiting for a deployment.',
           body: {
             problem:
               'Changing a credit policy meant a deployment: the business team could not adjust a term limit or a garnishment condition without going through development.',
@@ -177,6 +179,12 @@ export const en = {
         {
           id: 'esignature',
           title: 'Electronic signature with identity validation',
+          summary:
+            'A 24-page document that used to be filled in by hand, now generated from templates and signed once the customer identity checks out.',
+          metrics: [
+            { value: '24', label: 'pages previously by hand' },
+            { value: '20 min', label: 'full procedure' },
+          ],
           body: {
             problem:
               'The previous module was disused and the document — 24 pages — was filled in by hand. I built the module from scratch: it is now generated automatically from templates, with a different template per product.',
@@ -190,7 +198,12 @@ export const en = {
         {
           id: 'scoring',
           title: 'Monthly credit scoring process',
-          metric: 'Over 320,000 distinct people per run, once a month',
+          summary:
+            'A container on a monthly cron pulls the data from PostgreSQL, runs the risk model and loads the results with no manual step.',
+          metrics: [
+            { value: '320,000+', label: 'people per run' },
+            { value: '5,000', label: 'rows per batch' },
+          ],
           body: {
             problem:
               'A risk model lived in a script owned by the risk team, with no way to reach production.',
@@ -208,7 +221,12 @@ export const en = {
              technical evaluator looks for and almost nobody provides. */
           id: 'query-optimization',
           title: 'Query optimisation in production',
-          metric: 'From 20-30 s with timeouts down to 3-6 s',
+          summary:
+            'A query that took 20 to 30 seconds and ended in timeouts, fixed with upfront filters, indexes and pagination.',
+          metrics: [
+            { value: '3-6 s', label: 'previously 20-30 s' },
+            { value: '0', label: 'timeouts' },
+          ],
           body: {
             problem:
               'A query joining several tables took between 20 and 30 seconds to return, and timed out under high volume: the screen that depended on it was unusable exactly when there were most records to show.',
@@ -222,6 +240,9 @@ export const en = {
         {
           id: 'access-control',
           title: 'Access control and permissions',
+          summary:
+            'A permission tree across 17 modules, down to the option and sub-process level, with existing users and roles migrated without stopping operations.',
+          metrics: [{ value: '17', label: 'modules covered' }],
           brief:
             'I built the platform permission tree across 17 modules, with permissions down to the option and sub-process level, locked down every route, and migrated existing users and roles to the new schema without interrupting operations.',
           tags: ['Spatie Permission', 'Laravel', 'PostgreSQL'],
@@ -229,6 +250,12 @@ export const en = {
         {
           id: 'layered-migration',
           title: 'Migration to a layered architecture',
+          summary:
+            'First stage of migrating six years of code, module by module, until controllers held no raw SQL at all.',
+          metrics: [
+            { value: '6 years', label: 'of legacy code' },
+            { value: '3 months', label: 'of work' },
+          ],
           brief:
             'I took part in the first stage of migrating the platform — six years of code — to a layered architecture, verifying every change module by module before moving on and removing raw SQL queries from controllers entirely. Three months of work, reviewed by the tech lead at each step.',
           tags: ['Layered architecture', 'Laravel', 'PostgreSQL'],
@@ -236,6 +263,8 @@ export const en = {
         {
           id: 'infrastructure',
           title: 'Infrastructure and deployment',
+          summary:
+            'The application went from running natively to a container on a new GCP instance, with nginx in front and a parallel migration, with no downtime.',
           body: {
             problem:
               'The application ran natively on the machine, with no isolation between environment and code.',
@@ -256,6 +285,9 @@ export const en = {
           title: 'Portfolio assistant',
           role: 'Personal project',
           period: 'Ongoing',
+          summary:
+            'An agent that answers questions about my background, with its knowledge base in versioned files and the orchestration written in Python.',
+          metrics: [{ value: '133 MB', label: 'of dependency dropped' }],
           brief:
             'I built a conversational assistant that answers questions about my background and the decisions behind each project, with an explicit notice that an agent is answering and can be wrong. I first assembled it with n8n and the OpenAI API, and on deploying it I rebuilt the orchestration in Python, because the Vercel free plan does not support n8n. I dropped litellm after measuring it — 133 MB of the 199 the dependencies took, against a 250 MB per-function limit — and talk to the model over plain REST with httpx.',
           /* No `url`: the assistant IS this page, so linking it from inside leads
@@ -267,6 +299,8 @@ export const en = {
           title: 'Video clipping CLI',
           role: 'Personal project',
           period: 'Jul 2026 – ongoing',
+          summary:
+            'Splits a long video into vertical clips: transcribes, writes the script, narrates and renders the subtitles, step by step and resumable.',
           brief:
             'I built a TypeScript command-line tool that splits a long video into vertical clips: it transcribes with Whisper, writes the script with a model whose output is validated against a schema before use, narrates with speech synthesis and renders subtitles with Remotion. Every step persists its result to disk and the process is resumable, so already-paid model calls are never repeated.',
           tags: ['TypeScript', 'Node.js', 'Remotion', 'ffmpeg'],
@@ -276,6 +310,8 @@ export const en = {
           title: 'Portfolio',
           role: 'Personal project',
           period: '2026',
+          summary:
+            'This site: React and TypeScript, bilingual content from a single profile file, and animations written without a library.',
           brief:
             'I built this site with React and TypeScript, with variable fonts and animations written without a library, reinterpreting an existing design system and crediting it in the footer.',
           tags: ['React', 'TypeScript', 'Vite'],
@@ -302,6 +338,13 @@ export const en = {
       colophon: 'How this site is built',
     },
     blocks: { problem: 'Problem', hard: 'The hard part', result: 'Outcome' },
+    project: {
+      open: 'View detail',
+      close: 'Close',
+      metrics: 'Numbers',
+      stack: 'Stack',
+      visit: 'View the repository',
+    },
     viewCode: 'View the code',
     chat: {
       title: 'Ask what the page leaves out',
