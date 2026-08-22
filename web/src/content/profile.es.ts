@@ -214,11 +214,12 @@ export const es = {
   ],
   projectGroups: [
     {
-      category: 'CK Comercializadora',
+      /* Un solo grupo para todo el contrato. El motor de reglas estaba aparte porque lo
+         originaba CK, y esa separación lo sacaba de la plataforma en la que trabajó:
+         era el mismo empleo y el mismo equipo. Quién origina las solicitudes ya lo dice
+         el tagline del empleo, que es donde se sitúa una vez y no se repite. */
+      category: 'Plataforma GAF',
       employmentId: 'gaf',
-      /* Una sola forma de nombrar la relación con CK, aquí y en el tagline del empleo:
-         alternar «filial» y «empresa del grupo» hacía dudar de si eran dos cosas. */
-      note: 'Empresa del grupo',
       items: [
         {
           id: 'rules-engine',
@@ -235,12 +236,6 @@ export const es = {
           },
           tags: ['Laravel', 'Vue.js', 'Inertia.js', 'PostgreSQL'],
         },
-      ],
-    },
-    {
-      category: 'Plataforma GAF',
-      employmentId: 'gaf',
-      items: [
         {
           id: 'esignature',
           title: 'Firma electrónica con validación de identidad',
@@ -346,20 +341,6 @@ export const es = {
       category: 'Proyectos',
       items: [
         {
-          id: 'portfolio-agent',
-          title: 'Asistente del portfolio',
-          role: 'Proyecto propio',
-          period: 'En curso',
-          summary:
-            'Un agente que responde sobre mi trayectoria, con la base de conocimiento en archivos versionados y la orquestación escrita en Python.',
-          metrics: [{ value: '133 MB', label: 'de dependencia descartada' }],
-          brief:
-            'Construí un asistente conversacional que responde sobre mi trayectoria y las decisiones detrás de cada proyecto, con aviso explícito de que responde un agente y puede equivocarse. Lo monté primero con n8n y la API de OpenAI, y al desplegarlo rehíce la orquestación en Python porque el plan gratuito de Vercel no soporta n8n. Descarté litellm al medirlo —pesaba 133 MB de los 199 que ocupaban las dependencias, contra un límite de 250 MB por función— y hablo con el modelo por REST directo con httpx.',
-          /* Sin `url`: el asistente ES esta página, así que enlazarla desde dentro no
-             lleva a ninguna parte. En el CV sí aparece, en la línea de contacto. */
-          tags: ['Python', 'FastAPI', 'DeepSeek', 'Vercel'],
-        },
-        {
           id: 'video-cli',
           title: 'CLI de recorte de vídeo',
           role: 'Proyecto propio',
@@ -375,11 +356,15 @@ export const es = {
           title: 'Portfolio',
           role: 'Proyecto propio',
           period: '2026',
+          /* El asistente era hasta ahora una entrada aparte. No lo es: es el backend de
+             este mismo sitio, y presentarlo suelto contaba dos proyectos donde hay uno,
+             que es justo el inflado que este perfil evita en la experiencia laboral. */
           summary:
-            'Este sitio: React y TypeScript, contenido bilingüe desde un único archivo de perfil y animaciones escritas sin librería.',
+            'Este sitio y su backend: React y TypeScript delante, Python detrás para el agente que responde sobre mi trayectoria.',
+          metrics: [{ value: '133 MB', label: 'de dependencia descartada' }],
           brief:
-            'Construí este sitio con React y TypeScript, con tipografía variable y animaciones sin librería, reinterpretando un sistema de diseño ajeno y acreditándolo en el pie.',
-          tags: ['React', 'TypeScript', 'Vite'],
+            'Construí este sitio con React y TypeScript, con el contenido bilingüe saliendo de un único archivo de perfil que alimenta también el CV, y las animaciones escritas sin librería. Detrás corre un agente conversacional en Python sobre funciones serverless, que responde sobre mi trayectoria y las decisiones de cada proyecto: solo sabe lo que hay en su base de conocimiento, archivos de texto versionados, y avisa de que responde un agente y puede equivocarse. Lo monté primero con n8n y la API de OpenAI, y al desplegarlo rehíce la orquestación en Python porque el plan gratuito de Vercel no soporta n8n. Descarté litellm al medirlo (pesaba 133 MB de los 199 que ocupaban las dependencias, contra un límite de 250 MB por función) y hablo con el modelo por REST directo con httpx.',
+          tags: ['React', 'TypeScript', 'Python', 'FastAPI', 'Vercel'],
           url: 'https://github.com/wilfred524/portfolio',
         },
       ],

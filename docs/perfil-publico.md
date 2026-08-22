@@ -115,8 +115,12 @@ verdad. Los tres textos deben moverse juntos.
    opción y subproceso, blindaje ruta a ruta, migración de usuarios y roles existentes sin
    interrumpir la operación. `Spatie Permission · Laravel · PostgreSQL`
 
-**Proyectos propios:** asistente del portafolio (Python/FastAPI/DeepSeek en Vercel),
-CLI de recorte de vídeo, y el sitio (React/TypeScript).
+**Proyectos propios: dos, no tres.** La CLI de recorte de vídeo (TypeScript/Remotion/ffmpeg)
+y **este sitio**, que incluye su agente conversacional: el frontend es React/TypeScript y
+el backend que responde es Python/FastAPI sobre funciones serverless en Vercel. El
+asistente figuraba antes como un proyecto aparte y no lo es —es el backend del sitio—:
+listarlo suelto contaba dos donde hay uno, que es el mismo inflado que este dossier
+prohíbe en la experiencia laboral.
 
 ## 6. Historias mal contadas: qué corregir
 

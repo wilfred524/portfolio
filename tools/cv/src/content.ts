@@ -104,16 +104,16 @@ export const TEXT = {
         'Dockericé la aplicación, que corría de forma nativa sobre la máquina, y la desplegué en una instancia nueva de GCP con nginx como proxy inverso entre los contenedores y el host.',
         'Ejecuté la migración en paralelo: levanté y validé la instancia nueva con la anterior aún en producción, configuré el DNS del dominio y emití los certificados con Certbot hasta dejar la aplicación operando íntegramente sobre HTTPS. Sin interrupción del servicio.',
       ],
-      'portfolio-agent': [
-        'Construí un asistente conversacional que responde sobre mi trayectoria y las decisiones detrás de cada proyecto, con aviso explícito de que responde un agente y puede equivocarse.',
-        'Rehíce la orquestación en Python al desplegarlo, porque el plan gratuito de Vercel no soporta n8n; descarté litellm al medirlo (133 MB de 199, contra un techo de 250 MB por función) y hablo con el modelo por REST directo con httpx.',
-      ],
       'video-cli': [
         'Construí una herramienta de línea de comandos en TypeScript que parte un vídeo largo en clips verticales: transcripción con Whisper, guion generado por un modelo cuya salida se valida contra un esquema, síntesis de voz y montaje de subtítulos con Remotion.',
         'Persistí el resultado de cada paso en disco y dejé el proceso reanudable, para no repetir llamadas al modelo ya pagadas.',
       ],
+      /* El asistente estaba como proyecto aparte y no lo es: es el backend de este mismo
+         sitio. Sus dos viñetas se absorben aquí, que es donde el lector las sitúa. */
       'portfolio-site': [
-        'Construí este sitio con React y TypeScript, con tipografía variable y animaciones sin librería, reinterpretando un sistema de diseño ajeno y acreditándolo en el pie.',
+        'Construí este sitio con React y TypeScript, con el contenido bilingüe saliendo de un único archivo de perfil que alimenta también este CV, y las animaciones escritas sin librería.',
+        'Detrás corre un agente conversacional en Python sobre funciones serverless, que responde sobre mi trayectoria y solo sabe lo que hay en su base de conocimiento, en archivos de texto versionados.',
+        'Rehíce la orquestación en Python al desplegarlo, porque el plan gratuito de Vercel no soporta n8n; descarté litellm al medirlo (133 MB de 199, contra un techo de 250 MB por función) y hablo con el modelo por REST directo con httpx.',
       ],
     },
   },
@@ -167,16 +167,16 @@ export const TEXT = {
         'Containerised the application with Docker, which had been running natively on the machine, and deployed it on a new GCP instance with nginx as a reverse proxy between the containers and the host.',
         'Ran the migration in parallel: brought up and validated the new instance while the old one was still in production, configured the domain DNS and issued the certificates with Certbot until the application ran entirely over HTTPS. No service interruption.',
       ],
-      'portfolio-agent': [
-        'Built a conversational assistant that answers questions about my background and the decisions behind each project, with an explicit notice that an agent is answering and can be wrong.',
-        'Rebuilt the orchestration in Python on deployment, because the Vercel free plan does not support n8n; dropped litellm after measuring it (133 MB of 199, against a 250 MB per-function ceiling) and talk to the model over plain REST with httpx.',
-      ],
       'video-cli': [
         'Built a TypeScript command-line tool that splits long video into vertical clips: Whisper transcription, script generation by a model whose output is schema-validated, speech synthesis, and subtitle rendering with Remotion.',
         'Persisted every step to disk and made the process resumable, so already-paid model calls are never repeated.',
       ],
+      /* The assistant used to be a separate project and it is not: it is the backend of
+         this very site. Its two bullets are absorbed here, where the reader places them. */
       'portfolio-site': [
-        'Built this site with React and TypeScript, with variable type and animations written by hand, reinterpreting an existing design system and crediting it in the footer.',
+        'Built this site with React and TypeScript, with the bilingual content coming out of a single profile file that also feeds this CV, and the animations written without a library.',
+        'Behind it runs a conversational agent in Python on serverless functions, answering about my background and knowing only what is in its knowledge base, versioned text files.',
+        'Rebuilt the orchestration in Python on deployment, because the Vercel free plan does not support n8n; dropped litellm after measuring it (133 MB of 199, against a 250 MB per-function ceiling) and talk to the model over plain REST with httpx.',
       ],
     },
   },
