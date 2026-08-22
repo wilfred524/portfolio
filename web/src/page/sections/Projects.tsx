@@ -21,9 +21,18 @@ export function Projects() {
   const [abierto, setAbierto] = useState<ProjectItem | null>(null);
 
   // De qué empleo cuelga cada proyecto, para que el modal pueda situarlo sin que el
-  // dato se repita diez veces en el contenido.
+  // dato se repita nueve veces en el contenido.
   const empleoDe = new Map<string, string>();
   let empleoPintado = '';
+
+  // Cuántos grupos cuelgan de cada empleo. Con uno solo, su rótulo de categoría repite
+  // lo que acaba de decir la cabecera del contrato («GAF Technology Solutions» y debajo
+  // «Plataforma GAF»), así que no se pinta. Si algún día vuelve a haber dos, reaparece.
+  const gruposPorEmpleo = new Map<string, number>();
+  for (const group of profile.projectGroups) {
+    if (!group.employmentId) continue;
+    gruposPorEmpleo.set(group.employmentId, (gruposPorEmpleo.get(group.employmentId) ?? 0) + 1);
+  }
 
   return (
     <section className="section" id="experiencia">
@@ -48,10 +57,12 @@ export function Projects() {
               </header>
             )}
 
-            <p className="label group__label">
-              {group.category}
-              {group.note && ` · ${group.note}`}
-            </p>
+            {(!empleo || (gruposPorEmpleo.get(empleo.id) ?? 0) > 1) && (
+              <p className="label group__label">
+                {group.category}
+                {group.note && ` · ${group.note}`}
+              </p>
+            )}
 
             <div className="grid">
               {group.items.map((item) => (

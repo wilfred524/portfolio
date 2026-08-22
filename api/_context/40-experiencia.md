@@ -19,9 +19,13 @@ endeudamiento. Es un dominio de nicho, y conocerlo es parte de su valor.
 
 ## GAF Technology Solutions · desarrollador backend · oct 2025 – jul 2026
 
-**Un solo empleo**, con dos proyectos dentro y varias tareas en cada uno. Si alguien
-pregunta por su experiencia, esta es la estructura: *fue desarrollador backend en GAF, y
-entre lo que hizo allí está…*. No presentes cada tarea como si fuera un trabajo aparte.
+**Un solo empleo**, con varios proyectos dentro. Si alguien pregunta por su
+experiencia, esta es la estructura: *fue desarrollador backend en GAF, y entre lo que
+hizo allí está…*. No presentes cada proyecto como si fuera un trabajo aparte.
+
+Todo lo que hizo en ese contrato va junto, el motor de reglas incluido. Ese motor lo
+originaba CK, y separarlo lo sacaba de la plataforma en la que trabajaba: mismo empleo,
+mismo equipo. Si preguntan por CK, se explica ahí abajo; no es un empleo distinto.
 
 **Equipo de tecnología de 4 personas:** 2 desarrolladores, un líder técnico y un
 responsable de infraestructura y seguridad. Ese tamaño explica el alcance: en una
@@ -30,10 +34,12 @@ plantilla así, un desarrollador backend toca también despliegue e infraestruct
 Contrato por obra o labor, remoto. Terminó en julio de 2026 al cerrarse esa etapa;
 **hoy no trabaja allí y está disponible de inmediato**. Habla de ese periodo en pasado.
 
-### Proyecto: CK Comercializadora (empresa del mismo grupo)
+### CK Comercializadora (empresa del mismo grupo)
 
 CK origina las solicitudes. Nómbrala siempre así —«empresa del mismo grupo»—, nunca como
-filial: alternar los dos términos hace dudar de si son dos relaciones distintas.
+filial: alternar los dos términos hace dudar de si son dos relaciones distintas. No es un
+empleo aparte ni un cliente externo: es de dónde vienen las solicitudes que procesa la
+plataforma de GAF.
 
 #### Motor de reglas de crédito
 
@@ -58,7 +64,7 @@ cuerpo de las peticiones conforme cambiaba el modelo. No se la atribuyas.
 [AMPLIAR: ¿qué alternativa descartaste al modelar las reglas como datos? ¿Cuánto se
 tardaba antes en cambiar una política y cuánto ahora? Ese contraste es lo que convence.]
 
-### Proyecto: plataforma GAF
+### La plataforma de GAF
 
 Las cinco tareas que siguen son de la plataforma principal de GAF, no de CK.
 
@@ -182,28 +188,6 @@ Wilfred.
 
 ## Proyectos propios
 
-### Asistente del portfolio · en curso
-
-El agente con el que estás hablando. Responde sobre su trayectoria y las decisiones
-detrás de cada proyecto, **con aviso explícito de que responde un agente y puede
-equivocarse** —eso eres tú—.
-
-Lo montó primero con **n8n y la API de OpenAI**, y al desplegarlo **rehízo la
-orquestación en Python**, porque el plan gratuito de Vercel no soporta n8n.
-
-**Descartó litellm al medirlo**: pesaba 133 MB de los 199 que ocupaban las dependencias,
-contra un límite de 250 MB por función en Vercel, y su importación alargaba cada arranque
-en frío. Como la API de DeepSeek es compatible con la de OpenAI, hablarla directamente
-son ~40 líneas con `httpx`, que ya estaba entre las dependencias.
-
-Detalle que sí es suyo y merece contarse: **son dos llamadas al modelo, no una**. La
-primera responde en streaming (lo que lee el visitante); la segunda devuelve JSON
-validado con Pydantic (lo que el backend usa para decidir si crea una cita). Separadas,
-cada una hace una sola cosa; juntas, habría que esperar al JSON completo antes de pintar
-la primera palabra.
-
-*Python · FastAPI · DeepSeek · Vercel*
-
 ### CLI de recorte de vídeo · jul 2026 – en curso
 
 Herramienta en TypeScript que parte un vídeo largo en clips verticales: transcribe con
@@ -217,14 +201,37 @@ modelo ya pagadas**.
 Los dos detalles en negrita son lo interesante: validar la salida del modelo y hacer el
 proceso reanudable son decisiones de quien ha pagado la factura de no hacerlo.
 
-### Portfolio
+### Portfolio · 2026
 
-React y TypeScript, con tipografía variable y animaciones sin librería, reinterpretando
-un sistema de diseño ajeno y acreditándolo en el pie. Backend en Python (FastAPI)
-desplegado como función serverless en Vercel. Código público en
-github.com/wilfred524/portfolio.
+El sitio y el agente con el que estás hablando **son el mismo proyecto**, no dos: el
+frontend es React y TypeScript, y el backend que te responde es Python (FastAPI) sobre
+funciones serverless en Vercel. Si alguien pregunta por sus proyectos propios, son dos:
+este sitio y la CLI de vídeo. Código público en github.com/wilfred524/portfolio.
+
+El contenido de la página y el del CV salen **del mismo archivo de perfil**, en dos
+idiomas, para que no puedan contradecirse.
+
+Sobre el agente, que es la parte que suele interesar:
+
+- Responde **con aviso explícito de que responde un agente y puede equivocarse** (eso
+  eres tú), y solo sabe lo que hay en su base de conocimiento, archivos de texto
+  versionados.
+- Lo montó primero con **n8n y la API de OpenAI**, y al desplegarlo **rehízo la
+  orquestación en Python**, porque el plan gratuito de Vercel no soporta n8n.
+- **Descartó litellm al medirlo**: pesaba 133 MB de los 199 que ocupaban las
+  dependencias, contra un límite de 250 MB por función en Vercel, y su importación
+  alargaba cada arranque en frío. Como la API de DeepSeek es compatible con la de
+  OpenAI, hablarla directamente son ~40 líneas con `httpx`, que ya estaba entre las
+  dependencias.
+- Detalle que sí es suyo y merece contarse: **son dos llamadas al modelo, no una**. La
+  primera responde en streaming (lo que lee el visitante); la segunda devuelve JSON
+  validado con Pydantic (lo que el backend usa para decidir si crea una cita).
+  Separadas, cada una hace una sola cosa; juntas, habría que esperar al JSON completo
+  antes de pintar la primera palabra.
 
 Eligió ese stack porque era territorio nuevo: el backend ya sabía que lo tenía.
+
+*React · TypeScript · Python · FastAPI · Vercel*
 
 ---
 

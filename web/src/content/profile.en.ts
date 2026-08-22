@@ -149,11 +149,12 @@ export const en = {
   ],
   projectGroups: [
     {
-      category: 'CK Comercializadora',
+      /* One group for the whole contract. The rules engine used to sit apart because CK
+         originated it, and that separation pulled it out of the platform he worked on:
+         same job, same team. Who originates the applications is already stated in the
+         employment tagline, where it is said once and not repeated. */
+      category: 'GAF platform',
       employmentId: 'gaf',
-      /* One single way of naming the relationship with CK, here and in the employment
-         tagline: alternating "subsidiary" and "group company" read like two things. */
-      note: 'Company in the same group',
       items: [
         {
           id: 'rules-engine',
@@ -170,12 +171,6 @@ export const en = {
           },
           tags: ['Laravel', 'Vue.js', 'Inertia.js', 'PostgreSQL'],
         },
-      ],
-    },
-    {
-      category: 'GAF platform',
-      employmentId: 'gaf',
-      items: [
         {
           id: 'esignature',
           title: 'Electronic signature with identity validation',
@@ -281,20 +276,6 @@ export const en = {
       category: 'Projects',
       items: [
         {
-          id: 'portfolio-agent',
-          title: 'Portfolio assistant',
-          role: 'Personal project',
-          period: 'Ongoing',
-          summary:
-            'An agent that answers questions about my background, with its knowledge base in versioned files and the orchestration written in Python.',
-          metrics: [{ value: '133 MB', label: 'of dependency dropped' }],
-          brief:
-            'I built a conversational assistant that answers questions about my background and the decisions behind each project, with an explicit notice that an agent is answering and can be wrong. I first assembled it with n8n and the OpenAI API, and on deploying it I rebuilt the orchestration in Python, because the Vercel free plan does not support n8n. I dropped litellm after measuring it — 133 MB of the 199 the dependencies took, against a 250 MB per-function limit — and talk to the model over plain REST with httpx.',
-          /* No `url`: the assistant IS this page, so linking it from inside leads
-             nowhere. It does appear on the CV, in the contact line. */
-          tags: ['Python', 'FastAPI', 'DeepSeek', 'Vercel'],
-        },
-        {
           id: 'video-cli',
           title: 'Video clipping CLI',
           role: 'Personal project',
@@ -310,11 +291,15 @@ export const en = {
           title: 'Portfolio',
           role: 'Personal project',
           period: '2026',
+          /* The assistant used to be a separate entry. It is not: it is the backend of
+             this very site, and listing it apart counted two projects where there is
+             one, exactly the padding this profile avoids in the work history. */
           summary:
-            'This site: React and TypeScript, bilingual content from a single profile file, and animations written without a library.',
+            'This site and its backend: React and TypeScript at the front, Python behind it for the agent that answers about my background.',
+          metrics: [{ value: '133 MB', label: 'of dependency dropped' }],
           brief:
-            'I built this site with React and TypeScript, with variable fonts and animations written without a library, reinterpreting an existing design system and crediting it in the footer.',
-          tags: ['React', 'TypeScript', 'Vite'],
+            'I built this site with React and TypeScript, with the bilingual content coming out of a single profile file that also feeds the CV, and the animations written without a library. Behind it runs a conversational agent in Python on serverless functions, answering about my background and the decisions behind each project: it only knows what is in its knowledge base, versioned text files, and it states that an agent is answering and can be wrong. I first assembled it with n8n and the OpenAI API, and on deploying it I rebuilt the orchestration in Python, because the Vercel free plan does not support n8n. I dropped litellm after measuring it (133 MB of the 199 the dependencies took, against a 250 MB per-function limit) and talk to the model over plain REST with httpx.',
+          tags: ['React', 'TypeScript', 'Python', 'FastAPI', 'Vercel'],
           url: 'https://github.com/wilfred524/portfolio',
         },
       ],

@@ -144,7 +144,7 @@
         <p class="tagline">Payroll-deduction lending fintech. Technology team of 4: 2 developers, a tech lead, and an infrastructure and security lead. Applications are originated by CK Comercializadora, a company in the same group.</p>
         
         <div class="entry">
-          <p class="entry-title">Credit rules engine <span class="note">CK Comercializadora</span> <span class="stack">Laravel, Vue.js, Inertia.js, PostgreSQL</span></p>
+          <p class="entry-title">Credit rules engine <span class="stack">Laravel, Vue.js, Inertia.js, PostgreSQL</span></p>
           <ul>
             <li>Modelled the data and translated business policy into a rules schema in PostgreSQL: eligibility, garnishments, term limits, and employment and financial requirements per payer. The business team now adjusts parameters without a deployment.</li>
             <li>Implemented the full evaluation logic: borrowing-capacity calculation under Law 1527 (payroll-deduction lending) and Law 50 for active employees and pensioners, decision criteria, special rules, and application re-evaluation.</li>
@@ -209,14 +209,6 @@
         
         
         <div class="entry">
-          <p class="entry-title">Portfolio assistant <span class="note">Personal project · Ongoing</span> <span class="stack">Python, FastAPI, DeepSeek, Vercel</span></p>
-          <ul>
-            <li>Built a conversational assistant that answers questions about my background and the decisions behind each project, with an explicit notice that an agent is answering and can be wrong.</li>
-            <li>Rebuilt the orchestration in Python on deployment, because the Vercel free plan does not support n8n; dropped litellm after measuring it (133 MB of 199, against a 250 MB per-function ceiling) and talk to the model over plain REST with httpx.</li>
-          </ul>
-        </div>
-
-        <div class="entry">
           <p class="entry-title">Video clipping CLI <span class="note">Personal project · Jul 2026 – ongoing</span> <span class="stack">TypeScript, Node.js, Remotion, ffmpeg</span></p>
           <ul>
             <li>Built a TypeScript command-line tool that splits long video into vertical clips: Whisper transcription, script generation by a model whose output is schema-validated, speech synthesis, and subtitle rendering with Remotion.</li>
@@ -225,9 +217,11 @@
         </div>
 
         <div class="entry">
-          <p class="entry-title">Portfolio <span class="note">Personal project · 2026</span> <span class="stack">React, TypeScript, Vite</span></p>
+          <p class="entry-title">Portfolio <span class="note">Personal project · 2026</span> <span class="stack">React, TypeScript, Python, FastAPI, Vercel</span></p>
           <ul>
-            <li>Built this site with React and TypeScript, with variable type and animations written by hand, reinterpreting an existing design system and crediting it in the footer.</li>
+            <li>Built this site with React and TypeScript, with the bilingual content coming out of a single profile file that also feeds this CV, and the animations written without a library.</li>
+            <li>Behind it runs a conversational agent in Python on serverless functions, answering about my background and knowing only what is in its knowledge base, versioned text files.</li>
+            <li>Rebuilt the orchestration in Python on deployment, because the Vercel free plan does not support n8n; dropped litellm after measuring it (133 MB of 199, against a 250 MB per-function ceiling) and talk to the model over plain REST with httpx.</li>
           </ul>
         </div>
       </div>

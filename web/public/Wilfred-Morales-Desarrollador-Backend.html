@@ -144,7 +144,7 @@
         <p class="tagline">Fintech de crédito por libranza. Equipo de tecnología de 4 personas: 2 desarrolladores, líder técnico y responsable de infraestructura y seguridad. Las solicitudes las origina CK Comercializadora, empresa del mismo grupo.</p>
         
         <div class="entry">
-          <p class="entry-title">Motor de reglas de crédito <span class="note">CK Comercializadora</span> <span class="stack">Laravel, Vue.js, Inertia.js, PostgreSQL</span></p>
+          <p class="entry-title">Motor de reglas de crédito <span class="stack">Laravel, Vue.js, Inertia.js, PostgreSQL</span></p>
           <ul>
             <li>Modelé los datos y traduje las reglas de negocio a un esquema de políticas en PostgreSQL: elegibilidad, embargos, límites de plazo y requisitos laborales y financieros por pagaduría. El área de negocio ajusta parámetros sin desplegar código.</li>
             <li>Implementé la evaluación completa: cálculo de capacidad de endeudamiento según la Ley 1527 (libranzas) y la Ley 50 para activos y pensionados, criterios de decisión, reglas especiales y reevaluación de solicitudes.</li>
@@ -209,14 +209,6 @@
         
         
         <div class="entry">
-          <p class="entry-title">Asistente del portfolio <span class="note">Proyecto propio · En curso</span> <span class="stack">Python, FastAPI, DeepSeek, Vercel</span></p>
-          <ul>
-            <li>Construí un asistente conversacional que responde sobre mi trayectoria y las decisiones detrás de cada proyecto, con aviso explícito de que responde un agente y puede equivocarse.</li>
-            <li>Rehíce la orquestación en Python al desplegarlo, porque el plan gratuito de Vercel no soporta n8n; descarté litellm al medirlo (133 MB de 199, contra un techo de 250 MB por función) y hablo con el modelo por REST directo con httpx.</li>
-          </ul>
-        </div>
-
-        <div class="entry">
           <p class="entry-title">CLI de recorte de vídeo <span class="note">Proyecto propio · Jul 2026 – en curso</span> <span class="stack">TypeScript, Node.js, Remotion, ffmpeg</span></p>
           <ul>
             <li>Construí una herramienta de línea de comandos en TypeScript que parte un vídeo largo en clips verticales: transcripción con Whisper, guion generado por un modelo cuya salida se valida contra un esquema, síntesis de voz y montaje de subtítulos con Remotion.</li>
@@ -225,9 +217,11 @@
         </div>
 
         <div class="entry">
-          <p class="entry-title">Portfolio <span class="note">Proyecto propio · 2026</span> <span class="stack">React, TypeScript, Vite</span></p>
+          <p class="entry-title">Portfolio <span class="note">Proyecto propio · 2026</span> <span class="stack">React, TypeScript, Python, FastAPI, Vercel</span></p>
           <ul>
-            <li>Construí este sitio con React y TypeScript, con tipografía variable y animaciones sin librería, reinterpretando un sistema de diseño ajeno y acreditándolo en el pie.</li>
+            <li>Construí este sitio con React y TypeScript, con el contenido bilingüe saliendo de un único archivo de perfil que alimenta también este CV, y las animaciones escritas sin librería.</li>
+            <li>Detrás corre un agente conversacional en Python sobre funciones serverless, que responde sobre mi trayectoria y solo sabe lo que hay en su base de conocimiento, en archivos de texto versionados.</li>
+            <li>Rehíce la orquestación en Python al desplegarlo, porque el plan gratuito de Vercel no soporta n8n; descarté litellm al medirlo (133 MB de 199, contra un techo de 250 MB por función) y hablo con el modelo por REST directo con httpx.</li>
           </ul>
         </div>
       </div>
