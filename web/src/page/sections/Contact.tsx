@@ -18,11 +18,11 @@ export function Contact() {
     <section className="section" id="contacto">
       <SectionHeader title={profile.ui.sections.contact} />
 
-      <div className="raw">
+      <div className="contact">
         {facts.length > 0 && (
-          <dl className="raw">
+          <dl className="cols">
             {facts.map((fact) => (
-              <div key={fact.label}>
+              <div key={fact.label} className="cols__item">
                 <dt className="label">{fact.label}</dt>
                 <dd>
                   {fact.value}
@@ -40,10 +40,10 @@ export function Contact() {
           </dl>
         )}
 
-        <div>
+        <p className="contact__direct">
           <a href={`mailto:${profile.email}`}>{profile.email}</a>
-          <p className="meta">{profile.phone}</p>
-        </div>
+          <span className="meta">{profile.phone}</span>
+        </p>
 
         <div className="hero__links">
           {/* Un solo documento, el del idioma activo, y se descarga en vez de abrirse. */}

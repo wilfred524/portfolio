@@ -33,7 +33,6 @@ function ProjectRow({ item, labels }: { item: ProjectItem; labels: UiStrings['bl
 
       <div className="henry-proj__main">
         <h3 className="henry-proj__title">{item.title}</h3>
-        {item.metric && <p className="henry-proj__metric">{item.metric}</p>}
 
         {item.body
           ? BLOCK_KEYS.map((key) => (

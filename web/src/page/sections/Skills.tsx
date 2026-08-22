@@ -15,9 +15,11 @@ export function Skills() {
     <section className="section" id="habilidades">
       <SectionHeader title={profile.ui.sections.skills} />
 
-      <dl className="raw">
+      {/* En dos columnas y no en una lista: siete áreas apiladas ocupaban una pantalla
+          entera para lo que son siete líneas de texto. */}
+      <dl className="cols">
         {profile.skillGroups.map((group) => (
-          <div key={group.area}>
+          <div key={group.area} className="cols__item">
             <dt className="label">{group.area}</dt>
             <dd>{group.items.join(' · ')}</dd>
           </div>

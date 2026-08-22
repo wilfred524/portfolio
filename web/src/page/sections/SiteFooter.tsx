@@ -15,7 +15,7 @@ export function SiteFooter() {
   const profile = useContent();
 
   return (
-    <footer className="section">
+    <footer className="footer">
       <h2 className="label">{profile.ui.sections.colophon}</h2>
       <p className="prose">{profile.colophon}</p>
 
@@ -30,7 +30,7 @@ export function SiteFooter() {
         </a>
       </p>
 
-      <p className="meta">© 2026 {profile.name}</p>
+      <p className="footer__copy">© 2026 {profile.name}</p>
     </footer>
   );
 }

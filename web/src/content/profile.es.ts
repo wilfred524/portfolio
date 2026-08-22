@@ -223,6 +223,8 @@ export const es = {
         {
           id: 'rules-engine',
           title: 'Motor de reglas de crédito',
+          summary:
+            'Las políticas de crédito viven como datos en PostgreSQL, no como código: negocio ajusta un límite de plazo sin esperar un despliegue.',
           body: {
             problem:
               'Cambiar una política de crédito exigía un despliegue: el área de negocio no podía ajustar un límite de plazo o una condición de embargo sin pasar por desarrollo.',
@@ -242,6 +244,12 @@ export const es = {
         {
           id: 'esignature',
           title: 'Firma electrónica con validación de identidad',
+          summary:
+            'Un documento de 24 páginas que se llenaba a mano, ahora generado desde plantillas y firmado tras verificar la identidad del cliente.',
+          metrics: [
+            { value: '24', label: 'páginas antes a mano' },
+            { value: '20 min', label: 'trámite completo' },
+          ],
           body: {
             problem:
               'El módulo anterior estaba en desuso y el documento —24 páginas— se llenaba a mano. Construí el módulo desde cero: ahora se genera automáticamente desde plantillas, con una plantilla distinta por producto.',
@@ -255,7 +263,12 @@ export const es = {
         {
           id: 'scoring',
           title: 'Proceso mensual de puntaje crediticio',
-          metric: 'Más de 320.000 personas distintas por corrida, una vez al mes',
+          summary:
+            'Un contenedor con cron mensual saca los datos de PostgreSQL, ejecuta el modelo de riesgo y carga los resultados sin intervención manual.',
+          metrics: [
+            { value: '320.000+', label: 'personas por corrida' },
+            { value: '5.000', label: 'filas por bloque' },
+          ],
           body: {
             problem:
               'Un modelo de riesgo vivía en un script del área de riesgo, sin forma de llegar a producción.',
@@ -273,7 +286,12 @@ export const es = {
              evaluador técnico busca y casi nadie aporta. */
           id: 'query-optimization',
           title: 'Optimización de consultas en producción',
-          metric: 'De 20-30 s con timeouts a 3-6 s',
+          summary:
+            'Una consulta que tardaba entre 20 y 30 segundos y acababa en timeout, resuelta con filtros previos, índices y paginación.',
+          metrics: [
+            { value: '3-6 s', label: 'antes 20-30 s' },
+            { value: '0', label: 'timeouts' },
+          ],
           body: {
             problem:
               'Una consulta que cruzaba varias tablas tardaba entre 20 y 30 segundos en devolver los datos, y con volúmenes altos terminaba en timeout: la pantalla que dependía de ella quedaba inservible justo cuando más registros había.',
@@ -287,6 +305,9 @@ export const es = {
         {
           id: 'access-control',
           title: 'Control de accesos y permisos',
+          summary:
+            'Árbol de permisos sobre 17 módulos, hasta el nivel de opción y subproceso, con los usuarios y roles existentes migrados sin parar la operación.',
+          metrics: [{ value: '17', label: 'módulos cubiertos' }],
           brief:
             'Construí el árbol de permisos de la plataforma sobre 17 módulos, con permisos a nivel de opción y de subproceso, blindé ruta a ruta y migré los usuarios y roles existentes al esquema nuevo sin interrumpir la operación.',
           tags: ['Spatie Permission', 'Laravel', 'PostgreSQL'],
@@ -294,6 +315,12 @@ export const es = {
         {
           id: 'layered-migration',
           title: 'Migración a arquitectura por capas',
+          summary:
+            'Primera etapa de la migración de seis años de código, módulo a módulo, hasta dejar los controladores sin una sola consulta SQL en crudo.',
+          metrics: [
+            { value: '6 años', label: 'de código heredado' },
+            { value: '3 meses', label: 'de trabajo' },
+          ],
           brief:
             'Participé en la primera etapa de la migración de la plataforma —seis años de código— hacia una arquitectura por capas, verificando módulo a módulo cada cambio antes de continuar y eliminando por completo las consultas SQL en crudo de los controladores. Tres meses de trabajo, con revisión del líder técnico en cada paso.',
           tags: ['Arquitectura por capas', 'Laravel', 'PostgreSQL'],
@@ -301,6 +328,8 @@ export const es = {
         {
           id: 'infrastructure',
           title: 'Infraestructura y despliegue',
+          summary:
+            'La aplicación pasó de correr nativa a un contenedor en una instancia nueva de GCP, con nginx delante y migración en paralelo, sin cortar el servicio.',
           body: {
             problem:
               'La aplicación corría de forma nativa sobre la máquina, sin aislamiento entre el entorno y el código.',
@@ -321,6 +350,9 @@ export const es = {
           title: 'Asistente del portfolio',
           role: 'Proyecto propio',
           period: 'En curso',
+          summary:
+            'Un agente que responde sobre mi trayectoria, con la base de conocimiento en archivos versionados y la orquestación escrita en Python.',
+          metrics: [{ value: '133 MB', label: 'de dependencia descartada' }],
           brief:
             'Construí un asistente conversacional que responde sobre mi trayectoria y las decisiones detrás de cada proyecto, con aviso explícito de que responde un agente y puede equivocarse. Lo monté primero con n8n y la API de OpenAI, y al desplegarlo rehíce la orquestación en Python porque el plan gratuito de Vercel no soporta n8n. Descarté litellm al medirlo —pesaba 133 MB de los 199 que ocupaban las dependencias, contra un límite de 250 MB por función— y hablo con el modelo por REST directo con httpx.',
           /* Sin `url`: el asistente ES esta página, así que enlazarla desde dentro no
@@ -332,6 +364,8 @@ export const es = {
           title: 'CLI de recorte de vídeo',
           role: 'Proyecto propio',
           period: 'Jul 2026 – en curso',
+          summary:
+            'Parte un vídeo largo en clips verticales: transcribe, escribe el guion, narra y monta los subtítulos, paso a paso y reanudable.',
           brief:
             'Construí una herramienta de línea de comandos en TypeScript que parte un vídeo largo en clips verticales: transcribe con Whisper, escribe el guion con un modelo cuya salida se valida contra un esquema antes de usarla, narra con síntesis de voz y monta los subtítulos con Remotion. Cada paso persiste su resultado en disco y el proceso es reanudable, para no repetir llamadas al modelo ya pagadas.',
           tags: ['TypeScript', 'Node.js', 'Remotion', 'ffmpeg'],
@@ -341,6 +375,8 @@ export const es = {
           title: 'Portfolio',
           role: 'Proyecto propio',
           period: '2026',
+          summary:
+            'Este sitio: React y TypeScript, contenido bilingüe desde un único archivo de perfil y animaciones escritas sin librería.',
           brief:
             'Construí este sitio con React y TypeScript, con tipografía variable y animaciones sin librería, reinterpretando un sistema de diseño ajeno y acreditándolo en el pie.',
           tags: ['React', 'TypeScript', 'Vite'],
@@ -367,6 +403,13 @@ export const es = {
       colophon: 'Cómo está hecho este sitio',
     },
     blocks: { problem: 'Problema', hard: 'Lo difícil', result: 'Resultado' },
+    project: {
+      open: 'Ver detalle',
+      close: 'Cerrar',
+      metrics: 'Cifras',
+      stack: 'Tecnologías',
+      visit: 'Ver el repositorio',
+    },
     viewCode: 'Ver el código',
     chat: {
       title: 'Pregunta lo que la página no cuenta',
