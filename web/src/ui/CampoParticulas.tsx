@@ -109,7 +109,7 @@ export function CampoParticulas({
         alFormar: () => {
           if (cancelado) return;
           revelar.current(pieza.id);
-          temporizador = window.setTimeout(() => paso(indice + 1), 220);
+          temporizador = window.setTimeout(() => paso(indice + 1), 460);
         },
       });
     };
