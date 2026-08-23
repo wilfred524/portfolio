@@ -42,14 +42,11 @@ export function useObservatorio() {
     return false;
   });
 
-  // El ajuste del sistema manda mientras el visitante no haya elegido: si pidió menos
-  // movimiento, entra en modo documento sin tener que descubrir el conmutador.
+  // El ajuste del sistema manda mientras el visitante no haya elegido.
   useEffect(() => {
     if (reducido && localStorage.getItem(CLAVE_MODO) === null) setDocumento(true);
   }, [reducido]);
 
-  // Ir hacia atrás en el navegador devuelve al plano anterior, que es lo que espera
-  // cualquiera que haya llegado por un enlace directo.
   useEffect(() => {
     const alCambiarHash = () => setPlano(planoDesdeHash(window.location.hash));
     window.addEventListener('hashchange', alCambiarHash);
@@ -62,9 +59,8 @@ export function useObservatorio() {
       if (destino !== actual) setSentido(destino > actual ? 1 : -1);
       return destino;
     });
-    // replaceState y no `location.hash = …`: cambiar el hash apila una entrada por cada
-    // plano visitado, y entonces el botón «atrás» del navegador obliga a recorrer siete
-    // veces la narración para salir de la página.
+    // replaceState: con `location.hash` cada plano apilaría una entrada de historial y
+    // salir de la página costaría siete pulsaciones de «atrás».
     history.replaceState(null, '', `#/${PLANOS[destino].id}`);
   }, []);
 
@@ -75,9 +71,8 @@ export function useObservatorio() {
     });
   }, []);
 
-  // Flechas y AvPág/RePág para moverse entre planos. No se capturan si el foco está en un
-  // campo de texto (el chat) ni con un modificador pulsado: ahí las flechas son del
-  // visitante, no de la narración.
+  // Las flechas no se capturan dentro de un campo de texto ni con un modificador: ahí
+  // son del visitante, no de la narración.
   useEffect(() => {
     if (documento) return;
 

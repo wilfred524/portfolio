@@ -29,8 +29,6 @@ export default function SitePage() {
   const { plano, sentido, irA, documento, conmutarModo, reducido } = useObservatorio();
   const [abierto, setAbierto] = useState<ProjectItem | null>(null);
 
-  // Índice de proyectos por id: el reparto por planos vive en `planos.ts` (presentación),
-  // así que hay que resolver cada id contra el contenido.
   const porId = new Map<string, ProjectItem>();
   for (const grupo of profile.projectGroups) {
     for (const item of grupo.items) porId.set(item.id, item);
@@ -47,14 +45,11 @@ export default function SitePage() {
         {profile.ui.planes.contact}
       </a>
 
-      {/* Primer hijo y por debajo del contenido, sin z-index negativo: #root crea su
-          propio contexto de apilamiento y ahí un -1 quedaría tapado por cualquier fondo. */}
       {!documento && <CampoParticulas plano={plano} reducido={reducido} />}
 
       <Hud plano={plano} irA={irA} documento={documento} conmutarModo={conmutarModo} />
       {!documento && <Flechas plano={plano} irA={irA} />}
 
-      {/* El sentido lo consume el CSS para decidir por qué lado entra cada plano. */}
       <main className="planos" data-sentido={sentido}>
         {PLANOS.map((p, indice) => {
           const activo = documento || indice === plano;
@@ -68,8 +63,6 @@ export default function SitePage() {
               id={p.id}
               className={activo ? 'plano is-activo' : 'plano'}
               aria-label={profile.ui.planes[p.nombre]}
-              // Retira el plano oculto del orden de tabulación sin sacarlo del DOM:
-              // nadie tabula a ciegas dentro de una pantalla que no ve.
               inert={!activo}
             >
               {p.id === 'start' && <Umbral irA={irA} />}
@@ -90,8 +83,8 @@ export default function SitePage() {
       </main>
 
       {abierto && (
-        // La clave fuerza un montaje nuevo por proyecto: sin ella, abrir otro reciclaría
-        // el panel y los efectos de foco y de bloqueo de scroll no volverían a correr.
+        /* La clave fuerza un montaje nuevo: sin ella, abrir otro proyecto reciclaría el
+           panel y los efectos de foco y de bloqueo de scroll no volverían a correr. */
         <ProjectModal
           key={abierto.id}
           item={abierto}
