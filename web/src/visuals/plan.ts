@@ -18,8 +18,8 @@ export interface PlanVista {
 
 /** Densidad máxima a la que se puede espesar una figura al repartirle sobrantes. */
 const HOLGURA = 0.6;
-/** Parte del campo que puede llevarse una vista. El resto tiene que seguir siendo cielo. */
-const TECHO = 0.55;
+/** Parte del campo que puede llevarse una figura de texto. El resto sigue siendo cielo. */
+const TECHO = 0.5;
 /** Separación entre estrellas dentro de un renglón, y entre renglones. */
 const PASO_TEXTO = 9;
 const ALTO_RENGLON = 13;
@@ -35,8 +35,10 @@ const ALTO_RENGLON = 13;
 export function planificarVista(figuras: Figura[], disponibles: number, movil: boolean): PlanVista {
   if (figuras.length === 0) return { piezas: [], total: 0 };
 
-  const min = movil ? 40 : 70;
-  const max = movil ? 72 : 140;
+  // Más materia por figura: con el enjambre único la demanda instantánea es la de una
+  // sola pieza, no la suma del plano, así que se puede dibujar mucho más definida.
+  const min = movil ? 70 : 120;
+  const max = movil ? 130 : 240;
 
   const techo = Math.max(60, Math.round(disponibles * TECHO));
   const base = figuras.map((figura) =>
