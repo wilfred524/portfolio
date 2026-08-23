@@ -201,7 +201,7 @@ export class ParticleEngine {
     // Cierra el fundido que quedara a medias: si no, las partículas de la pieza anterior
     // se quedan visibles encima de su propio trazo para siempre.
     for (const p of this.particulas) {
-      if (p.estado === 'asentada' && this.cede) p.estado = 'latente';
+      if (p.estado === 'asentada' && p.pieza && this.cede) p.estado = 'latente';
     }
 
     const necesarias = Math.min(opciones.cuantas, puntos.length);
@@ -214,7 +214,13 @@ export class ParticleEngine {
      */
     const enJuego = this.particulas
       .map((p, i) => ({ p, i }))
-      .filter(({ p }) => p.estado === 'latente' || p.estado === 'dispersa');
+      .filter(
+        ({ p }) =>
+          p.estado === 'latente' ||
+          p.estado === 'dispersa' ||
+          // Materia que sobró de una transición anterior y quedó posada.
+          (p.estado === 'asentada' && p.pieza === null),
+      );
 
     for (const { p, i } of enJuego) {
       if (elegidas.length >= necesarias) break;
@@ -253,6 +259,17 @@ export class ParticleEngine {
     const cx = destinos.reduce((a, p) => a + p.x, 0) / destinos.length;
     const cy = destinos.reduce((a, p) => a + p.y, 0) / destinos.length;
     this.asignar(elegidas, destinos, cx, cy, opciones.pieza);
+
+    // La materia que no entra en esta figura se posa donde esté: no vuelve al cielo,
+    // pero tampoco puede quedarse derivando para siempre, o el bucle no pararía nunca.
+    const usadas = new Set(elegidas);
+    this.particulas.forEach((p, i) => {
+      if (usadas.has(i) || p.estado !== 'dispersa') return;
+      p.estado = 'asentada';
+      p.pieza = null;
+      p.tx = p.x;
+      p.ty = p.y;
+    });
 
     this.viaje = 0;
     this.fundido = 0;
@@ -322,7 +339,9 @@ export class ParticleEngine {
       alguna = true;
       p.estado = 'dispersa';
       p.pieza = null;
-      p.alfa = 1;
+      // Aparece justo donde estaba el trazo, que a la vez se está yendo: el ojo lee que
+      // el dibujo se granuló, no que una cosa se fue y otra llegó.
+      p.alfa = 0;
     }
     if (alguna) this.iniciar();
   }
@@ -398,7 +417,7 @@ export class ParticleEngine {
       p.px = p.x;
       p.py = p.y;
       p.alfa = 1;
-      if (p.estado === 'viaje') p.estado = this.cede ? 'latente' : 'asentada';
+      if (p.estado === 'viaje') p.estado = this.cede && p.pieza ? 'latente' : 'asentada';
       if (p.estado === 'dispersa') p.estado = 'fondo';
     }
     this.pintar();
@@ -417,7 +436,9 @@ export class ParticleEngine {
     } else if (this.cede && this.fundido < 1) {
       this.fundido = Math.min(1, this.fundido + dt / 420);
       if (this.fundido >= 1) {
-        for (const p of this.particulas) if (p.estado === 'asentada') p.estado = 'latente';
+        for (const p of this.particulas) {
+          if (p.estado === 'asentada' && p.pieza) p.estado = 'latente';
+        }
         this.reponerFondo();
       }
     }
@@ -451,7 +472,7 @@ export class ParticleEngine {
 
     for (const p of this.particulas) {
       if (p.estado === 'latente') continue;
-      const cesion = p.estado === 'asentada' && this.cede ? 1 - this.fundido : 1;
+      const cesion = p.estado === 'asentada' && p.pieza && this.cede ? 1 - this.fundido : 1;
       const alfa = Math.max(0, Math.min(1, p.brillo * cesion * p.alfa));
       if (alfa <= 0.01) continue;
       const lado = p.radio * 11;
