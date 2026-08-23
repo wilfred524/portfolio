@@ -22,6 +22,8 @@ export interface Punto {
 interface Particula {
   x: number;
   y: number;
+  /** Reclutada para la figura en curso, frente a las que se quedan de cielo. */
+  figura: boolean;
   px: number;
   py: number;
   hx: number;
@@ -41,6 +43,9 @@ const DURACION = 1100;
 const MAX_DT = 32;
 const MAX_ENLACE = 120;
 const ESTELA = 5;
+/** Cuánto del campo se recluta: el resto sigue de cielo, o la pantalla se queda muerta. */
+const RECLUTA = 0.6;
+const FUNDIDO = 320;
 
 export class ParticleEngine {
   private canvas: HTMLCanvasElement;
@@ -54,6 +59,10 @@ export class ParticleEngine {
   private ultimo = 0;
   private tiempo = 0;
   private viaje = 1;
+  /** 0 mientras las partículas de la figura se ven, 1 cuando ya cedieron al trazo. */
+  private fundido = 0;
+  private alFormar: (() => void) | null = null;
+  private cede = false;
   private conexiones = true;
   private colores = { core: '235,235,245', glow: '220,220,235', line: '180,180,200' };
 
@@ -124,6 +133,7 @@ export class ParticleEngine {
       return {
         x,
         y,
+        figura: false,
         px: x,
         py: y,
         hx,
@@ -142,26 +152,59 @@ export class ParticleEngine {
   }
 
   /**
-   * Arranca un viaje hacia anclas nuevas. Sin `puntos`, el campo se redistribuye.
+   * Manda el campo a anclas nuevas. Sin `puntos`, se redistribuye como cielo.
    *
-   * El emparejamiento va por ángulo alrededor del centro: al azar, cientos de
-   * trayectorias se cruzan y el resultado es ruido en vez de una masa que se pliega.
+   * Con una figura solo se recluta parte del campo, y son las partículas más cercanas a
+   * ella: así el recorrido es corto y el resto sigue de fondo. El emparejamiento va por
+   * ángulo; al azar, cientos de trayectorias se cruzan y el resultado es ruido en vez de
+   * una masa que se pliega.
    */
-  formar(puntos?: Punto[]) {
-    const destinos: Punto[] = puntos?.length
-      ? this.repartir(puntos, this.particulas.length)
-      : this.particulas.map(() => ({ x: Math.random() * this.w, y: Math.random() * this.h }));
+  formar(puntos?: Punto[], opciones?: { alFormar?: () => void; ceder?: boolean }) {
+    const total = this.particulas.length;
+    const conFigura = !!puntos?.length;
+    const reclutadas = conFigura ? Math.round(total * RECLUTA) : 0;
 
-    const cx = this.w / 2;
-    const cy = this.h / 2;
+    const cielo = () => ({ x: Math.random() * this.w, y: Math.random() * this.h });
+
+    if (conFigura) {
+      const cx = puntos!.reduce((a, p) => a + p.x, 0) / puntos!.length;
+      const cy = puntos!.reduce((a, p) => a + p.y, 0) / puntos!.length;
+      const cercanas = this.particulas
+        .map((p, i) => ({ i, d: (p.x - cx) ** 2 + (p.y - cy) ** 2 }))
+        .sort((a, b) => a.d - b.d)
+        .slice(0, reclutadas)
+        .map((e) => e.i);
+
+      const marcadas = new Set(cercanas);
+      this.particulas.forEach((p, i) => (p.figura = marcadas.has(i)));
+
+      this.asignar(cercanas, this.repartir(puntos!, reclutadas), cx, cy);
+      const resto = this.particulas.map((_, i) => i).filter((i) => !marcadas.has(i));
+      this.asignar(resto, resto.map(cielo), this.w / 2, this.h / 2);
+    } else {
+      this.particulas.forEach((p) => (p.figura = false));
+      const todas = this.particulas.map((_, i) => i);
+      this.asignar(todas, todas.map(cielo), this.w / 2, this.h / 2);
+    }
+
+    this.viaje = 0;
+    this.fundido = 0;
+    this.alFormar = opciones?.alFormar ?? null;
+    // Sin `ceder`, la figura se queda hecha de estrellas: es lo que pasa en los planos
+    // donde no hay ningún trazo debajo al que dar el relevo.
+    this.cede = opciones?.ceder ?? false;
+  }
+
+  private asignar(indices: number[], destinos: Punto[], cx: number, cy: number) {
     const angulo = (p: Punto) => Math.atan2(p.y - cy, p.x - cx);
-
-    const orden = this.particulas.map((p, i) => ({ i, a: angulo(p) })).sort((a, b) => a.a - b.a);
-    destinos.sort((a, b) => angulo(a) - angulo(b));
+    const orden = indices
+      .map((i) => ({ i, a: angulo(this.particulas[i]) }))
+      .sort((a, b) => a.a - b.a);
+    const puntos = [...destinos].sort((a, b) => angulo(a) - angulo(b));
 
     orden.forEach(({ i }, puesto) => {
       const p = this.particulas[i];
-      const d = destinos[puesto];
+      const d = puntos[puesto];
       p.ox = p.x;
       p.oy = p.y;
       p.tx = d.x;
@@ -171,8 +214,21 @@ export class ParticleEngine {
       p.curva = (puesto % 2 === 0 ? 1 : -1) * (0.12 + Math.random() * 0.18);
       p.retardo = Math.random() * 0.25;
     });
+  }
 
+  /** Suelta las partículas de la figura: vuelven a ser cielo. */
+  liberar() {
+    const enFigura = this.particulas.map((p, i) => (p.figura ? i : -1)).filter((i) => i >= 0);
+    if (enFigura.length === 0) return;
+    this.particulas.forEach((p) => (p.figura = false));
+    this.asignar(
+      enFigura,
+      enFigura.map(() => ({ x: Math.random() * this.w, y: Math.random() * this.h })),
+      this.w / 2,
+      this.h / 2,
+    );
     this.viaje = 0;
+    this.fundido = 0;
   }
 
   private repartir(puntos: Punto[], cantidad: number): Punto[] {
@@ -202,6 +258,10 @@ export class ParticleEngine {
     this.raf = null;
   }
 
+  private hayFigura() {
+    return this.particulas.some((p) => p.figura);
+  }
+
   /** Un fotograma ya asentado: es lo que se ve con `prefers-reduced-motion`. */
   pintarQuieto() {
     this.viaje = 1;
@@ -215,7 +275,17 @@ export class ParticleEngine {
   }
 
   private actualizar(dt: number) {
-    if (this.viaje < 1) this.viaje = Math.min(1, this.viaje + dt / DURACION);
+    if (this.viaje < 1) {
+      this.viaje = Math.min(1, this.viaje + dt / DURACION);
+      // La figura queda formada: se avisa una vez, y las partículas empiezan a ceder
+      // el sitio al trazo que aparece debajo.
+      if (this.viaje >= 1 && this.alFormar) {
+        this.alFormar();
+        this.alFormar = null;
+      }
+    } else if (this.cede && this.hayFigura() && this.fundido < 1) {
+      this.fundido = Math.min(1, this.fundido + dt / FUNDIDO);
+    }
     const f = this.tiempo / 1000;
 
     for (const p of this.particulas) {
@@ -247,7 +317,9 @@ export class ParticleEngine {
     const f = this.tiempo / 1000;
     for (const p of this.particulas) {
       const pulso = Math.sin(f * 0.9 + p.semilla) * 0.1;
-      const alfa = Math.max(0, Math.min(1, p.brillo + pulso));
+      const cesion = p.figura ? 1 - this.fundido : 1;
+      const alfa = Math.max(0, Math.min(1, (p.brillo + pulso) * cesion));
+      if (alfa <= 0.01) continue;
       const lado = p.radio * 11;
 
       ctx.globalAlpha = alfa * 0.8;

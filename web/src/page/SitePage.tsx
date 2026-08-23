@@ -1,10 +1,11 @@
 import '@fontsource-variable/inter';
 import '../styles/site.css';
-import { useState } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 import type { ProjectItem } from '../content';
 import { useContent } from '../i18n/LanguageProvider';
 import { useObservatorio } from '../hooks/useObservatorio';
-import { CampoParticulas } from '../ui/CampoParticulas';
+import { CampoParticulas, type Figura } from '../ui/CampoParticulas';
+import { PIEZAS, PIEZAS_PLANO } from '../visuals/piezas';
 import { Flechas, Hud } from '../ui/Hud';
 import { ProjectModal } from '../ui/ProjectModal';
 import { PLANOS } from './planos';
@@ -28,6 +29,8 @@ export default function SitePage() {
   const profile = useContent();
   const { plano, sentido, irA, documento, conmutarModo, reducido } = useObservatorio();
   const [abierto, setAbierto] = useState<ProjectItem | null>(null);
+  const [reveladas, setReveladas] = useState<Set<string>>(new Set());
+  const [saltado, setSaltado] = useState(false);
 
   const porId = new Map<string, ProjectItem>();
   for (const grupo of profile.projectGroups) {
@@ -39,13 +42,56 @@ export default function SitePage() {
     for (const item of grupo.items) empleoDe.set(item.id, grupo.employmentId);
   }
 
+  // Las figuras del plano activo, en orden: es la cascada que sigue el enjambre.
+  const figuras = useMemo<Figura[]>(() => {
+    const actual = PLANOS[plano];
+    if (actual.proyectos?.length) {
+      return actual.proyectos
+        .filter((id) => PIEZAS[id])
+        .map((id) => ({ id, d: PIEZAS[id], conHueco: true }));
+    }
+    const propia = PIEZAS_PLANO[actual.id];
+    return propia ? [{ id: actual.id, d: propia, conHueco: false }] : [];
+  }, [plano]);
+
+  // En modo documento no hay cascada: todas las piezas se ven de entrada, y las de
+  // todos los planos, no solo las del activo.
+  useEffect(() => {
+    setSaltado(false);
+    if (!documento) {
+      setReveladas(new Set());
+      return;
+    }
+    const todas = profile.projectGroups.flatMap((g) => g.items.map((i) => i.id));
+    setReveladas(new Set(todas));
+  }, [figuras, documento, profile]);
+
+  // La coreografía nunca es una puerta: cualquier interacción la salta al final.
+  const saltar = () => {
+    if (documento || saltado) return;
+    setSaltado(true);
+    setReveladas(new Set(figuras.map((f) => f.id)));
+  };
+
   return (
-    <div className={documento ? 'obs obs--documento' : 'obs'}>
+    <div
+      className={documento ? 'obs obs--documento' : 'obs'}
+      onPointerDown={saltar}
+      onKeyDown={saltar}
+    >
       <a className="skip" href={`#/${PLANOS[PLANOS.length - 1].id}`}>
         {profile.ui.planes.contact}
       </a>
 
-      {!documento && <CampoParticulas plano={plano} reducido={reducido} />}
+      {!documento && (
+        <CampoParticulas
+          plano={plano}
+          figuras={figuras}
+          reducido={reducido}
+          saltado={saltado}
+          onRevelar={(id) => setReveladas((previas) => new Set(previas).add(id))}
+        />
+      )}
 
       <Hud plano={plano} irA={irA} documento={documento} conmutarModo={conmutarModo} />
       {!documento && <Flechas plano={plano} irA={irA} />}
@@ -72,6 +118,7 @@ export default function SitePage() {
                   titulo={profile.ui.planes[p.nombre]}
                   proyectos={proyectos}
                   empleo={empleo}
+                  reveladas={reveladas}
                   onAbrir={setAbierto}
                 />
               )}
