@@ -26,17 +26,15 @@ export function useMovimientoReducido() {
 /**
  * Navegación del observatorio: qué plano está activo y en qué modo se lee la página.
  *
- * **Modo documento** no es una versión degradada del sitio: es la salida para quien quiere
- * buscar con Ctrl+F, imprimir, o simplemente no ver una narración. Se enciende solo cuando
- * el visitante pidió menos movimiento, y se puede conmutar a mano en cualquier momento.
- *
- * El plano activo vive en el hash de la URL para que un enlace a un plano concreto se
- * pueda enviar en una postulación y abra donde debe.
+ * El modo documento apila los planos con scroll, para buscar con Ctrl+F o imprimir.
+ * El plano activo vive en el hash para poder enviar un enlace directo a un plano.
  */
 export function useObservatorio() {
   const reducido = useMovimientoReducido();
 
   const [plano, setPlano] = useState(() => planoDesdeHash(window.location.hash));
+  /** +1 avanzando, -1 retrocediendo: el plano entra y sale por el lado que le toca. */
+  const [sentido, setSentido] = useState<1 | -1>(1);
   const [documento, setDocumento] = useState<boolean>(() => {
     const guardado = localStorage.getItem(CLAVE_MODO);
     if (guardado === 'documento') return true;
@@ -60,7 +58,10 @@ export function useObservatorio() {
 
   const irA = useCallback((indice: number) => {
     const destino = Math.max(0, Math.min(PLANOS.length - 1, indice));
-    setPlano(destino);
+    setPlano((actual) => {
+      if (destino !== actual) setSentido(destino > actual ? 1 : -1);
+      return destino;
+    });
     // replaceState y no `location.hash = …`: cambiar el hash apila una entrada por cada
     // plano visitado, y entonces el botón «atrás» del navegador obliga a recorrer siete
     // veces la narración para salir de la página.
@@ -98,5 +99,5 @@ export function useObservatorio() {
     return () => window.removeEventListener('keydown', alPulsar);
   }, [plano, documento, irA]);
 
-  return { plano, irA, documento, conmutarModo, reducido };
+  return { plano, sentido, irA, documento, conmutarModo, reducido };
 }

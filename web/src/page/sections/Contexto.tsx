@@ -1,16 +1,11 @@
 import { useContent } from '../../i18n/LanguageProvider';
 
 /**
- * Plano 1. Sitúa el escenario, una sola vez.
+ * Plano 1. Sitúa el escenario una sola vez, para que los nueve proyectos siguientes no
+ * tengan que repetir empresa, rol ni periodo.
  *
- * Una empresa que nadie conoce, un equipo de cuatro personas y un sector regulado son el
- * contexto que convierte «hice un motor de reglas» en «hice un motor de reglas donde eso
- * importaba». Dicho aquí, los nueve proyectos de los planos siguientes no tienen que
- * repetir empresa, rol ni periodo: ya se dijeron.
- *
- * El dominio (crédito por libranza) aparece aquí y **una sola vez**, como circunstancia y
- * no como identidad: es la regla de `docs/perfil-publico.md`, porque en el titular solo
- * cierra puertas fuera del sector.
+ * El dominio aparece aquí y solo aquí, como circunstancia y no como identidad: es la
+ * regla de `docs/perfil-publico.md`, porque en el titular cierra puertas fuera del sector.
  */
 export function Contexto() {
   const profile = useContent();

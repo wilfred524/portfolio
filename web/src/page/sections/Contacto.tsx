@@ -2,14 +2,10 @@ import { useContent } from '../../i18n/LanguageProvider';
 import { track } from '../../lib/analytics';
 
 /**
- * Plano 6: el cierre.
+ * Plano 6: el cierre. Aquí las partículas no forman figura, se abren y dejan sitio.
  *
- * Aquí las partículas no formarán ninguna figura: se abren y dejan sitio. Fin de la
- * coreografía, principio de la conversación.
- *
- * El colofón cierra aquí y no en un plano propio porque en este sitio no es una nota al
- * pie: es la última prueba. Explicar que las animaciones que se acaban de ver están
- * escritas sin librería solo funciona **después** de haberlas visto funcionar.
+ * El colofón cierra aquí y no en un plano propio: explicar que las animaciones están
+ * escritas sin librería solo funciona después de haberlas visto funcionar.
  */
 export function Contacto() {
   const profile = useContent();

@@ -4,14 +4,11 @@ import { useContent } from '../../i18n/LanguageProvider';
 /**
  * Un plano de trabajo: varias piezas en la misma vista.
  *
- * Cada pieza es **una imagen a la izquierda y una descripción corta a la derecha**, y el
- * conjunto entero es lo que se pulsa. Ningún punto del fondo es pulsable por separado:
- * las partículas son materia, no interfaz, y obligar a apuntar a un punto de tres píxeles
- * sería convertir un adorno en un obstáculo.
+ * Cada pieza es una imagen a la izquierda y una descripción corta a la derecha, y el
+ * conjunto entero es lo que se pulsa: ningún punto del fondo es pulsable por separado.
  *
- * En la fase actual la imagen es el SVG ya formado. Cuando entre el motor de partículas,
- * el mismo `<path>` será a la vez el destino de los puntos y el dibujo final: una sola
- * forma en dos materiales, sin salto entre ellas.
+ * El `<path>` de la imagen es a la vez el destino de las partículas y el dibujo final:
+ * una sola forma en dos materiales, para que no haya salto entre ellas.
  */
 export function Trabajo({
   titulo,
@@ -34,7 +31,6 @@ export function Trabajo({
         {proyectos.map((item) => (
           <li key={item.id}>
             <button type="button" className="pieza" onClick={() => onAbrir(item)}>
-              {/* Marco de la imagen. Vacío en esta fase: lo llena la pieza generada. */}
               <span className="pieza__figura" aria-hidden="true" />
 
               <span className="pieza__texto">

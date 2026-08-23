@@ -6,7 +6,7 @@
  *   1. Utilidades          5. Piezas de proyecto
  *   2. Botones y prosa     6. Los planos con contenido
  *   3. El observatorio     7. Modo documento
- *   4. HUD y rail
+ *   4. HUD, menú y flechas
  */
 
 /* ─────────────────────────────────────────────────────────────────────────────
@@ -235,9 +235,8 @@
   z-index: 1;
 }
 
-/* Cada plano ocupa el viewport y ninguno hace scroll de página. Lo que desborde
-   scrollea DENTRO de su plano: a 200% de zoom o en un móvil apaisado, el contenido
-   sigue siendo alcanzable en vez de quedar cortado por el borde inferior. */
+/* Cada plano ocupa el viewport y lo que desborde scrollea DENTRO de él: a 200% de
+   zoom o en móvil apaisado el contenido sigue siendo alcanzable. */
 .planos {
   position: relative;
 }
@@ -250,15 +249,27 @@
   padding: calc(var(--nav-h) + 1rem) var(--gutter) 5rem;
   overflow-y: auto;
   opacity: 0;
-  /* visibility y no display: un plano en `display:none` sale del árbol de
-     accesibilidad y del buscador del navegador, y aquí se quiere justo lo contrario. */
+  /* visibility y no display: `display:none` sacaría el plano del buscador del
+     navegador y del árbol de accesibilidad, y aquí se quiere lo contrario. */
   visibility: hidden;
-  transition: opacity var(--slow), visibility var(--slow);
+  /* El plano inactivo espera al lado que marca el sentido del viaje. `--dx` lo fija
+     el atributo `data-sentido` del contenedor. */
+  transform: translateX(var(--dx, 3rem));
+  transition: opacity var(--slow), visibility var(--slow), transform var(--slow);
+}
+
+.planos[data-sentido='1'] .plano {
+  --dx: 3rem;
+}
+
+.planos[data-sentido='-1'] .plano {
+  --dx: -3rem;
 }
 
 .plano.is-activo {
   opacity: 1;
   visibility: visible;
+  transform: none;
 }
 
 .planos {
@@ -271,10 +282,10 @@
 }
 
 /* ─────────────────────────────────────────────────────────────────────────────
-   4. HUD y rail
+   4. HUD, menú y flechas
    ───────────────────────────────────────────────────────────────────────────── */
 
-.hud__bar {
+.hud {
   position: fixed;
   top: 0;
   left: 0;
@@ -296,78 +307,133 @@
   color: var(--text-soft);
 }
 
+/* Scroll horizontal propio: en pantallas estrechas los siete nombres se recorren
+   en vez de romper la barra. */
+.hud__planos {
+  min-width: 0;
+  overflow-x: auto;
+  scrollbar-width: none;
+}
+
+.hud__planos::-webkit-scrollbar {
+  display: none;
+}
+
+.hud__planos ol {
+  display: flex;
+  gap: 1.25rem;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.hud__plano {
+  white-space: nowrap;
+  font-size: var(--text-xs);
+  font-weight: 500;
+  letter-spacing: 0.02em;
+  color: var(--text-faint);
+  transition: color var(--fast);
+}
+
+.hud__plano:hover {
+  color: var(--text-soft);
+}
+
+/* El plano activo, en el segundo acento. Único significado: dónde estoy. */
+.hud__plano[aria-current] {
+  color: var(--accent-act);
+}
+
 .hud__acciones {
   display: flex;
   align-items: center;
   gap: 0.75rem;
 }
 
+/* ── Conmutador de idioma ─────────────────────────────────────────────────── */
+
+.langswitch {
+  display: flex;
+  gap: 0.375rem;
+  padding-left: 0.75rem;
+  border-left: 1px solid var(--line);
+}
+
+.langswitch__btn {
+  display: flex;
+  padding: 2px;
+  border-radius: 3px;
+  /* En reposo, apagadas y algo desaturadas: la que importa es la activa. */
+  opacity: 0.45;
+  outline: 1px solid transparent;
+  transition: opacity var(--fast), outline-color var(--fast);
+}
+
+.langswitch__btn:hover {
+  opacity: 0.8;
+}
+
+.langswitch__btn[aria-pressed='true'] {
+  opacity: 1;
+  outline-color: var(--line-strong);
+}
+
+.bandera {
+  display: block;
+  width: 24px;
+  height: 16px;
+  border-radius: 2px;
+}
+
+/* ── Flechas de navegación ────────────────────────────────────────────────── */
+
+/* Fijas a los lados: avanzar y retroceder es lo que se hace casi todo el tiempo. */
+.flecha {
+  position: fixed;
+  top: 50%;
+  z-index: 95;
+  display: grid;
+  place-items: center;
+  width: 3rem;
+  height: 3rem;
+  transform: translateY(-50%);
+  border: 1px solid var(--line);
+  border-radius: 50%;
+  color: var(--text-dim);
+  background: var(--bg-card);
+  transition: color var(--fast), border-color var(--fast), background-color var(--fast);
+}
+
+.flecha svg {
+  width: 1.25rem;
+  height: 1.25rem;
+}
+
+.flecha--izq {
+  left: var(--gutter);
+}
+
+.flecha--der {
+  right: var(--gutter);
+}
+
+.flecha:hover:not(:disabled) {
+  color: var(--text);
+  border-color: var(--line-strong);
+  background: var(--bg-raised);
+}
+
+/* En los extremos se apaga, no desaparece: un control que se esfuma mueve el resto
+   de la interfaz. */
+.flecha:disabled {
+  opacity: 0.25;
+  cursor: default;
+}
+
 .btn--sm {
   padding: 0.5rem 1rem;
   font-size: var(--text-xs);
-}
-
-/* El rail es el mapa mental de la narración: sin él, «una pantalla sin scroll» se
-   siente como estar perdido. Vertical a la izquierda en escritorio. */
-.rail {
-  position: fixed;
-  top: 50%;
-  left: var(--gutter);
-  z-index: 90;
-  transform: translateY(-50%);
-}
-
-.rail ol {
-  display: grid;
-  gap: 0.75rem;
-  margin: 0;
-  padding: 0;
-  list-style: none;
-}
-
-.rail__punto {
-  display: flex;
-  align-items: center;
-  gap: 0.625rem;
-  padding: 0.25rem;
-  color: var(--text-faint);
-  transition: color var(--fast);
-}
-
-.rail__num {
-  font-size: var(--text-xs);
-  font-variant-numeric: tabular-nums;
-}
-
-/* El nombre del plano solo aparece al pasar por encima o al enfocar: en reposo el
-   rail son siete números y no compite con el contenido. Nunca se oculta al lector
-   de pantalla, que es quien más lo necesita. */
-.rail__nombre {
-  font-size: var(--text-xs);
-  letter-spacing: 0.02em;
-  opacity: 0;
-  transform: translateX(-0.25rem);
-  transition: opacity var(--fast), transform var(--fast);
-}
-
-.rail__punto:hover,
-.rail__punto:focus-visible {
-  color: var(--text-soft);
-}
-
-.rail__punto:hover .rail__nombre,
-.rail__punto:focus-visible .rail__nombre {
-  opacity: 1;
-  transform: none;
-}
-
-.rail__punto[aria-current] {
-  color: var(--accent-act);
-}
-
-.rail__punto[aria-current] .rail__nombre {
-  opacity: 1;
-  transform: none;
 }
 
 /* ─────────────────────────────────────────────────────────────────────────────
@@ -386,8 +452,7 @@
   overflow: hidden;
 }
 
-/* Imagen a la izquierda, texto a la derecha, y la pieza entera es el botón: el
-   objetivo es grande y evidente, y no hay que apuntar a nada pequeño. */
+/* La pieza entera es el botón: objetivo grande, sin nada pequeño al que apuntar. */
 .pieza {
   display: grid;
   grid-template-columns: 7rem 1fr;
@@ -619,9 +684,7 @@
 }
 
 /* ─────────────────────────────────────────────────────────────────────────────
-   7. Modo documento
-   Los mismos planos, apilados y con scroll. No es una versión degradada: es la
-   salida para quien quiere buscar con Ctrl+F, imprimir, o no ver una narración.
+   7. Modo documento: los mismos planos, apilados y con scroll.
    ───────────────────────────────────────────────────────────────────────────── */
 
 .obs--documento .planos {
@@ -647,11 +710,10 @@
   margin: 0 auto;
 }
 
-/* Al imprimir siempre sale el documento entero, esté en el modo que esté: es lo
-   que un evaluador se lleva al papel. */
+/* Al imprimir sale el documento entero, esté en el modo que esté. */
 @media print {
   .hud,
-  .rail,
+  .flecha,
   .skip {
     display: none;
   }
@@ -676,28 +738,30 @@
    ───────────────────────────────────────────────────────────────────────────── */
 
 @media (max-width: 48rem) {
-  /* El rail baja a una fila de puntos: en vertical se comería el ancho del texto. */
-  .rail {
+  /* El HUD pasa a dos filas: los siete nombres no caben junto a las acciones. */
+  .hud {
+    height: auto;
+    flex-wrap: wrap;
+    padding: 0.75rem var(--gutter);
+    row-gap: 0.5rem;
+  }
+
+  .hud__planos {
+    order: 3;
+    flex-basis: 100%;
+  }
+
+  /* Las flechas bajan a las esquinas inferiores: centradas taparían el texto. */
+  .flecha {
     top: auto;
-    bottom: 0;
-    left: 0;
-    right: 0;
+    bottom: 1rem;
+    width: 2.75rem;
+    height: 2.75rem;
     transform: none;
-    padding: 0.75rem var(--gutter) 1rem;
-    background: linear-gradient(to top, var(--bg) 60%, transparent);
-  }
-
-  .rail ol {
-    grid-auto-flow: column;
-    justify-content: center;
-    gap: 0.5rem;
-  }
-
-  .rail__nombre {
-    display: none;
   }
 
   .plano {
+    padding-top: 7.5rem;
     padding-bottom: 5.5rem;
   }
 
