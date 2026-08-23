@@ -12,9 +12,9 @@ export function Contacto() {
 
   return (
     <div className="plano__cuerpo contacto">
-      <p className="label">{profile.ui.sections.contact}</p>
+      <p className="label" data-texto>{profile.ui.sections.contact}</p>
 
-      <p className="contacto__directo">
+      <p className="contacto__directo" data-texto>
         <a href={`mailto:${profile.email}`}>{profile.email}</a>
         <span className="meta">{profile.phone}</span>
       </p>
@@ -47,8 +47,8 @@ export function Contacto() {
       </div>
 
       <div className="contacto__colofon">
-        <p className="label">{profile.ui.sections.colophon}</p>
-        <p className="prose">{profile.colophon}</p>
+        <p className="label" data-texto>{profile.ui.sections.colophon}</p>
+        <p className="prose" data-texto>{profile.colophon}</p>
         <p>
           <a
             href={profile.repoUrl}

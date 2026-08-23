@@ -44,15 +44,6 @@ function barra(x1: number, y1: number, x2: number, y2: number, grosor: number) {
   return `M${x1 + nx} ${y1 + ny}L${x2 + nx} ${y2 + ny}L${x2 - nx} ${y2 - ny}L${x1 - nx} ${y1 - ny}z`;
 }
 
-function anillo(cx: number, cy: number, r: number, grosor: number, pasos = 28) {
-  let d = '';
-  for (let i = 0; i < pasos; i++) {
-    const a = (i / pasos) * Math.PI * 2;
-    d += circulo(cx + Math.cos(a) * r, cy + Math.sin(a) * r, grosor / 2);
-  }
-  return d;
-}
-
 /**
  * Cada figura evoca la acción del proyecto. Nada de escudos ni engranajes: un escudo
  * dice «seguridad» igual que en cualquier landing y no dice nada de un árbol de permisos.
@@ -100,14 +91,6 @@ export const PIEZAS: Record<string, string> = {
 
   // Frontend y backend, unidos.
   'portfolio-site': rect(8, 20, 34, 60) + barra(42, 50, 58, 50, 10) + rect(58, 20, 34, 60),
-};
-
-/** Figuras de los planos que no muestran proyectos. */
-export const PIEZAS_PLANO: Record<string, string> = {
-  start: anillo(50, 50, 30, 11) + circulo(50, 50, 9),
-  context: rect(20, 16, 60, 26) + rejilla(20, 52, 60, 32, 4, 1),
-  toolkit: rejilla(8, 8, 84, 84, 4, 4),
-  contact: anillo(50, 50, 32, 10, 22),
 };
 
 export const LADO_VB = VB;

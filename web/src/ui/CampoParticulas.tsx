@@ -4,9 +4,13 @@ import { planificarVista } from '../visuals/plan';
 
 export interface Figura {
   id: string;
-  d: string;
-  /** Con hueco, la nube cede el sitio al SVG que aparece ahí. Sin él, se queda. */
-  conHueco: boolean;
+  /**
+   * `pieza`: la nube forma la figura de un proyecto en su hueco y cede al trazo.
+   * `texto`: la nube rellena los bloques de texto del plano y cede a las palabras.
+   */
+  tipo: 'pieza' | 'texto';
+  /** Geometría de la figura, solo para las de tipo `pieza`. */
+  d?: string;
 }
 
 /**
@@ -103,7 +107,7 @@ export function CampoParticulas({
         pieza: pieza.id,
         cuantas: pieza.cuantas,
         duracion: 1100,
-        ceder: pieza.conHueco,
+        ceder: pieza.cede,
         alFormar: () => {
           if (cancelado) return;
           revelar.current(pieza.id);

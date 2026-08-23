@@ -514,6 +514,20 @@
   filter: none;
 }
 
+/* En los planos sin proyectos, las estrellas ocupan los renglones del texto y este
+   aparece encima cuando la nube termina: la constelación es el texto antes de serlo. */
+[data-texto] {
+  opacity: 0;
+  filter: blur(8px);
+  transition: opacity 0.65s ease, filter 0.65s ease;
+}
+
+.plano.is-formado [data-texto],
+.obs--documento [data-texto] {
+  opacity: 1;
+  filter: none;
+}
+
 /* El rótulo del plano tampoco se adelanta a su contenido. */
 .trabajo > .label,
 .trabajo__empleo {

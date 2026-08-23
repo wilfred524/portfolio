@@ -14,20 +14,20 @@ export function Contexto() {
 
   return (
     <div className="plano__cuerpo contexto">
-      <p className="label">{profile.ui.sections.experience}</p>
+      <p className="label" data-texto>{profile.ui.sections.experience}</p>
 
-      <h2 className="contexto__empresa">{empleo.employer}</h2>
-      <p className="contexto__linea">
+      <h2 className="contexto__empresa" data-texto>{empleo.employer}</h2>
+      <p className="contexto__linea" data-texto>
         {empleo.role} · {empleo.period}
         {empleo.mode && ` · ${empleo.mode}`}
       </p>
 
-      {empleo.tagline && <p className="prose contexto__tagline">{empleo.tagline}</p>}
+      {empleo.tagline && <p className="prose contexto__tagline" data-texto>{empleo.tagline}</p>}
 
       {dominio && dominio.value.trim() !== '' && (
         <div className="contexto__dominio">
-          <p className="label">{dominio.label}</p>
-          <p className="prose">{dominio.value}</p>
+          <p className="label" data-texto>{dominio.label}</p>
+          <p className="prose" data-texto>{dominio.value}</p>
         </div>
       )}
     </div>

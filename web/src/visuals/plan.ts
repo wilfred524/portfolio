@@ -1,16 +1,13 @@
 import type { Figura } from '../ui/CampoParticulas';
-import { muestrear, puntosNecesarios, situar, type Nube } from './muestreo';
+import { muestrear, puntosNecesarios, situar } from './muestreo';
 import type { Punto } from './ParticleEngine';
 
 export interface PiezaPlanificada {
   id: string;
-  caja: DOMRect;
-  nube: Nube;
-  /** Cuántas partículas le tocan, ya con el reparto de sobrantes aplicado. */
   cuantas: number;
-  /** Sus destinos en coordenadas de pantalla. */
   destinos: Punto[];
-  conHueco: boolean;
+  /** Si cede, el trazo o el texto aparecen debajo y la nube se apaga. */
+  cede: boolean;
 }
 
 export interface PlanVista {
@@ -21,81 +18,81 @@ export interface PlanVista {
 
 /** Densidad máxima a la que se puede espesar una figura al repartirle sobrantes. */
 const HOLGURA = 0.6;
+/** Separación entre estrellas dentro de un renglón, y entre renglones. */
+const PASO_TEXTO = 9;
+const ALTO_RENGLON = 13;
 
 /**
  * Calcula la vista entera de una vez: mide todas las cajas en un solo bloque, decide
  * cuántas partículas lleva cada figura y reparte lo que sobre.
  *
  * De una vez y no figura a figura: medir el DOM en mitad de la animación obliga al
- * navegador a recalcular la disposición en cada paso, y además hasta ahora era imposible
- * saber el volumen del plano antes de empezar a moverlo.
+ * navegador a recalcular la disposición en cada paso, y así se conoce el volumen del
+ * plano antes de empezar a moverlo.
  */
 export function planificarVista(figuras: Figura[], disponibles: number, movil: boolean): PlanVista {
   if (figuras.length === 0) return { piezas: [], total: 0 };
 
   const min = movil ? 40 : 70;
   const max = movil ? 72 : 140;
-  const sinHueco = movil ? 150 : 240;
 
-  // Primero todas las lecturas del DOM, juntas.
-  const medidas = figuras.map((figura) => ({
-    figura,
-    caja: cajaDe(figura.id) ?? cuerpoDelPlano(),
-  }));
+  const base = figuras.map((figura) =>
+    figura.tipo === 'texto' ? planificarTexto(figura) : planificarPieza(figura, min, max),
+  );
 
-  const base = medidas.map(({ figura, caja }) => {
-    const nube = muestrear(figura.d);
-    // Sin hueco la nube ES la figura definitiva: necesita densidad de imagen, no de
-    // esbozo, porque no hay ningún trazo que la remate después.
-    const cuantas = figura.conHueco ? puntosNecesarios(nube, caja, min, max) : sinHueco;
-    return { figura, caja, nube, cuantas };
-  });
-
-  const necesario = base.reduce((a, p) => a + p.cuantas, 0);
+  const necesario = base.reduce((a, p) => a + p.cuantas, 0) || 1;
 
   // Si vienen más partículas de las que pide la vista, no se apaga ninguna: las figuras
   // se dibujan más densas, hasta cierto punto.
-  const sobran = Math.max(0, disponibles - necesario);
-  const holgura = Math.round(necesario * HOLGURA);
-  const extra = Math.min(sobran, holgura);
+  const extra = Math.min(Math.max(0, disponibles - necesario), Math.round(necesario * HOLGURA));
 
-  const piezas: PiezaPlanificada[] = base.map((p) => {
+  const piezas = base.map((p) => {
     const parte = extra > 0 ? Math.round((extra * p.cuantas) / necesario) : 0;
-    const cuantas = p.cuantas + parte;
-    return {
-      id: p.figura.id,
-      caja: p.caja,
-      nube: p.nube,
-      cuantas,
-      destinos: situar(p.nube, p.caja, cuantas),
-      conHueco: p.figura.conHueco,
-    };
+    const cuantas = Math.min(p.destinos.length, p.cuantas + parte);
+    return { id: p.id, cede: p.cede, cuantas, destinos: p.destinos.slice(0, cuantas) };
   });
 
   return { piezas, total: piezas.reduce((a, p) => a + p.cuantas, 0) };
 }
 
-function cajaDe(id: string): DOMRect | undefined {
-  return document.querySelector(`[data-figura="${id}"]`)?.getBoundingClientRect();
+function planificarPieza(figura: Figura, min: number, max: number): PiezaPlanificada {
+  const caja = cajaDe(`[data-figura="${figura.id}"]`);
+  const nube = muestrear(figura.d ?? '');
+  const cuantas = caja ? puntosNecesarios(nube, caja, min, max) : min;
+  const destinos = caja ? situar(nube, caja, Math.round(cuantas * (1 + HOLGURA))) : [];
+  return { id: figura.id, cuantas, destinos, cede: true };
 }
 
-/** Caja cuadrada sobre el texto del plano activo, para las figuras sin hueco propio. */
-function cuerpoDelPlano(): DOMRect {
-  const cuerpo = document.querySelector('.plano.is-activo .plano__cuerpo');
-  const caja = cuerpo?.getBoundingClientRect();
-  const ancho = window.innerWidth;
-  const alto = window.innerHeight;
+/**
+ * Los planos sin proyectos no llevan una figura geométrica: las estrellas **ocupan los
+ * propios bloques de texto**, en renglones, y ceden cuando las palabras aparecen encima.
+ *
+ * Una forma abstracta en el centro no se acoplaba a nada de lo que había alrededor; esto
+ * hace que la constelación sea literalmente el texto antes de ser texto.
+ */
+function planificarTexto(figura: Figura): PiezaPlanificada {
+  const bloques = Array.from(document.querySelectorAll('.plano.is-activo [data-texto]'));
+  const destinos: Punto[] = [];
 
-  if (!caja || caja.width === 0) {
-    const lado = Math.min(ancho, alto) * 0.55;
-    return new DOMRect((ancho - lado) / 2, (alto - lado) / 2, lado, lado);
+  for (const bloque of bloques) {
+    const caja = bloque.getBoundingClientRect();
+    if (caja.width < 8 || caja.height < 8) continue;
+
+    const renglones = Math.max(1, Math.round(caja.height / ALTO_RENGLON));
+    for (let r = 0; r < renglones; r++) {
+      // El último renglón se corta, como el de un párrafo real.
+      const ancho = r === renglones - 1 && renglones > 1 ? caja.width * 0.62 : caja.width;
+      const cuantos = Math.max(2, Math.round(ancho / PASO_TEXTO));
+      const y = caja.top + ((r + 0.5) * caja.height) / renglones;
+      for (let i = 0; i < cuantos; i++) {
+        destinos.push({ x: caja.left + (i / Math.max(1, cuantos - 1)) * ancho, y });
+      }
+    }
   }
 
-  const lado = Math.min(caja.width, caja.height, Math.min(ancho, alto) * 0.62);
-  return new DOMRect(
-    caja.left + (caja.width - lado) / 2,
-    caja.top + (caja.height - lado) / 2,
-    lado,
-    lado,
-  );
+  return { id: figura.id, cuantas: destinos.length, destinos, cede: true };
+}
+
+function cajaDe(selector: string): DOMRect | undefined {
+  return document.querySelector(selector)?.getBoundingClientRect();
 }

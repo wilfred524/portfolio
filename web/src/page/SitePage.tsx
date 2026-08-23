@@ -5,7 +5,7 @@ import type { ProjectItem } from '../content';
 import { useContent } from '../i18n/LanguageProvider';
 import { useObservatorio } from '../hooks/useObservatorio';
 import { CampoParticulas, type Figura } from '../ui/CampoParticulas';
-import { PIEZAS, PIEZAS_PLANO } from '../visuals/piezas';
+import { PIEZAS } from '../visuals/piezas';
 import { Flechas, Hud } from '../ui/Hud';
 import { ProjectModal } from '../ui/ProjectModal';
 import { PLANOS } from './planos';
@@ -45,13 +45,15 @@ export default function SitePage() {
   // Las figuras del plano activo, en orden: es la cascada que sigue el enjambre.
   const figuras = useMemo<Figura[]>(() => {
     const actual = PLANOS[plano];
+    // El primer plano no lleva animación: es el que decide si el visitante sigue, y
+    // hacerle esperar antes de decirle quién eres es cobrarle la entrada.
+    if (actual.id === 'start') return [];
     if (actual.proyectos?.length) {
       return actual.proyectos
         .filter((id) => PIEZAS[id])
-        .map((id) => ({ id, d: PIEZAS[id], conHueco: true }));
+        .map((id) => ({ id, tipo: 'pieza' as const, d: PIEZAS[id] }));
     }
-    const propia = PIEZAS_PLANO[actual.id];
-    return propia ? [{ id: actual.id, d: propia, conHueco: false }] : [];
+    return [{ id: actual.id, tipo: 'texto' as const }];
   }, [plano]);
 
   // En modo documento no hay cascada: todas las piezas se ven de entrada, y las de
@@ -107,7 +109,15 @@ export default function SitePage() {
             <section
               key={p.id}
               id={p.id}
-              className={activo ? 'plano is-activo' : 'plano'}
+              className={[
+                'plano',
+                activo ? 'is-activo' : '',
+                // El plano de inicio no tiene animación: su texto está desde el primer
+                // fotograma. Los demás esperan a que las estrellas los rellenen.
+                p.id === 'start' || reveladas.has(p.id) ? 'is-formado' : '',
+              ]
+                .filter(Boolean)
+                .join(' ')}
               aria-label={profile.ui.planes[p.nombre]}
               inert={!activo}
             >
