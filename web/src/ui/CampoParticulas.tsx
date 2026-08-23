@@ -1,6 +1,6 @@
 import { useEffect, useRef } from 'react';
 import { ParticleEngine } from '../visuals/ParticleEngine';
-import { muestrear, puntosNecesarios, situar } from '../visuals/muestreo';
+import { planificarVista } from '../visuals/plan';
 
 export interface Figura {
   id: string;
@@ -90,28 +90,23 @@ export function CampoParticulas({
     let cancelado = false;
     let temporizador: number | undefined;
 
-    const cajaDe = (id: string) =>
-      document.querySelector(`[data-figura="${id}"]`)?.getBoundingClientRect();
+    // Toda la vista se calcula de una vez, antes de mover nada: cuántas partículas lleva
+    // cada figura y cuál es el volumen total de la transición.
+    const plan = planificarVista(figuras, engine.libres(), engine.esMovil());
 
     const paso = (indice: number) => {
       if (cancelado) return;
-      const figura = figuras[indice];
-      if (!figura) return;
+      const pieza = plan.piezas[indice];
+      if (!pieza) return;
 
-      const caja = cajaDe(figura.id) ?? cuerpoDelPlano();
-      const nube = muestrear(figura.d);
-      // Sin hueco la nube ES la figura definitiva, así que necesita densidad de imagen y
-      // no de esbozo: ahí no hay ningún trazo que la remate.
-      const cuantas = figura.conHueco ? puntosNecesarios(nube, caja) : 240;
-
-      engine.formar(situar(nube, caja, cuantas), {
-        pieza: figura.id,
-        cuantas,
+      engine.formar(pieza.destinos, {
+        pieza: pieza.id,
+        cuantas: pieza.cuantas,
         duracion: 1100,
-        ceder: figura.conHueco,
+        ceder: pieza.conHueco,
         alFormar: () => {
           if (cancelado) return;
-          revelar.current(figura.id);
+          revelar.current(pieza.id);
           temporizador = window.setTimeout(() => paso(indice + 1), 220);
         },
       });
@@ -127,25 +122,4 @@ export function CampoParticulas({
   }, [plano, figuras, reducido, saltado]);
 
   return <canvas ref={canvas} className="campo" aria-hidden="true" />;
-}
-
-/** Caja cuadrada sobre el texto del plano activo, para las figuras sin hueco propio. */
-function cuerpoDelPlano(): DOMRect {
-  const cuerpo = document.querySelector('.plano.is-activo .plano__cuerpo');
-  const caja = cuerpo?.getBoundingClientRect();
-  const ancho = window.innerWidth;
-  const alto = window.innerHeight;
-
-  if (!caja || caja.width === 0) {
-    const lado = Math.min(ancho, alto) * 0.55;
-    return new DOMRect((ancho - lado) / 2, (alto - lado) / 2, lado, lado);
-  }
-
-  const lado = Math.min(caja.width, caja.height, Math.min(ancho, alto) * 0.62);
-  return new DOMRect(
-    caja.left + (caja.width - lado) / 2,
-    caja.top + (caja.height - lado) / 2,
-    lado,
-    lado,
-  );
 }

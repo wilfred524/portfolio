@@ -228,6 +228,15 @@ export class ParticleEngine {
     this.iniciar();
   }
 
+  /** Cuántas partículas pueden entrar en una figura ahora mismo. */
+  libres() {
+    return this.particulas.filter((p) => p.estado === 'fondo' || p.estado === 'dispersa').length;
+  }
+
+  esMovil() {
+    return this.w < 768;
+  }
+
   /** Rompe una pieza: sus partículas reaparecen sobre el trazo y se dispersan. */
   disolver(pieza: string) {
     let alguna = false;
