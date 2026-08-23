@@ -459,7 +459,7 @@
 /* La pieza entera es el botón: objetivo grande, sin nada pequeño al que apuntar. */
 .pieza {
   display: grid;
-  grid-template-columns: 7rem 1fr;
+  grid-template-columns: 9rem 1fr;
   align-items: center;
   gap: 1.5rem;
   width: 100%;
@@ -827,7 +827,7 @@
   }
 
   .pieza__figura {
-    width: 5rem;
+    width: 6rem;
   }
 
   .modal__panel {
