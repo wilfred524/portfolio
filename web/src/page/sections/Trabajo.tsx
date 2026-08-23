@@ -1,5 +1,6 @@
 import type { Employment, ProjectItem } from '../../content';
 import { useContent } from '../../i18n/LanguageProvider';
+import { PIEZAS } from '../../visuals/piezas';
 
 /**
  * Un plano de trabajo: varias piezas en la misma vista.
@@ -7,18 +8,21 @@ import { useContent } from '../../i18n/LanguageProvider';
  * Cada pieza es una imagen a la izquierda y una descripción corta a la derecha, y el
  * conjunto entero es lo que se pulsa: ningún punto del fondo es pulsable por separado.
  *
- * El `<path>` de la imagen es a la vez el destino de las partículas y el dibujo final:
- * una sola forma en dos materiales, para que no haya salto entre ellas.
+ * El `<path>` de la imagen es el mismo que las partículas ocupan al converger. La pieza
+ * está oculta hasta que la nube termina de formarla, y entonces aparece en su sitio: por
+ * eso el relevo entre puntos y trazo no se nota.
  */
 export function Trabajo({
   titulo,
   proyectos,
   empleo,
+  reveladas,
   onAbrir,
 }: {
   titulo: string;
   proyectos: ProjectItem[];
   empleo?: Employment;
+  reveladas: Set<string>;
   onAbrir: (item: ProjectItem) => void;
 }) {
   const { ui } = useContent();
@@ -30,8 +34,16 @@ export function Trabajo({
       <ul className="piezas">
         {proyectos.map((item) => (
           <li key={item.id}>
-            <button type="button" className="pieza" onClick={() => onAbrir(item)}>
-              <span className="pieza__figura" aria-hidden="true" />
+            <button
+              type="button"
+              className={reveladas.has(item.id) ? 'pieza is-revelada' : 'pieza'}
+              onClick={() => onAbrir(item)}
+            >
+              <span className="pieza__figura" data-figura={item.id} aria-hidden="true">
+                <svg viewBox="0 0 100 100" focusable="false">
+                  <path d={PIEZAS[item.id] ?? ''} fill="currentColor" fillRule="evenodd" />
+                </svg>
+              </span>
 
               <span className="pieza__texto">
                 <span className="pieza__titulo">{item.title}</span>
@@ -39,7 +51,7 @@ export function Trabajo({
                 <span className="pieza__pie">
                   <span className="pieza__tags">{item.tags.join(' · ')}</span>
                   {/* aria-hidden: el nombre accesible del botón ya lo dan el título y el
-                      resumen, y el rol de botón ya anuncia que se puede accionar. */}
+                      resumen, y el rol de botón anuncia que se puede accionar. */}
                   <span className="pieza__abrir" aria-hidden="true">
                     {ui.project.open}
                   </span>
@@ -50,8 +62,6 @@ export function Trabajo({
         ))}
       </ul>
 
-      {/* La cabecera del contrato se dijo entera en el plano de contexto; aquí solo se
-          recuerda de quién cuelga este trabajo, en una línea. */}
       {empleo && (
         <p className="meta trabajo__empleo">
           {empleo.employer} · {empleo.period}
