@@ -117,8 +117,8 @@ export class ParticleEngine {
     const movil = ancho < 768;
     this.conexiones = !movil;
     this.capacidad = movil
-      ? Math.max(60, Math.min(180, Math.round((ancho * alto) / 5200)))
-      : Math.max(120, Math.min(380, Math.round((ancho * alto) / 4200)));
+      ? Math.max(140, Math.min(200, Math.round((ancho * alto) / 3600)))
+      : Math.max(240, Math.min(460, Math.round((ancho * alto) / 3200)));
 
     this.poblar();
     this.pintar();
@@ -204,21 +204,36 @@ export class ParticleEngine {
       if (p.estado === 'asentada' && this.cede) p.estado = 'latente';
     }
 
-    const disponibles = this.particulas
+    const necesarias = Math.min(opciones.cuantas, puntos.length);
+    const elegidas: number[] = [];
+
+    /**
+     * Un solo enjambre recorre el sitio. Primero se echa mano de la materia que ya está
+     * en juego —la que sostiene las piezas ya hechas, que sale de sus trazos— y solo si
+     * no basta se toca el cielo. Así el volumen no crece plano a plano.
+     */
+    const enJuego = this.particulas
       .map((p, i) => ({ p, i }))
-      .filter(({ p }) => p.estado === 'fondo' || p.estado === 'dispersa')
+      .filter(({ p }) => p.estado === 'latente' || p.estado === 'dispersa');
+
+    for (const { p, i } of enJuego) {
+      if (elegidas.length >= necesarias) break;
+      // Vuelve a hacerse visible saliendo de donde estaba: del trazo que sostenía.
+      if (p.estado === 'latente') p.alfa = 0;
+      elegidas.push(i);
+    }
+
+    const cielo = this.particulas
+      .map((p, i) => ({ p, i }))
+      .filter(({ p }) => p.estado === 'fondo')
       // Orden de barrido: al tomar uno de cada N, el reparto cubre la pantalla entera.
       .sort((a, b) => a.p.y + a.p.x * 0.35 - (b.p.y + b.p.x * 0.35));
 
-    const necesarias = Math.min(opciones.cuantas, puntos.length);
-    const elegidas: number[] = [];
-    if (disponibles.length > 0) {
+    const delCielo = Math.min(necesarias - elegidas.length, cielo.length);
+    for (let i = 0; i < delCielo; i++) {
       // Índice proporcional y no un salto entero: con el salto redondeado a 1 se tomaban
       // las primeras del orden de barrido, o sea toda una esquina de la pantalla.
-      const cuantas = Math.min(necesarias, disponibles.length);
-      for (let i = 0; i < cuantas; i++) {
-        elegidas.push(disponibles[Math.floor((i * disponibles.length) / cuantas)].i);
-      }
+      elegidas.push(cielo[Math.floor((i * cielo.length) / delCielo)].i);
     }
 
     // Si el fondo no da para tanto, entran nuevas por el borde en vez de robar más cielo.
