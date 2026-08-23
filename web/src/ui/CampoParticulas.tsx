@@ -94,12 +94,10 @@ export function CampoParticulas({
     let cancelado = false;
     let temporizador: number | undefined;
 
-    // Toda la vista se calcula de una vez, antes de mover nada: cuántas partículas lleva
-    // cada figura y cuál es el volumen total de la transición.
-    const plan = planificarVista(figuras, engine.libres(), engine.esMovil());
+    let plan: ReturnType<typeof planificarVista> | null = null;
 
     const paso = (indice: number) => {
-      if (cancelado) return;
+      if (cancelado || !plan) return;
       const pieza = plan.piezas[indice];
       if (!pieza) return;
 
@@ -116,12 +114,29 @@ export function CampoParticulas({
       });
     };
 
-    // Margen para que las cajas del plano que entra estén ya colocadas.
-    temporizador = window.setTimeout(() => paso(0), 320);
+    /**
+     * Las cajas no se pueden medir hasta que el plano ha terminado de deslizarse: entra
+     * con un `translateX` de 3 rem, así que medir antes coloca las estrellas a medio
+     * camino de donde acabará el texto.
+     */
+    const arrancar = () => {
+      if (cancelado || plan) return;
+      plan = planificarVista(figuras, engine.libres(), engine.esMovil());
+      paso(0);
+    };
+
+    const activo = document.querySelector('.plano.is-activo');
+    const alTerminar = (evento: Event) => {
+      if ((evento as TransitionEvent).propertyName === 'transform') arrancar();
+    };
+    activo?.addEventListener('transitionend', alTerminar);
+    // Respaldo: si el plano no llega a animarse, el evento no se dispara nunca.
+    temporizador = window.setTimeout(arrancar, 820);
 
     return () => {
       cancelado = true;
       clearTimeout(temporizador);
+      activo?.removeEventListener('transitionend', alTerminar);
     };
   }, [plano, figuras, reducido, saltado]);
 
