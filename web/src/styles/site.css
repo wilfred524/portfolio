@@ -265,7 +265,7 @@
   /* El plano inactivo espera al lado que marca el sentido del viaje. `--dx` lo fija
      el atributo `data-sentido` del contenedor. */
   transform: translateX(var(--dx, 3rem));
-  transition: opacity var(--slow), visibility var(--slow), transform var(--slow);
+  transition: opacity 0.7s ease, visibility 0.7s ease, transform 0.7s cubic-bezier(0.22, 1, 0.36, 1);
 }
 
 .planos[data-sentido='1'] .plano {
@@ -446,21 +446,14 @@
    5. Piezas de proyecto
    ───────────────────────────────────────────────────────────────────────────── */
 
-/* Sin fondo: el campo de estrellas tiene que verse a través de las piezas, o la
-   animación queda tapada por la propia lista. Los separadores son bordes, no huecos
-   sobre un fondo opaco. */
+/* Ni fondo ni marco: el campo tiene que verse a través, y sobre todo no puede haber
+   una lista vacía esperando a llenarse. Cada pieza trae su propio contorno cuando la
+   nube termina de formarla. */
 .piezas {
   display: grid;
   margin: 1.5rem 0 0;
   padding: 0;
   list-style: none;
-  border: 1px solid var(--line);
-  border-radius: var(--radius);
-  overflow: hidden;
-}
-
-.piezas li + li {
-  border-top: 1px solid var(--line);
 }
 
 /* La pieza entera es el botón: objetivo grande, sin nada pequeño al que apuntar. */
@@ -473,7 +466,16 @@
   padding: 1.5rem;
   text-align: left;
   background: transparent;
-  transition: background-color var(--medium);
+  border-top: 1px solid transparent;
+  transition: background-color var(--medium), border-color var(--slow);
+}
+
+.pieza.is-revelada {
+  border-top-color: var(--line);
+}
+
+.piezas li:first-child .pieza {
+  border-top-color: transparent;
 }
 
 .pieza:hover {
@@ -490,7 +492,7 @@
   aspect-ratio: 1;
   color: var(--text-mute);
   opacity: 0;
-  transition: opacity var(--slow);
+  transition: opacity 0.55s ease;
 }
 
 .pieza__figura svg {
@@ -502,14 +504,26 @@
    de borroso a definido: se condensa igual que lo hacen las partículas. */
 .pieza__texto {
   opacity: 0;
-  filter: blur(6px);
-  transition: opacity var(--slow), filter var(--slow);
+  filter: blur(8px);
+  transition: opacity 0.65s ease, filter 0.65s ease;
 }
 
 .pieza.is-revelada .pieza__figura,
 .pieza.is-revelada .pieza__texto {
   opacity: 1;
   filter: none;
+}
+
+/* El rótulo del plano tampoco se adelanta a su contenido. */
+.trabajo > .label,
+.trabajo__empleo {
+  opacity: 0;
+  transition: opacity var(--slow);
+}
+
+.trabajo.is-abierto > .label,
+.trabajo.is-abierto .trabajo__empleo {
+  opacity: 1;
 }
 
 .pieza:hover .pieza__figura {

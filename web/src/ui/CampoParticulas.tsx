@@ -92,10 +92,9 @@ export function CampoParticulas({
       return;
     }
 
-    // El contenido ya está a la vista: el enjambre no tiene nada que anunciar y vuelve
-    // a ser cielo en vez de seguir formando figuras sobre piezas ya visibles.
+    // El contenido ya está a la vista: el enjambre no tiene nada más que anunciar.
     if (saltado) {
-      engine.liberar();
+      engine.formar();
       return;
     }
 
@@ -109,8 +108,9 @@ export function CampoParticulas({
       if (cancelado) return;
       const figura = figuras[indice];
 
+      // Recorrido terminado: solo queda reponer lo que se gastó por el camino.
       if (!figura) {
-        engine.liberar();
+        engine.formar();
         return;
       }
 
@@ -156,8 +156,26 @@ export function CampoParticulas({
   return <canvas ref={canvas} className="campo" aria-hidden="true" />;
 }
 
-/** Donde la figura se forma en grande, antes de recogerse a su sitio. */
+/**
+ * Donde la figura se forma en grande, antes de recogerse a su sitio: sobre el texto del
+ * plano activo, no en un centro abstracto. Cuadrada, o la figura saldría estirada.
+ */
 function escenario(): DOMRect {
-  const lado = Math.min(window.innerWidth, window.innerHeight) * 0.62;
-  return new DOMRect((window.innerWidth - lado) / 2, (window.innerHeight - lado) / 2, lado, lado);
+  const cuerpo = document.querySelector('.plano.is-activo .plano__cuerpo');
+  const caja = cuerpo?.getBoundingClientRect();
+  const alto = window.innerHeight;
+  const ancho = window.innerWidth;
+
+  if (!caja || caja.width === 0) {
+    const lado = Math.min(ancho, alto) * 0.62;
+    return new DOMRect((ancho - lado) / 2, (alto - lado) / 2, lado, lado);
+  }
+
+  const lado = Math.min(caja.width, caja.height, Math.min(ancho, alto) * 0.7);
+  return new DOMRect(
+    caja.left + (caja.width - lado) / 2,
+    caja.top + (caja.height - lado) / 2,
+    lado,
+    lado,
+  );
 }
