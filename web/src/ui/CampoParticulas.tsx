@@ -114,25 +114,38 @@ export function CampoParticulas({
         return;
       }
 
-      const caja = cajaDe(figura.id);
-      const puntos = muestrear(figura.d);
-      const cuantos = Math.min(puntos.length, 220);
-      const destino = caja
-        ? situar(puntos, caja, cuantos)
-        : situar(puntos, centro(), cuantos);
+      const nube = muestrear(figura.d);
+      const cuantos = 240;
 
-      engine.formar(destino, {
-        ceder: figura.conHueco,
+      // Primero en grande y en el centro. En el hueco de la tarjeta, que mide poco más
+      // de cien píxeles, una figura hecha de estrellas no se lee: parecía un borrón.
+      engine.formar(situar(nube, escenario(), cuantos), {
+        duracion: 1500,
         alFormar: () => {
           if (cancelado) return;
-          revelar.current(figura.id);
-          temporizador = window.setTimeout(() => paso(indice + 1), 420);
+
+          // Reposo: la figura se queda quieta el tiempo justo para leerse.
+          temporizador = window.setTimeout(() => {
+            if (cancelado) return;
+            const caja = cajaDe(figura.id);
+
+            // Y ahora se recoge a su sitio en la lista, donde cede al trazo.
+            engine.formar(situar(nube, caja ?? escenario(), cuantos), {
+              duracion: 900,
+              ceder: figura.conHueco,
+              mismasParticulas: true,
+              alFormar: () => {
+                if (cancelado) return;
+                revelar.current(figura.id);
+                temporizador = window.setTimeout(() => paso(indice + 1), 520);
+              },
+            });
+          }, 620);
         },
       });
     };
 
-    // Un fotograma de margen: las cajas del plano que entra aún no están colocadas.
-    temporizador = window.setTimeout(() => paso(0), 260);
+    temporizador = window.setTimeout(() => paso(0), 320);
 
     return () => {
       cancelado = true;
@@ -143,8 +156,8 @@ export function CampoParticulas({
   return <canvas ref={canvas} className="campo" aria-hidden="true" />;
 }
 
-/** Caja centrada, para las figuras de los planos que no tienen hueco en el DOM. */
-function centro(): DOMRect {
-  const lado = Math.min(window.innerWidth, window.innerHeight) * 0.5;
+/** Donde la figura se forma en grande, antes de recogerse a su sitio. */
+function escenario(): DOMRect {
+  const lado = Math.min(window.innerWidth, window.innerHeight) * 0.62;
   return new DOMRect((window.innerWidth - lado) / 2, (window.innerHeight - lado) / 2, lado, lado);
 }

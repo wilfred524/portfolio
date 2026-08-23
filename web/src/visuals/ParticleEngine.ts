@@ -39,13 +39,13 @@ interface Particula {
   brillo: number;
 }
 
-const DURACION = 1100;
+const DURACION = 1500;
 const MAX_DT = 32;
 const MAX_ENLACE = 120;
 const ESTELA = 5;
 /** Cuánto del campo se recluta: el resto sigue de cielo, o la pantalla se queda muerta. */
-const RECLUTA = 0.6;
-const FUNDIDO = 320;
+const RECLUTA = 0.55;
+const FUNDIDO = 420;
 
 export class ParticleEngine {
   private canvas: HTMLCanvasElement;
@@ -63,6 +63,7 @@ export class ParticleEngine {
   private fundido = 0;
   private alFormar: (() => void) | null = null;
   private cede = false;
+  private duracion = DURACION;
   private conexiones = true;
   private colores = { core: '235,235,245', glow: '220,220,235', line: '180,180,200' };
 
@@ -159,7 +160,16 @@ export class ParticleEngine {
    * ángulo; al azar, cientos de trayectorias se cruzan y el resultado es ruido en vez de
    * una masa que se pliega.
    */
-  formar(puntos?: Punto[], opciones?: { alFormar?: () => void; ceder?: boolean }) {
+  formar(
+    puntos?: Punto[],
+    opciones?: {
+      alFormar?: () => void;
+      ceder?: boolean;
+      duracion?: number;
+      /** Reutiliza las partículas ya reclutadas: la figura se recoge en vez de rehacerse. */
+      mismasParticulas?: boolean;
+    },
+  ) {
     const total = this.particulas.length;
     const conFigura = !!puntos?.length;
     const reclutadas = conFigura ? Math.round(total * RECLUTA) : 0;
@@ -169,18 +179,32 @@ export class ParticleEngine {
     if (conFigura) {
       const cx = puntos!.reduce((a, p) => a + p.x, 0) / puntos!.length;
       const cy = puntos!.reduce((a, p) => a + p.y, 0) / puntos!.length;
-      const cercanas = this.particulas
-        .map((p, i) => ({ i, d: (p.x - cx) ** 2 + (p.y - cy) ** 2 }))
-        .sort((a, b) => a.d - b.d)
-        .slice(0, reclutadas)
-        .map((e) => e.i);
+
+      const yaReclutadas = this.particulas.map((p, i) => (p.figura ? i : -1)).filter((i) => i >= 0);
+      const cercanas =
+        opciones?.mismasParticulas && yaReclutadas.length > 0
+          ? yaReclutadas
+          : this.particulas
+              .map((p, i) => ({ i, d: (p.x - cx) ** 2 + (p.y - cy) ** 2 }))
+              .sort((a, b) => a.d - b.d)
+              .slice(0, reclutadas)
+              .map((e) => e.i);
 
       const marcadas = new Set(cercanas);
       this.particulas.forEach((p, i) => (p.figura = marcadas.has(i)));
 
-      this.asignar(cercanas, this.repartir(puntos!, reclutadas), cx, cy);
-      const resto = this.particulas.map((_, i) => i).filter((i) => !marcadas.has(i));
-      this.asignar(resto, resto.map(cielo), this.w / 2, this.h / 2);
+      this.asignar(cercanas, this.repartir(puntos!, cercanas.length), cx, cy);
+      // El resto no se toca. Redistribuir el cielo entero en cada paso hacía que la
+      // pantalla se agitara sin contar nada.
+      this.particulas.forEach((p, i) => {
+        if (marcadas.has(i)) return;
+        p.ox = p.x;
+        p.oy = p.y;
+        p.tx = p.hx;
+        p.ty = p.hy;
+        p.curva = 0;
+        p.retardo = 0;
+      });
     } else {
       this.particulas.forEach((p) => (p.figura = false));
       const todas = this.particulas.map((_, i) => i);
@@ -189,6 +213,7 @@ export class ParticleEngine {
 
     this.viaje = 0;
     this.fundido = 0;
+    this.duracion = opciones?.duracion ?? DURACION;
     this.alFormar = opciones?.alFormar ?? null;
     // Sin `ceder`, la figura se queda hecha de estrellas: es lo que pasa en los planos
     // donde no hay ningún trazo debajo al que dar el relevo.
@@ -276,7 +301,7 @@ export class ParticleEngine {
 
   private actualizar(dt: number) {
     if (this.viaje < 1) {
-      this.viaje = Math.min(1, this.viaje + dt / DURACION);
+      this.viaje = Math.min(1, this.viaje + dt / this.duracion);
       // La figura queda formada: se avisa una vez, y las partículas empiezan a ceder
       // el sitio al trazo que aparece debajo.
       if (this.viaje >= 1 && this.alFormar) {
@@ -296,12 +321,12 @@ export class ParticleEngine {
         const t = suavizar(Math.max(0, (this.viaje - p.retardo) / (1 - p.retardo)));
         const dx = p.tx - p.ox;
         const dy = p.ty - p.oy;
-        const arrastre = Math.sin(t * Math.PI) * this.w * 0.18;
+        const arrastre = Math.sin(t * Math.PI) * this.w * (p.figura ? 0.05 : 0.02);
         p.x = p.ox + dx * t + arrastre;
         p.y = p.oy + dy * t + Math.sin(t * Math.PI) * dx * p.curva;
       } else {
-        p.x = p.hx + Math.cos(f * 0.18 + p.semilla) * 9;
-        p.y = p.hy + Math.sin(f * 0.13 + p.semilla * 1.7) * 7;
+        p.x = p.hx + Math.cos(f * 0.09 + p.semilla) * 5;
+        p.y = p.hy + Math.sin(f * 0.07 + p.semilla * 1.7) * 4;
       }
     }
   }
