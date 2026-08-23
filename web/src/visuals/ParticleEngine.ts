@@ -149,6 +149,17 @@ export class ParticleEngine {
     this.particulas = [...nuevas, ...enPiezas];
   }
 
+  /** Punto del perímetro para un recorrido de 0 a 1, con margen fuera de pantalla. */
+  private enPerimetro(t: number): [number, number] {
+    const m = 24;
+    const perimetro = 2 * (this.w + this.h);
+    const d = t * perimetro;
+    if (d < this.w) return [d, -m];
+    if (d < this.w + this.h) return [this.w + m, d - this.w];
+    if (d < 2 * this.w + this.h) return [2 * this.w + this.h - d, this.h + m];
+    return [-m, perimetro - d];
+  }
+
   private nacer(x: number, y: number, indice: number): Particula {
     const grande = indice % 9 === 0;
     return {
@@ -203,13 +214,13 @@ export class ParticleEngine {
     }
 
     // Si el fondo no da para tanto, entran nuevas por el borde en vez de robar más cielo.
-    while (elegidas.length < necesarias) {
-      const desdeIzquierda = Math.random() < 0.5;
-      const p = this.nacer(
-        desdeIzquierda ? -20 : this.w + 20,
-        Math.random() * this.h,
-        this.particulas.length,
-      );
+    // Repartidas por todo el perímetro y no siempre por el mismo lado, o el conjunto
+    // entero parece venir del mismo sitio en cada transición.
+    const faltan = necesarias - elegidas.length;
+    const arranque = Math.random();
+    for (let n = 0; n < faltan; n++) {
+      const t = (arranque + n / Math.max(1, faltan)) % 1;
+      const p = this.nacer(...this.enPerimetro(t), this.particulas.length);
       p.alfa = 0;
       this.particulas.push(p);
       elegidas.push(this.particulas.length - 1);

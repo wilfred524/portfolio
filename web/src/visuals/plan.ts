@@ -18,6 +18,8 @@ export interface PlanVista {
 
 /** Densidad máxima a la que se puede espesar una figura al repartirle sobrantes. */
 const HOLGURA = 0.6;
+/** Parte del campo que puede llevarse una vista. El resto tiene que seguir siendo cielo. */
+const TECHO = 0.55;
 /** Separación entre estrellas dentro de un renglón, y entre renglones. */
 const PASO_TEXTO = 9;
 const ALTO_RENGLON = 13;
@@ -36,8 +38,11 @@ export function planificarVista(figuras: Figura[], disponibles: number, movil: b
   const min = movil ? 40 : 70;
   const max = movil ? 72 : 140;
 
+  const techo = Math.max(60, Math.round(disponibles * TECHO));
   const base = figuras.map((figura) =>
-    figura.tipo === 'texto' ? planificarTexto(figura) : planificarPieza(figura, min, max),
+    figura.tipo === 'texto'
+      ? planificarTexto(figura, Math.round(techo / figuras.length))
+      : planificarPieza(figura, min, max),
   );
 
   const necesario = base.reduce((a, p) => a + p.cuantas, 0) || 1;
@@ -70,9 +75,9 @@ function planificarPieza(figura: Figura, min: number, max: number): PiezaPlanifi
  * Una forma abstracta en el centro no se acoplaba a nada de lo que había alrededor; esto
  * hace que la constelación sea literalmente el texto antes de ser texto.
  */
-function planificarTexto(figura: Figura): PiezaPlanificada {
+function planificarTexto(figura: Figura, techo: number): PiezaPlanificada {
   const bloques = Array.from(document.querySelectorAll('.plano.is-activo [data-texto]'));
-  const destinos: Punto[] = [];
+  const todos: Punto[] = [];
 
   for (const bloque of bloques) {
     const caja = bloque.getBoundingClientRect();
@@ -85,9 +90,18 @@ function planificarTexto(figura: Figura): PiezaPlanificada {
       const cuantos = Math.max(2, Math.round(ancho / PASO_TEXTO));
       const y = caja.top + ((r + 0.5) * caja.height) / renglones;
       for (let i = 0; i < cuantos; i++) {
-        destinos.push({ x: caja.left + (i / Math.max(1, cuantos - 1)) * ancho, y });
+        todos.push({ x: caja.left + (i / Math.max(1, cuantos - 1)) * ancho, y });
       }
     }
+  }
+
+  // Un plano lleno de párrafos pide más renglones de los que el campo puede dar sin
+  // vaciarse. Se toman repartidos por todos los bloques, no los primeros.
+  const cuantas = Math.min(todos.length, techo);
+  const salto = Math.max(1, todos.length / Math.max(1, cuantas));
+  const destinos: Punto[] = [];
+  for (let i = 0; destinos.length < cuantas && Math.floor(i) < todos.length; i += salto) {
+    destinos.push(todos[Math.floor(i)]);
   }
 
   return { id: figura.id, cuantas: destinos.length, destinos, cede: true };
