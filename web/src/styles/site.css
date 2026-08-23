@@ -446,16 +446,21 @@
    5. Piezas de proyecto
    ───────────────────────────────────────────────────────────────────────────── */
 
+/* Sin fondo: el campo de estrellas tiene que verse a través de las piezas, o la
+   animación queda tapada por la propia lista. Los separadores son bordes, no huecos
+   sobre un fondo opaco. */
 .piezas {
   display: grid;
-  gap: 1px;
   margin: 1.5rem 0 0;
   padding: 0;
   list-style: none;
-  background: var(--line);
   border: 1px solid var(--line);
   border-radius: var(--radius);
   overflow: hidden;
+}
+
+.piezas li + li {
+  border-top: 1px solid var(--line);
 }
 
 /* La pieza entera es el botón: objetivo grande, sin nada pequeño al que apuntar. */
@@ -467,12 +472,12 @@
   width: 100%;
   padding: 1.5rem;
   text-align: left;
-  background: var(--bg);
+  background: transparent;
   transition: background-color var(--medium);
 }
 
 .pieza:hover {
-  background: var(--bg-card);
+  background: rgba(255, 255, 255, 0.03);
 }
 
 .pieza:focus-visible {

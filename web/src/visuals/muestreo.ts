@@ -1,7 +1,12 @@
 import type { Punto } from './ParticleEngine';
 import { LADO_VB } from './piezas';
 
-const cache = new Map<string, Punto[]>();
+export interface Nube {
+  contorno: Punto[];
+  relleno: Punto[];
+}
+
+const cache = new Map<string, Nube>();
 
 /**
  * Convierte una figura en la nube de puntos que las partículas van a ocupar.
@@ -14,16 +19,17 @@ const cache = new Map<string, Punto[]>();
  * uniforme reparte los puntos por área y deja el contorno con cuatro, que es donde vive
  * la forma: el resultado es una mancha. Aquí el contorno va primero.
  */
-export function muestrear(d: string, lado = 240, paso = 6): Punto[] {
+export function muestrear(d: string, lado = 240, paso = 6): Nube {
   const clave = `${d.length}:${d.slice(0, 24)}:${lado}:${paso}`;
   const guardado = cache.get(clave);
   if (guardado) return guardado;
 
+  const vacia: Nube = { contorno: [], relleno: [] };
   const lienzo = document.createElement('canvas');
   lienzo.width = lado;
   lienzo.height = lado;
   const ctx = lienzo.getContext('2d', { willReadFrequently: true });
-  if (!ctx) return [];
+  if (!ctx) return vacia;
 
   ctx.scale(lado / LADO_VB, lado / LADO_VB);
   ctx.fillStyle = '#fff';
@@ -48,18 +54,33 @@ export function muestrear(d: string, lado = 240, paso = 6): Punto[] {
     }
   }
 
-  const puntos = [...contorno, ...relleno];
-  cache.set(clave, puntos);
-  return puntos;
+  const nube = { contorno, relleno };
+  cache.set(clave, nube);
+  return nube;
 }
 
-/** Lleva los puntos normalizados a un rectángulo de la pantalla. */
-export function situar(puntos: Punto[], caja: DOMRect, cuantos: number): Punto[] {
-  if (puntos.length === 0) return [];
+/**
+ * Lleva la nube a un rectángulo de la pantalla, con siete de cada diez puntos en el
+ * contorno. Repartirlos por área deja el borde con un puñado y la figura se ve como una
+ * mancha: la forma vive en el contorno, no en el relleno.
+ */
+export function situar(nube: Nube, caja: DOMRect, cuantos: number): Punto[] {
+  const total = nube.contorno.length + nube.relleno.length;
+  if (total === 0) return [];
+
+  const deseados = Math.min(cuantos, total);
+  const enContorno = Math.min(nube.contorno.length, Math.round(deseados * 0.7));
+  const enRelleno = Math.min(nube.relleno.length, deseados - enContorno);
+
   const salida: Punto[] = [];
-  for (let i = 0; i < cuantos; i++) {
-    const p = puntos[Math.floor((i * puntos.length) / cuantos)];
-    salida.push({ x: caja.left + p.x * caja.width, y: caja.top + p.y * caja.height });
-  }
+  const tomar = (origen: Punto[], cantidad: number) => {
+    for (let i = 0; i < cantidad; i++) {
+      const p = origen[Math.floor((i * origen.length) / cantidad)];
+      salida.push({ x: caja.left + p.x * caja.width, y: caja.top + p.y * caja.height });
+    }
+  };
+
+  tomar(nube.contorno, enContorno);
+  tomar(nube.relleno, enRelleno);
   return salida;
 }
