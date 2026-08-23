@@ -1,5 +1,6 @@
 import type { Figura } from '../ui/CampoParticulas';
-import { muestrear, puntosNecesarios, situar } from './muestreo';
+import { puntosDeConstelacion, puntosDeTexto, puntosNecesarios } from './muestreo';
+import { CONSTELACIONES } from './piezas';
 import type { Punto } from './ParticleEngine';
 
 export interface PiezaPlanificada {
@@ -20,7 +21,6 @@ export interface PlanVista {
 const HOLGURA = 0.6;
 /** Parte del campo que puede llevarse una figura de texto. El resto sigue siendo cielo. */
 const TECHO = 0.5;
-/** Separación entre estrellas dentro de un renglón, y entre renglones. */
 const PASO_TEXTO = 9;
 const ALTO_RENGLON = 13;
 
@@ -35,12 +35,12 @@ const ALTO_RENGLON = 13;
 export function planificarVista(figuras: Figura[], disponibles: number, movil: boolean): PlanVista {
   if (figuras.length === 0) return { piezas: [], total: 0 };
 
-  // Más materia por figura: con el enjambre único la demanda instantánea es la de una
-  // sola pieza, no la suma del plano, así que se puede dibujar mucho más definida.
+  // Con el enjambre único, la demanda instantánea es la de una sola pieza y no la suma
+  // del plano, así que se pueden dibujar mucho más definidas.
   const min = movil ? 70 : 120;
   const max = movil ? 130 : 240;
-
   const techo = Math.max(60, Math.round(disponibles * TECHO));
+
   const base = figuras.map((figura) =>
     figura.tipo === 'texto'
       ? planificarTexto(figura, Math.round(techo / figuras.length))
@@ -48,9 +48,6 @@ export function planificarVista(figuras: Figura[], disponibles: number, movil: b
   );
 
   const necesario = base.reduce((a, p) => a + p.cuantas, 0) || 1;
-
-  // Si vienen más partículas de las que pide la vista, no se apaga ninguna: las figuras
-  // se dibujan más densas, hasta cierto punto.
   const extra = Math.min(Math.max(0, disponibles - necesario), Math.round(necesario * HOLGURA));
 
   const piezas = base.map((p) => {
@@ -63,19 +60,18 @@ export function planificarVista(figuras: Figura[], disponibles: number, movil: b
 }
 
 function planificarPieza(figura: Figura, min: number, max: number): PiezaPlanificada {
+  const constelacion = CONSTELACIONES[figura.id];
   const caja = cajaDe(`[data-figura="${figura.id}"]`);
-  const nube = muestrear(figura.d ?? '');
-  const cuantas = caja ? puntosNecesarios(nube, caja, min, max) : min;
-  const destinos = caja ? situar(nube, caja, Math.round(cuantas * (1 + HOLGURA))) : [];
+  if (!constelacion || !caja) return { id: figura.id, cuantas: min, destinos: [], cede: true };
+
+  const cuantas = puntosNecesarios(constelacion, caja, min, max);
+  const destinos = puntosDeConstelacion(constelacion, caja, Math.round(cuantas * (1 + HOLGURA)));
   return { id: figura.id, cuantas, destinos, cede: true };
 }
 
 /**
- * Los planos sin proyectos no llevan una figura geométrica: las estrellas **ocupan los
- * propios bloques de texto**, en renglones, y ceden cuando las palabras aparecen encima.
- *
- * Una forma abstracta en el centro no se acoplaba a nada de lo que había alrededor; esto
- * hace que la constelación sea literalmente el texto antes de ser texto.
+ * Los planos sin proyectos no llevan objeto: las estrellas ocupan los propios bloques de
+ * texto, en renglones, y ceden cuando las palabras aparecen encima.
  */
 function planificarTexto(figura: Figura, techo: number): PiezaPlanificada {
   const bloques = Array.from(document.querySelectorAll('.plano.is-activo [data-texto]'));
@@ -84,17 +80,7 @@ function planificarTexto(figura: Figura, techo: number): PiezaPlanificada {
   for (const bloque of bloques) {
     const caja = bloque.getBoundingClientRect();
     if (caja.width < 8 || caja.height < 8) continue;
-
-    const renglones = Math.max(1, Math.round(caja.height / ALTO_RENGLON));
-    for (let r = 0; r < renglones; r++) {
-      // El último renglón se corta, como el de un párrafo real.
-      const ancho = r === renglones - 1 && renglones > 1 ? caja.width * 0.62 : caja.width;
-      const cuantos = Math.max(2, Math.round(ancho / PASO_TEXTO));
-      const y = caja.top + ((r + 0.5) * caja.height) / renglones;
-      for (let i = 0; i < cuantos; i++) {
-        todos.push({ x: caja.left + (i / Math.max(1, cuantos - 1)) * ancho, y });
-      }
-    }
+    todos.push(...puntosDeTexto(caja, ALTO_RENGLON, PASO_TEXTO));
   }
 
   // Un plano lleno de párrafos pide más renglones de los que el campo puede dar sin

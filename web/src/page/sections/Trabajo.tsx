@@ -1,6 +1,6 @@
 import type { Employment, ProjectItem } from '../../content';
 import { useContent } from '../../i18n/LanguageProvider';
-import { PIEZAS } from '../../visuals/piezas';
+import { Constelacion } from '../../ui/Constelacion';
 
 /**
  * Un plano de trabajo: varias piezas en la misma vista.
@@ -40,9 +40,7 @@ export function Trabajo({
               onClick={() => onAbrir(item)}
             >
               <span className="pieza__figura" data-figura={item.id} aria-hidden="true">
-                <svg viewBox="0 0 100 100" focusable="false">
-                  <path d={PIEZAS[item.id] ?? ''} fill="currentColor" fillRule="evenodd" />
-                </svg>
+                <Constelacion id={item.id} />
               </span>
 
               <span className="pieza__texto">

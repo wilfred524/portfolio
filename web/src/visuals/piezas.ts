@@ -1,96 +1,233 @@
 /**
- * Las figuras del observatorio, en geometría paramétrica.
+ * Las figuras del observatorio: objetos reconocibles dibujados como constelaciones.
  *
- * Cada figura se define una sola vez y de aquí salen las dos cosas: los puntos que las
- * partículas ocupan al converger, y el `<path>` del SVG que queda después. Es lo que hace
- * que el relevo entre ambos no se note.
+ * Cada una es una lista de trazos (polilíneas sobre un lienzo de 100×100). De ahí salen
+ * los nodos y las aristas: las partículas se convierten en los nodos y las líneas los
+ * unen, así que el relevo entre estrellas y dibujo no se nota.
  *
- * Reglas de dibujo, impuestas por el muestreo:
- *  - Solo relleno. Un trazo fino desaparece al muestrear.
- *  - Rasgo mínimo de 8 unidades sobre 100, y hueco interior mínimo de 12.
- *  - Nada de texto: un glifo legible cuesta más puntos de los que hay.
+ * La regla al dibujar: pocos vértices y bien separados. Un objeto se reconoce por su
+ * silueta, no por su detalle, y cada vértice de más es una estrella que hay que gastar.
  */
 
-const VB = 100;
+export type Trazo = { puntos: [number, number][]; cerrado?: boolean };
 
-function rect(x: number, y: number, w: number, h: number) {
-  return `M${x} ${y}h${w}v${h}h${-w}z`;
+export interface Constelacion {
+  nodos: [number, number][];
+  aristas: [number, number][];
 }
 
-function circulo(cx: number, cy: number, r: number) {
-  return `M${cx - r} ${cy}a${r} ${r} 0 1 0 ${r * 2} 0a${r} ${r} 0 1 0 ${-r * 2} 0z`;
-}
+/** Une los vértices que caen casi encima para que compartan estrella. */
+export function aConstelacion(trazos: Trazo[]): Constelacion {
+  const nodos: [number, number][] = [];
+  const aristas: [number, number][] = [];
 
-function rejilla(x: number, y: number, w: number, h: number, cols: number, filas: number) {
-  const hueco = 4;
-  const cw = (w - hueco * (cols - 1)) / cols;
-  const ch = (h - hueco * (filas - 1)) / filas;
-  let d = '';
-  for (let f = 0; f < filas; f++) {
-    for (let c = 0; c < cols; c++) {
-      d += rect(x + c * (cw + hueco), y + f * (ch + hueco), cw, ch);
+  const indiceDe = (p: [number, number]) => {
+    const ya = nodos.findIndex((n) => Math.hypot(n[0] - p[0], n[1] - p[1]) < 2);
+    if (ya >= 0) return ya;
+    nodos.push(p);
+    return nodos.length - 1;
+  };
+
+  for (const trazo of trazos) {
+    const indices = trazo.puntos.map(indiceDe);
+    for (let i = 0; i < indices.length - 1; i++) aristas.push([indices[i], indices[i + 1]]);
+    if (trazo.cerrado && indices.length > 2) {
+      aristas.push([indices[indices.length - 1], indices[0]]);
     }
   }
-  return d;
+
+  return { nodos, aristas };
 }
 
-/** Barra entre dos puntos, con grosor. Cualquier «línea» de una figura es esto. */
-function barra(x1: number, y1: number, x2: number, y2: number, grosor: number) {
-  const dx = x2 - x1;
-  const dy = y2 - y1;
-  const largo = Math.hypot(dx, dy) || 1;
-  const nx = (-dy / largo) * (grosor / 2);
-  const ny = (dx / largo) * (grosor / 2);
-  return `M${x1 + nx} ${y1 + ny}L${x2 + nx} ${y2 + ny}L${x2 - nx} ${y2 - ny}L${x1 - nx} ${y1 - ny}z`;
-}
+const marco = (x: number, y: number, w: number, h: number): Trazo => ({
+  puntos: [
+    [x, y],
+    [x + w, y],
+    [x + w, y + h],
+    [x, y + h],
+  ],
+  cerrado: true,
+});
+
+const linea = (x1: number, y1: number, x2: number, y2: number): Trazo => ({
+  puntos: [
+    [x1, y1],
+    [x2, y2],
+  ],
+});
+
+/** Polígono regular: el sustituto de un círculo cuando la figura son vértices. */
+const redondo = (cx: number, cy: number, r: number, lados = 8, giro = 0): Trazo => ({
+  puntos: Array.from({ length: lados }, (_, i) => {
+    const a = giro + (i / lados) * Math.PI * 2;
+    return [cx + Math.cos(a) * r, cy + Math.sin(a) * r] as [number, number];
+  }),
+  cerrado: true,
+});
+
+/** Arco abierto, para ciclos y flechas curvas. */
+const arco = (cx: number, cy: number, r: number, desde: number, hasta: number, pasos = 5): Trazo => ({
+  puntos: Array.from({ length: pasos }, (_, i) => {
+    const a = desde + ((hasta - desde) * i) / (pasos - 1);
+    return [cx + Math.cos(a) * r, cy + Math.sin(a) * r] as [number, number];
+  }),
+});
+
+const G = Math.PI / 180;
 
 /**
- * Cada figura evoca la acción del proyecto. Nada de escudos ni engranajes: un escudo
- * dice «seguridad» igual que en cualquier landing y no dice nada de un árbol de permisos.
+ * Un objeto por proyecto, elegido para que se entienda sin leer el texto de al lado.
  */
-export const PIEZAS: Record<string, string> = {
-  // Reglas como datos frente al motor que las lee.
-  'rules-engine': rejilla(6, 22, 46, 56, 2, 3) + rect(64, 30, 30, 40),
+export const PIEZAS: Record<string, Trazo[]> = {
+  // Tabla de políticas con un control ajustable en cada fila: las reglas son datos.
+  'rules-engine': [
+    marco(14, 20, 72, 60),
+    linea(14, 38, 86, 38),
+    linea(14, 56, 86, 56),
+    linea(30, 29, 62, 29),
+    { puntos: [[62, 29]] },
+    linea(30, 47, 46, 47),
+    { puntos: [[46, 47]] },
+    linea(30, 65, 70, 65),
+    { puntos: [[70, 65]] },
+  ],
 
-  // Extraer, procesar y cargar en bloques: la misma tanda, una y otra vez.
-  scoring: rect(6, 26, 18, 48) + barra(28, 50, 44, 50, 9) + rejilla(48, 26, 46, 48, 3, 3),
+  // Documento con su línea de firma y la marca de validado.
+  esignature: [
+    {
+      puntos: [
+        [24, 10],
+        [62, 10],
+        [76, 24],
+        [76, 90],
+        [24, 90],
+      ],
+      cerrado: true,
+    },
+    linea(62, 10, 62, 24),
+    linea(62, 24, 76, 24),
+    linea(34, 40, 66, 40),
+    linea(34, 52, 58, 52),
+    {
+      puntos: [
+        [34, 74],
+        [42, 66],
+        [50, 78],
+        [60, 64],
+        [68, 72],
+      ],
+    },
+  ],
 
-  // Antes y después, a la misma escala.
-  'query-optimization': rect(8, 26, 84, 16) + rect(8, 58, 26, 16),
+  // Base de datos, ciclo mensual, y los registros que salen puntuados.
+  scoring: [
+    redondo(30, 22, 16, 6),
+    linea(14, 22, 14, 58),
+    linea(46, 22, 46, 58),
+    redondo(30, 58, 16, 6),
+    arco(66, 50, 20, -120 * G, 150 * G, 6),
+    linea(52, 36, 66, 30),
+    linea(66, 30, 64, 44),
+  ],
 
-  // Máquina de estados: un tronco, una bifurcación y dos finales.
-  esignature:
-    circulo(16, 50, 11) +
-    barra(27, 50, 45, 50, 8) +
-    circulo(56, 26, 11) +
-    circulo(56, 74, 11) +
-    barra(45, 50, 56, 26, 8) +
-    barra(45, 50, 56, 74, 8) +
-    rect(78, 18, 16, 16) +
-    rect(78, 66, 16, 16),
+  // Cronómetro: el antes y el después de la consulta.
+  'query-optimization': [
+    redondo(50, 56, 30, 10),
+    linea(42, 14, 58, 14),
+    linea(50, 14, 50, 26),
+    linea(50, 56, 50, 36),
+    linea(50, 56, 68, 62),
+  ],
 
-  // Árbol de permisos: módulo, opción, subproceso.
-  'access-control':
-    rect(42, 6, 16, 16) +
-    barra(50, 22, 22, 44, 8) +
-    barra(50, 22, 78, 44, 8) +
-    rect(14, 44, 16, 16) +
-    rect(70, 44, 16, 16) +
-    rejilla(6, 76, 88, 18, 4, 1),
+  // Llave sobre el árbol de módulos que abre.
+  'access-control': [
+    redondo(26, 30, 14, 6),
+    linea(36, 38, 74, 74),
+    linea(74, 74, 88, 74),
+    linea(64, 64, 64, 78),
+    linea(74, 74, 74, 88),
+    linea(12, 66, 88, 66),
+    linea(30, 66, 30, 82),
+    linea(50, 66, 50, 90),
+  ],
 
-  // Capas apiladas, con la de arriba desprendida.
-  'layered-migration':
-    rect(10, 8, 80, 16) + rect(10, 34, 80, 16) + rect(10, 56, 80, 16) + rect(10, 78, 80, 16),
+  // Capas apiladas, con la de arriba desplazada: la migración en curso.
+  'layered-migration': [
+    {
+      puntos: [
+        [22, 22],
+        [78, 14],
+        [86, 30],
+        [30, 38],
+      ],
+      cerrado: true,
+    },
+    {
+      puntos: [
+        [16, 46],
+        [72, 40],
+        [80, 56],
+        [24, 62],
+      ],
+      cerrado: true,
+    },
+    {
+      puntos: [
+        [16, 70],
+        [72, 64],
+        [80, 80],
+        [24, 86],
+      ],
+      cerrado: true,
+    },
+  ],
 
-  // Contenedores dentro de una máquina, con el proxy delante.
-  infrastructure:
-    rect(6, 20, 12, 60) + rect(28, 14, 66, 12) + rejilla(28, 34, 66, 46, 2, 2),
+  // Contenedor sobre la máquina, con el proxy delante.
+  infrastructure: [
+    marco(34, 30, 52, 46),
+    linea(34, 44, 86, 44),
+    linea(52, 44, 52, 76),
+    linea(69, 44, 69, 76),
+    marco(8, 40, 16, 30),
+    linea(24, 55, 34, 55),
+  ],
 
-  // Una banda larga que se corta en piezas verticales.
-  'video-cli': rect(6, 14, 88, 18) + rejilla(6, 46, 88, 48, 4, 1),
+  // Tira de película que se corta en piezas verticales.
+  'video-cli': [
+    marco(8, 24, 84, 30),
+    linea(8, 32, 92, 32),
+    linea(8, 46, 92, 46),
+    linea(34, 24, 34, 54),
+    linea(62, 24, 62, 54),
+    marco(20, 66, 18, 28),
+    marco(46, 66, 18, 28),
+    marco(72, 66, 18, 28),
+  ],
 
-  // Frontend y backend, unidos.
-  'portfolio-site': rect(8, 20, 34, 60) + barra(42, 50, 58, 50, 10) + rect(58, 20, 34, 60),
+  // La ventana del sitio y el agente que responde dentro.
+  'portfolio-site': [
+    marco(10, 18, 80, 60),
+    linea(10, 32, 90, 32),
+    { puntos: [[20, 25]] },
+    { puntos: [[30, 25]] },
+    {
+      puntos: [
+        [26, 44],
+        [62, 44],
+        [62, 64],
+        [38, 64],
+        [30, 72],
+        [30, 64],
+        [26, 64],
+      ],
+      cerrado: true,
+    },
+  ],
 };
 
-export const LADO_VB = VB;
+/** Cada figura, ya resuelta en nodos y aristas. */
+export const CONSTELACIONES: Record<string, Constelacion> = Object.fromEntries(
+  Object.entries(PIEZAS).map(([id, trazos]) => [id, aConstelacion(trazos)]),
+);
+
+export const LADO_VB = 100;

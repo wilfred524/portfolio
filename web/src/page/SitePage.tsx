@@ -5,7 +5,7 @@ import type { ProjectItem } from '../content';
 import { useContent } from '../i18n/LanguageProvider';
 import { useObservatorio } from '../hooks/useObservatorio';
 import { CampoParticulas, type Figura } from '../ui/CampoParticulas';
-import { PIEZAS } from '../visuals/piezas';
+import { CONSTELACIONES } from '../visuals/piezas';
 import { Flechas, Hud } from '../ui/Hud';
 import { ProjectModal } from '../ui/ProjectModal';
 import { PLANOS } from './planos';
@@ -50,8 +50,8 @@ export default function SitePage() {
     if (actual.id === 'start') return [];
     if (actual.proyectos?.length) {
       return actual.proyectos
-        .filter((id) => PIEZAS[id])
-        .map((id) => ({ id, tipo: 'pieza' as const, d: PIEZAS[id] }));
+        .filter((id) => CONSTELACIONES[id])
+        .map((id) => ({ id, tipo: 'pieza' as const }));
     }
     return [{ id: actual.id, tipo: 'texto' as const }];
   }, [plano]);
