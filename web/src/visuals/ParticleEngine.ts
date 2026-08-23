@@ -22,6 +22,9 @@ export interface Punto {
 interface Particula {
   x: number;
   y: number;
+  /** Posición del fotograma anterior: es de donde sale la estela. */
+  px: number;
+  py: number;
   /** Ancla: el sitio al que vuelve cuando no viaja. */
   hx: number;
   hy: number;
@@ -42,6 +45,10 @@ interface Particula {
 
 const DURACION = 1100;
 const MAX_DT = 32;
+/** Radio de la constelación, y también el lado de la rejilla espacial. */
+const MAX_ENLACE = 120;
+/** Cuánto se alarga la estela respecto a lo recorrido en un fotograma. */
+const ESTELA = 5;
 
 export class ParticleEngine {
   private ctx: CanvasRenderingContext2D;
@@ -113,14 +120,14 @@ export class ParticleEngine {
     this.ctx.setTransform(this.dpr, 0, 0, this.dpr, 0, 0);
 
     const movil = ancho < 768;
-    // Las líneas son O(n²) y son lo caro, no las partículas. Apagadas en móvil sobra
-    // presupuesto para mantener una densidad que se lea como un cielo y no como polvo.
+    // Las líneas son lo caro, no las partículas. Apagadas en móvil sobra presupuesto
+    // para mantener una densidad que se lea como un cielo y no como polvo.
     this.conexiones = !movil;
     const objetivo = movil
-      ? Math.min(80, Math.round((ancho * alto) / 9000))
-      : Math.min(150, Math.round((ancho * alto) / 9000));
+      ? Math.min(160, Math.round((ancho * alto) / 6000))
+      : Math.min(340, Math.round((ancho * alto) / 5200));
 
-    this.poblar(Math.max(30, objetivo));
+    this.poblar(Math.max(60, objetivo));
   }
 
   private poblar(cantidad: number) {
@@ -129,20 +136,27 @@ export class ParticleEngine {
       const anterior = previas[i];
       const hx = Math.random() * this.w;
       const hy = Math.random() * this.h;
+      const x = anterior?.x ?? hx;
+      const y = anterior?.y ?? hy;
+      // Rango de tamaño estrecho, y una de cada nueve algo mayor. Con un rango amplio
+      // el campo se lee desigual, como si faltaran partículas donde solo son pequeñas.
+      const grande = i % 9 === 0;
       return {
-        x: anterior?.x ?? hx,
-        y: anterior?.y ?? hy,
+        x,
+        y,
+        px: x,
+        py: y,
         hx,
         hy,
         tx: hx,
         ty: hy,
-        ox: anterior?.x ?? hx,
-        oy: anterior?.y ?? hy,
+        ox: x,
+        oy: y,
         curva: 0,
         retardo: Math.random() * 0.25,
         semilla: Math.random() * Math.PI * 2,
-        radio: 0.4 + Math.random() * 1.1,
-        brillo: 0.12 + Math.random() * 0.33,
+        radio: grande ? 1.5 + Math.random() * 0.5 : 0.85 + Math.random() * 0.35,
+        brillo: grande ? 0.5 + Math.random() * 0.3 : 0.28 + Math.random() * 0.24,
       };
     });
   }
@@ -231,6 +245,9 @@ export class ParticleEngine {
     if (this.viaje < 1) this.viaje = Math.min(1, this.viaje + dt / DURACION);
 
     for (const p of this.particulas) {
+      p.px = p.x;
+      p.py = p.y;
+
       if (this.viaje < 1) {
         const t = suavizar(Math.max(0, (this.viaje - p.retardo) / (1 - p.retardo)));
         const dx = p.tx - p.ox;
@@ -258,16 +275,17 @@ export class ParticleEngine {
 
     const asentado = this.viaje >= 1;
     // Durante el viaje las líneas desaparecen: unir puntos que se están cruzando dibuja
-    // una maraña, no una constelación.
+    // una maraña, no una constelación. En su lugar manda la estela.
     if (this.conexiones && asentado) this.pintarLineas();
+    else this.pintarEstelas();
 
     const f = this.tiempo / 1000;
     for (const p of this.particulas) {
-      const pulso = Math.sin(f * 0.9 + p.semilla) * 0.08;
-      const alfa = Math.max(0, Math.min(0.9, p.brillo + pulso));
-      const lado = p.radio * 8;
+      const pulso = Math.sin(f * 0.9 + p.semilla) * 0.1;
+      const alfa = Math.max(0, Math.min(1, p.brillo + pulso));
+      const lado = p.radio * 11;
 
-      ctx.globalAlpha = alfa * 0.55;
+      ctx.globalAlpha = alfa * 0.8;
       ctx.drawImage(this.sprite, p.x - lado / 2, p.y - lado / 2, lado, lado);
 
       ctx.globalAlpha = alfa;
@@ -280,27 +298,84 @@ export class ParticleEngine {
   }
 
   /**
+   * Estela: el rastro de lo que la partícula acaba de recorrer, alargado.
+   *
+   * Se agrupan por grosor y se pintan de una vez, como las líneas: un gradiente por
+   * partícula y fotograma sería crear trescientos objetos por frame.
+   */
+  private pintarEstelas() {
+    const { ctx } = this;
+    const grupos: [number, number, number, number][][] = [[], [], []];
+
+    for (const p of this.particulas) {
+      const dx = p.x - p.px;
+      const dy = p.y - p.py;
+      if (dx * dx + dy * dy < 1) continue;
+      const nivel = p.radio > 1.4 ? 2 : p.radio > 1 ? 1 : 0;
+      grupos[nivel].push([p.px - dx * ESTELA, p.py - dy * ESTELA, p.x, p.y]);
+    }
+
+    ctx.lineCap = 'round';
+    grupos.forEach((segmentos, nivel) => {
+      if (segmentos.length === 0) return;
+      ctx.lineWidth = 0.9 + nivel * 0.9;
+      ctx.strokeStyle = `rgba(${this.colores.glow}, ${0.14 + nivel * 0.12})`;
+      ctx.beginPath();
+      for (const [x1, y1, x2, y2] of segmentos) {
+        ctx.moveTo(x1, y1);
+        ctx.lineTo(x2, y2);
+      }
+      ctx.stroke();
+    });
+    ctx.lineCap = 'butt';
+  }
+
+  /**
    * Constelación. Los segmentos se agrupan en tres niveles de opacidad y se pintan con
-   * tres `stroke()`: uno por línea serían cien llamadas por fotograma.
+   * tres `stroke()`: uno por línea serían cientos de llamadas por fotograma.
    */
   private pintarLineas() {
     const { ctx } = this;
-    const max = 120;
-    const max2 = max * max;
+    const max2 = MAX_ENLACE * MAX_ENLACE;
     const grupos: [number, number, number, number][][] = [[], [], []];
+
+    // Rejilla espacial: comparar todos contra todos con trescientas partículas son más
+    // de cincuenta mil pares por fotograma. Con celdas del tamaño del radio de enlace,
+    // cada partícula solo mira sus nueve celdas vecinas.
+    const cols = Math.max(1, Math.ceil(this.w / MAX_ENLACE));
+    const filas = Math.max(1, Math.ceil(this.h / MAX_ENLACE));
+    const celdas: number[][] = Array.from({ length: cols * filas }, () => []);
+    const columna = (p: Particula) =>
+      Math.min(cols - 1, Math.max(0, Math.floor(p.x / MAX_ENLACE)));
+    const fila = (p: Particula) => Math.min(filas - 1, Math.max(0, Math.floor(p.y / MAX_ENLACE)));
+
+    this.particulas.forEach((p, i) => celdas[fila(p) * cols + columna(p)].push(i));
 
     for (let i = 0; i < this.particulas.length; i++) {
       const a = this.particulas[i];
+      const c = columna(a);
+      const f = fila(a);
       let enlaces = 0;
-      for (let j = i + 1; j < this.particulas.length && enlaces < 2; j++) {
-        const b = this.particulas[j];
-        const dx = a.x - b.x;
-        const dy = a.y - b.y;
-        const d2 = dx * dx + dy * dy;
-        if (d2 > max2) continue;
-        const cercania = 1 - Math.sqrt(d2) / max;
-        grupos[Math.min(2, Math.floor(cercania * 3))].push([a.x, a.y, b.x, b.y]);
-        enlaces++;
+
+      for (let df = -1; df <= 1 && enlaces < 2; df++) {
+        for (let dc = -1; dc <= 1 && enlaces < 2; dc++) {
+          const nf = f + df;
+          const nc = c + dc;
+          if (nf < 0 || nf >= filas || nc < 0 || nc >= cols) continue;
+
+          for (const j of celdas[nf * cols + nc]) {
+            // Solo hacia delante: sin esto cada pareja se dibujaría dos veces.
+            if (j <= i) continue;
+            const b = this.particulas[j];
+            const dx = a.x - b.x;
+            const dy = a.y - b.y;
+            const d2 = dx * dx + dy * dy;
+            if (d2 > max2) continue;
+            const cercania = 1 - Math.sqrt(d2) / MAX_ENLACE;
+            grupos[Math.min(2, Math.floor(cercania * 3))].push([a.x, a.y, b.x, b.y]);
+            if (++enlaces >= 2) break;
+          }
+        }
       }
     }
 
