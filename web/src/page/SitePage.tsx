@@ -4,7 +4,7 @@ import { useState } from 'react';
 import type { ProjectItem } from '../content';
 import { useContent } from '../i18n/LanguageProvider';
 import { useObservatorio } from '../hooks/useObservatorio';
-import { Hud } from '../ui/Hud';
+import { Flechas, Hud } from '../ui/Hud';
 import { ProjectModal } from '../ui/ProjectModal';
 import { PLANOS } from './planos';
 import { Umbral } from './sections/Umbral';
@@ -17,18 +17,15 @@ import { Contacto } from './sections/Contacto';
  * El observatorio: una sola pantalla por la que se navega, en vez de una página que se
  * recorre con el scroll.
  *
- * **Los siete planos se montan siempre.** Los inactivos se ocultan con `inert` y
- * `aria-hidden`, nunca se desmontan: el HTML servido contiene las 34 tecnologías, los
- * nueve proyectos y todos los datos de perfil, así que la búsqueda del navegador, los
- * buscadores y los lectores de pantalla siguen encontrando el contenido entero. El coste
- * de rendimiento no está en un DOM oculto, está en el canvas, que es uno solo.
+ * **Los siete planos se montan siempre**, los inactivos con `inert`: así el HTML servido
+ * conserva todo el contenido y la búsqueda del navegador, los buscadores y los lectores
+ * de pantalla lo siguen encontrando. El coste está en el canvas, que es uno solo.
  *
- * En **modo documento** los mismos planos se apilan y se recorren con el scroll. No es una
- * segunda implementación: es el mismo árbol con otra clase raíz.
+ * El modo documento es el mismo árbol con otra clase raíz, no una segunda implementación.
  */
 export default function SitePage() {
   const profile = useContent();
-  const { plano, irA, documento, conmutarModo } = useObservatorio();
+  const { plano, sentido, irA, documento, conmutarModo } = useObservatorio();
   const [abierto, setAbierto] = useState<ProjectItem | null>(null);
 
   // Índice de proyectos por id: el reparto por planos vive en `planos.ts` (presentación),
@@ -50,8 +47,10 @@ export default function SitePage() {
       </a>
 
       <Hud plano={plano} irA={irA} documento={documento} conmutarModo={conmutarModo} />
+      {!documento && <Flechas plano={plano} irA={irA} />}
 
-      <main className="planos">
+      {/* El sentido lo consume el CSS para decidir por qué lado entra cada plano. */}
+      <main className="planos" data-sentido={sentido}>
         {PLANOS.map((p, indice) => {
           const activo = documento || indice === plano;
           const proyectos = (p.proyectos ?? []).map((id) => porId.get(id)!).filter(Boolean);
@@ -64,9 +63,8 @@ export default function SitePage() {
               id={p.id}
               className={activo ? 'plano is-activo' : 'plano'}
               aria-label={profile.ui.planes[p.nombre]}
-              // `inert` retira el plano oculto del orden de tabulación y del árbol de
-              // accesibilidad sin sacarlo del DOM, que es justo lo que se busca: nadie
-              // tabula a ciegas dentro de una pantalla que no ve, y el texto sigue ahí.
+              // Retira el plano oculto del orden de tabulación sin sacarlo del DOM:
+              // nadie tabula a ciegas dentro de una pantalla que no ve.
               inert={!activo}
             >
               {p.id === 'start' && <Umbral irA={irA} />}

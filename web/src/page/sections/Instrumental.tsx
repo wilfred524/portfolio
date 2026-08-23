@@ -1,15 +1,11 @@
 import { useContent } from '../../i18n/LanguageProvider';
 
 /**
- * Plano 5: herramientas y datos de perfil, juntos.
+ * Plano 5: herramientas y datos de perfil. Comparten plano porque los dos son bloques de
+ * escaneo, no de lectura, y van después de la evidencia: una lista de literales delante
+ * de los proyectos se lee como declaración; detrás, como índice de lo ya visto.
  *
- * Comparten plano porque los dos son bloques de **escaneo, no de lectura**: nadie lee 34
- * tecnologías, se buscan. Y van después de la evidencia y no antes: una lista de literales
- * puesta delante de los proyectos se lee como una declaración; puesta detrás, se lee como
- * el índice de lo que se acaba de ver.
- *
- * El dominio no está aquí: se dijo en el plano de contexto, que es donde sitúa. Los otros
- * tres datos son los que quitan objeciones logísticas justo antes del contacto.
+ * El dominio no está aquí, se dijo en el plano de contexto.
  */
 export function Instrumental() {
   const profile = useContent();

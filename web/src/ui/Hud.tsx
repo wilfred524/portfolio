@@ -7,9 +7,8 @@ import { LangSwitch } from './LangSwitch';
  * La capa persistente. No es un plano y no participa en la coreografía: está desde el
  * primer fotograma y no se mueve.
  *
- * Es lo que contesta a «¿y quien llega con prisa?». En una página sin scroll, dejar el CV
- * al final significaría enterrarlo detrás de seis transiciones; aquí está a un clic desde
- * cualquier punto de la narración, igual que el chat y el conmutador de idioma.
+ * En una página sin scroll, dejar el CV al final lo enterraría detrás de seis
+ * transiciones; aquí está a un clic desde cualquier punto, igual que el idioma y el modo.
  */
 export function Hud({
   plano,
@@ -26,53 +25,92 @@ export function Hud({
   const { planes } = profile.ui;
 
   return (
-    <div className="hud">
-      <div className="hud__bar">
-        <button type="button" className="hud__marca" onClick={() => irA(0)}>
-          wm.
+    <header className="hud">
+      <button type="button" className="hud__marca" onClick={() => irA(0)}>
+        WM.
+      </button>
+
+      {/* En modo documento la página se recorre con el scroll y los planos son anclas;
+          el menú sigue sirviendo, así que se queda en los dos modos. */}
+      <nav className="hud__planos" aria-label={planes.ariaLabel}>
+        <ol>
+          {PLANOS.map((p, indice) => (
+            <li key={p.id}>
+              <button
+                type="button"
+                className="hud__plano"
+                aria-current={indice === plano ? 'true' : undefined}
+                onClick={() => irA(indice)}
+              >
+                {planes[p.nombre]}
+              </button>
+            </li>
+          ))}
+        </ol>
+      </nav>
+
+      <div className="hud__acciones">
+        <a
+          className="btn btn--sm"
+          href={profile.cv.url}
+          download
+          onClick={() => track('cv-descargado', { origen: 'hud' })}
+        >
+          {profile.cv.label}
+        </a>
+        <button type="button" className="btn btn--sm" onClick={conmutarModo}>
+          {documento ? planes.observatoryMode : planes.documentMode}
         </button>
-
-        <div className="hud__acciones">
-          <a
-            className="btn btn--sm"
-            href={profile.cv.url}
-            download
-            onClick={() => track('cv-descargado', { origen: 'hud' })}
-          >
-            {profile.cv.label}
-          </a>
-          <button type="button" className="btn btn--sm" onClick={conmutarModo}>
-            {documento ? planes.observatoryMode : planes.documentMode}
-          </button>
-          <LangSwitch />
-        </div>
+        <LangSwitch />
       </div>
+    </header>
+  );
+}
 
-      {/* El rail solo tiene sentido mientras se navega por planos: en modo documento la
-          página se recorre con el scroll y un índice flotante sobraría. */}
-      {!documento && (
-        <nav className="rail" aria-label={planes.ariaLabel}>
-          <ol>
-            {PLANOS.map((p, indice) => (
-              <li key={p.id}>
-                <button
-                  type="button"
-                  className="rail__punto"
-                  aria-current={indice === plano ? 'true' : undefined}
-                  onClick={() => irA(indice)}
-                >
-                  {/* El número se ve; el nombre aparece al enfocar o al pasar por encima,
-                      y es lo que lee un lector de pantalla. */}
-                  <span aria-hidden="true" className="rail__num">
-                    {String(indice + 1).padStart(2, '0')}
-                  </span>
-                  <span className="rail__nombre">{planes[p.nombre]}</span>
-                </button>
-              </li>
-            ))}
-          </ol>
-        </nav>
-      )}
-    </div>
+/**
+ * Las dos flechas, una a cada lado de la pantalla.
+ *
+ * Son el control principal de la narración: avanzar y retroceder es lo único que se hace
+ * el 90 % del tiempo, y merece un objetivo grande y en el sitio donde la vista ya está,
+ * no un menú al que hay que subir.
+ *
+ * En los extremos se deshabilitan en vez de desaparecer: un control que se esfuma mueve
+ * el resto de la interfaz y deja al visitante buscando lo que acaba de pulsar.
+ */
+export function Flechas({
+  plano,
+  irA,
+}: {
+  plano: number;
+  irA: (indice: number) => void;
+}) {
+  const { planes } = useContent().ui;
+
+  return (
+    <>
+      <button
+        type="button"
+        className="flecha flecha--izq"
+        onClick={() => irA(plano - 1)}
+        disabled={plano === 0}
+        aria-label={planes.previous}
+      >
+        <svg viewBox="0 0 24 24" aria-hidden="true" focusable="false">
+          <path d="M15 4 7 12l8 8" fill="none" stroke="currentColor" strokeWidth="1.5" />
+        </svg>
+      </button>
+
+      <button
+        type="button"
+        className="flecha flecha--der"
+        onClick={() => irA(plano + 1)}
+        disabled={plano === PLANOS.length - 1}
+        aria-label={planes.next}
+      >
+        <svg viewBox="0 0 24 24" aria-hidden="true" focusable="false">
+          <path d="M9 4l8 8-8 8" fill="none" stroke="currentColor" strokeWidth="1.5" />
+        </svg>
+      </button>
+    </>
   );
 }

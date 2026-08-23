@@ -1,14 +1,10 @@
 import { useContent } from '../../i18n/LanguageProvider';
 
 /**
- * Plano 0. Decide si el visitante sigue.
+ * Plano 0. Decide si el visitante sigue, así que es el único **sin coreografía de
+ * entrada**: su texto está en su sitio al primer pintado.
  *
- * Es el único plano **sin coreografía de entrada**: su texto está en su sitio al primer
- * pintado. Hacer esperar una animación antes de decir quién eres es cobrarle al visitante
- * la entrada antes de enseñarle nada.
- *
- * Lleva dos salidas: la que sigue la narración y un atajo directo al trabajo, para quien
- * ya sabe lo que busca.
+ * Dos salidas: seguir la narración, o el atajo al trabajo para quien ya sabe qué busca.
  */
 export function Umbral({ irA }: { irA: (indice: number) => void }) {
   const profile = useContent();
