@@ -4,6 +4,7 @@ import { useState } from 'react';
 import type { ProjectItem } from '../content';
 import { useContent } from '../i18n/LanguageProvider';
 import { useObservatorio } from '../hooks/useObservatorio';
+import { CampoParticulas } from '../ui/CampoParticulas';
 import { Flechas, Hud } from '../ui/Hud';
 import { ProjectModal } from '../ui/ProjectModal';
 import { PLANOS } from './planos';
@@ -25,7 +26,7 @@ import { Contacto } from './sections/Contacto';
  */
 export default function SitePage() {
   const profile = useContent();
-  const { plano, sentido, irA, documento, conmutarModo } = useObservatorio();
+  const { plano, sentido, irA, documento, conmutarModo, reducido } = useObservatorio();
   const [abierto, setAbierto] = useState<ProjectItem | null>(null);
 
   // Índice de proyectos por id: el reparto por planos vive en `planos.ts` (presentación),
@@ -45,6 +46,10 @@ export default function SitePage() {
       <a className="skip" href={`#/${PLANOS[PLANOS.length - 1].id}`}>
         {profile.ui.planes.contact}
       </a>
+
+      {/* Primer hijo y por debajo del contenido, sin z-index negativo: #root crea su
+          propio contexto de apilamiento y ahí un -1 quedaría tapado por cualquier fondo. */}
+      {!documento && <CampoParticulas plano={plano} reducido={reducido} />}
 
       <Hud plano={plano} irA={irA} documento={documento} conmutarModo={conmutarModo} />
       {!documento && <Flechas plano={plano} irA={irA} />}

@@ -232,13 +232,23 @@
 
 .obs {
   position: relative;
-  z-index: 1;
+}
+
+/* Materia, no interfaz: no captura clics ni gestos. Lo pulsable son las piezas del
+   DOM que hay encima. */
+.campo {
+  position: fixed;
+  inset: 0;
+  z-index: 0;
+  pointer-events: none;
 }
 
 /* Cada plano ocupa el viewport y lo que desborde scrollea DENTRO de él: a 200% de
    zoom o en móvil apaisado el contenido sigue siendo alcanzable. */
 .planos {
   position: relative;
+  z-index: 1;
+  height: 100dvh;
 }
 
 .plano {
@@ -270,10 +280,6 @@
   opacity: 1;
   visibility: visible;
   transform: none;
-}
-
-.planos {
-  height: 100dvh;
 }
 
 .plano__cuerpo {
