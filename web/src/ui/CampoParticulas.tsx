@@ -27,12 +27,14 @@ export function CampoParticulas({
   figuras,
   reducido,
   saltado,
+  disolviendo,
   onRevelar,
 }: {
   plano: number;
   figuras: Figura[];
   reducido: boolean;
   saltado: boolean;
+  disolviendo: boolean;
   onRevelar: (id: string) => void;
 }) {
   const canvas = useRef<HTMLCanvasElement>(null);
@@ -76,6 +78,32 @@ export function CampoParticulas({
       motor.current = null;
     };
   }, [reducido]);
+
+  /**
+   * Lo que hay se rompe antes de irse: las partículas salen de los trazos que sostenían,
+   * en orden inverso al de lectura, y quedan sueltas para formar el plano siguiente.
+   */
+  useEffect(() => {
+    const engine = motor.current;
+    if (!engine || !disolviendo || reducido) return;
+
+    let cancelado = false;
+    const salientes = [...figuras].reverse();
+    const relojes: number[] = [];
+
+    salientes.forEach((figura, i) => {
+      relojes.push(
+        window.setTimeout(() => {
+          if (!cancelado) engine.disolver(figura.id);
+        }, i * 70),
+      );
+    });
+
+    return () => {
+      cancelado = true;
+      relojes.forEach(clearTimeout);
+    };
+  }, [disolviendo, figuras, reducido]);
 
   /**
    * La cascada. Las partículas van **directas al hueco de cada pieza**: no hay figura

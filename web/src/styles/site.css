@@ -514,6 +514,16 @@
   filter: none;
 }
 
+/* Al abandonar un plano, sus trazos se van mientras las estrellas salen de ellos. Más
+   rápido de lo que tardan en aparecer, para que el relevo no deje un hueco vacío. */
+.plano.is-disolviendo .pieza__figura,
+.plano.is-disolviendo .pieza__texto,
+.plano.is-disolviendo [data-texto] {
+  opacity: 0;
+  filter: blur(6px);
+  transition: opacity 0.24s ease-in, filter 0.24s ease-in;
+}
+
 /* En los planos sin proyectos, las estrellas ocupan los renglones del texto y este
    aparece encima cuando la nube termina: la constelación es el texto antes de serlo. */
 [data-texto] {

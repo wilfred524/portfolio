@@ -27,7 +27,7 @@ import { Contacto } from './sections/Contacto';
  */
 export default function SitePage() {
   const profile = useContent();
-  const { plano, sentido, irA, documento, conmutarModo, reducido } = useObservatorio();
+  const { plano, pedido, sentido, irA, documento, conmutarModo, reducido } = useObservatorio();
   const [abierto, setAbierto] = useState<ProjectItem | null>(null);
   const [reveladas, setReveladas] = useState<Set<string>>(new Set());
   const [saltado, setSaltado] = useState(false);
@@ -91,12 +91,13 @@ export default function SitePage() {
           figuras={figuras}
           reducido={reducido}
           saltado={saltado}
+          disolviendo={pedido !== plano}
           onRevelar={(id) => setReveladas((previas) => new Set(previas).add(id))}
         />
       )}
 
-      <Hud plano={plano} irA={irA} documento={documento} conmutarModo={conmutarModo} />
-      {!documento && <Flechas plano={plano} irA={irA} />}
+      <Hud plano={pedido} irA={irA} documento={documento} conmutarModo={conmutarModo} />
+      {!documento && <Flechas plano={pedido} irA={irA} />}
 
       <main className="planos" data-sentido={sentido}>
         {PLANOS.map((p, indice) => {
@@ -112,6 +113,7 @@ export default function SitePage() {
               className={[
                 'plano',
                 activo ? 'is-activo' : '',
+                activo && pedido !== plano ? 'is-disolviendo' : '',
                 // El plano de inicio no tiene animación: su texto está desde el primer
                 // fotograma. Los demás esperan a que las estrellas los rellenen.
                 p.id === 'start' || reveladas.has(p.id) ? 'is-formado' : '',
