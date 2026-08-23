@@ -9,8 +9,6 @@ export interface Figura {
    * `texto`: la nube rellena los bloques de texto del plano y cede a las palabras.
    */
   tipo: 'pieza' | 'texto';
-  /** Geometría de la figura, solo para las de tipo `pieza`. */
-  d?: string;
 }
 
 /**
