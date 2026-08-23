@@ -90,6 +90,13 @@ export interface ProjectGroup {
 }
 
 export interface Fact {
+  /**
+   * Clave estable, idéntica en los dos idiomas. Existe porque el dominio se muestra en un
+   * plano distinto al de los otros tres datos, y localizarlo por su posición en el array
+   * era una bomba: `tools/cv/src/build.ts` ya lee `facts[0]` y `facts[1]` por posición, y
+   * bastaba reordenar la lista para que la página enseñara un dato por otro sin avisar.
+   */
+  id: 'education' | 'languages' | 'mode' | 'domain';
   label: string;
   /** Si va vacío, la línea no se renderiza: mejor omitir que publicar un dato inventado. */
   value: string;
@@ -111,7 +118,15 @@ export interface SkillGroup {
  */
 export interface UiStrings {
   nav: { experience: string; skills: string; contact: string; ariaLabel: string };
-  sections: { experience: string; skills: string; contact: string; colophon: string };
+  sections: {
+    experience: string;
+    skills: string;
+    contact: string;
+    colophon: string;
+    /** Los datos de perfil (formación, idiomas, modalidad), que comparten plano con las
+     *  habilidades: los dos son bloques de escaneo, no de lectura. */
+    profile: string;
+  };
   blocks: { problem: string; hard: string; result: string };
   /** Tarjeta de proyecto y su detalle. */
   project: {
@@ -127,6 +142,38 @@ export interface UiStrings {
     visit: string;
   };
   viewCode: string;
+  /**
+   * Los planos del observatorio y los controles para moverse entre ellos.
+   *
+   * El sitio dejó de ser una página con secciones que se recorren con el scroll: ahora es
+   * una sola pantalla por la que se navega. Los nombres de abajo son los del rail, y son
+   * lo único que le dice al visitante dónde está y cuánto le queda.
+   */
+  planes: {
+    /** Etiqueta accesible del rail de navegación. */
+    ariaLabel: string;
+    previous: string;
+    next: string;
+    /** Prefijo de la etiqueta accesible de cada punto del rail: «Ir a …». */
+    goTo: string;
+    /** Nombres de los siete planos, en orden. */
+    threshold: string;
+    context: string;
+    data: string;
+    platform: string;
+    own: string;
+    toolkit: string;
+    contact: string;
+    /** Acción principal del primer plano, y el atajo para saltarse la presentación. */
+    enter: string;
+    skipToWork: string;
+    /**
+     * Conmutador entre la narración y la página apilada. El modo documento no es una
+     * versión degradada: es la salida para quien quiere buscar con Ctrl+F o imprimir.
+     */
+    documentMode: string;
+    observatoryMode: string;
+  };
   /** Chat del agente. Su lógica vive en el backend; aquí solo está lo que se lee. */
   chat: {
     title: string;

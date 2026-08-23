@@ -2,11 +2,11 @@
  * Estilos del sitio. Los valores salen todos de tokens.css: si aquí aparece un color
  * o un tamaño escrito a mano, es un error, no una excepción.
  *
- * Orden de las secciones, de arriba abajo de la página:
- *   1. Utilidades      5. Proyectos
- *   2. Estructura      6. Habilidades y perfil
- *   3. Navegación      7. Contacto y pie
- *   4. Hero
+ * Orden:
+ *   1. Utilidades          5. Piezas de proyecto
+ *   2. Botones y prosa     6. Los planos con contenido
+ *   3. El observatorio     7. Modo documento
+ *   4. HUD y rail
  */
 
 /* ─────────────────────────────────────────────────────────────────────────────
@@ -64,202 +64,9 @@
    2. Estructura
    ───────────────────────────────────────────────────────────────────────────── */
 
-/* El contenido va por encima del canvas del fondo. Sin z-index negativos: #root
-   crea contexto de apilamiento propio (isolation: isolate en global.css) y un
-   canvas en -1 quedaría tapado por cualquier fondo opaco. */
-.site {
-  position: relative;
-  z-index: 1;
-}
-
-.section {
-  max-width: var(--page);
-  margin: 0 auto;
-  padding: var(--section-gap) var(--gutter);
-}
-
-/* La nav es fija: sin esto, al saltar a una ancla el título queda debajo de ella. */
-.section[id] {
-  scroll-margin-top: calc(var(--nav-h) + 1rem);
-}
-
-.section__head {
-  display: flex;
-  align-items: baseline;
-  gap: 1rem;
-  margin-bottom: 2.5rem;
-}
-
-.section__title {
-  font-size: var(--text-xl);
-  font-weight: 600;
-  letter-spacing: var(--tracking-tight);
-  color: var(--text);
-}
-
-/* Regla que ocupa lo que sobra a la derecha del título. Es el único adorno de los
-   encabezados: el énfasis lo da el tamaño. */
-.section__rule {
-  flex: 1;
-  height: 1px;
-  background: var(--line-soft);
-}
-
 .prose {
   max-width: var(--measure);
   color: var(--text-mute);
-}
-
-/* ─────────────────────────────────────────────────────────────────────────────
-   3. Navegación
-   ───────────────────────────────────────────────────────────────────────────── */
-
-.nav {
-  position: sticky;
-  top: 0;
-  z-index: 100;
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  gap: 1rem;
-  height: var(--nav-h);
-  padding: 0 var(--gutter);
-  /* Degradado y no color plano: el borde inferior de una barra opaca corta el
-     campo de estrellas en seco. Así el fondo se desvanece por debajo. */
-  background: linear-gradient(to bottom, var(--bg) 30%, transparent);
-  backdrop-filter: blur(8px);
-}
-
-.nav__logo {
-  font-size: var(--text-base);
-  font-weight: 600;
-  letter-spacing: var(--tracking-tight);
-  color: var(--text-soft);
-}
-
-.nav__links {
-  display: flex;
-  align-items: center;
-  gap: 1.5rem;
-}
-
-.nav__links a {
-  font-size: var(--text-sm);
-  font-weight: 500;
-  color: var(--text-dim);
-  text-decoration: none;
-  transition: color var(--medium);
-}
-
-.nav__links a:hover {
-  color: var(--text-soft);
-}
-
-/* Conmutador de idioma. Botones, no enlaces: no hay navegación, se cambia el
-   contenido en cliente. */
-.langswitch {
-  display: flex;
-  gap: 0.25rem;
-  padding-left: 1rem;
-  border-left: 1px solid var(--line);
-}
-
-.langswitch button {
-  padding: 0.25rem 0.5rem;
-  border-radius: var(--radius-sm);
-  font-size: var(--text-xs);
-  font-weight: 600;
-  letter-spacing: 0.05em;
-  color: var(--text-faint);
-  transition: color var(--fast), background-color var(--fast);
-}
-
-.langswitch button:hover {
-  color: var(--text-soft);
-}
-
-.langswitch button[aria-pressed='true'] {
-  color: var(--text);
-  background: var(--line);
-}
-
-/* ─────────────────────────────────────────────────────────────────────────────
-   4. Hero
-   ───────────────────────────────────────────────────────────────────────────── */
-
-.hero {
-  display: flex;
-  flex-direction: column;
-  justify-content: center;
-  min-height: calc(100dvh - var(--nav-h));
-  max-width: var(--page);
-  margin: 0 auto;
-  padding: 0 var(--gutter) var(--section-gap);
-}
-
-.hero__name {
-  font-size: var(--display);
-  font-weight: 700;
-  line-height: 1.05;
-  letter-spacing: var(--tracking-tight);
-  color: var(--text);
-}
-
-.hero__role {
-  margin-top: 0.75rem;
-  font-size: var(--text-lg);
-  color: var(--text-mute);
-  letter-spacing: -0.01em;
-}
-
-.hero__credential {
-  max-width: var(--measure);
-  margin-top: 1.5rem;
-  color: var(--text-dim);
-}
-
-.hero__links {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 1rem;
-  margin-top: 2rem;
-}
-
-.hero__foot {
-  display: flex;
-  flex-wrap: wrap;
-  align-items: center;
-  gap: 0.5rem 1.5rem;
-  margin-top: 2rem;
-}
-
-/* Punto de disponibilidad: uno de los dos únicos sitios donde aparece el acento. */
-.available {
-  display: inline-flex;
-  align-items: center;
-  gap: 0.5rem;
-  font-size: var(--text-sm);
-  color: var(--accent);
-}
-
-.available::before {
-  content: '';
-  width: 6px;
-  height: 6px;
-  border-radius: 50%;
-  background: var(--accent);
-  box-shadow: 0 0 8px var(--accent-glow);
-  animation: latido 2s infinite;
-}
-
-@keyframes latido {
-  0%,
-  100% {
-    opacity: 1;
-  }
-  50% {
-    opacity: 0.45;
-  }
 }
 
 /* ─────────────────────────────────────────────────────────────────────────────
@@ -297,105 +104,6 @@
   background: var(--text);
   border-color: var(--text);
   color: var(--bg);
-}
-
-/* ─────────────────────────────────────────────────────────────────────────────
-   5. Proyectos: cabecera de empleo, rejilla y tarjeta
-   ───────────────────────────────────────────────────────────────────────────── */
-
-.group + .group {
-  margin-top: 2.5rem;
-}
-
-.job {
-  margin-bottom: 1.5rem;
-}
-
-.job__employer {
-  font-size: var(--text-md);
-  font-weight: 600;
-  color: var(--text-soft);
-}
-
-.job__tagline {
-  margin-top: 0.5rem;
-  font-size: var(--text-sm);
-}
-
-.group__label {
-  display: block;
-  margin-bottom: 0.75rem;
-}
-
-/* auto-fill y no auto-fit: con una sola tarjeta en su grupo, auto-fit la estiraría a
-   todo el ancho y la haría parecer destacada sin serlo. */
-.grid {
-  display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(16rem, 1fr));
-  gap: 1px;
-  background: var(--line);
-  border: 1px solid var(--line);
-  border-radius: var(--radius);
-  overflow: hidden;
-}
-
-/* La rejilla se ve por los huecos de 1px: cada tarjeta es opaca y el fondo del
-   contenedor hace de línea divisoria. Un borde por tarjeta daría líneas dobles. */
-.card {
-  display: flex;
-  flex-direction: column;
-  gap: 0.5rem;
-  min-height: 11rem;
-  padding: 1.5rem;
-  text-align: left;
-  background: var(--bg);
-  transition: background-color var(--medium);
-}
-
-.card:hover {
-  background: var(--bg-card);
-}
-
-.card__title {
-  font-size: var(--text-md);
-  font-weight: 600;
-  letter-spacing: -0.01em;
-  color: var(--text-soft);
-}
-
-.card__summary {
-  font-size: var(--text-sm);
-  color: var(--text-dim);
-  line-height: 1.6;
-}
-
-.card__foot {
-  display: flex;
-  align-items: baseline;
-  justify-content: space-between;
-  gap: 1rem;
-  /* Empuja el pie abajo: los pies quedan alineados aunque los resúmenes midan
-     distinto, que es lo que hace que la rejilla se lea como una rejilla. */
-  margin-top: auto;
-  padding-top: 1rem;
-}
-
-.card__tags {
-  font-size: var(--text-xs);
-  color: var(--text-faint);
-}
-
-.card__open {
-  flex-shrink: 0;
-  font-size: var(--text-xs);
-  font-weight: 600;
-  color: var(--text-faint);
-  transition: color var(--medium);
-}
-
-.card:hover .card__open,
-.card:focus-visible .card__open {
-  color: var(--text-soft);
 }
 
 /* ─────────────────────────────────────────────────────────────────────────────
@@ -517,14 +225,355 @@
   margin-top: 2rem;
 }
 
+
 /* ─────────────────────────────────────────────────────────────────────────────
-   6. Columnas: habilidades y datos de perfil
+   3. El observatorio: los planos
    ───────────────────────────────────────────────────────────────────────────── */
+
+.obs {
+  position: relative;
+  z-index: 1;
+}
+
+/* Cada plano ocupa el viewport y ninguno hace scroll de página. Lo que desborde
+   scrollea DENTRO de su plano: a 200% de zoom o en un móvil apaisado, el contenido
+   sigue siendo alcanzable en vez de quedar cortado por el borde inferior. */
+.planos {
+  position: relative;
+}
+
+.plano {
+  position: absolute;
+  inset: 0;
+  display: grid;
+  place-items: center;
+  padding: calc(var(--nav-h) + 1rem) var(--gutter) 5rem;
+  overflow-y: auto;
+  opacity: 0;
+  /* visibility y no display: un plano en `display:none` sale del árbol de
+     accesibilidad y del buscador del navegador, y aquí se quiere justo lo contrario. */
+  visibility: hidden;
+  transition: opacity var(--slow), visibility var(--slow);
+}
+
+.plano.is-activo {
+  opacity: 1;
+  visibility: visible;
+}
+
+.planos {
+  height: 100dvh;
+}
+
+.plano__cuerpo {
+  width: 100%;
+  max-width: var(--page);
+}
+
+/* ─────────────────────────────────────────────────────────────────────────────
+   4. HUD y rail
+   ───────────────────────────────────────────────────────────────────────────── */
+
+.hud__bar {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  z-index: 100;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+  height: var(--nav-h);
+  padding: 0 var(--gutter);
+  background: linear-gradient(to bottom, var(--bg) 40%, transparent);
+}
+
+.hud__marca {
+  font-size: var(--text-base);
+  font-weight: 600;
+  letter-spacing: var(--tracking-tight);
+  color: var(--text-soft);
+}
+
+.hud__acciones {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+}
+
+.btn--sm {
+  padding: 0.5rem 1rem;
+  font-size: var(--text-xs);
+}
+
+/* El rail es el mapa mental de la narración: sin él, «una pantalla sin scroll» se
+   siente como estar perdido. Vertical a la izquierda en escritorio. */
+.rail {
+  position: fixed;
+  top: 50%;
+  left: var(--gutter);
+  z-index: 90;
+  transform: translateY(-50%);
+}
+
+.rail ol {
+  display: grid;
+  gap: 0.75rem;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.rail__punto {
+  display: flex;
+  align-items: center;
+  gap: 0.625rem;
+  padding: 0.25rem;
+  color: var(--text-faint);
+  transition: color var(--fast);
+}
+
+.rail__num {
+  font-size: var(--text-xs);
+  font-variant-numeric: tabular-nums;
+}
+
+/* El nombre del plano solo aparece al pasar por encima o al enfocar: en reposo el
+   rail son siete números y no compite con el contenido. Nunca se oculta al lector
+   de pantalla, que es quien más lo necesita. */
+.rail__nombre {
+  font-size: var(--text-xs);
+  letter-spacing: 0.02em;
+  opacity: 0;
+  transform: translateX(-0.25rem);
+  transition: opacity var(--fast), transform var(--fast);
+}
+
+.rail__punto:hover,
+.rail__punto:focus-visible {
+  color: var(--text-soft);
+}
+
+.rail__punto:hover .rail__nombre,
+.rail__punto:focus-visible .rail__nombre {
+  opacity: 1;
+  transform: none;
+}
+
+.rail__punto[aria-current] {
+  color: var(--accent-act);
+}
+
+.rail__punto[aria-current] .rail__nombre {
+  opacity: 1;
+  transform: none;
+}
+
+/* ─────────────────────────────────────────────────────────────────────────────
+   5. Piezas de proyecto
+   ───────────────────────────────────────────────────────────────────────────── */
+
+.piezas {
+  display: grid;
+  gap: 1px;
+  margin: 1.5rem 0 0;
+  padding: 0;
+  list-style: none;
+  background: var(--line);
+  border: 1px solid var(--line);
+  border-radius: var(--radius);
+  overflow: hidden;
+}
+
+/* Imagen a la izquierda, texto a la derecha, y la pieza entera es el botón: el
+   objetivo es grande y evidente, y no hay que apuntar a nada pequeño. */
+.pieza {
+  display: grid;
+  grid-template-columns: 7rem 1fr;
+  align-items: center;
+  gap: 1.5rem;
+  width: 100%;
+  padding: 1.5rem;
+  text-align: left;
+  background: var(--bg);
+  transition: background-color var(--medium);
+}
+
+.pieza:hover {
+  background: var(--bg-card);
+}
+
+.pieza:focus-visible {
+  outline: 2px solid var(--accent-act);
+  outline-offset: -2px;
+}
+
+.pieza__figura {
+  display: block;
+  aspect-ratio: 1;
+  border: 1px solid var(--line-soft);
+  border-radius: var(--radius-sm);
+}
+
+.pieza__texto {
+  display: grid;
+  gap: 0.375rem;
+}
+
+.pieza__titulo {
+  font-size: var(--text-md);
+  font-weight: 600;
+  color: var(--text-soft);
+}
+
+.pieza__resumen {
+  max-width: var(--measure);
+  font-size: var(--text-sm);
+  color: var(--text-dim);
+  line-height: 1.6;
+}
+
+.pieza__pie {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 1rem;
+  margin-top: 0.25rem;
+}
+
+.pieza__tags {
+  font-size: var(--text-xs);
+  color: var(--text-faint);
+}
+
+.pieza__abrir {
+  flex-shrink: 0;
+  font-size: var(--text-xs);
+  font-weight: 600;
+  color: var(--text-faint);
+  transition: color var(--medium);
+}
+
+.pieza:hover .pieza__abrir,
+.pieza:focus-visible .pieza__abrir {
+  color: var(--text-soft);
+}
+
+.trabajo__empleo {
+  margin-top: 1rem;
+}
+
+/* ─────────────────────────────────────────────────────────────────────────────
+   6. Contenido de los planos
+   ───────────────────────────────────────────────────────────────────────────── */
+
+.umbral__nombre {
+  margin-top: 0.5rem;
+  font-size: var(--display);
+  font-weight: 700;
+  line-height: 1.05;
+  letter-spacing: var(--tracking-tight);
+  color: var(--text);
+}
+
+.umbral__stack {
+  margin-top: 0.5rem;
+  font-size: var(--text-lg);
+  color: var(--text-mute);
+}
+
+.umbral__credencial {
+  max-width: var(--measure);
+  margin-top: 1.25rem;
+  color: var(--text-dim);
+}
+
+.umbral__acciones {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.75rem;
+  margin-top: 2rem;
+}
+
+.umbral__pie {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0.5rem 1.5rem;
+  margin-top: 2rem;
+}
+
+/* Punto de disponibilidad: uno de los dos únicos sitios donde aparece el verde. */
+.available {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  font-size: var(--text-sm);
+  color: var(--accent);
+}
+
+.available::before {
+  content: '';
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: var(--accent);
+  box-shadow: 0 0 8px var(--accent-glow);
+  animation: latido 2s infinite;
+}
+
+@keyframes latido {
+  0%,
+  100% {
+    opacity: 1;
+  }
+  50% {
+    opacity: 0.45;
+  }
+}
+
+.contexto__empresa {
+  margin-top: 0.75rem;
+  font-size: var(--text-xl);
+  font-weight: 600;
+  letter-spacing: var(--tracking-tight);
+  color: var(--text);
+}
+
+.contexto__linea {
+  margin-top: 0.375rem;
+  font-size: var(--text-sm);
+  color: var(--text-dim);
+}
+
+.contexto__tagline {
+  margin-top: 1.25rem;
+}
+
+.contexto__dominio {
+  margin-top: 2rem;
+  padding-top: 1.5rem;
+  border-top: 1px solid var(--line);
+}
+
+.contexto__dominio .prose {
+  margin-top: 0.5rem;
+}
+
+.instrumental {
+  display: grid;
+  gap: 2.5rem;
+}
+
+.instrumental .cols {
+  margin-top: 1rem;
+}
 
 .cols {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(18rem, 1fr));
-  gap: 1.5rem 2.5rem;
+  grid-template-columns: repeat(auto-fit, minmax(16rem, 1fr));
+  gap: 1.25rem 2.5rem;
 }
 
 .cols__item dd {
@@ -533,54 +582,134 @@
   color: var(--text-mute);
 }
 
-/* ─────────────────────────────────────────────────────────────────────────────
-   7. Contacto y pie
-   ───────────────────────────────────────────────────────────────────────────── */
-
-.contact {
-  display: grid;
-  gap: 2rem;
-}
-
-.contact__direct {
+.contacto__directo {
   display: flex;
   flex-wrap: wrap;
   align-items: baseline;
   gap: 0.5rem 1.5rem;
+  margin-top: 0.75rem;
   font-size: var(--text-md);
 }
 
-.contact__direct a {
+.contacto__directo a {
   color: var(--text-soft);
 }
 
-.footer {
-  max-width: var(--page);
-  margin: 0 auto;
-  padding: 0 var(--gutter) var(--section-gap);
+.contacto__acciones {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.75rem;
+  margin-top: 1.5rem;
+}
+
+.contacto__colofon {
+  margin-top: 2.5rem;
+  padding-top: 1.5rem;
   border-top: 1px solid var(--line);
-  padding-top: 2.5rem;
 }
 
-.footer p {
-  margin-top: 0.75rem;
-  font-size: var(--text-sm);
-  color: var(--text-dim);
+.contacto__colofon .prose {
+  margin: 0.5rem 0 0.75rem;
 }
 
-.footer__copy {
+.contacto__copy {
   margin-top: 2rem;
   font-size: var(--text-xs);
   color: var(--text-faint);
 }
 
 /* ─────────────────────────────────────────────────────────────────────────────
+   7. Modo documento
+   Los mismos planos, apilados y con scroll. No es una versión degradada: es la
+   salida para quien quiere buscar con Ctrl+F, imprimir, o no ver una narración.
+   ───────────────────────────────────────────────────────────────────────────── */
+
+.obs--documento .planos {
+  height: auto;
+}
+
+.obs--documento .plano {
+  position: static;
+  display: block;
+  min-height: 0;
+  padding: var(--section-gap) var(--gutter);
+  overflow: visible;
+  opacity: 1;
+  visibility: visible;
+  border-bottom: 1px solid var(--line);
+}
+
+.obs--documento .plano:first-child {
+  padding-top: calc(var(--nav-h) + var(--section-gap));
+}
+
+.obs--documento .plano__cuerpo {
+  margin: 0 auto;
+}
+
+/* Al imprimir siempre sale el documento entero, esté en el modo que esté: es lo
+   que un evaluador se lleva al papel. */
+@media print {
+  .hud,
+  .rail,
+  .skip {
+    display: none;
+  }
+
+  .planos {
+    height: auto;
+  }
+
+  .plano {
+    position: static;
+    display: block;
+    overflow: visible;
+    opacity: 1;
+    visibility: visible;
+    padding: 1rem 0;
+    break-inside: avoid;
+  }
+}
+
+/* ─────────────────────────────────────────────────────────────────────────────
    Móvil
    ───────────────────────────────────────────────────────────────────────────── */
 
-@media (max-width: 40rem) {
-  .nav__links {
+@media (max-width: 48rem) {
+  /* El rail baja a una fila de puntos: en vertical se comería el ancho del texto. */
+  .rail {
+    top: auto;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    transform: none;
+    padding: 0.75rem var(--gutter) 1rem;
+    background: linear-gradient(to top, var(--bg) 60%, transparent);
+  }
+
+  .rail ol {
+    grid-auto-flow: column;
+    justify-content: center;
+    gap: 0.5rem;
+  }
+
+  .rail__nombre {
+    display: none;
+  }
+
+  .plano {
+    padding-bottom: 5.5rem;
+  }
+
+  /* La imagen pasa arriba y el texto debajo: a 390 px, dos columnas dejan el
+     resumen en una tira de cuatro palabras por línea. */
+  .pieza {
+    grid-template-columns: 1fr;
     gap: 1rem;
+  }
+
+  .pieza__figura {
+    width: 5rem;
   }
 
   .modal__panel {

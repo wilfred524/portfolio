@@ -72,6 +72,7 @@ export const es = {
    */
   facts: [
     {
+      id: 'education',
       label: 'Formación',
       /* Sin el estado de la carrera, por decisión suya. Antes decía «Cursando 7.º
          semestre», que no cuadra con el expediente real y quedaba expuesto si alguien
@@ -81,6 +82,7 @@ export const es = {
         'Ingeniería Informática, Universidad Nacional Experimental del Táchira (UNET).',
     },
     {
+      id: 'languages',
       label: 'Idiomas y certificaciones',
       /* Idiomas y certificaciones fusionados: dos líneas para tres datos cortos partían
          el bloque sin ganar nada. Sin enlace al certificado y sin desglose por destreza:
@@ -92,6 +94,7 @@ export const es = {
         'Español nativo · Inglés B2 (EF SET) · Google IT Automation with Python — Coursera (en curso)',
     },
     {
+      id: 'mode',
       label: 'Modalidad',
       /* Sin mención a documentos, visado ni patrocinio: son datos que no se piden y que
          invitan a filtrar por nacionalidad antes de leer nada técnico. Lo que importa es
@@ -100,6 +103,7 @@ export const es = {
         'Remoto · GMT-5 · Contratación local en Colombia o internacional vía Deel.',
     },
     {
+      id: 'domain',
       label: 'Dominio',
       value:
         'Crédito por libranza: préstamos con descuento directo de nómina, un sector regulado en Colombia (Ley 1527).',
@@ -386,6 +390,26 @@ export const es = {
       skills: 'Habilidades',
       contact: 'Contacto',
       colophon: 'Cómo está hecho este sitio',
+      profile: 'Perfil',
+    },
+    planes: {
+      ariaLabel: 'Planos',
+      previous: 'Plano anterior',
+      next: 'Plano siguiente',
+      goTo: 'Ir a',
+      threshold: 'Inicio',
+      context: 'Contexto',
+      /* Los tres planos de trabajo no se llaman «Trabajo I, II y III»: un número romano no
+         dice qué hay dentro. Se nombran por lo que agrupan. */
+      data: 'Datos y decisión',
+      platform: 'Plataforma',
+      own: 'Proyectos propios',
+      toolkit: 'Instrumental',
+      contact: 'Contacto',
+      enter: 'Empezar',
+      skipToWork: 'Ir al trabajo',
+      documentMode: 'Modo documento',
+      observatoryMode: 'Modo observatorio',
     },
     blocks: { problem: 'Problema', hard: 'Lo difícil', result: 'Resultado' },
     project: {
