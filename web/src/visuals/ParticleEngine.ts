@@ -198,6 +198,12 @@ export class ParticleEngine {
       alFormar?: () => void;
     },
   ) {
+    // Cierra el fundido que quedara a medias: si no, las partículas de la pieza anterior
+    // se quedan visibles encima de su propio trazo para siempre.
+    for (const p of this.particulas) {
+      if (p.estado === 'asentada' && this.cede) p.estado = 'latente';
+    }
+
     const disponibles = this.particulas
       .map((p, i) => ({ p, i }))
       .filter(({ p }) => p.estado === 'fondo' || p.estado === 'dispersa')
@@ -207,9 +213,11 @@ export class ParticleEngine {
     const necesarias = Math.min(opciones.cuantas, puntos.length);
     const elegidas: number[] = [];
     if (disponibles.length > 0) {
-      const salto = Math.max(1, Math.floor(disponibles.length / necesarias));
-      for (let i = 0; elegidas.length < necesarias && i < disponibles.length; i += salto) {
-        elegidas.push(disponibles[i].i);
+      // Índice proporcional y no un salto entero: con el salto redondeado a 1 se tomaban
+      // las primeras del orden de barrido, o sea toda una esquina de la pantalla.
+      const cuantas = Math.min(necesarias, disponibles.length);
+      for (let i = 0; i < cuantas; i++) {
+        elegidas.push(disponibles[Math.floor((i * disponibles.length) / cuantas)].i);
       }
     }
 
@@ -237,6 +245,49 @@ export class ParticleEngine {
     this.cede = opciones.ceder ?? false;
     this.alFormar = opciones.alFormar ?? null;
     this.iniciar();
+  }
+
+  /**
+   * Devuelve el cielo a su densidad dando de alta partículas nuevas, no reciclando las
+   * usadas: una recién nacida sí es de las que nunca se han movido.
+   *
+   * Se colocan en las celdas con menos estrellas, o el cielo se repone donde ya había y
+   * las zonas que la figura vació se quedan vacías para siempre.
+   */
+  private reponerFondo() {
+    const fondo = this.particulas.filter((p) => p.estado === 'fondo');
+    const faltan = this.capacidad - fondo.length;
+    if (faltan <= 0) return;
+
+    const columnas = Math.max(1, Math.round(Math.sqrt((this.capacidad * this.w) / this.h)));
+    const filas = Math.max(1, Math.ceil(this.capacidad / columnas));
+    const anchoCelda = this.w / columnas;
+    const altoCelda = this.h / filas;
+
+    const censo = new Map<number, number>();
+    for (const p of fondo) {
+      const c = Math.min(columnas - 1, Math.max(0, Math.floor(p.x / anchoCelda)));
+      const f = Math.min(filas - 1, Math.max(0, Math.floor(p.y / altoCelda)));
+      const celda = f * columnas + c;
+      censo.set(celda, (censo.get(celda) ?? 0) + 1);
+    }
+
+    const vacias = Array.from({ length: columnas * filas }, (_, i) => i)
+      .map((i) => ({ i, n: censo.get(i) ?? 0 }))
+      .sort((a, b) => a.n - b.n)
+      .slice(0, faltan);
+
+    for (const { i } of vacias) {
+      const c = i % columnas;
+      const f = Math.floor(i / columnas);
+      const p = this.nacer(
+        (c + 0.15 + Math.random() * 0.7) * anchoCelda,
+        (f + 0.15 + Math.random() * 0.7) * altoCelda,
+        this.particulas.length,
+      );
+      p.alfa = 0;
+      this.particulas.push(p);
+    }
   }
 
   /** Cuántas partículas pueden entrar en una figura ahora mismo. */
@@ -352,6 +403,7 @@ export class ParticleEngine {
       this.fundido = Math.min(1, this.fundido + dt / 420);
       if (this.fundido >= 1) {
         for (const p of this.particulas) if (p.estado === 'asentada') p.estado = 'latente';
+        this.reponerFondo();
       }
     }
 
