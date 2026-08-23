@@ -28,7 +28,7 @@ export function Trabajo({
   const { ui } = useContent();
 
   return (
-    <div className="plano__cuerpo trabajo">
+    <div className={reveladas.size > 0 ? 'plano__cuerpo trabajo is-abierto' : 'plano__cuerpo trabajo'}>
       <p className="label">{titulo}</p>
 
       <ul className="piezas">
