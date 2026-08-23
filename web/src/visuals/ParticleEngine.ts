@@ -149,6 +149,18 @@ export class ParticleEngine {
     this.particulas = [...nuevas, ...enPiezas];
   }
 
+  /** Punto suelto y repartido, para la materia que no entra en ninguna figura. */
+  private repartida(indice: number, total: number): [number, number] {
+    const columnas = Math.max(1, Math.round(Math.sqrt((total * this.w) / this.h)));
+    const filas = Math.max(1, Math.ceil(total / columnas));
+    const c = indice % columnas;
+    const f = Math.floor(indice / columnas) % filas;
+    return [
+      ((c + 0.15 + Math.random() * 0.7) * this.w) / columnas,
+      ((f + 0.15 + Math.random() * 0.7) * this.h) / filas,
+    ];
+  }
+
   /** Punto del perímetro para un recorrido de 0 a 1, con margen fuera de pantalla. */
   private enPerimetro(t: number): [number, number] {
     const m = 24;
@@ -260,15 +272,23 @@ export class ParticleEngine {
     const cy = destinos.reduce((a, p) => a + p.y, 0) / destinos.length;
     this.asignar(elegidas, destinos, cx, cy, opciones.pieza);
 
-    // La materia que no entra en esta figura se posa donde esté: no vuelve al cielo,
-    // pero tampoco puede quedarse derivando para siempre, o el bucle no pararía nunca.
+    // La materia que no entra en esta figura se posa repartida. Dejarla donde estaba
+    // conservaba la silueta de la figura anterior y quedaba grabada en la pantalla.
     const usadas = new Set(elegidas);
-    this.particulas.forEach((p, i) => {
-      if (usadas.has(i) || p.estado !== 'dispersa') return;
-      p.estado = 'asentada';
+    const sobrantes = this.particulas
+      .map((p, i) => ({ p, i }))
+      .filter(({ p }, i) => !usadas.has(i) && p.estado === 'dispersa');
+
+    sobrantes.forEach(({ p }, n) => {
+      const [x, y] = this.repartida(n, sobrantes.length);
+      p.ox = p.x;
+      p.oy = p.y;
+      p.tx = x;
+      p.ty = y;
+      p.curva = 0.08;
+      p.retardo = 0.1;
+      p.estado = 'viaje';
       p.pieza = null;
-      p.tx = p.x;
-      p.ty = p.y;
     });
 
     this.viaje = 0;
@@ -418,6 +438,7 @@ export class ParticleEngine {
       p.py = p.y;
       p.alfa = 1;
       if (p.estado === 'viaje') p.estado = this.cede && p.pieza ? 'latente' : 'asentada';
+      if (p.estado === 'asentada' && p.pieza && this.cede) p.estado = 'latente';
       if (p.estado === 'dispersa') p.estado = 'fondo';
     }
     this.pintar();
