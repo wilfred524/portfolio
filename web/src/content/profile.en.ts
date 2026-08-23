@@ -42,6 +42,7 @@ export const en = {
     'This site is React and TypeScript, with variable fonts and animations written without a library. The assistant runs on Python in serverless functions, with its knowledge base in versioned text files. I build with AI as a tool: I define the architecture, give the instructions and verify every step. The code is public.',
   facts: [
     {
+      id: 'education',
       label: 'Education',
       /* No degree status, his call. It used to read "Currently in 7th semester", which
          does not match the actual transcript. The trade-off: with no status it reads as
@@ -49,12 +50,14 @@ export const en = {
       value: 'Computer Engineering, Universidad Nacional Experimental del Táchira (UNET).',
     },
     {
+      id: 'languages',
       label: 'Languages and certifications',
       /* Merged: two rows for three short facts split the block for nothing. */
       value:
         'Spanish (native) · English B2 (EF SET) · Google IT Automation with Python — Coursera (in progress)',
     },
     {
+      id: 'mode',
       label: 'Work mode',
       /* No mention of documents, visas or sponsorship: unrequested data that invites
          filtering by nationality before reading anything technical. */
@@ -62,6 +65,7 @@ export const en = {
         'Remote · GMT-5 · Local employment in Colombia or international contracting via Deel.',
     },
     {
+      id: 'domain',
       label: 'Domain',
       value:
         'Payroll-deduction lending: loans repaid through automatic salary deductions, a regulated sector in Colombia (Law 1527).',
@@ -321,6 +325,26 @@ export const en = {
       skills: 'Skills',
       contact: 'Contact',
       colophon: 'How this site is built',
+      profile: 'Profile',
+    },
+    planes: {
+      ariaLabel: 'Views',
+      previous: 'Previous view',
+      next: 'Next view',
+      goTo: 'Go to',
+      threshold: 'Start',
+      context: 'Context',
+      /* Named after what they hold, not "Work I, II, III": a roman numeral says nothing
+         about what is inside. */
+      data: 'Data and decisions',
+      platform: 'The platform',
+      own: 'Own projects',
+      toolkit: 'Toolkit',
+      contact: 'Contact',
+      enter: 'Begin',
+      skipToWork: 'Skip to the work',
+      documentMode: 'Document view',
+      observatoryMode: 'Observatory view',
     },
     blocks: { problem: 'Problem', hard: 'The hard part', result: 'Outcome' },
     project: {
