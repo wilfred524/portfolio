@@ -149,18 +149,6 @@ export class ParticleEngine {
     this.particulas = [...nuevas, ...enPiezas];
   }
 
-  /** Punto suelto y repartido, para la materia que no entra en ninguna figura. */
-  private repartida(indice: number, total: number): [number, number] {
-    const columnas = Math.max(1, Math.round(Math.sqrt((total * this.w) / this.h)));
-    const filas = Math.max(1, Math.ceil(total / columnas));
-    const c = indice % columnas;
-    const f = Math.floor(indice / columnas) % filas;
-    return [
-      ((c + 0.15 + Math.random() * 0.7) * this.w) / columnas,
-      ((f + 0.15 + Math.random() * 0.7) * this.h) / filas,
-    ];
-  }
-
   /** Punto del perímetro para un recorrido de 0 a 1, con margen fuera de pantalla. */
   private enPerimetro(t: number): [number, number] {
     const m = 24;
@@ -226,13 +214,10 @@ export class ParticleEngine {
      */
     const enJuego = this.particulas
       .map((p, i) => ({ p, i }))
-      .filter(
-        ({ p }) =>
-          p.estado === 'latente' ||
-          p.estado === 'dispersa' ||
-          // Materia que sobró de una transición anterior y quedó posada.
-          (p.estado === 'asentada' && p.pieza === null),
-      );
+      .filter(({ p }) => p.estado === 'latente' || p.estado === 'dispersa')
+      // Primero las que acaban de salir de un trazo, que son las que se está viendo
+      // viajar; la reserva apagada solo entra si no basta.
+      .sort((a, b) => Number(b.p.estado === 'dispersa') - Number(a.p.estado === 'dispersa'));
 
     for (const { p, i } of enJuego) {
       if (elegidas.length >= necesarias) break;
@@ -272,23 +257,16 @@ export class ParticleEngine {
     const cy = destinos.reduce((a, p) => a + p.y, 0) / destinos.length;
     this.asignar(elegidas, destinos, cx, cy, opciones.pieza);
 
-    // La materia que no entra en esta figura se posa repartida. Dejarla donde estaba
-    // conservaba la silueta de la figura anterior y quedaba grabada en la pantalla.
+    // La materia que no entra en esta figura se apaga y queda en reserva. Dejarla a la
+    // vista la acumulaba por encima de todo transición tras transición, y era lo que
+    // ensuciaba la figura recién formada.
     const usadas = new Set(elegidas);
-    const sobrantes = this.particulas
-      .map((p, i) => ({ p, i }))
-      .filter(({ p }, i) => !usadas.has(i) && p.estado === 'dispersa');
-
-    sobrantes.forEach(({ p }, n) => {
-      const [x, y] = this.repartida(n, sobrantes.length);
-      p.ox = p.x;
-      p.oy = p.y;
-      p.tx = x;
-      p.ty = y;
-      p.curva = 0.08;
-      p.retardo = 0.1;
-      p.estado = 'viaje';
-      p.pieza = null;
+    this.particulas.forEach((p, i) => {
+      if (usadas.has(i)) return;
+      if (p.estado === 'dispersa' || (p.estado === 'asentada' && p.pieza === null)) {
+        p.estado = 'latente';
+        p.pieza = null;
+      }
     });
 
     this.viaje = 0;
