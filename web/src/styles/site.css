@@ -266,7 +266,8 @@
   inset: 0;
   display: grid;
   place-items: center;
-  padding: calc(var(--nav-h) + 1rem) var(--gutter) 5rem;
+  /* El hueco lo dicta la barra medida, no un número: en inglés y en móvil crece. */
+  padding: calc(var(--hud-h, var(--nav-h)) + 1.5rem) var(--gutter) 5rem;
   overflow-y: auto;
   opacity: 0;
   /* visibility y no display: `display:none` sacaría el plano del buscador del
@@ -451,8 +452,8 @@
    ───────────────────────────────────────────────────────────────────────────── */
 
 /* Ni fondo ni marco: el campo tiene que verse a través, y sobre todo no puede haber
-   una lista vacía esperando a llenarse. Cada pieza trae su propio contorno cuando el
-   rótulo del plano ya está formado. */
+   una lista vacía esperando a llenarse. Cada pieza trae su propio contorno cuando la
+   nube termina de formar su número. */
 .piezas {
   display: grid;
   margin: 1.5rem 0 0;
@@ -474,8 +475,7 @@
   transition: background-color var(--medium), border-color var(--slow);
 }
 
-.plano.is-formado .pieza,
-.obs--documento .pieza {
+.pieza.is-revelada {
   border-top-color: var(--line);
 }
 
@@ -492,8 +492,8 @@
   outline-offset: -2px;
 }
 
-/* El número ordena las piezas dentro del recorrido de los nueve; no lo forman las
-   estrellas, que están ocupadas en el rótulo del plano. */
+/* El número: lo que forman las estrellas y lo que queda después. Se muestrea de este
+   mismo elemento, con su tipografía y su caja, así que el relevo cae al píxel. */
 .pieza__figura {
   display: grid;
   place-items: center;
@@ -511,7 +511,7 @@
   color: var(--text);
 }
 
-/* Hasta que la nube no termina de formar el rótulo, las piezas no están. El texto entra
+/* Hasta que la nube no termina de formar su número, la pieza no está. El texto entra
    de borroso a definido: se condensa igual que lo hacen las partículas. */
 .pieza__texto {
   opacity: 0;
@@ -519,10 +519,8 @@
   transition: opacity 0.65s ease, filter 0.65s ease;
 }
 
-.plano.is-formado .pieza__figura,
-.plano.is-formado .pieza__texto,
-.obs--documento .pieza__figura,
-.obs--documento .pieza__texto {
+.pieza.is-revelada .pieza__figura,
+.pieza.is-revelada .pieza__texto {
   opacity: 1;
   filter: none;
 }
@@ -582,8 +580,8 @@
   gap: 0.375rem;
 }
 
-/* La pieza aún invisible no debe poder pulsarse ni recibir foco por sorpresa. */
-.plano:not(.is-formado) .pieza {
+/* La pieza sin revelar no debe poder pulsarse ni recibir foco por sorpresa. */
+.pieza:not(.is-revelada) {
   pointer-events: none;
 }
 
@@ -792,7 +790,7 @@
 }
 
 .obs--documento .plano:first-child {
-  padding-top: calc(var(--nav-h) + var(--section-gap));
+  padding-top: calc(var(--hud-h, var(--nav-h)) + var(--section-gap));
 }
 
 .obs--documento .plano__cuerpo {
@@ -850,7 +848,6 @@
   }
 
   .plano {
-    padding-top: 7.5rem;
     padding-bottom: 5.5rem;
   }
 

@@ -1,22 +1,22 @@
 import { useContent } from '../../i18n/LanguageProvider';
 
 /**
- * Plano 5: herramientas y datos de perfil. Comparten plano porque los dos son bloques de
+ * Plano 5: el stack y los datos de perfil. Comparten plano porque los dos son bloques de
  * escaneo, no de lectura, y van después de la evidencia: una lista de literales delante
  * de los proyectos se lee como declaración; detrás, como índice de lo ya visto.
  *
  * El dominio no está aquí, se dijo en el plano de contexto.
  */
-export function Instrumental({ titulo }: { titulo: string }) {
+export function Stack({ titulo }: { titulo: string }) {
   const profile = useContent();
   const ficha = profile.facts.filter((f) => f.id !== 'domain' && f.value.trim() !== '');
 
   return (
     <div className="plano__cuerpo instrumental">
-      <h2 className="plano__rotulo" data-figura="toolkit">{titulo}</h2>
-
       <div>
-        <p className="label" data-texto>{profile.ui.sections.skills}</p>
+        {/* El rótulo del plano hace de encabezado de las tecnologías: repetir
+            «Habilidades» debajo sería decir dos veces lo mismo. */}
+        <h2 className="plano__rotulo" data-figura="stack">{titulo}</h2>
         <dl className="cols">
           {profile.skillGroups.map((group) => (
             <div key={group.area} className="cols__item">

@@ -339,7 +339,7 @@ export const en = {
       data: 'Data and decisions',
       platform: 'The platform',
       own: 'Own projects',
-      toolkit: 'Toolkit',
+      stack: 'Stack',
       contact: 'Contact',
       enter: 'Begin',
       skipToWork: 'Skip to the work',

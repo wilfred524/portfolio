@@ -4,7 +4,7 @@ import '@fontsource-variable/space-grotesk';
 import '../styles/site.css';
 import { useEffect, useMemo, useState } from 'react';
 import type { ProjectItem } from '../content';
-import { useContent } from '../i18n/LanguageProvider';
+import { useContent, useLangSwitch } from '../i18n/LanguageProvider';
 import { useObservatorio } from '../hooks/useObservatorio';
 import { CampoParticulas, type Figura } from '../ui/CampoParticulas';
 import { Flechas, Hud } from '../ui/Hud';
@@ -13,7 +13,7 @@ import { PLANOS } from './planos';
 import { Umbral } from './sections/Umbral';
 import { Contexto } from './sections/Contexto';
 import { Trabajo } from './sections/Trabajo';
-import { Instrumental } from './sections/Instrumental';
+import { Stack } from './sections/Stack';
 import { Contacto } from './sections/Contacto';
 
 /**
@@ -28,6 +28,7 @@ import { Contacto } from './sections/Contacto';
  */
 export default function SitePage() {
   const profile = useContent();
+  const { lang } = useLangSwitch();
   const { plano, pedido, sentido, irA, documento, conmutarModo, reducido } = useObservatorio();
   const [abierto, setAbierto] = useState<ProjectItem | null>(null);
   const [reveladas, setReveladas] = useState<Set<string>>(new Set());
@@ -55,14 +56,17 @@ export default function SitePage() {
   }, []);
 
   /**
-   * Una sola figura por plano: su rótulo. Toda la materia se concentra en un texto en vez
-   * de repartirse entre varios, que es lo que hacía que ninguno llegara a leerse. El
-   * resto del contenido entra con el mismo fundido que ya usan los planos de texto.
+   * La cascada del plano: primero su rótulo, después los números, en orden de lectura.
+   * Ese orden es el relato — dónde estamos y luego qué hay dentro—, y al salir se recorre
+   * al revés.
    */
-  const figuras = useMemo<Figura[]>(
-    () => [{ id: PLANOS[plano].id, tipo: 'rotulo' as const }],
-    [plano],
-  );
+  const figuras = useMemo<Figura[]>(() => {
+    const actual = PLANOS[plano];
+    return [
+      { id: actual.id, tipo: 'rotulo' as const },
+      ...(actual.proyectos ?? []).map((id) => ({ id, tipo: 'rotulo' as const })),
+    ];
+  }, [plano]);
 
   // En modo documento no hay cascada: todas las piezas se ven de entrada, y las de
   // todos los planos, no solo las del activo.
@@ -72,7 +76,8 @@ export default function SitePage() {
       setReveladas(new Set());
       return;
     }
-    setReveladas(new Set(PLANOS.map((p) => p.id)));
+    const todas = profile.projectGroups.flatMap((g) => g.items.map((i) => i.id));
+    setReveladas(new Set([...PLANOS.map((p) => p.id), ...todas]));
   }, [figuras, documento, profile]);
 
   // La coreografía nunca es una puerta: cualquier interacción la salta al final.
@@ -95,6 +100,7 @@ export default function SitePage() {
       {!documento && (
         <CampoParticulas
           plano={plano}
+          lang={lang}
           figuras={figuras}
           reducido={reducido}
           saltado={saltado}
@@ -136,11 +142,12 @@ export default function SitePage() {
                   titulo={profile.ui.planes[p.nombre]}
                   proyectos={proyectos}
                   empleo={empleo}
+                  reveladas={reveladas}
                   numeroDe={(id) => numeros.get(id) ?? ''}
                   onAbrir={setAbierto}
                 />
               )}
-              {p.id === 'toolkit' && <Instrumental titulo={profile.ui.planes[p.nombre]} />}
+              {p.id === 'stack' && <Stack titulo={profile.ui.planes[p.nombre]} />}
               {p.id === 'contact' && <Contacto titulo={profile.ui.planes[p.nombre]} />}
             </section>
           );

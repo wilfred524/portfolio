@@ -12,7 +12,6 @@ export function Contacto({ titulo }: { titulo: string }) {
 
   return (
     <div className="plano__cuerpo contacto">
-      <p className="label" data-texto>{profile.ui.sections.contact}</p>
       <h2 className="plano__rotulo" data-figura="contact">{titulo}</h2>
 
       <p className="contacto__directo" data-texto>

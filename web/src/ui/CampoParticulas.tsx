@@ -19,6 +19,7 @@ export interface Figura {
  */
 export function CampoParticulas({
   plano,
+  lang,
   figuras,
   reducido,
   saltado,
@@ -26,6 +27,8 @@ export function CampoParticulas({
   onRevelar,
 }: {
   plano: number;
+  /** El texto que se muestrea cambia con el idioma, así que la cascada se rehace. */
+  lang: string;
   figuras: Figura[];
   reducido: boolean;
   saltado: boolean;
@@ -130,7 +133,11 @@ export function CampoParticulas({
     const paso = (indice: number) => {
       if (cancelado || !plan) return;
       const pieza = plan.piezas[indice];
-      if (!pieza) return;
+      // Fin de la cascada: lo que no llegó a formarse aparece igual, con su texto.
+      if (!pieza) {
+        figuras.forEach((f) => revelar.current(f.id));
+        return;
+      }
 
       engine.formar(pieza.destinos, {
         pieza: pieza.id,
@@ -153,9 +160,13 @@ export function CampoParticulas({
       // estrellas dibujan una forma que no es la que después aparece.
       document.fonts.ready.then(() => {
         if (cancelado || plan) return;
-        // Antes de formar nada, apagar lo que quedara de la vista anterior.
-        engine.olvidar(figuras.map((f) => f.id));
-        plan = planificarVista(figuras, engine.materia());
+        // Antes de formar nada, apagar lo que quedara de la vista anterior, incluido el
+        // rótulo en el idioma que se acaba de dejar.
+        engine.olvidar([]);
+        // En una pantalla estrecha no hay materia para el rótulo y las cifras: se forma
+        // el rótulo, y las piezas entran con su texto sin pasar por las estrellas.
+        const materia = engine.materia();
+        plan = planificarVista(materia < 600 ? figuras.slice(0, 1) : figuras, materia);
         paso(0);
       });
     };
@@ -171,7 +182,7 @@ export function CampoParticulas({
       clearTimeout(temporizador);
       cancelAnimationFrame(cuadro);
     };
-  }, [plano, figuras, reducido, saltado]);
+  }, [plano, lang, figuras, reducido, saltado]);
 
   return <canvas ref={canvas} className="campo" aria-hidden="true" />;
 }

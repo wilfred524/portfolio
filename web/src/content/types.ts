@@ -162,7 +162,7 @@ export interface UiStrings {
     data: string;
     platform: string;
     own: string;
-    toolkit: string;
+    stack: string;
     contact: string;
     /** Acción principal del primer plano, y el atajo para saltarse la presentación. */
     enter: string;

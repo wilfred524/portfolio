@@ -8,14 +8,15 @@ import { useContent } from '../../i18n/LanguageProvider';
  * Cada pieza es un número a la izquierda y una descripción corta a la derecha, y el
  * conjunto entero es lo que se pulsa: ningún punto del fondo es pulsable por separado.
  *
- * Lo que forman las estrellas es el rótulo del plano, no los números: repartir la materia
- * entre varias piezas dejaba a todas por debajo de lo legible.
+ * Las estrellas forman el rótulo del plano y después, una a una, las cifras: cada pieza
+ * aparece cuando la suya termina de dibujarse.
  */
 export function Trabajo({
   id,
   titulo,
   proyectos,
   empleo,
+  reveladas,
   numeroDe,
   onAbrir,
 }: {
@@ -23,6 +24,7 @@ export function Trabajo({
   titulo: string;
   proyectos: ProjectItem[];
   empleo?: Employment;
+  reveladas: Set<string>;
   /** Su puesto en el conjunto de los nueve, no dentro del plano. */
   numeroDe: (id: string) => string;
   onAbrir: (item: ProjectItem) => void;
@@ -36,8 +38,16 @@ export function Trabajo({
       <ul className="piezas">
         {proyectos.map((item) => (
           <li key={item.id}>
-            <button type="button" className="pieza" onClick={() => onAbrir(item)}>
-              <span className="pieza__figura" aria-hidden="true">{numeroDe(item.id)}</span>
+            <button
+              type="button"
+              className={reveladas.has(item.id) ? 'pieza is-revelada' : 'pieza'}
+              onClick={() => onAbrir(item)}
+            >
+              {/* El número es a la vez lo que forman las estrellas y el rótulo que queda:
+                  se muestrea de este mismo elemento, con su tipografía y su caja. */}
+              <span className="pieza__figura" data-figura={item.id} aria-hidden="true">
+                {numeroDe(item.id)}
+              </span>
 
               <span className="pieza__texto">
                 <span className="pieza__titulo">{item.title}</span>

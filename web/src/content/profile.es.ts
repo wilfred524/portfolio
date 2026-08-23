@@ -404,7 +404,7 @@ export const es = {
       data: 'Datos y decisión',
       platform: 'Plataforma',
       own: 'Proyectos propios',
-      toolkit: 'Instrumental',
+      stack: 'Stack',
       contact: 'Contacto',
       enter: 'Empezar',
       skipToWork: 'Ir al trabajo',
