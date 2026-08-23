@@ -13,7 +13,9 @@ export function Umbral({ irA }: { irA: (indice: number) => void }) {
   return (
     <div className="plano__cuerpo umbral">
       <p className="label">{profile.role}</p>
-      <h1 className="umbral__nombre">{profile.name}</h1>
+      <h1 className="plano__rotulo umbral__nombre" data-figura="start">
+        {profile.name}
+      </h1>
 
       {/* Punto medio y no raya: la raya está descartada en todas las superficies del
           perfil salvo rangos de fechas. */}

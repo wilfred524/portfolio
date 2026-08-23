@@ -1,14 +1,11 @@
 import { useEffect, useRef } from 'react';
-import { ParticleEngine } from '../visuals/ParticleEngine';
+import { ParticleEngine, type Curva } from '../visuals/ParticleEngine';
 import { planificarVista } from '../visuals/plan';
 
 export interface Figura {
   id: string;
-  /**
-   * `pieza`: la nube forma la figura de un proyecto en su hueco y cede al trazo.
-   * `texto`: la nube rellena los bloques de texto del plano y cede a las palabras.
-   */
-  tipo: 'pieza' | 'texto';
+  /** La nube forma el rótulo del plano y cede a él. */
+  tipo: 'rotulo';
 }
 
 /**
@@ -89,10 +86,18 @@ export function CampoParticulas({
     const salientes = [...figuras].reverse();
     const relojes: number[] = [];
 
+    // Restos de vistas anteriores: se apagan antes de romper la actual, o se quedarían
+    // dibujados hasta que algo repinte el canvas.
+    engine.olvidar(figuras.map((f) => f.id));
+
+    // La forma va por vista y no al azar: cada una se rompe siempre igual, así que el
+    // recorrido tiene memoria, pero dos seguidas no se rompen del mismo modo.
+    const modo = curvaDe(plano);
+
     salientes.forEach((figura, i) => {
       relojes.push(
         window.setTimeout(() => {
-          if (!cancelado) engine.disolver(figura.id);
+          if (!cancelado) engine.disolver(figura.id, modo);
         }, i * 70),
       );
     });
@@ -101,11 +106,11 @@ export function CampoParticulas({
       cancelado = true;
       relojes.forEach(clearTimeout);
     };
-  }, [disolviendo, figuras, reducido]);
+  }, [disolviendo, figuras, reducido, plano]);
 
   /**
-   * La cascada. Las partículas van **directas al hueco de cada pieza**: no hay figura
-   * intermedia en grande, se unen ya en el componente final.
+   * Las partículas van **directas al rótulo**: no hay figura intermedia en grande, se unen
+   * ya sobre el texto definitivo, con su tipografía y su caja.
    */
   useEffect(() => {
     const engine = motor.current;
@@ -130,8 +135,9 @@ export function CampoParticulas({
       engine.formar(pieza.destinos, {
         pieza: pieza.id,
         cuantas: pieza.cuantas,
-        duracion: 1100,
+        duracion: 1400,
         ceder: pieza.cede,
+        curva: curvaDe(plano),
         alFormar: () => {
           if (cancelado) return;
           revelar.current(pieza.id);
@@ -140,31 +146,38 @@ export function CampoParticulas({
       });
     };
 
-    /**
-     * Las cajas no se pueden medir hasta que el plano ha terminado de deslizarse: entra
-     * con un `translateX` de 3 rem, así que medir antes coloca las estrellas a medio
-     * camino de donde acabará el texto.
-     */
+    /** El plano ya no se desliza, así que basta con esperar a que esté pintado. */
     const arrancar = () => {
       if (cancelado || plan) return;
-      plan = planificarVista(figuras, engine.libres(), engine.esMovil());
-      paso(0);
+      // Sin esperar a la tipografía, el rótulo se muestrea con la fuente de reserva y las
+      // estrellas dibujan una forma que no es la que después aparece.
+      document.fonts.ready.then(() => {
+        if (cancelado || plan) return;
+        // Antes de formar nada, apagar lo que quedara de la vista anterior.
+        engine.olvidar(figuras.map((f) => f.id));
+        plan = planificarVista(figuras, engine.materia());
+        paso(0);
+      });
     };
 
-    const activo = document.querySelector('.plano.is-activo');
-    const alTerminar = (evento: Event) => {
-      if ((evento as TransitionEvent).propertyName === 'transform') arrancar();
-    };
-    activo?.addEventListener('transitionend', alTerminar);
-    // Respaldo: si el plano no llega a animarse, el evento no se dispara nunca.
-    temporizador = window.setTimeout(arrancar, 820);
+    // Dos fotogramas: uno para que React monte y otro para que el navegador calcule la
+    // disposición. Con eso las cajas ya son las definitivas.
+    let cuadro = requestAnimationFrame(() => {
+      cuadro = requestAnimationFrame(arrancar);
+    });
 
     return () => {
       cancelado = true;
       clearTimeout(temporizador);
-      activo?.removeEventListener('transitionend', alTerminar);
+      cancelAnimationFrame(cuadro);
     };
   }, [plano, figuras, reducido, saltado]);
 
   return <canvas ref={canvas} className="campo" aria-hidden="true" />;
+}
+
+/** La forma del recorrido de cada vista. Fija por plano: el sitio tiene memoria. */
+function curvaDe(plano: number): Curva {
+  const FORMAS: Curva[] = ['ese', 'remolino', 'estallido'];
+  return FORMAS[plano % FORMAS.length];
 }

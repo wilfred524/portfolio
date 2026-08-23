@@ -7,12 +7,14 @@ import { useContent } from '../../i18n/LanguageProvider';
  *
  * El dominio no está aquí, se dijo en el plano de contexto.
  */
-export function Instrumental() {
+export function Instrumental({ titulo }: { titulo: string }) {
   const profile = useContent();
   const ficha = profile.facts.filter((f) => f.id !== 'domain' && f.value.trim() !== '');
 
   return (
     <div className="plano__cuerpo instrumental">
+      <h2 className="plano__rotulo" data-figura="toolkit">{titulo}</h2>
+
       <div>
         <p className="label" data-texto>{profile.ui.sections.skills}</p>
         <dl className="cols">

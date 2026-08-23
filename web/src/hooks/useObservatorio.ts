@@ -7,7 +7,7 @@ const CLAVE_MODO = 'wm.modo';
  * rompe en estrellas: si el DOM se moviera antes, las partículas saldrían de donde el
  * contenido ya no está.
  */
-const DISOLUCION = 420;
+const DISOLUCION = 240;
 
 /**
  * Detecta si el visitante pidió menos movimiento, y **sigue escuchando**: el ajuste del
