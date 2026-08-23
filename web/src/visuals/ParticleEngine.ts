@@ -161,7 +161,9 @@ export class ParticleEngine {
 
     const movil = ancho < 768;
     this.conexiones = !movil;
-    this.poblar(movil ? 420 : 1200);
+    // Bastante más de la que mueve una vista: lo que no viaja es el disco, y sin ese
+    // resto el fondo se vacía justo cuando el plano termina de formarse.
+    this.poblar(movil ? 620 : 1600);
     this.pintar();
   }
 
@@ -241,7 +243,7 @@ export class ParticleEngine {
 
   /** Cuánta materia mueve una vista. Constante, para que el volumen no dé saltos. */
   materia() {
-    return this.w < 768 ? 340 : 760;
+    return this.w < 768 ? 420 : 1050;
   }
 
   /**

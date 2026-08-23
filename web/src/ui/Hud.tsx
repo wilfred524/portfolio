@@ -1,3 +1,4 @@
+import { useEffect, useRef } from 'react';
 import { useContent } from '../i18n/LanguageProvider';
 import { track } from '../lib/analytics';
 import { PLANOS } from '../page/planos';
@@ -23,9 +24,25 @@ export function Hud({
 }) {
   const profile = useContent();
   const { planes } = profile.ui;
+  const barra = useRef<HTMLElement>(null);
+
+  /**
+   * La barra publica su altura real: en inglés los nombres son más largos, y en pantalla
+   * estrecha pasa a dos filas. Un hueco fijo se le queda corto y se come el rótulo.
+   */
+  useEffect(() => {
+    const el = barra.current;
+    if (!el) return;
+    const medir = () =>
+      document.documentElement.style.setProperty('--hud-h', `${el.offsetHeight}px`);
+    medir();
+    const observador = new ResizeObserver(medir);
+    observador.observe(el);
+    return () => observador.disconnect();
+  }, []);
 
   return (
-    <header className="hud">
+    <header className="hud" ref={barra}>
       <button type="button" className="hud__marca" onClick={() => irA(0)}>
         WM.
       </button>

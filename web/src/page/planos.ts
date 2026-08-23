@@ -30,7 +30,7 @@ export const PLANOS: Plano[] = [
     proyectos: ['esignature', 'access-control', 'layered-migration', 'infrastructure'],
   },
   { id: 'own', nombre: 'own', proyectos: ['video-cli', 'portfolio-site'] },
-  { id: 'toolkit', nombre: 'toolkit' },
+  { id: 'stack', nombre: 'stack' },
   { id: 'contact', nombre: 'contact' },
 ];
 
