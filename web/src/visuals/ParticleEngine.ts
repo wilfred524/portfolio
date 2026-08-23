@@ -1,17 +1,17 @@
 /**
- * Campo de partículas del observatorio.
+ * Campo de partículas del observatorio. Canvas 2D, sin librería y sin React dentro: el
+ * bucle de fotogramas no pasa por el estado de React.
  *
- * Clase sin React a propósito: el bucle de fotogramas no puede pasar por el estado de
- * React. Ni un `setState` por frame.
+ * En reposo cada partícula deriva alrededor de su ancla y late. Al cambiar de plano, el
+ * campo barre la pantalla de izquierda a derecha y se reasienta en anclas nuevas.
  *
- * Dos regímenes:
- *  - **Reposo**: cada partícula deriva alrededor de su ancla y late con fase propia.
- *  - **Viaje**: al cambiar de plano, el campo entero barre la pantalla y se reasienta en
- *    anclas nuevas. El barrido va siempre de izquierda a derecha, como una corriente:
- *    es ambiental, no direccional, y por eso no contradice al plano que entra por su lado.
- *
- * `formar()` acepta los puntos de una figura y está preparado para la fase siguiente, en
- * la que las partículas se condensan en la pieza de cada proyecto.
+ * Tres cosas que parecen mejorables y no lo son:
+ *  - El brillo es un sprite pre-renderizado. `shadowBlur` con esta densidad cuesta entre
+ *    8 y 14 ms por fotograma, el presupuesto entero.
+ *  - Las líneas y las estelas se agrupan y se pintan con tres `stroke()`. Una llamada por
+ *    segmento serían cientos por fotograma.
+ *  - El delta va acotado. Sin tope, volver a la pestaña entrega un delta de minutos y las
+ *    partículas se teletransportan fuera de pantalla.
  */
 
 export interface Punto {
@@ -22,21 +22,15 @@ export interface Punto {
 interface Particula {
   x: number;
   y: number;
-  /** Posición del fotograma anterior: es de donde sale la estela. */
   px: number;
   py: number;
-  /** Ancla: el sitio al que vuelve cuando no viaja. */
   hx: number;
   hy: number;
-  /** Destino del viaje en curso. */
   tx: number;
   ty: number;
-  /** Origen del viaje, para interpolar sin acumular error. */
   ox: number;
   oy: number;
-  /** Desvío perpendicular de la curva: sin él las trayectorias son rectas. */
   curva: number;
-  /** Reparte la salida para que el grupo no arranque de golpe. */
   retardo: number;
   semilla: number;
   radio: number;
@@ -45,12 +39,11 @@ interface Particula {
 
 const DURACION = 1100;
 const MAX_DT = 32;
-/** Radio de la constelación, y también el lado de la rejilla espacial. */
 const MAX_ENLACE = 120;
-/** Cuánto se alarga la estela respecto a lo recorrido en un fotograma. */
 const ESTELA = 5;
 
 export class ParticleEngine {
+  private canvas: HTMLCanvasElement;
   private ctx: CanvasRenderingContext2D;
   private sprite: HTMLCanvasElement;
   private particulas: Particula[] = [];
@@ -60,12 +53,9 @@ export class ParticleEngine {
   private raf: number | null = null;
   private ultimo = 0;
   private tiempo = 0;
-  /** Progreso del viaje en [0,1]. Fuera de un viaje vale 1. */
   private viaje = 1;
   private conexiones = true;
   private colores = { core: '235,235,245', glow: '220,220,235', line: '180,180,200' };
-
-  private canvas: HTMLCanvasElement;
 
   constructor(canvas: HTMLCanvasElement) {
     const ctx = canvas.getContext('2d', { alpha: true });
@@ -76,12 +66,6 @@ export class ParticleEngine {
     this.leerColores();
   }
 
-  /**
-   * El brillo es un sprite pre-renderizado y no `shadowBlur`.
-   *
-   * Con 150 partículas, `shadowBlur` cuesta entre 8 y 14 ms por fotograma: el presupuesto
-   * entero. Un `drawImage` de un degradado ya pintado baja eso a menos de 1 ms.
-   */
   private crearSprite() {
     const lado = 32;
     const s = document.createElement('canvas');
@@ -120,8 +104,6 @@ export class ParticleEngine {
     this.ctx.setTransform(this.dpr, 0, 0, this.dpr, 0, 0);
 
     const movil = ancho < 768;
-    // Las líneas son lo caro, no las partículas. Apagadas en móvil sobra presupuesto
-    // para mantener una densidad que se lea como un cielo y no como polvo.
     this.conexiones = !movil;
     const objetivo = movil
       ? Math.min(160, Math.round((ancho * alto) / 6000))
@@ -138,8 +120,6 @@ export class ParticleEngine {
       const hy = Math.random() * this.h;
       const x = anterior?.x ?? hx;
       const y = anterior?.y ?? hy;
-      // Rango de tamaño estrecho, y una de cada nueve algo mayor. Con un rango amplio
-      // el campo se lee desigual, como si faltaran partículas donde solo son pequeñas.
       const grande = i % 9 === 0;
       return {
         x,
@@ -162,12 +142,10 @@ export class ParticleEngine {
   }
 
   /**
-   * Arranca un viaje hacia anclas nuevas.
+   * Arranca un viaje hacia anclas nuevas. Sin `puntos`, el campo se redistribuye.
    *
-   * `puntos` son las posiciones de una figura; sin ellos, el campo se redistribuye. Las
-   * partículas se emparejan con su destino **por ángulo** alrededor del centro: con un
-   * emparejamiento al azar, ciento cincuenta trayectorias se cruzan y el resultado es
-   * ruido en vez de una sola masa que se pliega.
+   * El emparejamiento va por ángulo alrededor del centro: al azar, cientos de
+   * trayectorias se cruzan y el resultado es ruido en vez de una masa que se pliega.
    */
   formar(puntos?: Punto[]) {
     const destinos: Punto[] = puntos?.length
@@ -178,9 +156,7 @@ export class ParticleEngine {
     const cy = this.h / 2;
     const angulo = (p: Punto) => Math.atan2(p.y - cy, p.x - cx);
 
-    const orden = this.particulas
-      .map((p, i) => ({ i, a: angulo(p) }))
-      .sort((a, b) => a.a - b.a);
+    const orden = this.particulas.map((p, i) => ({ i, a: angulo(p) })).sort((a, b) => a.a - b.a);
     destinos.sort((a, b) => angulo(a) - angulo(b));
 
     orden.forEach(({ i }, puesto) => {
@@ -192,8 +168,6 @@ export class ParticleEngine {
       p.ty = d.y;
       p.hx = d.x;
       p.hy = d.y;
-      // Signo alternado: sin él, todas las curvas se comban al mismo lado y el campo
-      // entero parece un solo arco.
       p.curva = (puesto % 2 === 0 ? 1 : -1) * (0.12 + Math.random() * 0.18);
       p.retardo = Math.random() * 0.25;
     });
@@ -201,7 +175,6 @@ export class ParticleEngine {
     this.viaje = 0;
   }
 
-  /** Ajusta una lista de puntos al número de partículas, repitiendo o saltando. */
   private repartir(puntos: Punto[], cantidad: number): Punto[] {
     const salida: Punto[] = [];
     for (let i = 0; i < cantidad; i++) {
@@ -214,8 +187,6 @@ export class ParticleEngine {
     if (this.raf !== null) return;
     this.ultimo = performance.now();
     const paso = (ahora: number) => {
-      // Sin el tope, volver a la pestaña tras un rato entrega un delta de minutos y las
-      // partículas se teletransportan fuera de pantalla.
       const dt = Math.min(ahora - this.ultimo, MAX_DT);
       this.ultimo = ahora;
       this.tiempo += dt;
@@ -231,18 +202,21 @@ export class ParticleEngine {
     this.raf = null;
   }
 
-  /** Un solo fotograma, ya asentado: es lo que se ve con `prefers-reduced-motion`. */
+  /** Un fotograma ya asentado: es lo que se ve con `prefers-reduced-motion`. */
   pintarQuieto() {
     this.viaje = 1;
     for (const p of this.particulas) {
       p.x = p.hx;
       p.y = p.hy;
+      p.px = p.x;
+      p.py = p.y;
     }
     this.pintar();
   }
 
   private actualizar(dt: number) {
     if (this.viaje < 1) this.viaje = Math.min(1, this.viaje + dt / DURACION);
+    const f = this.tiempo / 1000;
 
     for (const p of this.particulas) {
       p.px = p.x;
@@ -252,17 +226,10 @@ export class ParticleEngine {
         const t = suavizar(Math.max(0, (this.viaje - p.retardo) / (1 - p.retardo)));
         const dx = p.tx - p.ox;
         const dy = p.ty - p.oy;
-
-        // Campana: el barrido acelera y frena dentro del viaje, en vez de arrastrar al
-        // campo hasta el final. Siempre hacia la derecha: es una corriente, no una
-        // dirección de navegación.
         const arrastre = Math.sin(t * Math.PI) * this.w * 0.18;
-
         p.x = p.ox + dx * t + arrastre;
         p.y = p.oy + dy * t + Math.sin(t * Math.PI) * dx * p.curva;
       } else {
-        // Reposo: deriva lenta alrededor del ancla. Determinista, sin acumular estado.
-        const f = this.tiempo / 1000;
         p.x = p.hx + Math.cos(f * 0.18 + p.semilla) * 9;
         p.y = p.hy + Math.sin(f * 0.13 + p.semilla * 1.7) * 7;
       }
@@ -274,8 +241,6 @@ export class ParticleEngine {
     ctx.clearRect(0, 0, this.w, this.h);
 
     const asentado = this.viaje >= 1;
-    // Durante el viaje las líneas desaparecen: unir puntos que se están cruzando dibuja
-    // una maraña, no una constelación. En su lugar manda la estela.
     if (this.conexiones && asentado) this.pintarLineas();
     else this.pintarEstelas();
 
@@ -297,12 +262,6 @@ export class ParticleEngine {
     ctx.globalAlpha = 1;
   }
 
-  /**
-   * Estela: el rastro de lo que la partícula acaba de recorrer, alargado.
-   *
-   * Se agrupan por grosor y se pintan de una vez, como las líneas: un gradiente por
-   * partícula y fotograma sería crear trescientos objetos por frame.
-   */
   private pintarEstelas() {
     const { ctx } = this;
     const grupos: [number, number, number, number][][] = [[], [], []];
@@ -330,23 +289,16 @@ export class ParticleEngine {
     ctx.lineCap = 'butt';
   }
 
-  /**
-   * Constelación. Los segmentos se agrupan en tres niveles de opacidad y se pintan con
-   * tres `stroke()`: uno por línea serían cientos de llamadas por fotograma.
-   */
+  /** Constelación, con rejilla espacial: cada partícula solo mira sus celdas vecinas. */
   private pintarLineas() {
     const { ctx } = this;
     const max2 = MAX_ENLACE * MAX_ENLACE;
     const grupos: [number, number, number, number][][] = [[], [], []];
 
-    // Rejilla espacial: comparar todos contra todos con trescientas partículas son más
-    // de cincuenta mil pares por fotograma. Con celdas del tamaño del radio de enlace,
-    // cada partícula solo mira sus nueve celdas vecinas.
     const cols = Math.max(1, Math.ceil(this.w / MAX_ENLACE));
     const filas = Math.max(1, Math.ceil(this.h / MAX_ENLACE));
     const celdas: number[][] = Array.from({ length: cols * filas }, () => []);
-    const columna = (p: Particula) =>
-      Math.min(cols - 1, Math.max(0, Math.floor(p.x / MAX_ENLACE)));
+    const columna = (p: Particula) => Math.min(cols - 1, Math.max(0, Math.floor(p.x / MAX_ENLACE)));
     const fila = (p: Particula) => Math.min(filas - 1, Math.max(0, Math.floor(p.y / MAX_ENLACE)));
 
     this.particulas.forEach((p, i) => celdas[fila(p) * cols + columna(p)].push(i));
@@ -364,7 +316,6 @@ export class ParticleEngine {
           if (nf < 0 || nf >= filas || nc < 0 || nc >= cols) continue;
 
           for (const j of celdas[nf * cols + nc]) {
-            // Solo hacia delante: sin esto cada pareja se dibujaría dos veces.
             if (j <= i) continue;
             const b = this.particulas[j];
             const dx = a.x - b.x;
@@ -393,7 +344,6 @@ export class ParticleEngine {
   }
 }
 
-/** Aceleración al salir y frenada al llegar. */
 function suavizar(t: number) {
   return t < 0.5 ? 4 * t * t * t : 1 - Math.pow(-2 * t + 2, 3) / 2;
 }

@@ -4,11 +4,11 @@ import { ParticleEngine } from '../visuals/ParticleEngine';
 /**
  * El campo de estrellas, detrás de todo.
  *
- * `pointer-events: none` y `aria-hidden`: es materia, no interfaz. No captura clics ni
- * gestos táctiles, y no añade nada que un lector de pantalla se pueda perder.
+ * Es materia, no interfaz: no captura clics ni gestos, y no añade nada que un lector de
+ * pantalla se pueda perder. Con movimiento reducido no se arranca el bucle.
  *
- * Con movimiento reducido no se arranca el bucle: se pinta un fotograma asentado y ya.
- * Misma imagen, coste cero.
+ * ResizeObserver y no `window.resize`: en móvil, mostrar y ocultar la barra de
+ * direcciones lo dispara constantemente.
  */
 export function CampoParticulas({ plano, reducido }: { plano: number; reducido: boolean }) {
   const canvas = useRef<HTMLCanvasElement>(null);
@@ -30,8 +30,6 @@ export function CampoParticulas({ plano, reducido }: { plano: number; reducido: 
       engine.iniciar();
     }
 
-    // ResizeObserver sobre el documento y no `window.resize`: en móvil, mostrar y ocultar
-    // la barra de direcciones dispara resize constantemente.
     let pendiente: number | undefined;
     const observador = new ResizeObserver(() => {
       clearTimeout(pendiente);
@@ -58,7 +56,6 @@ export function CampoParticulas({ plano, reducido }: { plano: number; reducido: 
     };
   }, [reducido]);
 
-  // Cambiar de plano lanza el viaje. Con movimiento reducido se reasienta sin animar.
   useEffect(() => {
     const engine = motor.current;
     if (!engine) return;
