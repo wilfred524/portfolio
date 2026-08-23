@@ -7,12 +7,13 @@ import { track } from '../../lib/analytics';
  * El colofón cierra aquí y no en un plano propio: explicar que las animaciones están
  * escritas sin librería solo funciona después de haberlas visto funcionar.
  */
-export function Contacto() {
+export function Contacto({ titulo }: { titulo: string }) {
   const profile = useContent();
 
   return (
     <div className="plano__cuerpo contacto">
       <p className="label" data-texto>{profile.ui.sections.contact}</p>
+      <h2 className="plano__rotulo" data-figura="contact">{titulo}</h2>
 
       <p className="contacto__directo" data-texto>
         <a href={`mailto:${profile.email}`}>{profile.email}</a>

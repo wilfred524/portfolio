@@ -1,12 +1,15 @@
 /**
- * Campo de partículas del observatorio. Canvas 2D, sin librería y sin React dentro: el
- * bucle de fotogramas no pasa por el estado de React.
+ * El campo del observatorio: una galaxia. Canvas 2D, sin librería y sin React dentro, que
+ * el bucle de fotogramas no puede pasar por el estado de React.
  *
- * **El campo no se mueve solo.** En reposo es una imagen fija y el bucle está detenido.
+ * **Un solo sistema.** No hay cielo por un lado y materia por otro, ni partículas que
+ * entren desde fuera del cuadro: todo lo que se ve pertenece al disco. Cuando una vista
+ * necesita formar un rótulo recluta parte de él, y al soltarlo esa materia vuelve al flujo
+ * y sigue girando. Por eso todas las vistas se leen como una sola cosa que se reordena.
  *
- * Una partícula que sale del fondo **no vuelve nunca**: al fundirse en una pieza queda
- * anclada a su punto (`latente`), lista para volver a salir cuando esa pieza se disuelva.
- * El fondo se repone dando de alta partículas nuevas, no reciclando las usadas.
+ * **El disco gira siempre**, con rotación diferencial: lo de dentro más rápido que lo de
+ * fuera, como una galaxia real. Es lentísimo, pero es lo que impide que el fondo se lea
+ * como un fondo de pantalla.
  *
  * Tres cosas que parecen mejorables y no lo son:
  *  - El brillo es un sprite pre-renderizado. `shadowBlur` con esta densidad cuesta entre
@@ -22,71 +25,105 @@ export interface Punto {
   y: number;
 }
 
-export type Estado = 'fondo' | 'viaje' | 'asentada' | 'latente' | 'dispersa';
+export type Estado = 'disco' | 'viaje' | 'asentada' | 'latente';
+
+/** Forma del recorrido. Alternarlas evita que las transiciones se vuelvan previsibles. */
+export type Curva = 'ese' | 'remolino' | 'estallido';
 
 interface Particula {
   x: number;
   y: number;
   px: number;
   py: number;
-  /** Origen y destino del viaje en curso. */
+  /** Sitio en el disco, en polares respecto al núcleo. */
+  radio: number;
+  angulo: number;
+  /** Velocidad angular propia: mayor cerca del núcleo. */
+  giro: number;
+  /** Origen, destino y los dos controles de la Bézier que recorre. */
   ox: number;
   oy: number;
   tx: number;
   ty: number;
-  curva: number;
+  c1x: number;
+  c1y: number;
+  c2x: number;
+  c2y: number;
+  /** Cuándo sale, y a qué velocidad respecto al tiempo base del viaje. */
   retardo: number;
-  radio: number;
+  ritmo: number;
+  tam: number;
   brillo: number;
-  /** Multiplicador de opacidad, para aparecer y para ceder al trazo. */
+  /** Fase del titileo, para que el disco no lata a la vez. */
+  fase: number;
+  /** Temperatura: qué sprite y qué color de núcleo le tocan. */
+  tinte: number;
   alfa: number;
   estado: Estado;
-  /** A qué pieza pertenece mientras está asentada o latente. */
   pieza: string | null;
 }
 
 const MAX_DT = 32;
 const MAX_ENLACE = 130;
 const ESTELA = 5;
+/** Brazos de la espiral. Dos es lo que mejor se lee sin parecer un remolino de dibujo. */
+const BRAZOS = 2;
+/** Cuánto se enrolla cada brazo: más alto, espiral más cerrada. */
+const ENROLLE = 2.6;
+/**
+ * El disco se ve casi de canto: por eso lo que se ve es una banda y no una espiral
+ * completa. Cuanto más bajo, más se concentra sobre la línea central.
+ */
+const ACHATADO = 0.26;
+/** La banda va inclinada: horizontal se leería como un renglón, no como un cielo. */
+const INCLINACION = -0.28;
 
 export class ParticleEngine {
   private canvas: HTMLCanvasElement;
   private ctx: CanvasRenderingContext2D;
-  private sprite: HTMLCanvasElement;
+  private sprites: HTMLCanvasElement[] = [];
   private particulas: Particula[] = [];
   private w = 0;
   private h = 0;
   private dpr = 1;
-  private capacidad = 0;
+  private nucleo = { x: 0, y: 0 };
+  private radioMax = 1;
   private raf: number | null = null;
   private ultimo = 0;
+  private tiempo = 0;
   private viaje = 1;
   private duracion = 1200;
   private fundido = 1;
   private cede = false;
   private alFormar: (() => void) | null = null;
   private conexiones = true;
-  private colores = { core: '235,235,245', glow: '220,220,235', line: '180,180,200' };
+  private colores = {
+    core: '235,235,245',
+    glow: '220,220,235',
+    line: '180,180,200',
+    tintes: ['235,235,245', '168,192,232', '219,195,168'],
+  };
 
   constructor(canvas: HTMLCanvasElement) {
     const ctx = canvas.getContext('2d', { alpha: true });
     if (!ctx) throw new Error('sin contexto 2d');
     this.canvas = canvas;
     this.ctx = ctx;
-    this.sprite = this.crearSprite();
     this.leerColores();
+    this.sprites = this.colores.tintes.map((rgb) => this.crearSprite(rgb));
   }
 
-  private crearSprite() {
+  /** Un halo por temperatura. Teñir en cada fotograma costaría mucho más que tres canvas. */
+  private crearSprite(rgb: string) {
     const lado = 32;
     const s = document.createElement('canvas');
     s.width = lado;
     s.height = lado;
     const c = s.getContext('2d')!;
     const g = c.createRadialGradient(lado / 2, lado / 2, 0, lado / 2, lado / 2, lado / 2);
-    g.addColorStop(0, 'rgba(255,255,255,1)');
-    g.addColorStop(0.25, 'rgba(255,255,255,0.55)');
-    g.addColorStop(1, 'rgba(255,255,255,0)');
+    g.addColorStop(0, `rgba(${rgb},1)`);
+    g.addColorStop(0.25, `rgba(${rgb},0.55)`);
+    g.addColorStop(1, `rgba(${rgb},0)`);
     c.fillStyle = g;
     c.fillRect(0, 0, lado, lado);
     return s;
@@ -97,10 +134,13 @@ export class ParticleEngine {
     const raiz = getComputedStyle(document.documentElement);
     const leer = (nombre: string, respaldo: string) =>
       raiz.getPropertyValue(nombre).trim() || respaldo;
+    const core = leer('--star-core', '235,235,245');
     this.colores = {
-      core: leer('--star-core', '235,235,245'),
+      core,
       glow: leer('--star-glow', '220,220,235'),
       line: leer('--star-line', '180,180,200'),
+      // Orden: neutra, azul, cálida. El índice del tinte apunta a esta lista.
+      tintes: [core, leer('--star-blue', '168,192,232'), leer('--star-warm', '219,195,168')],
     };
   }
 
@@ -114,79 +154,101 @@ export class ParticleEngine {
     this.canvas.style.height = `${alto}px`;
     this.ctx.setTransform(this.dpr, 0, 0, this.dpr, 0, 0);
 
+    // Núcleo descentrado y bajo: centrado competiría con el contenido, que vive en la
+    // mitad superior de la pantalla.
+    this.nucleo = { x: ancho * 0.34, y: alto * 0.58 };
+    this.radioMax = Math.hypot(ancho, alto) * 0.9;
+
     const movil = ancho < 768;
     this.conexiones = !movil;
-    this.capacidad = movil
-      ? Math.max(140, Math.min(200, Math.round((ancho * alto) / 3600)))
-      : Math.max(240, Math.min(460, Math.round((ancho * alto) / 3200)));
-
-    this.poblar();
+    this.poblar(movil ? 420 : 1200);
     this.pintar();
   }
 
   /**
-   * Reparte el fondo por una rejilla con desplazamiento aleatorio dentro de cada celda.
-   * Con `Math.random()` puro las estrellas se agrupan y media pantalla queda vacía.
+   * Reparte el disco: dos brazos en espiral, densidad que cae hacia fuera y un núcleo más
+   * brillante. Repartir al azar da una nube uniforme, que es justo lo que no es una
+   * galaxia.
    */
-  private poblar() {
-    const objetivo = this.capacidad;
-    const columnas = Math.max(1, Math.round(Math.sqrt((objetivo * this.w) / this.h)));
-    const filas = Math.max(1, Math.ceil(objetivo / columnas));
-    const anchoCelda = this.w / columnas;
-    const altoCelda = this.h / filas;
-
+  private poblar(cantidad: number) {
+    const enPiezas = this.particulas.filter(
+      (p) => p.estado === 'asentada' || p.estado === 'latente',
+    );
+    const faltan = Math.max(0, cantidad - enPiezas.length);
     const nuevas: Particula[] = [];
-    for (let f = 0; f < filas && nuevas.length < objetivo; f++) {
-      for (let c = 0; c < columnas && nuevas.length < objetivo; c++) {
-        const x = (c + 0.15 + Math.random() * 0.7) * anchoCelda;
-        const y = (f + 0.15 + Math.random() * 0.7) * altoCelda;
-        nuevas.push(this.nacer(x, y, nuevas.length));
-      }
+
+    for (let i = 0; i < faltan; i++) {
+      nuevas.push(this.enDisco(i));
     }
 
-    // Las que ya estaban en una pieza no se tiran: siguen ancladas a su punto.
-    const enPiezas = this.particulas.filter((p) => p.estado === 'latente' || p.estado === 'asentada');
     this.particulas = [...nuevas, ...enPiezas];
   }
 
-  /** Punto del perímetro para un recorrido de 0 a 1, con margen fuera de pantalla. */
-  private enPerimetro(t: number): [number, number] {
-    const m = 24;
-    const perimetro = 2 * (this.w + this.h);
-    const d = t * perimetro;
-    if (d < this.w) return [d, -m];
-    if (d < this.w + this.h) return [this.w + m, d - this.w];
-    if (d < 2 * this.w + this.h) return [2 * this.w + this.h - d, this.h + m];
-    return [-m, perimetro - d];
-  }
+  /** Una partícula nueva en su sitio del disco. */
+  private enDisco(indice: number): Particula {
+    // Raíz: concentra hacia el núcleo sin dejar el borde vacío.
+    const t = Math.pow(Math.random(), 0.62);
+    const radio = t * this.radioMax;
+    const brazo = (indice % BRAZOS) * ((Math.PI * 2) / BRAZOS);
+    // La dispersión se ensancha hacia fuera, como en los brazos reales.
+    const ruido = (Math.random() - 0.5) * (0.35 + t * 1.1);
+    const angulo = brazo + t * ENROLLE + ruido;
+    const sitio = this.puntoDeDisco(radio, angulo);
+    const cerca = 1 - t;
 
-  private nacer(x: number, y: number, indice: number): Particula {
-    const grande = indice % 9 === 0;
     return {
-      x,
-      y,
-      px: x,
-      py: y,
-      ox: x,
-      oy: y,
-      tx: x,
-      ty: y,
-      curva: 0,
+      x: sitio.x,
+      y: sitio.y,
+      px: sitio.x,
+      py: sitio.y,
+      radio,
+      angulo,
+      // Rotación diferencial: lo de dentro gira más rápido. En el borde una vuelta tarda
+      // minutos, así que se percibe como respiración y no como giro.
+      giro: 0.000007 + 0.00003 * cerca,
+      ox: sitio.x,
+      oy: sitio.y,
+      tx: sitio.x,
+      ty: sitio.y,
+      c1x: sitio.x,
+      c1y: sitio.y,
+      c2x: sitio.x,
+      c2y: sitio.y,
       retardo: 0,
-      radio: grande ? 1.4 + Math.random() * 0.4 : 0.8 + Math.random() * 0.3,
-      brillo: grande ? 0.45 + Math.random() * 0.25 : 0.24 + Math.random() * 0.2,
+      ritmo: 1,
+      tam: 0.65 + cerca * 1.1 + Math.random() * 0.35,
+      brillo: 0.14 + cerca * 0.44 + Math.random() * 0.14,
+      fase: Math.random() * Math.PI * 2,
+      // La mayoría neutras, unas cuantas azules y muy pocas cálidas: es el reparto que
+      // hace que un cielo se lea como un cielo y no como una trama de puntos iguales.
+      tinte: indice % 23 === 0 ? 2 : indice % 4 === 0 ? 1 : 0,
       alfa: 1,
-      estado: 'fondo',
+      estado: 'disco',
       pieza: null,
     };
   }
 
+  private puntoDeDisco(radio: number, angulo: number): Punto {
+    const x = Math.cos(angulo) * radio;
+    const y = Math.sin(angulo) * radio * ACHATADO;
+    const cos = Math.cos(INCLINACION);
+    const sen = Math.sin(INCLINACION);
+    return {
+      x: this.nucleo.x + x * cos - y * sen,
+      y: this.nucleo.y + x * sen + y * cos,
+    };
+  }
+
+  /** Cuánta materia mueve una vista. Constante, para que el volumen no dé saltos. */
+  materia() {
+    return this.w < 768 ? 340 : 760;
+  }
+
   /**
-   * Manda a viajar hacia los puntos de una figura.
+   * Recluta parte del disco y la manda a formar un rótulo.
    *
-   * El reclutamiento es **repartido por toda la pantalla**, no por cercanía: tomar las más
-   * próximas vacía esa zona y el cielo acaba apelmazado en un lado. El emparejamiento con
-   * los destinos sí va por ángulo, que es lo que evita que las trayectorias se crucen.
+   * Se toma repartida por ángulo, no la más cercana: llevarse una zona entera deja un
+   * agujero que se nota mucho más que unas cuantas ausencias repartidas.
    */
   formar(
     puntos: Punto[],
@@ -195,109 +257,155 @@ export class ParticleEngine {
       cuantas: number;
       duracion?: number;
       ceder?: boolean;
+      curva?: Curva;
       alFormar?: () => void;
     },
   ) {
-    // Cierra el fundido que quedara a medias: si no, las partículas de la pieza anterior
-    // se quedan visibles encima de su propio trazo para siempre.
+    // Cierra el fundido que quedara a medias, o la materia de la pieza anterior se queda
+    // visible encima de su propio rótulo.
     for (const p of this.particulas) {
       if (p.estado === 'asentada' && p.pieza && this.cede) p.estado = 'latente';
     }
 
-    const necesarias = Math.min(opciones.cuantas, puntos.length);
-    const elegidas: number[] = [];
-
-    /**
-     * Un solo enjambre recorre el sitio. Primero se echa mano de la materia que ya está
-     * en juego —la que sostiene las piezas ya hechas, que sale de sus trazos— y solo si
-     * no basta se toca el cielo. Así el volumen no crece plano a plano.
-     */
-    const enJuego = this.particulas
+    const disponibles = this.particulas
       .map((p, i) => ({ p, i }))
-      .filter(({ p }) => p.estado === 'latente' || p.estado === 'dispersa')
-      // Primero las que acaban de salir de un trazo, que son las que se está viendo
-      // viajar; la reserva apagada solo entra si no basta.
-      .sort((a, b) => Number(b.p.estado === 'dispersa') - Number(a.p.estado === 'dispersa'));
+      .filter(({ p }) => p.estado === 'disco' || (p.estado === 'latente' && !p.pieza))
+      .sort((a, b) => a.p.angulo - b.p.angulo);
 
-    for (const { p, i } of enJuego) {
-      if (elegidas.length >= necesarias) break;
-      // Vuelve a hacerse visible saliendo de donde estaba: del trazo que sostenía.
-      if (p.estado === 'latente') p.alfa = 0;
-      elegidas.push(i);
-    }
-
-    // El cielo no es cantera: nunca se toca. Lo que falte entra desde fuera del cuadro,
-    // repartido por todo el perímetro y empezando en un punto distinto cada vez, para
-    // que el conjunto no parezca venir siempre del mismo sitio.
-    const faltan = necesarias - elegidas.length;
-    const arranque = Math.random();
-    for (let n = 0; n < faltan; n++) {
-      const t = (arranque + n / Math.max(1, faltan)) % 1;
-      const p = this.nacer(...this.enPerimetro(t), this.particulas.length);
-      p.alfa = 0;
-      p.estado = 'dispersa';
-      this.particulas.push(p);
-      elegidas.push(this.particulas.length - 1);
+    const cuantas = Math.min(opciones.cuantas, puntos.length, disponibles.length);
+    const elegidas: number[] = [];
+    for (let i = 0; i < cuantas; i++) {
+      elegidas.push(disponibles[Math.floor((i * disponibles.length) / cuantas)].i);
     }
 
     const destinos = this.repartir(puntos, elegidas.length);
-    const cx = destinos.reduce((a, p) => a + p.x, 0) / destinos.length;
-    const cy = destinos.reduce((a, p) => a + p.y, 0) / destinos.length;
-    this.asignar(elegidas, destinos, cx, cy, opciones.pieza);
-
-    // La materia que no entra en esta figura se apaga y queda en reserva. Dejarla a la
-    // vista la acumulaba por encima de todo transición tras transición, y era lo que
-    // ensuciaba la figura recién formada.
-    const usadas = new Set(elegidas);
-    this.particulas.forEach((p, i) => {
-      if (usadas.has(i)) return;
-      if (p.estado === 'dispersa' || (p.estado === 'asentada' && p.pieza === null)) {
-        p.estado = 'latente';
-        p.pieza = null;
-      }
-    });
+    const cx = destinos.reduce((a, p) => a + p.x, 0) / (destinos.length || 1);
+    const cy = destinos.reduce((a, p) => a + p.y, 0) / (destinos.length || 1);
+    this.asignar(elegidas, destinos, cx, cy, opciones.pieza, opciones.curva ?? 'ese');
 
     this.viaje = 0;
     this.fundido = 0;
     this.duracion = opciones.duracion ?? 1200;
     this.cede = opciones.ceder ?? false;
     this.alFormar = opciones.alFormar ?? null;
+    this.pintar();
     this.iniciar();
   }
 
   /**
-   * Materia narrativa disponible: la que ya está en juego. El cielo no cuenta, porque
-   * no se toca.
+   * Rompe un rótulo: su materia vuelve al disco, a un sitio nuevo y no al que tenía.
+   *
+   * No se apaga ni se queda flotando: recorre una curva de vuelta al flujo. Es lo que hace
+   * que el conjunto se lea como una galaxia que se reordena.
    */
-  libres() {
-    return this.particulas.filter((p) => p.estado === 'latente' || p.estado === 'dispersa').length;
-  }
+  disolver(pieza: string, curva: Curva = 'remolino') {
+    const suyas = this.particulas.filter((p) => p.pieza === pieza);
+    if (suyas.length === 0) return;
 
-  esMovil() {
-    return this.w < 768;
-  }
+    const cx = suyas.reduce((a, p) => a + p.x, 0) / suyas.length;
+    const cy = suyas.reduce((a, p) => a + p.y, 0) / suyas.length;
 
-  /** Rompe una pieza: sus partículas reaparecen sobre el trazo y se dispersan. */
-  disolver(pieza: string) {
-    let alguna = false;
-    for (const p of this.particulas) {
-      if (p.pieza !== pieza) continue;
-      alguna = true;
-      p.estado = 'dispersa';
+    suyas.forEach((p, i) => {
+      p.alfa = 1;
       p.pieza = null;
-      // Aparece justo donde estaba el trazo, que a la vez se está yendo: el ojo lee que
-      // el dibujo se granuló, no que una cosa se fue y otra llegó.
-      p.alfa = 0;
-    }
-    if (alguna) this.iniciar();
+      p.estado = 'viaje';
+      p.ox = p.x;
+      p.oy = p.y;
+
+      const t = Math.pow(Math.random(), 0.62);
+      p.radio = t * this.radioMax;
+      p.angulo = (i % BRAZOS) * Math.PI + t * ENROLLE + (Math.random() - 0.5) * (0.5 + t * 1.6);
+      const destino = this.puntoDeDisco(p.radio, p.angulo);
+      p.tx = destino.x;
+      p.ty = destino.y;
+
+      // Sale en la dirección en que estaba respecto al centro del rótulo: la forma se
+      // infla un instante antes de deshacerse, y eso dice que aquello era algo.
+      const dx = p.ox - cx;
+      const dy = p.oy - cy;
+      const d = Math.hypot(dx, dy) || 1;
+      p.retardo = 0.24 * (i / suyas.length);
+      p.ritmo = 0.75 + Math.random() * 0.6;
+      this.controles(p, { x: dx / d, y: dy / d }, curva, i);
+    });
+
+    this.viaje = 0;
+    this.duracion = 1100;
+    this.cede = false;
+    this.fundido = 1;
+    this.pintar();
+    this.iniciar();
   }
 
-  private asignar(indices: number[], destinos: Punto[], cx: number, cy: number, pieza: string) {
+  /** Apaga la materia que quedara colgada de una vista que ya no está. */
+  olvidar(vigentes: string[]) {
+    const validas = new Set(vigentes);
+    for (const p of this.particulas) {
+      if (!p.pieza || validas.has(p.pieza)) continue;
+      p.pieza = null;
+      p.estado = 'latente';
+    }
+    this.pintar();
+  }
+
+  /**
+   * Los dos puntos de control de la Bézier son los que deciden la forma del recorrido:
+   * con qué inclinación sale la partícula y con cuál llega.
+   *
+   *  - `ese`: los controles salen a lados opuestos y la curva serpentea.
+   *  - `remolino`: los dos al mismo lado y muy abiertos, y el trayecto se enrosca.
+   *  - `estallido`: apenas se desvía, sale disparada y frena al llegar.
+   */
+  private controles(p: Particula, salida: Punto, curva: Curva, indice: number) {
+    const dist = Math.hypot(p.tx - p.ox, p.ty - p.oy);
+    const perp = { x: -salida.y, y: salida.x };
+    const lado = indice % 2 === 0 ? 1 : -1;
+    // La apertura crece con la distancia y se atenúa en trayectos cortos, donde una curva
+    // amplia se vería como un rodeo sin motivo.
+    const abre = Math.min(dist * 0.38, 260) * lado;
+    const avance = dist * 0.45;
+
+    if (curva === 'ese') {
+      p.c1x = p.ox + salida.x * avance + perp.x * abre;
+      p.c1y = p.oy + salida.y * avance + perp.y * abre;
+      p.c2x = p.tx - salida.x * avance * 0.5 - perp.x * abre;
+      p.c2y = p.ty - salida.y * avance * 0.5 - perp.y * abre;
+    } else if (curva === 'remolino') {
+      p.c1x = p.ox + perp.x * abre * 1.6 + salida.x * avance * 0.3;
+      p.c1y = p.oy + perp.y * abre * 1.6 + salida.y * avance * 0.3;
+      p.c2x = p.tx + perp.x * abre;
+      p.c2y = p.ty + perp.y * abre;
+    } else {
+      p.c1x = p.ox + salida.x * avance * 1.5;
+      p.c1y = p.oy + salida.y * avance * 1.5;
+      p.c2x = p.tx + salida.x * avance * 0.25;
+      p.c2y = p.ty + salida.y * avance * 0.25;
+    }
+  }
+
+  /**
+   * Empareja partículas y destinos por ángulo: al azar, cientos de trayectorias se cruzan
+   * y el resultado es ruido en vez de una masa que se pliega.
+   */
+  private asignar(
+    indices: number[],
+    destinos: Punto[],
+    cx: number,
+    cy: number,
+    pieza: string,
+    curva: Curva,
+  ) {
     const angulo = (p: Punto) => Math.atan2(p.y - cy, p.x - cx);
     const orden = indices
       .map((i) => ({ i, a: angulo(this.particulas[i]) }))
       .sort((a, b) => a.a - b.a);
     const puntos = [...destinos].sort((a, b) => angulo(a) - angulo(b));
+
+    // Dirección del viaje del grupo: es la que da coherencia al conjunto.
+    const ox = indices.reduce((a, i) => a + this.particulas[i].x, 0) / (indices.length || 1);
+    const oy = indices.reduce((a, i) => a + this.particulas[i].y, 0) / (indices.length || 1);
+    const largo = Math.hypot(cx - ox, cy - oy) || 1;
+    const dir = { x: (cx - ox) / largo, y: (cy - oy) / largo };
 
     orden.forEach(({ i }, puesto) => {
       const p = this.particulas[i];
@@ -308,11 +416,11 @@ export class ParticleEngine {
       p.ty = d.y;
       p.estado = 'viaje';
       p.pieza = pieza;
-      // Una sola comba para todo el grupo: si cada partícula elige la suya, el conjunto
-      // es ruido en vez de una masa que se pliega.
-      p.curva = 0.12;
-      // El retardo sale del puesto en el contorno, no del azar: la figura se traza.
-      p.retardo = 0.22 * (puesto / orden.length);
+      // El retardo sale del puesto en el contorno, no del azar: el rótulo se traza.
+      p.retardo = 0.24 * (puesto / Math.max(1, orden.length));
+      // Y cada una a su ritmo: unas llegan y se asientan mientras otras aún vienen.
+      p.ritmo = 0.75 + ((puesto * 37) % 60) / 100;
+      this.controles(p, dir, curva, puesto);
     });
   }
 
@@ -324,24 +432,15 @@ export class ParticleEngine {
     return salida;
   }
 
-  private ocupado() {
-    if (this.viaje < 1) return true;
-    if (this.cede && this.fundido < 1) return true;
-    return this.particulas.some((p) => p.estado === 'dispersa' || p.alfa < 1);
-  }
-
   iniciar() {
     if (this.raf !== null) return;
     this.ultimo = performance.now();
     const paso = (ahora: number) => {
       const dt = Math.min(ahora - this.ultimo, MAX_DT);
       this.ultimo = ahora;
+      this.tiempo += dt;
       this.actualizar(dt);
       this.pintar();
-      if (!this.ocupado()) {
-        this.raf = null;
-        return;
-      }
       this.raf = requestAnimationFrame(paso);
     };
     this.raf = requestAnimationFrame(paso);
@@ -352,7 +451,7 @@ export class ParticleEngine {
     this.raf = null;
   }
 
-  /** Deja todo asentado y lo pinta una vez: es lo que se ve con movimiento reducido. */
+  /** Un fotograma asentado y quieto: es lo que se ve con movimiento reducido. */
   pintarQuieto() {
     this.detener();
     this.viaje = 1;
@@ -363,9 +462,8 @@ export class ParticleEngine {
       p.px = p.x;
       p.py = p.y;
       p.alfa = 1;
-      if (p.estado === 'viaje') p.estado = this.cede && p.pieza ? 'latente' : 'asentada';
-      if (p.estado === 'asentada' && p.pieza && this.cede) p.estado = 'latente';
-      if (p.estado === 'dispersa') p.estado = 'fondo';
+      if (p.estado === 'viaje') p.estado = p.pieza ? 'latente' : 'disco';
+      if (p.estado === 'asentada' && p.pieza) p.estado = 'latente';
     }
     this.pintar();
   }
@@ -374,7 +472,10 @@ export class ParticleEngine {
     if (this.viaje < 1) {
       this.viaje = Math.min(1, this.viaje + dt / this.duracion);
       if (this.viaje >= 1) {
-        for (const p of this.particulas) if (p.estado === 'viaje') p.estado = 'asentada';
+        for (const p of this.particulas) {
+          if (p.estado !== 'viaje') continue;
+          p.estado = p.pieza ? 'asentada' : 'disco';
+        }
         if (this.alFormar) {
           this.alFormar();
           this.alFormar = null;
@@ -392,18 +493,26 @@ export class ParticleEngine {
     for (const p of this.particulas) {
       p.px = p.x;
       p.py = p.y;
-      if (p.alfa < 1) p.alfa = Math.min(1, p.alfa + dt / 700);
 
       if (p.estado === 'viaje') {
-        const t = suavizar(Math.max(0, (this.viaje - p.retardo) / (1 - p.retardo)));
-        const dx = p.tx - p.ox;
-        const dy = p.ty - p.oy;
-        p.x = p.ox + dx * t;
-        p.y = p.oy + dy * t + Math.sin(t * Math.PI) * dx * p.curva;
-      } else if (p.estado === 'dispersa') {
-        // Deriva suave hasta que alguien la recluta.
-        p.x += Math.cos(p.retardo * 12) * 0.35;
-        p.y += Math.sin(p.retardo * 9) * 0.25;
+        // Cada partícula recorre su Bézier a su propio ritmo, desde su propio retardo.
+        const avance = Math.max(0, (this.viaje - p.retardo) / (1 - p.retardo)) * p.ritmo;
+        const t = suavizar(Math.min(1, avance));
+        const u = 1 - t;
+        const w0 = u * u * u;
+        const w1 = 3 * u * u * t;
+        const w2 = 3 * u * t * t;
+        const w3 = t * t * t;
+        p.x = w0 * p.ox + w1 * p.c1x + w2 * p.c2x + w3 * p.tx;
+        p.y = w0 * p.oy + w1 * p.c1y + w2 * p.c2y + w3 * p.ty;
+      } else if (p.estado === 'disco') {
+        // La galaxia gira. Es lentísimo, pero es lo que la mantiene viva.
+        p.angulo += p.giro * dt;
+        const sitio = this.puntoDeDisco(p.radio, p.angulo);
+        p.x = sitio.x;
+        p.y = sitio.y;
+        p.tx = sitio.x;
+        p.ty = sitio.y;
       }
     }
   }
@@ -416,20 +525,22 @@ export class ParticleEngine {
     if (this.conexiones && asentado) this.pintarLineas();
     else this.pintarEstelas();
 
+    const f = this.tiempo / 1000;
     for (const p of this.particulas) {
       if (p.estado === 'latente') continue;
       const cesion = p.estado === 'asentada' && p.pieza && this.cede ? 1 - this.fundido : 1;
-      const alfa = Math.max(0, Math.min(1, p.brillo * cesion * p.alfa));
+      const pulso = 1 + Math.sin(f * 0.6 + p.fase) * 0.14;
+      const alfa = Math.max(0, Math.min(1, p.brillo * cesion * p.alfa * pulso));
       if (alfa <= 0.01) continue;
-      const lado = p.radio * 11;
+      const lado = p.tam * 11;
 
-      ctx.globalAlpha = alfa * 0.8;
-      ctx.drawImage(this.sprite, p.x - lado / 2, p.y - lado / 2, lado, lado);
+      ctx.globalAlpha = alfa * 0.75;
+      ctx.drawImage(this.sprites[p.tinte], p.x - lado / 2, p.y - lado / 2, lado, lado);
 
       ctx.globalAlpha = alfa;
-      ctx.fillStyle = `rgb(${this.colores.core})`;
+      ctx.fillStyle = `rgb(${this.colores.tintes[p.tinte]})`;
       ctx.beginPath();
-      ctx.arc(p.x, p.y, p.radio, 0, Math.PI * 2);
+      ctx.arc(p.x, p.y, p.tam, 0, Math.PI * 2);
       ctx.fill();
     }
     ctx.globalAlpha = 1;
@@ -444,7 +555,7 @@ export class ParticleEngine {
       const dx = p.x - p.px;
       const dy = p.y - p.py;
       if (dx * dx + dy * dy < 1) continue;
-      const nivel = p.radio > 1.3 ? 2 : p.radio > 1 ? 1 : 0;
+      const nivel = p.tam > 1.5 ? 2 : p.tam > 1.1 ? 1 : 0;
       grupos[nivel].push([p.px - dx * ESTELA, p.py - dy * ESTELA, p.x, p.y]);
     }
 
@@ -452,7 +563,7 @@ export class ParticleEngine {
     grupos.forEach((segmentos, nivel) => {
       if (segmentos.length === 0) return;
       ctx.lineWidth = 0.9 + nivel * 0.9;
-      ctx.strokeStyle = `rgba(${this.colores.glow}, ${0.14 + nivel * 0.12})`;
+      ctx.strokeStyle = `rgba(${this.colores.glow}, ${0.13 + nivel * 0.11})`;
       ctx.beginPath();
       for (const [x1, y1, x2, y2] of segmentos) {
         ctx.moveTo(x1, y1);
@@ -463,10 +574,7 @@ export class ParticleEngine {
     ctx.lineCap = 'butt';
   }
 
-  /**
-   * Constelación: solo entre las de fondo. Así se distingue de un vistazo qué es cielo y
-   * qué es materia en tránsito, y de paso el bucle más caro solo recorre el fondo.
-   */
+  /** Constelación entre las del disco, con rejilla espacial para no comparar todo con todo. */
   private pintarLineas() {
     const { ctx } = this;
     const max2 = MAX_ENLACE * MAX_ENLACE;
@@ -478,12 +586,10 @@ export class ParticleEngine {
     const columna = (p: Particula) => Math.min(cols - 1, Math.max(0, Math.floor(p.x / MAX_ENLACE)));
     const fila = (p: Particula) => Math.min(filas - 1, Math.max(0, Math.floor(p.y / MAX_ENLACE)));
 
-    const fondo = this.particulas
-      .map((p, i) => ({ p, i }))
-      .filter(({ p }) => p.estado === 'fondo');
-    fondo.forEach(({ p, i }) => celdas[fila(p) * cols + columna(p)].push(i));
+    const disco = this.particulas.map((p, i) => ({ p, i })).filter(({ p }) => p.estado === 'disco');
+    disco.forEach(({ p, i }) => celdas[fila(p) * cols + columna(p)].push(i));
 
-    for (const { p: a, i } of fondo) {
+    for (const { p: a, i } of disco) {
       const c = columna(a);
       const f = fila(a);
       let enlaces = 0;
@@ -512,7 +618,7 @@ export class ParticleEngine {
     ctx.lineWidth = 0.5;
     grupos.forEach((segmentos, nivel) => {
       if (segmentos.length === 0) return;
-      ctx.strokeStyle = `rgba(${this.colores.line}, ${0.04 + nivel * 0.035})`;
+      ctx.strokeStyle = `rgba(${this.colores.line}, ${0.03 + nivel * 0.028})`;
       ctx.beginPath();
       for (const [x1, y1, x2, y2] of segmentos) {
         ctx.moveTo(x1, y1);

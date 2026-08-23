@@ -1,11 +1,12 @@
 import '@fontsource-variable/inter';
+import '@fontsource-variable/montserrat';
+import '@fontsource-variable/space-grotesk';
 import '../styles/site.css';
 import { useEffect, useMemo, useState } from 'react';
 import type { ProjectItem } from '../content';
 import { useContent } from '../i18n/LanguageProvider';
 import { useObservatorio } from '../hooks/useObservatorio';
 import { CampoParticulas, type Figura } from '../ui/CampoParticulas';
-import { CONSTELACIONES } from '../visuals/piezas';
 import { Flechas, Hud } from '../ui/Hud';
 import { ProjectModal } from '../ui/ProjectModal';
 import { PLANOS } from './planos';
@@ -42,19 +43,26 @@ export default function SitePage() {
     for (const item of grupo.items) empleoDe.set(item.id, grupo.employmentId);
   }
 
-  // Las figuras del plano activo, en orden: es la cascada que sigue el enjambre.
-  const figuras = useMemo<Figura[]>(() => {
-    const actual = PLANOS[plano];
-    // El primer plano no lleva animación: es el que decide si el visitante sigue, y
-    // hacerle esperar antes de decirle quién eres es cobrarle la entrada.
-    if (actual.id === 'start') return [];
-    if (actual.proyectos?.length) {
-      return actual.proyectos
-        .filter((id) => CONSTELACIONES[id])
-        .map((id) => ({ id, tipo: 'pieza' as const }));
+  // Numeración corrida por los nueve proyectos, en el orden en que se recorren: es el
+  // índice del trabajo, no una posición dentro de su plano.
+  const numeros = useMemo(() => {
+    const mapa = new Map<string, string>();
+    let n = 0;
+    for (const p of PLANOS) {
+      for (const id of p.proyectos ?? []) mapa.set(id, String(++n).padStart(2, '0'));
     }
-    return [{ id: actual.id, tipo: 'texto' as const }];
-  }, [plano]);
+    return mapa;
+  }, []);
+
+  /**
+   * Una sola figura por plano: su rótulo. Toda la materia se concentra en un texto en vez
+   * de repartirse entre varios, que es lo que hacía que ninguno llegara a leerse. El
+   * resto del contenido entra con el mismo fundido que ya usan los planos de texto.
+   */
+  const figuras = useMemo<Figura[]>(
+    () => [{ id: PLANOS[plano].id, tipo: 'rotulo' as const }],
+    [plano],
+  );
 
   // En modo documento no hay cascada: todas las piezas se ven de entrada, y las de
   // todos los planos, no solo las del activo.
@@ -64,8 +72,7 @@ export default function SitePage() {
       setReveladas(new Set());
       return;
     }
-    const todas = profile.projectGroups.flatMap((g) => g.items.map((i) => i.id));
-    setReveladas(new Set(todas));
+    setReveladas(new Set(PLANOS.map((p) => p.id)));
   }, [figuras, documento, profile]);
 
   // La coreografía nunca es una puerta: cualquier interacción la salta al final.
@@ -114,9 +121,7 @@ export default function SitePage() {
                 'plano',
                 activo ? 'is-activo' : '',
                 activo && pedido !== plano ? 'is-disolviendo' : '',
-                // El plano de inicio no tiene animación: su texto está desde el primer
-                // fotograma. Los demás esperan a que las estrellas los rellenen.
-                p.id === 'start' || reveladas.has(p.id) ? 'is-formado' : '',
+                reveladas.has(p.id) ? 'is-formado' : '',
               ]
                 .filter(Boolean)
                 .join(' ')}
@@ -127,15 +132,16 @@ export default function SitePage() {
               {p.id === 'context' && <Contexto />}
               {proyectos.length > 0 && (
                 <Trabajo
+                  id={p.id}
                   titulo={profile.ui.planes[p.nombre]}
                   proyectos={proyectos}
                   empleo={empleo}
-                  reveladas={reveladas}
+                  numeroDe={(id) => numeros.get(id) ?? ''}
                   onAbrir={setAbierto}
                 />
               )}
-              {p.id === 'toolkit' && <Instrumental />}
-              {p.id === 'contact' && <Contacto />}
+              {p.id === 'toolkit' && <Instrumental titulo={profile.ui.planes[p.nombre]} />}
+              {p.id === 'contact' && <Contacto titulo={profile.ui.planes[p.nombre]} />}
             </section>
           );
         })}

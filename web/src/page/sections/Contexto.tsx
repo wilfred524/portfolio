@@ -16,7 +16,7 @@ export function Contexto() {
     <div className="plano__cuerpo contexto">
       <p className="label" data-texto>{profile.ui.sections.experience}</p>
 
-      <h2 className="contexto__empresa" data-texto>{empleo.employer}</h2>
+      <h2 className="plano__rotulo" data-figura="context">{empleo.employer}</h2>
       <p className="contexto__linea" data-texto>
         {empleo.role} · {empleo.period}
         {empleo.mode && ` · ${empleo.mode}`}

@@ -1,47 +1,43 @@
 import type { Employment, ProjectItem } from '../../content';
 import { useContent } from '../../i18n/LanguageProvider';
-import { Constelacion } from '../../ui/Constelacion';
+
 
 /**
  * Un plano de trabajo: varias piezas en la misma vista.
  *
- * Cada pieza es una imagen a la izquierda y una descripción corta a la derecha, y el
+ * Cada pieza es un número a la izquierda y una descripción corta a la derecha, y el
  * conjunto entero es lo que se pulsa: ningún punto del fondo es pulsable por separado.
  *
- * El `<path>` de la imagen es el mismo que las partículas ocupan al converger. La pieza
- * está oculta hasta que la nube termina de formarla, y entonces aparece en su sitio: por
- * eso el relevo entre puntos y trazo no se nota.
+ * Lo que forman las estrellas es el rótulo del plano, no los números: repartir la materia
+ * entre varias piezas dejaba a todas por debajo de lo legible.
  */
 export function Trabajo({
+  id,
   titulo,
   proyectos,
   empleo,
-  reveladas,
+  numeroDe,
   onAbrir,
 }: {
+  id: string;
   titulo: string;
   proyectos: ProjectItem[];
   empleo?: Employment;
-  reveladas: Set<string>;
+  /** Su puesto en el conjunto de los nueve, no dentro del plano. */
+  numeroDe: (id: string) => string;
   onAbrir: (item: ProjectItem) => void;
 }) {
   const { ui } = useContent();
 
   return (
-    <div className={reveladas.size > 0 ? 'plano__cuerpo trabajo is-abierto' : 'plano__cuerpo trabajo'}>
-      <p className="label">{titulo}</p>
+    <div className="plano__cuerpo trabajo">
+      <h2 className="plano__rotulo" data-figura={id}>{titulo}</h2>
 
       <ul className="piezas">
         {proyectos.map((item) => (
           <li key={item.id}>
-            <button
-              type="button"
-              className={reveladas.has(item.id) ? 'pieza is-revelada' : 'pieza'}
-              onClick={() => onAbrir(item)}
-            >
-              <span className="pieza__figura" data-figura={item.id} aria-hidden="true">
-                <Constelacion id={item.id} />
-              </span>
+            <button type="button" className="pieza" onClick={() => onAbrir(item)}>
+              <span className="pieza__figura" aria-hidden="true">{numeroDe(item.id)}</span>
 
               <span className="pieza__texto">
                 <span className="pieza__titulo">{item.title}</span>
@@ -61,7 +57,7 @@ export function Trabajo({
       </ul>
 
       {empleo && (
-        <p className="meta trabajo__empleo">
+        <p className="meta trabajo__empleo" data-texto>
           {empleo.employer} · {empleo.period}
         </p>
       )}

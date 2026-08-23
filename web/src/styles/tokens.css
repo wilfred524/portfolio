@@ -1,95 +1,101 @@
 /**
- * Tokens del tema. Únicos valores de color, tipografía y ritmo de todo el sitio:
- * ningún componente escribe un color a mano.
+ * Tokens del tema. Únicos valores de color, tipografía y ritmo de todo el sitio: ningún
+ * componente escribe un color a mano.
  *
- * Van en `:root` y no bajo una clase raíz. El diseño anterior los declaraba en
- * `.design-henry` porque convivían varios diseños; ya no hay colección, y con fondo
- * oscuro declararlos en un div deja bandas claras en el overscroll.
+ * La paleta viene de «Celestial Immersion» (DESIGN.md). Es una escala neutra fría sobre
+ * obsidiana, con la jerarquía puesta en la **luminosidad** y no en el color: lo activo
+ * emite luz, lo secundario se retira hacia el fondo.
+ *
+ * Van en `:root` y no bajo una clase raíz: con fondo oscuro, declararlos en un div deja
+ * bandas claras en el rebote del scroll.
  */
 
 :root {
   /* ── Superficies ────────────────────────────────────────────────────────────
-     Tres niveles y no más. El binario fondo/tarjeta es lo que mantiene la página
-     tranquila; cada gris intermedio nuevo es una decisión que hay que justificar. */
-  --bg: #0a0a0f;
-  --bg-card: #0f0f16;
-  --bg-raised: #12121a;
-  --bg-overlay: rgba(10, 10, 15, 0.85);
+     Escalones de la misma familia, del hueco más profundo al panel más elevado. */
+  --bg: #131314;
+  --surface-lowest: #0e0e0f;
+  --surface-low: #1c1b1c;
+  --surface: #201f20;
+  --surface-high: #2a2a2b;
+  --surface-highest: #353436;
+  --bg-overlay: rgba(14, 14, 15, 0.72);
+
+  /* Alias de compatibilidad con los componentes que ya los usan. */
+  --bg-card: var(--surface-low);
+  --bg-raised: var(--surface);
 
   /* ── Texto ──────────────────────────────────────────────────────────────────
-     Escala de cuatro pesos de gris. `--text-dim` es el mínimo que mantiene 4.5:1
-     sobre `--bg`: por debajo de ahí el texto deja de ser accesible, así que los
-     tonos más apagados quedan para bordes y rótulos, nunca para prosa. */
-  --text: #ffffff;
-  --text-soft: #e8e8ec;
-  --text-mute: #a1a1ad;
-  --text-dim: #8b8b98;
-  --text-faint: #6b6b78;
+     Nunca blanco puro: cansa la vista sobre un fondo tan oscuro. */
+  --text: #e5e2e3;
+  --text-soft: #e5e2e3;
+  --text-mute: #c7c6cc;
+  --text-dim: #909096;
+  --text-faint: #6f6f76;
 
-  /* ── Acento ─────────────────────────────────────────────────────────────────
-     El ÚNICO color del sistema. Reservado a la disponibilidad y a los valores de
-     las métricas: repartido por la página deja de significar nada. */
-  --accent: #4ade80;
-  --accent-glow: rgba(74, 222, 128, 0.4);
-
-  /* Segundo acento, y el último. No dice «esto se toca» —de eso ya se encargan el
-     tamaño y la composición de cada pieza—: dice **dónde estoy**. Solo el anillo de
-     foco de teclado y el plano activo en el rail. Frío a propósito, para no pelearse
-     con el verde, que es la señal cara. 10,1:1 sobre el fondo. */
-  --accent-act: #7cc4ff;
-  --accent-act-soft: rgba(124, 196, 255, 0.16);
+  /* ── Acentos ────────────────────────────────────────────────────────────────
+     Dos, y con un significado cada uno. El arena marca lo verificado (una cifra,
+     la disponibilidad); el azul pálido marca dónde estás. */
+  --accent: #dbc3a8;
+  --accent-glow: rgba(219, 195, 168, 0.35);
+  --accent-act: #c3c6d7;
+  --accent-act-soft: rgba(195, 198, 215, 0.14);
 
   /* ── Bordes ─────────────────────────────────────────────────────────────────
-     Blanco con alfa, no grises opacos: así el borde se comporta igual sobre el
-     fondo y sobre una tarjeta, y deja ver el canvas por detrás. */
-  --line: rgba(255, 255, 255, 0.06);
-  --line-soft: rgba(255, 255, 255, 0.1);
-  --line-strong: rgba(255, 255, 255, 0.25);
+     Sólidos y no alfa sobre blanco: la paleta los define como parte de la escala. */
+  --line: #2a2a2b;
+  --line-soft: #46464c;
+  --line-strong: #909096;
 
-  /* ── Estrellas del fondo ────────────────────────────────────────────────────
-     Las consume el canvas por `getComputedStyle`, para que el fondo y el texto
-     salgan de la misma paleta. Sin alfa: la opacidad la calcula cada partícula. */
-  --star-core: 235, 235, 245;
-  --star-glow: 220, 220, 235;
-  --star-line: 180, 180, 200;
-  /* Dos escalones más de la misma rampa. No son color: dan profundidad al campo, y sin
-     ella el viaje de las partículas se ve plano. */
-  --star-far: 210, 210, 225;
-  --star-near: 255, 255, 255;
+  /* ── Estrellas ──────────────────────────────────────────────────────────────
+     Las consume el canvas por `getComputedStyle`. Sin alfa: la opacidad la calcula
+     cada partícula. */
+  --star-core: 229, 226, 227;
+  --star-glow: 199, 198, 204;
+  --star-line: 144, 144, 150;
+  /* Un cielo real no es monocromo: hay estrellas más azules y unas pocas más cálidas.
+     Son variaciones de temperatura, no un color nuevo en el sistema. */
+  --star-blue: 168, 192, 232;
+  --star-warm: 219, 195, 168;
 
   /* ── Tipografía ─────────────────────────────────────────────────────────────
-     Una sola familia. El contraste lo dan el tamaño y el peso, no una segunda
-     fuente. Los tamaños fluidos evitan tener un breakpoint por titular. */
+     Tres familias con un papel cada una: Montserrat abre y respira en los
+     titulares, Inter carga el cuerpo, y Space Grotesk firma los rótulos técnicos. */
   --font: 'Inter Variable', system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif;
+  --font-display: 'Montserrat Variable', var(--font);
+  --font-label: 'Space Grotesk Variable', var(--font);
 
-  --text-xs: 0.6875rem; /* 11px, rótulos en versales */
-  --text-sm: 0.8125rem; /* 13px, meta y pies */
-  --text-base: 0.9375rem; /* 15px, cuerpo */
+  --text-xs: 0.75rem; /* 12px, rótulos en versales */
+  --text-sm: 0.875rem; /* 14px, meta y pies */
+  --text-base: 1rem; /* 16px, cuerpo */
   --text-md: 1.125rem; /* 18px, títulos de tarjeta */
-  --text-lg: clamp(1.125rem, 2.5vw, 1.75rem); /* subtítulo del hero */
-  --text-xl: clamp(1.5rem, 4vw, 2.25rem); /* encabezados de sección */
-  --display: clamp(2.5rem, 6vw, 4.5rem); /* el nombre */
+  --text-lg: clamp(1.25rem, 2.5vw, 1.75rem);
+  --text-xl: clamp(1.5rem, 4vw, 2rem);
+  --display: clamp(2.5rem, 6vw, 4rem);
 
-  --tracking-tight: -0.03em;
-  --tracking-label: 0.15em;
-  --leading-body: 1.7;
+  /* El titular expande en lugar de apretar: es lo que da la sensación de vacío. */
+  --tracking-display: 0.05em;
+  --tracking-head: 0.02em;
+  --tracking-label: 0.1em;
+  --leading-body: 1.6;
 
   /* ── Ritmo ──────────────────────────────────────────────────────────────────
-     `--measure` limita la línea de texto a ~70 caracteres; `--page` es el ancho
-     del contenido. Son cosas distintas: la columna de lectura no crece porque la
-     página crezca. */
-  --page: 60rem;
-  --measure: 34rem;
-  --gutter: clamp(1.5rem, 5vw, 2.5rem);
-  --section-gap: clamp(4rem, 10vw, 7rem);
+     Base de 8 px. `--measure` limita la línea de lectura; `--page` es el ancho del
+     contenido: son cosas distintas y no crecen juntas. */
+  --page: 72rem;
+  --measure: 36rem;
+  --gutter: clamp(1.5rem, 5vw, 4rem);
+  --section-gap: clamp(4rem, 10vw, 8rem);
   --nav-h: 4.5rem;
 
-  --radius: 12px;
-  --radius-sm: 8px;
+  --radius-sm: 0.25rem;
+  --radius: 0.5rem;
+  --radius-md: 0.75rem;
+  --radius-lg: 1.5rem;
 
   /* ── Movimiento ─────────────────────────────────────────────────────────────
-     Tres duraciones. `--slow` lleva curva propia porque es la de los cambios de
-     tamaño (tarjetas que se abren), donde una salida lineal se nota. */
+     Tres duraciones. La lenta lleva curva propia porque es la de los cambios de
+     tamaño, donde una salida lineal se nota. */
   --fast: 0.2s ease;
   --medium: 0.3s ease;
   --slow: 0.4s cubic-bezier(0.4, 0, 0.2, 1);

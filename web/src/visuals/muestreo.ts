@@ -1,77 +1,133 @@
 import type { Punto } from './ParticleEngine';
-import { LADO_VB, type Constelacion } from './piezas';
 
-/** Lleva un punto del lienzo de 100x100 a la caja de pantalla, sin deformarlo. */
-function proyector(caja: DOMRect) {
-  const escala = Math.min(caja.width, caja.height) / LADO_VB;
-  const x0 = caja.left + (caja.width - LADO_VB * escala) / 2;
-  const y0 = caja.top + (caja.height - LADO_VB * escala) / 2;
-  return (p: [number, number]): Punto => ({ x: x0 + p[0] * escala, y: y0 + p[1] * escala });
-}
+const cache = new Map<string, Punto[]>();
 
 /**
- * Reparte partículas sobre una constelación.
+ * Convierte el texto de un elemento del DOM en la nube de puntos que las partículas van a
+ * ocupar, **para que formen las letras de verdad**.
  *
- * Los nodos van primero y siempre: son los vértices del objeto y donde el SVG pinta sus
- * puntos, así que ahí la partícula y el dibujo coinciden exactamente. El resto se reparte
- * por las aristas en proporción a su longitud, para que un lado largo no quede con las
- * mismas estrellas que uno corto.
+ * Dos cosas hay que hacer bien o no sale una letra, sale una mancha:
+ *
+ *  - **Rasterizar en grande.** El texto se dibuja a unos 160 px de altura de fuente, no al
+ *    tamaño en que se ve. Muestrear un glifo de 20 px da tres puntos por letra.
+ *  - **Respetar dónde está.** La caja se mide sobre el propio texto y no sobre el
+ *    elemento que lo contiene: un número centrado por la rejilla y un titular alineado a
+ *    la izquierda ocupan sitios muy distintos dentro de la misma casilla.
+ *
+ * El paso se ajusta a las partículas que se quieran, y el contorno va primero: lo que hace
+ * legible un glifo es su perfil, no su relleno.
  */
-export function puntosDeConstelacion(figura: Constelacion, caja: DOMRect, cuantas: number): Punto[] {
-  const aPantalla = proyector(caja);
-  const salida: Punto[] = figura.nodos.map(aPantalla);
-  if (salida.length >= cuantas || figura.aristas.length === 0) return salida.slice(0, cuantas);
+export function puntosDeTexto(el: HTMLElement, cuantas: number): Punto[] {
+  const texto = (el.textContent ?? '').trim();
+  const caja = cajaDelTexto(el);
+  if (!texto || cuantas < 4 || !caja || caja.width < 4) return [];
 
-  const largos = figura.aristas.map(([a, b]) =>
-    Math.hypot(figura.nodos[b][0] - figura.nodos[a][0], figura.nodos[b][1] - figura.nodos[a][1]),
-  );
-  const total = largos.reduce((a, l) => a + l, 0) || 1;
-  const porRepartir = cuantas - salida.length;
+  const estilo = getComputedStyle(el);
+  const tamReal = parseFloat(estilo.fontSize) || 16;
+  const familia = estilo.fontFamily;
+  const peso = estilo.fontWeight;
 
-  figura.aristas.forEach(([a, b], i) => {
-    const cuantos = Math.round((porRepartir * largos[i]) / total);
-    if (cuantos <= 0) return;
-    const p = figura.nodos[a];
-    const q = figura.nodos[b];
-    for (let n = 1; n <= cuantos; n++) {
-      const t = n / (cuantos + 1);
-      salida.push(aPantalla([p[0] + (q[0] - p[0]) * t, p[1] + (q[1] - p[1]) * t]));
-    }
-  });
+  const clave = `${texto}|${peso}|${familia}|${Math.round(tamReal)}|${cuantas}`;
+  const guardado = cache.get(clave);
 
-  return salida;
-}
+  // Resolución de trabajo: fuente de ~160 px, que es donde un glifo tiene perfil de sobra.
+  const zoom = Math.max(1, 160 / tamReal);
+  const tam = tamReal * zoom;
 
-/**
- * Cuántas partículas necesita una constelación en una caja concreta. El criterio es la
- * separación entre estrellas a lo largo del trazo: apretadas se apelmazan y separadas
- * dejan de leerse como línea.
- */
-export function puntosNecesarios(figura: Constelacion, caja: DOMRect, min = 70, max = 140): number {
-  const escala = Math.min(caja.width, caja.height) / LADO_VB;
-  const largo = figura.aristas.reduce(
-    (a, [i, j]) =>
-      a +
-      Math.hypot(figura.nodos[j][0] - figura.nodos[i][0], figura.nodos[j][1] - figura.nodos[i][1]),
-    0,
-  );
-  return Math.round(Math.max(min, Math.min(max, (largo * escala) / 8 + figura.nodos.length)));
-}
+  const medidor = document.createElement('canvas').getContext('2d');
+  if (!medidor) return [];
+  const fuente = `${estilo.fontStyle} ${peso} ${tam}px ${familia}`;
+  medidor.font = fuente;
+  const ancho = medidor.measureText(texto).width;
+  if (ancho < 1) return [];
 
-/** Puntos en renglones sobre una caja de texto, para los planos que no llevan figura. */
-export function puntosDeTexto(caja: DOMRect, altoRenglon: number, paso: number): Punto[] {
-  const salida: Punto[] = [];
-  const renglones = Math.max(1, Math.round(caja.height / altoRenglon));
+  const margen = Math.round(tam * 0.25);
+  const W = Math.ceil(ancho) + margen * 2;
+  const H = Math.ceil(tam * 1.4) + margen * 2;
 
-  for (let r = 0; r < renglones; r++) {
-    // El último renglón se corta, como el de un párrafo real.
-    const ancho = r === renglones - 1 && renglones > 1 ? caja.width * 0.62 : caja.width;
-    const cuantos = Math.max(2, Math.round(ancho / paso));
-    const y = caja.top + ((r + 0.5) * caja.height) / renglones;
-    for (let i = 0; i < cuantos; i++) {
-      salida.push({ x: caja.left + (i / Math.max(1, cuantos - 1)) * ancho, y });
-    }
+  let mapa: Uint8ClampedArray;
+  if (!guardado) {
+    const lienzo = document.createElement('canvas');
+    lienzo.width = W;
+    lienzo.height = H;
+    const ctx = lienzo.getContext('2d', { willReadFrequently: true });
+    if (!ctx) return [];
+    ctx.fillStyle = '#fff';
+    ctx.font = fuente;
+    ctx.textAlign = 'left';
+    ctx.textBaseline = 'middle';
+    ctx.fillText(texto, margen, H / 2);
+    mapa = ctx.getImageData(0, 0, W, H).data;
+  } else {
+    mapa = new Uint8ClampedArray();
   }
 
-  return salida;
+  // La caja ya es la del texto, así que empieza donde empieza.
+  const izquierda = caja.left;
+  const medio = caja.top + caja.height / 2;
+
+  const aPantalla = (x: number, y: number): Punto => ({
+    x: izquierda + (x - margen) / zoom,
+    y: medio + (y - H / 2) / zoom,
+  });
+
+  if (guardado) {
+    // La caché guarda coordenadas relativas al texto, no a la pantalla.
+    return guardado.map((p) => aPantalla(p.x, p.y));
+  }
+
+  const opaco = (x: number, y: number) =>
+    x >= 0 && y >= 0 && x < W && y < H && mapa[(y * W + x) * 4 + 3] > 128;
+
+  // Paso adaptado: se busca el que produce aproximadamente las partículas pedidas.
+  let paso = Math.max(3, Math.round(Math.sqrt((ancho * tam * 0.3) / cuantas)));
+  let contorno: Punto[] = [];
+  let relleno: Punto[] = [];
+
+  for (let intento = 0; intento < 5; intento++) {
+    contorno = [];
+    relleno = [];
+    for (let y = 0; y < H; y += paso) {
+      for (let x = 0; x < W; x += paso) {
+        if (!opaco(x, y)) continue;
+        const borde =
+          !opaco(x - paso, y) || !opaco(x + paso, y) || !opaco(x, y - paso) || !opaco(x, y + paso);
+        (borde ? contorno : relleno).push({ x, y });
+      }
+    }
+    const total = contorno.length + relleno.length;
+    if (total >= cuantas * 0.85 && total <= cuantas * 2.2) break;
+    if (total < cuantas * 0.85 && paso <= 3) break;
+    paso = Math.max(3, Math.round(paso * (total > cuantas ? 1.25 : 0.8)));
+  }
+
+  if (contorno.length === 0) return [];
+
+  const deseados = Math.min(cuantas, contorno.length + relleno.length);
+  const enContorno = Math.min(contorno.length, Math.round(deseados * 0.75));
+  const enRelleno = Math.min(relleno.length, deseados - enContorno);
+
+  const crudos: Punto[] = [];
+  const tomar = (origen: Punto[], cantidad: number) => {
+    for (let i = 0; i < cantidad; i++) {
+      crudos.push(origen[Math.floor((i * origen.length) / cantidad)]);
+    }
+  };
+  tomar(contorno, enContorno);
+  tomar(relleno, enRelleno);
+
+  cache.set(clave, crudos);
+  return crudos.map((p) => aPantalla(p.x, p.y));
+}
+
+/**
+ * La caja que ocupa el texto en pantalla, no la del elemento que lo contiene. Un `Range`
+ * mide lo que de verdad se ve, sea cual sea la alineación o el tipo de contenedor.
+ */
+export function cajaDelTexto(el: HTMLElement): DOMRect | null {
+  if (!el.firstChild) return null;
+  const rango = document.createRange();
+  rango.selectNodeContents(el);
+  const caja = rango.getBoundingClientRect();
+  return caja.width > 0 ? caja : null;
 }
