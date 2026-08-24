@@ -1,12 +1,6 @@
 import { useContent } from '../../i18n/LanguageProvider';
 import { track } from '../../lib/analytics';
 
-/**
- * Plano 6: el cierre. Aquí las partículas no forman figura, se abren y dejan sitio.
- *
- * El colofón cierra aquí y no en un plano propio: explicar que las animaciones están
- * escritas sin librería solo funciona después de haberlas visto funcionar.
- */
 export function Contacto({ titulo }: { titulo: string }) {
   const profile = useContent();
 

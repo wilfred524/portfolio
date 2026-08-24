@@ -29,16 +29,21 @@ Repo: https://github.com/wilfred524/portfolio (público, remoto SSH).
 ## Estructura de `web/src`
 
 ```
-main.tsx / App.tsx        monta HenryPage; sin router
+main.tsx / App.tsx        monta SitePage; sin router (el plano activo va en el hash)
 lib/api.ts                cliente HTTP tipado (único punto de contacto con /api)
 content/types.ts          forma del contenido; el `satisfies Profile` fuerza paridad
 content/profile.en.ts     contenido en inglés (idioma por defecto)
 content/profile.es.ts     contenido en español
 content/index.ts          content = { en, es }, Lang, LANGS
 i18n/LanguageProvider.tsx idioma activo (localStorage) + useContent()
-hooks/                    useReveal.ts, useScrollProgress.ts, useScrollSlide.ts
-styles/global.css         reset + @font-face de Switzer
-designs/henry/            el diseño Henry (design.md, henry.css, HenryPage.tsx, components/)
+hooks/useObservatorio.ts  plano activo, modo documento, teclado y gesto
+page/SitePage.tsx         los siete planos; page/planos.ts los declara
+page/sections/            el contenido de cada plano (Umbral, Contexto, Trabajo, Stack…)
+ui/                       Hud, Flechas, CampoParticulas, ProjectModal, LangSwitch
+visuals/ParticleEngine.ts el campo: cielo y materia, dos lienzos (ver observatorio.md)
+visuals/muestreo.ts       texto del DOM → nube de puntos
+visuals/plan.ts           cuánta materia se lleva cada figura
+styles/                   tokens.css (todos los valores), global.css (reset), site.css
 ```
 
 ## Estructura de `api/`

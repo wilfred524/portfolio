@@ -11,30 +11,32 @@ Estructura de proyectos: `projectGroups` = lista de `{ category, items[] }`, y c
 `{ title, context, description, tags[] }`. Se renderizan agrupados y compactos en
 `Projects.tsx`.
 
-## Diseños
+## Diseño
 
-**La colección de diseños se retiró** (ver `docs/architecture.md`): varias páginas
-diluían el mensaje del portafolio. Ya no existen `registry.ts`, `DesignSwitcher`,
-`GalleryPage` ni la ruta `/disenos`, así que no hay "añadir un diseño nuevo": hay un
-solo diseño, **Henry**, y es la página.
+Hay un solo diseño y es la página: **el observatorio**, siete planos sobre un campo de
+partículas. Cómo funciona, en [`observatorio.md`](observatorio.md). La reconstrucción
+del sistema Henry que había antes se retiró entera —código, estilos y spec— junto con
+los hooks de scroll que solo ella usaba.
 
-Lo que sí sigue en pie, porque es lo que mantiene Henry coherente:
-
-- La spec vive en `web/src/designs/henry/design.md`, pegada tal cual desde la ficha de
-  styles.refero.design. Es la fuente de verdad; si el código y la spec discrepan, manda
-  la spec o se documenta por qué no.
-- Los tokens son variables CSS **scoped bajo `.design-henry`**, y los estilos usan solo
-  esas variables, nunca valores sueltos.
-- La carpeta del diseño es autocontenida: los estilos no se filtran porque todo cuelga
-  de su clase raíz.
+- Los tokens viven en `web/src/styles/tokens.css` y son el único sitio con valores de
+  color, tipografía y ritmo. Un color escrito a mano en `site.css` es un error, no una
+  excepción.
+- Los estilos son CSS plano, sin Tailwind, en tres archivos: `tokens.css`, `global.css`
+  (reset y fundamentos) y `site.css` (todo lo demás).
 
 ## Estilo de código
 
 - React 19 + TS. Componentes funcionales; hooks reutilizables en `web/src/hooks/`.
-- CSS plano por diseño (sin Tailwind). Clases con prefijo del diseño (`henry-…`).
-- Comentarios y commits en **español**.
+- CSS plano, sin Tailwind. Clases en español, con la convención `bloque__elemento` y
+  estados con `is-`.
+- **El código no lleva comentarios.** El porqué de una decisión va a `docs/` o al
+  mensaje del commit; el código dice qué hace y el nombre de una constante hace el
+  trabajo que haría el comentario. La única excepción es el aviso que evita una
+  regresión concreta: un acoplamiento invisible desde el archivo que se está editando,
+  o un valor que alguien "arreglaría" reintroduciendo un problema medido.
+- Commits en **español**.
 - Animaciones: siempre con rama `prefers-reduced-motion`. Decorativo → `aria-hidden` +
-  `<h2 class="henry-sr-only">` con el texto real.
+  texto real en un elemento `.sr-only`.
 
 ## Git
 

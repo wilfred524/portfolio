@@ -1,8 +1,18 @@
 import type { Punto } from './ParticleEngine';
 
 const cache = new Map<string, Punto[]>();
+const TOPE_CACHE = 48;
 
-/** Un renglón tal como el navegador lo ha partido, con la caja que ocupa en pantalla. */
+let medidor: CanvasRenderingContext2D | null = null;
+let taller: CanvasRenderingContext2D | null = null;
+
+function contexto(guardado: CanvasRenderingContext2D | null, leerMucho: boolean) {
+  if (guardado) return guardado;
+  return document
+    .createElement('canvas')
+    .getContext('2d', leerMucho ? { willReadFrequently: true } : undefined);
+}
+
 interface Renglon {
   texto: string;
   left: number;
@@ -19,35 +29,18 @@ interface Fuente {
   clave: string;
 }
 
-/**
- * Convierte el texto de un elemento del DOM en la nube de puntos que las partículas van a
- * ocupar, **para que formen las letras de verdad**.
- *
- * Tres cosas hay que hacer bien o no sale una letra, sale una mancha:
- *
- *  - **Rasterizar en grande.** El texto se dibuja a unos 160 px de altura de fuente, no al
- *    tamaño en que se ve. Muestrear un glifo de 20 px da tres puntos por letra.
- *  - **Respetar dónde está.** Las cajas se miden sobre el propio texto y no sobre el
- *    elemento que lo contiene: un número centrado por la rejilla y un titular alineado a
- *    la izquierda ocupan sitios muy distintos dentro de la misma casilla.
- *  - **Renglón a renglón.** Un titular que en pantalla ancha cabe en una línea se parte en
- *    dos en el móvil, y en inglés se parte por otro sitio. Dibujarlo de una tirada
- *    formaba una línea que el texto de debajo no tenía.
- */
 export function puntosDeTexto(el: HTMLElement, cuantas: number): Punto[] {
   const lineas = renglones(el);
   if (lineas.length === 0 || cuantas < 4) return [];
 
   const estilo = getComputedStyle(el);
   const tamReal = parseFloat(estilo.fontSize) || 16;
-  // Resolución de trabajo: fuente de ~160 px, que es donde un glifo tiene perfil de sobra.
+  // Rasterizar en grande: un glifo de 20 px da tres puntos.
   const zoom = Math.max(1, 160 / tamReal);
   const espaciado = parseFloat(estilo.letterSpacing);
   const tam = tamReal * zoom;
   const fuente: Fuente = {
     css: `${estilo.fontStyle} ${estilo.fontWeight} ${tam}px ${estilo.fontFamily}`,
-    // Los titulares van expandidos: sin esto el rasterizado sale más estrecho que el
-    // texto que hay debajo y las estrellas forman una palabra apretada.
     espaciado: Number.isFinite(espaciado) ? espaciado * zoom : 0,
     tam,
     zoom,
@@ -62,12 +55,6 @@ export function puntosDeTexto(el: HTMLElement, cuantas: number): Punto[] {
   return puntos;
 }
 
-/**
- * Los renglones reales, medidos carácter a carácter con un `Range`.
- *
- * Es la única forma de saber por dónde ha partido el navegador: depende del ancho, del
- * idioma y de la tipografía ya cargada, y ninguna de las tres se puede predecir aquí.
- */
 function renglones(el: HTMLElement): Renglon[] {
   const paseante = document.createTreeWalker(el, NodeFilter.SHOW_TEXT);
   const rango = document.createRange();
@@ -82,14 +69,10 @@ function renglones(el: HTMLElement): Renglon[] {
       if (r.height === 0) continue;
 
       const previo = grupos[grupos.length - 1];
-      // Mismo renglón si comparten línea base: comparar por el alto tolera el subrayado
-      // o un `sup` sin abrir un grupo nuevo.
       const mismo = previo && Math.abs(r.top - previo.arr) < r.height * 0.5;
       if (mismo) previo.texto += nodo.data[i];
       else grupos.push({ texto: nodo.data[i], izq: Infinity, der: -Infinity, arr: r.top, aba: r.bottom });
 
-      // Los espacios no dibujan nada: entran en el texto por el kerning, pero no estiran
-      // la caja, o un espacio de ruptura al final desplazaría el renglón entero.
       if (nodo.data[i].trim() === '') continue;
       const g = grupos[grupos.length - 1];
       g.izq = Math.min(g.izq, r.left);
@@ -106,17 +89,11 @@ function renglones(el: HTMLElement): Renglon[] {
     .filter((l) => l.texto !== '' && l.ancho > 4);
 }
 
-/**
- * Un renglón: se rasteriza a resolución de trabajo y se muestrea.
- *
- * El paso se ajusta a las partículas que se quieran, y el contorno va primero: lo que hace
- * legible un glifo es su perfil, no su relleno.
- */
 function deRenglon(linea: Renglon, fuente: Fuente, cuantas: number): Punto[] {
   const clave = `${linea.texto}|${fuente.clave}|${cuantas}`;
   const guardado = cache.get(clave);
 
-  const medidor = document.createElement('canvas').getContext('2d');
+  medidor = contexto(medidor, false);
   if (!medidor) return [];
   medidor.font = fuente.css;
   medidor.letterSpacing = `${fuente.espaciado}px`;
@@ -127,8 +104,6 @@ function deRenglon(linea: Renglon, fuente: Fuente, cuantas: number): Punto[] {
   const W = Math.ceil(ancho) + margen * 2;
   const H = Math.ceil(fuente.tam * 1.4) + margen * 2;
 
-  // La caja medida y la rasterizada no tienen por qué coincidir al píxel: se estira el
-  // rasterizado hasta la caja real, que es donde el texto va a estar.
   const escalaX = linea.ancho / (ancho || 1);
   const aPantalla = (x: number, y: number): Punto => ({
     x: linea.left + (x - margen) * escalaX,
@@ -137,13 +112,15 @@ function deRenglon(linea: Renglon, fuente: Fuente, cuantas: number): Punto[] {
 
   if (guardado) return guardado.map((p) => aPantalla(p.x, p.y));
 
-  const lienzo = document.createElement('canvas');
-  lienzo.width = W;
-  lienzo.height = H;
-  const ctx = lienzo.getContext('2d', { willReadFrequently: true });
-  if (!ctx) return [];
+  taller = contexto(taller, true);
+  if (!taller) return [];
+  const ctx = taller;
+  ctx.canvas.width = W;
+  ctx.canvas.height = H;
   ctx.fillStyle = '#fff';
   ctx.font = fuente.css;
+  // Sin esto el rasterizado sale más estrecho que el texto del DOM y las estrellas forman
+  // una palabra apretada que no coincide con la que aparece debajo.
   ctx.letterSpacing = `${fuente.espaciado}px`;
   ctx.textAlign = 'left';
   ctx.textBaseline = 'middle';
@@ -189,6 +166,7 @@ function deRenglon(linea: Renglon, fuente: Fuente, cuantas: number): Punto[] {
   tomar(contorno, enContorno);
   tomar(relleno, enRelleno);
 
+  if (cache.size >= TOPE_CACHE) cache.delete(cache.keys().next().value!);
   cache.set(clave, crudos);
   return crudos.map((p) => aPantalla(p.x, p.y));
 }

@@ -4,13 +4,6 @@ import { track } from '../lib/analytics';
 import { PLANOS } from '../page/planos';
 import { LangSwitch } from './LangSwitch';
 
-/**
- * La capa persistente. No es un plano y no participa en la coreografía: está desde el
- * primer fotograma y no se mueve.
- *
- * En una página sin scroll, dejar el CV al final lo enterraría detrás de seis
- * transiciones; aquí está a un clic desde cualquier punto, igual que el idioma y el modo.
- */
 export function Hud({
   plano,
   irA,
@@ -26,10 +19,6 @@ export function Hud({
   const { planes } = profile.ui;
   const barra = useRef<HTMLElement>(null);
 
-  /**
-   * La barra publica su altura real: en inglés los nombres son más largos, y en pantalla
-   * estrecha pasa a dos filas. Un hueco fijo se le queda corto y se come el rótulo.
-   */
   useEffect(() => {
     const el = barra.current;
     if (!el) return;
@@ -84,16 +73,6 @@ export function Hud({
   );
 }
 
-/**
- * Las dos flechas, una a cada lado de la pantalla.
- *
- * Son el control principal de la narración: avanzar y retroceder es lo único que se hace
- * el 90 % del tiempo, y merece un objetivo grande y en el sitio donde la vista ya está,
- * no un menú al que hay que subir.
- *
- * En los extremos se deshabilitan en vez de desaparecer: un control que se esfuma mueve
- * el resto de la interfaz y deja al visitante buscando lo que acaba de pulsar.
- */
 export function Flechas({
   plano,
   irA,

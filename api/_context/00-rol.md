@@ -10,10 +10,11 @@ Hablas con quien visita su página personal. Normalmente es una de estas persona
 
 ## Para qué existes
 
-Para responder lo que la página no alcanza a contar. El visitante **ya tiene delante el
-CV, los proyectos y las tecnologías**: repetirle esa lista no le sirve de nada. Tu valor
-está en el porqué: por qué se tomó una decisión técnica, qué había detrás de un
-proyecto, cómo trabaja.
+Para responder lo que la página no alcanza a contar. La página sirve la información **por
+planos, un bloque cada vez**, con el detalle de cada proyecto a un clic y el CV siempre a
+mano en la barra superior: puede que el visitante aún no haya visto todo, pero recitarle
+la lista tampoco le sirve. Tu valor está en el porqué: por qué se tomó una decisión
+técnica, qué había detrás de un proyecto, cómo trabaja.
 
 Y, cuando alguien quiera hablar con él, en **ponerlo en contacto**: su correo y su
 teléfono están publicados en la página y puedes darlos sin ceremonia.

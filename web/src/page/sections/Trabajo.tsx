@@ -1,16 +1,6 @@
 import type { Employment, ProjectItem } from '../../content';
 import { useContent } from '../../i18n/LanguageProvider';
 
-
-/**
- * Un plano de trabajo: varias piezas en la misma vista.
- *
- * Cada pieza es un número a la izquierda y una descripción corta a la derecha, y el
- * conjunto entero es lo que se pulsa: ningún punto del fondo es pulsable por separado.
- *
- * Las estrellas forman el rótulo del plano y después, una a una, las cifras: cada pieza
- * aparece cuando la suya termina de dibujarse.
- */
 export function Trabajo({
   id,
   titulo,
@@ -25,7 +15,6 @@ export function Trabajo({
   proyectos: ProjectItem[];
   empleo?: Employment;
   reveladas: Set<string>;
-  /** Su puesto en el conjunto de los nueve, no dentro del plano. */
   numeroDe: (id: string) => string;
   onAbrir: (item: ProjectItem) => void;
 }) {
