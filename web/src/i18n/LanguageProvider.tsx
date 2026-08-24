@@ -5,13 +5,6 @@ import type { Lang, Profile } from '../content';
 
 const STORAGE_KEY = 'wm.lang';
 
-/**
- * Idioma inicial: lo que el visitante eligió la última vez y, si no eligió nunca,
- * INGLÉS. Deliberadamente no se mira `navigator.language`: redirigir por idioma del
- * navegador impide a los buscadores rastrear la otra versión, y aquí además solo hay
- * una URL, así que la detección automática dejaría al visitante sin pista de que el
- * contenido puede cambiar.
- */
 function initialLang(): Lang {
   if (typeof window === 'undefined') return 'en';
   const stored = window.localStorage.getItem(STORAGE_KEY);
@@ -29,8 +22,6 @@ const LanguageContext = createContext<LanguageValue | null>(null);
 export function LanguageProvider({ children }: { children: ReactNode }) {
   const [lang, setLangState] = useState<Lang>(initialLang);
 
-  // El atributo lang del documento importa para lectores de pantalla, para el corrector
-  // del navegador y para que el navegador ofrezca traducir la página correctamente.
   useEffect(() => {
     document.documentElement.lang = lang;
   }, [lang]);
@@ -54,12 +45,10 @@ function useLanguage(): LanguageValue {
   return value;
 }
 
-/** Contenido del idioma activo. Los componentes ya no importan un perfil concreto. */
 export function useContent(): Profile {
   return useLanguage().profile;
 }
 
-/** Para el conmutador de la nav. */
 export function useLangSwitch() {
   const { lang, setLang } = useLanguage();
   return { lang, setLang };

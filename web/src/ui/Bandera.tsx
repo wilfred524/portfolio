@@ -1,13 +1,5 @@
 import type { Lang } from '../content';
 
-/**
- * Banderas del conmutador de idioma.
- *
- * SVG y no emoji: **Windows no dibuja los emoji de bandera**, ahí se ven como dos letras.
- *
- * Decorativas. El nombre accesible lo pone el idioma escrito (`aria-label`): una bandera
- * no es un idioma, así que la que se ve es una convención y el dato real va en el texto.
- */
 export function Bandera({ lang }: { lang: Lang }) {
   const comun = {
     viewBox: '0 0 24 16',

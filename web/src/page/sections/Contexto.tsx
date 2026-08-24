@@ -1,12 +1,5 @@
 import { useContent } from '../../i18n/LanguageProvider';
 
-/**
- * Plano 1. Sitúa el escenario una sola vez, para que los nueve proyectos siguientes no
- * tengan que repetir empresa, rol ni periodo.
- *
- * El dominio aparece aquí y solo aquí, como circunstancia y no como identidad: es la
- * regla de `docs/perfil-publico.md`, porque en el titular cierra puertas fuera del sector.
- */
 export function Contexto() {
   const profile = useContent();
   const empleo = profile.employments[0];
