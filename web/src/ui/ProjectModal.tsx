@@ -3,16 +3,6 @@ import type { Employment, ProjectItem, UiStrings } from '../content';
 
 const BLOCK_KEYS = ['problem', 'hard', 'result'] as const;
 
-/**
- * Detalle de un proyecto.
- *
- * **Este sí es un modal de verdad**, al contrario que el chat: mientras está abierto no
- * hay nada más que leer detrás, así que atrapa el foco, bloquea el scroll del documento
- * y se cierra con Escape o pulsando el fondo. El chat es accesorio y por eso convive con
- * la página; un detalle de proyecto sustituye a la página mientras dura.
- *
- * Se monta solo cuando se abre: quien no pulsa ninguna tarjeta no paga diez detalles.
- */
 export function ProjectModal({
   item,
   employment,
@@ -27,16 +17,12 @@ export function ProjectModal({
   const panel = useRef<HTMLDivElement>(null);
   const labels = ui.project;
 
-  // El foco entra al panel y vuelve a su origen al cerrar. `document.activeElement` se
-  // guarda ANTES de mover el foco: después ya sería el propio panel.
   useEffect(() => {
     const origen = document.activeElement as HTMLElement | null;
     panel.current?.focus();
     return () => origen?.focus();
   }, []);
 
-  // El documento no se desplaza por detrás del modal. Se restaura el valor anterior en
-  // vez de fijar 'visible': la página podría tener otro overflow por otra razón.
   useEffect(() => {
     const previo = document.body.style.overflow;
     document.body.style.overflow = 'hidden';
@@ -45,11 +31,6 @@ export function ProjectModal({
     };
   }, []);
 
-  /**
-   * Trampa de foco. Con `aria-modal="true"` los lectores de pantalla ya acotan el árbol,
-   * pero la tabulación del navegador no: sin esto se sale del panel hacia la página de
-   * detrás, que está visualmente tapada.
-   */
   function alPulsarTecla(evento: React.KeyboardEvent) {
     if (evento.key === 'Escape') {
       evento.stopPropagation();
@@ -76,9 +57,6 @@ export function ProjectModal({
   }
 
   return (
-    // El fondo cierra al pulsarlo. No es un botón porque su contenido son los controles
-    // reales del modal; para quien no usa ratón, Escape y el botón de cerrar cumplen la
-    // misma función, así que no queda ninguna acción sin equivalente accesible.
     <div className="modal" onMouseDown={onClose}>
       <div
         ref={panel}
@@ -88,8 +66,6 @@ export function ProjectModal({
         aria-labelledby="modal-titulo"
         tabIndex={-1}
         onKeyDown={alPulsarTecla}
-        // El clic dentro del panel no debe propagarse al fondo y cerrarlo. En mousedown
-        // y no en click: seleccionar texto arrastrando hasta fuera cerraría el modal.
         onMouseDown={(evento) => evento.stopPropagation()}
       >
         <button type="button" className="modal__close" onClick={onClose}>

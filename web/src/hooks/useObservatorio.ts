@@ -2,19 +2,10 @@ import { useCallback, useEffect, useRef, useState } from 'react';
 import { PLANOS, planoDesdeHash } from '../page/planos';
 
 const CLAVE_MODO = 'wm.modo';
-/**
- * Lo que tarda en confirmarse un cambio de plano. Es el hueco en el que lo que había se
- * rompe en estrellas: si el DOM se moviera antes, las partículas saldrían de donde el
- * contenido ya no está.
- */
 const DISOLUCION = 240;
+const UMBRAL_GESTO = 60;
 
-/**
- * Detecta si el visitante pidió menos movimiento, y **sigue escuchando**: el ajuste del
- * sistema se puede cambiar con la página abierta, y leerlo una sola vez al montar deja al
- * sitio animándose para alguien que acaba de pedir que no lo haga.
- */
-export function useMovimientoReducido() {
+function useMovimientoReducido() {
   const [reducido, setReducido] = useState(
     () => window.matchMedia('(prefers-reduced-motion: reduce)').matches,
   );
@@ -29,20 +20,12 @@ export function useMovimientoReducido() {
   return reducido;
 }
 
-/**
- * Navegación del observatorio: qué plano está activo y en qué modo se lee la página.
- *
- * El modo documento apila los planos con scroll, para buscar con Ctrl+F o imprimir.
- * El plano activo vive en el hash para poder enviar un enlace directo a un plano.
- */
 export function useObservatorio() {
   const reducido = useMovimientoReducido();
 
   const [plano, setPlano] = useState(() => planoDesdeHash(window.location.hash));
-  /** El plano pedido. Marca el HUD desde el clic, sin esperar a la disolución. */
   const [pedido, setPedido] = useState(plano);
   const cambio = useRef<number | undefined>(undefined);
-  /** +1 avanzando, -1 retrocediendo: el plano entra y sale por el lado que le toca. */
   const [sentido, setSentido] = useState<1 | -1>(1);
   const [documento, setDocumento] = useState<boolean>(() => {
     const guardado = localStorage.getItem(CLAVE_MODO);
@@ -51,7 +34,6 @@ export function useObservatorio() {
     return false;
   });
 
-  // El ajuste del sistema manda mientras el visitante no haya elegido.
   useEffect(() => {
     if (reducido && localStorage.getItem(CLAVE_MODO) === null) setDocumento(true);
   }, [reducido]);
@@ -72,12 +54,8 @@ export function useObservatorio() {
       if (destino !== actual) setSentido(destino > actual ? 1 : -1);
       return destino;
     });
-    // replaceState: con `location.hash` cada plano apilaría una entrada de historial y
-    // salir de la página costaría siete pulsaciones de «atrás».
     history.replaceState(null, '', `#/${PLANOS[destino].id}`);
 
-    // Re-apuntar durante la disolución es barato: se cancela el cambio anterior y se
-    // confirma el nuevo. Nunca hay dos transiciones encoladas.
     clearTimeout(cambio.current);
     cambio.current = window.setTimeout(() => setPlano(destino), DISOLUCION);
   }, []);
@@ -91,8 +69,6 @@ export function useObservatorio() {
     });
   }, []);
 
-  // Las flechas no se capturan dentro de un campo de texto ni con un modificador: ahí
-  // son del visitante, no de la narración.
   useEffect(() => {
     if (documento) return;
 
@@ -112,6 +88,42 @@ export function useObservatorio() {
 
     window.addEventListener('keydown', alPulsar);
     return () => window.removeEventListener('keydown', alPulsar);
+  }, [pedido, documento, irA]);
+
+  useEffect(() => {
+    if (documento) return;
+
+    let x0 = 0;
+    let y0 = 0;
+    let sigue = false;
+
+    const alTocar = (evento: TouchEvent) => {
+      const dedo = evento.touches[0];
+      const destino = evento.target as HTMLElement | null;
+      sigue =
+        evento.touches.length === 1 &&
+        !destino?.closest('input, textarea, [contenteditable], [role="dialog"]');
+      if (!sigue || !dedo) return;
+      x0 = dedo.clientX;
+      y0 = dedo.clientY;
+    };
+
+    const alSoltar = (evento: TouchEvent) => {
+      const dedo = evento.changedTouches[0];
+      if (!sigue || !dedo) return;
+      sigue = false;
+      const dx = dedo.clientX - x0;
+      const dy = dedo.clientY - y0;
+      if (Math.abs(dx) < UMBRAL_GESTO || Math.abs(dx) < Math.abs(dy) * 1.5) return;
+      irA(pedido + (dx < 0 ? 1 : -1));
+    };
+
+    window.addEventListener('touchstart', alTocar, { passive: true });
+    window.addEventListener('touchend', alSoltar, { passive: true });
+    return () => {
+      window.removeEventListener('touchstart', alTocar);
+      window.removeEventListener('touchend', alSoltar);
+    };
   }, [pedido, documento, irA]);
 
   return { plano, pedido, sentido, irA, documento, conmutarModo, reducido };

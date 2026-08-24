@@ -1,12 +1,13 @@
 # Portfolio · Wilfred Morales
 
-Sitio personal de presentación, de una sola página, con un **agente conversacional
-propio** que responde sobre la trayectoria y las decisiones detrás de cada proyecto, y
-que puede agendar una llamada contra el calendario real.
+Sitio personal de presentación con un **agente conversacional propio** que responde
+sobre la trayectoria y las decisiones detrás de cada proyecto, y que puede agendar una
+llamada contra el calendario real.
 
-La página está construida sobre una reconstrucción fiel de **Henry**, un sistema de
-diseño editorial monocromático inspirado en carteles tipográficos: papel y tinta,
-jerarquía por escala tipográfica y cero color.
+Una sola pantalla, sin scroll y sin una sola imagen: el contenido se recorre por siete
+planos, y lo único que se mueve es un campo de partículas en canvas 2D —escrito sin
+librería de animación— que muestrea la tipografía del propio documento para formar el
+titular de cada plano y lo deshace al cambiar de vista.
 
 ## Destacados técnicos
 
@@ -16,13 +17,17 @@ jerarquía por escala tipográfica y cero color.
 - **Toda integración se degrada sola** — si falta una credencial, esa pieza se apaga y
   el chat sigue funcionando. Agendar, además, va detrás de su propio interruptor: es la
   única acción con efectos fuera del chat.
-- **Placa halftone generada por código** — un retrato se convierte en tiempo real a
-  1-bit con *dithering* ordenado (matriz Bayer 8×8) sobre `<canvas>`, recoloreado a la
-  paleta del sistema y con un *spotlight* que sigue el cursor. Sin imágenes pretratadas.
+- **Los titulares los forman las partículas** — el campo muestrea el elemento del DOM que
+  va a quedar debajo, renglón a renglón y con su `letter-spacing`, así que las estrellas
+  dibujan las letras de verdad y no una silueta aproximada.
+- **El fondo cuesta lo que se ve** — el cielo vive en su propio lienzo y se repinta diez
+  veces por segundo, porque gira 0,2 px por fotograma; nada de lo que corre por fotograma
+  reserva memoria.
 - **Un solo origen para el contenido** — web y CV se generan del mismo archivo de perfil,
   en dos idiomas, con `satisfies Profile` para que a ninguno le falte una clave.
-- **Accesible y responsive** — respeta `prefers-reduced-motion`, jerarquía semántica y
-  se adapta de escritorio a móvil.
+- **Accesible y responsive** — los siete planos están siempre en el DOM, así que `Ctrl+F`
+  encuentra lo que está en uno inactivo; un modo documento apaga la coreografía y apila el
+  contenido con scroll para imprimir o para `prefers-reduced-motion`.
 
 ## Stack
 
@@ -66,14 +71,6 @@ Otros scripts: `npm run typecheck -w @portfolio/web` (chequeo de tipos) y
 
 **Vercel.** `vercel.json` define la instalación, el build del workspace `web` y el
 enrutado de `/api/*` a la función Python. Cada push a `main` genera un despliegue.
-
-## Créditos
-
-El sistema de diseño **Henry** es obra de [Henry Desroches](https://henry.codes),
-catalogado en [refero.design](https://styles.refero.design). Este proyecto es una
-reinterpretación en React con fines de aprendizaje y portafolio; el código y el
-contenido son propios. El retrato usado en la placa halftone es un grabado de Leonardo
-da Vinci en dominio público.
 
 ## Autor
 

@@ -1,18 +1,5 @@
-/**
- * Tokens del tema. Únicos valores de color, tipografía y ritmo de todo el sitio: ningún
- * componente escribe un color a mano.
- *
- * La paleta viene de «Celestial Immersion» (DESIGN.md). Es una escala neutra fría sobre
- * obsidiana, con la jerarquía puesta en la **luminosidad** y no en el color: lo activo
- * emite luz, lo secundario se retira hacia el fondo.
- *
- * Van en `:root` y no bajo una clase raíz: con fondo oscuro, declararlos en un div deja
- * bandas claras en el rebote del scroll.
- */
 
 :root {
-  /* ── Superficies ────────────────────────────────────────────────────────────
-     Escalones de la misma familia, del hueco más profundo al panel más elevado. */
   --bg: #131314;
   --surface-lowest: #0e0e0f;
   --surface-low: #1c1b1c;
@@ -20,47 +7,32 @@
   --surface-high: #2a2a2b;
   --surface-highest: #353436;
   --bg-overlay: rgba(14, 14, 15, 0.72);
+  --velo: rgba(19, 19, 20, 0.94);
 
-  /* Alias de compatibilidad con los componentes que ya los usan. */
   --bg-card: var(--surface-low);
   --bg-raised: var(--surface);
 
-  /* ── Texto ──────────────────────────────────────────────────────────────────
-     Nunca blanco puro: cansa la vista sobre un fondo tan oscuro. */
   --text: #e5e2e3;
   --text-soft: #e5e2e3;
   --text-mute: #c7c6cc;
   --text-dim: #909096;
-  --text-faint: #6f6f76;
+  --text-faint: #87878d;
 
-  /* ── Acentos ────────────────────────────────────────────────────────────────
-     Dos, y con un significado cada uno. El arena marca lo verificado (una cifra,
-     la disponibilidad); el azul pálido marca dónde estás. */
   --accent: #dbc3a8;
   --accent-glow: rgba(219, 195, 168, 0.35);
   --accent-act: #c3c6d7;
   --accent-act-soft: rgba(195, 198, 215, 0.14);
 
-  /* ── Bordes ─────────────────────────────────────────────────────────────────
-     Sólidos y no alfa sobre blanco: la paleta los define como parte de la escala. */
   --line: #2a2a2b;
   --line-soft: #46464c;
   --line-strong: #909096;
 
-  /* ── Estrellas ──────────────────────────────────────────────────────────────
-     Las consume el canvas por `getComputedStyle`. Sin alfa: la opacidad la calcula
-     cada partícula. */
   --star-core: 229, 226, 227;
   --star-glow: 199, 198, 204;
   --star-line: 144, 144, 150;
-  /* Un cielo real no es monocromo: hay estrellas más azules y unas pocas más cálidas.
-     Son variaciones de temperatura, no un color nuevo en el sistema. */
   --star-blue: 168, 192, 232;
   --star-warm: 219, 195, 168;
 
-  /* ── Tipografía ─────────────────────────────────────────────────────────────
-     Tres familias con un papel cada una: Montserrat abre y respira en los
-     titulares, Inter carga el cuerpo, y Space Grotesk firma los rótulos técnicos. */
   --font: 'Inter Variable', system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif;
   --font-display: 'Montserrat Variable', var(--font);
   --font-label: 'Space Grotesk Variable', var(--font);
@@ -73,15 +45,11 @@
   --text-xl: clamp(1.5rem, 4vw, 2rem);
   --display: clamp(2.5rem, 6vw, 4rem);
 
-  /* El titular expande en lugar de apretar: es lo que da la sensación de vacío. */
   --tracking-display: 0.05em;
   --tracking-head: 0.02em;
   --tracking-label: 0.1em;
   --leading-body: 1.6;
 
-  /* ── Ritmo ──────────────────────────────────────────────────────────────────
-     Base de 8 px. `--measure` limita la línea de lectura; `--page` es el ancho del
-     contenido: son cosas distintas y no crecen juntas. */
   --page: 72rem;
   --measure: 36rem;
   --gutter: clamp(1.5rem, 5vw, 4rem);
@@ -93,9 +61,6 @@
   --radius-md: 0.75rem;
   --radius-lg: 1.5rem;
 
-  /* ── Movimiento ─────────────────────────────────────────────────────────────
-     Tres duraciones. La lenta lleva curva propia porque es la de los cambios de
-     tamaño, donde una salida lineal se nota. */
   --fast: 0.2s ease;
   --medium: 0.3s ease;
   --slow: 0.4s cubic-bezier(0.4, 0, 0.2, 1);

@@ -1,66 +1,39 @@
-/**
- * English content — the default language of the site.
- *
- * Structure is fixed by `types.ts`; the `satisfies Profile` at the bottom guarantees this
- * file and `profile.es.ts` stay in sync. Add a key in one and typecheck fails until the
- * other has it too.
- *
- * Terms deliberately NOT translated from the Spanish source: `guards`, `policies` and
- * `middleware` are Laravel class names, and "libranza" becomes "payroll-deduction
- * lending", which is the term a lender outside Colombia would recognise.
- */
 import type { Profile } from './types';
 
+/* `facts` se lee por POSICIÓN desde tools/cv/src/build.ts, no por etiqueta: reordenar
+   este array cambia lo que sale impreso en el CV. */
 export const en = {
   name: 'Wilfred Morales',
   role: 'Backend developer',
   stack: 'PHP/Laravel · PostgreSQL · Python',
-  /* "in production" dangled at the end of a verbless list and read like a translation.
-     "Shipped to production" is the phrasing an English-speaking reader expects. */
   credential:
     'Configurable business logic, external service integrations and batch processing, shipped to production.',
-  /* "Available immediately" is the standing formula on English-language job boards;
-     "Available now" is correct but reads as a translation. */
   availability: 'Available immediately · Looking for my next role as a backend developer',
   trajectory: 'Remote · Colombia (GMT-5)',
-  /* Kept as a three-beat lockup with the nexus in italics, like the Spanish original.
-     A literal "Ideas made Product" reads wrong in English. */
   heroSlogan: { start: 'Ideas', link: 'into', end: 'Product' },
   location: 'Colombia',
   email: 'wilfred3019@gmail.com',
   phone: '+57 301 737 4234',
   repoUrl: 'https://github.com/wilfred524/portfolio',
-  /** Dominio de producción en Vercel; sin dominio propio todavía. */
   siteUrl: 'https://portfolio-wilfred524.vercel.app',
   cv: { label: 'Download CV', url: '/Wilfred-Morales-Backend-Developer.pdf' },
   colophon:
-    /* Three fixes against the Spanish. "variable type" reads as "variable data type" to
-       an English-speaking developer, which is the opposite of the point: it is
-       typography, so "variable fonts". "animations written by hand" lost the actual
-       claim, which is *no library*. And "leaning on AI" carries a connotation of
-       dependence in English, turning a declarable skill into an apology. */
-    'This site is React and TypeScript, with variable fonts and animations written without a library. The assistant runs on Python in serverless functions, with its knowledge base in versioned text files. I build with AI as a tool: I define the architecture, give the instructions and verify every step. The code is public.',
+    'React and TypeScript, no animation library: the particle field is 2D canvas and samples the typography of the document itself to form each heading. A single profile file feeds the page, the PDF CV and what the assistant knows. The assistant itself runs on Python in serverless functions. The code is public.',
   facts: [
     {
       id: 'education',
       label: 'Education',
-      /* No degree status, his call. It used to read "Currently in 7th semester", which
-         does not match the actual transcript. The trade-off: with no status it reads as
-         a completed degree, so he clears that up on the first call, not the page. */
       value: 'Computer Engineering, Universidad Nacional Experimental del Táchira (UNET).',
     },
     {
       id: 'languages',
       label: 'Languages and certifications',
-      /* Merged: two rows for three short facts split the block for nothing. */
       value:
         'Spanish (native) · English B2 (EF SET) · Google IT Automation with Python — Coursera (in progress)',
     },
     {
       id: 'mode',
       label: 'Work mode',
-      /* No mention of documents, visas or sponsorship: unrequested data that invites
-         filtering by nationality before reading anything technical. */
       value:
         'Remote · GMT-5 · Local employment in Colombia or international contracting via Deel.',
     },
@@ -71,16 +44,6 @@ export const en = {
         'Payroll-deduction lending: loans repaid through automatic salary deductions, a regulated sector in Colombia (Law 1527).',
     },
   ],
-  /*
-   * Only what is backed by shipped work or a public project. Still out, for lack of
-   * evidence: Hexagonal Architecture, DDD, pytest, queues and background jobs,
-   * JWT/OAuth2/SSO, encryption, pandas, NumPy, SQLAlchemy.
-   *
-   * Every item is ONE searchable literal. Compound items — "PHP / Laravel",
-   * "PostgreSQL / SQL", "Linux / Nginx" — read fine but do not tokenise: a filter that
-   * splits the list on its separator yields the token "PHP / Laravel" and never "PHP"
-   * or "Laravel" on their own, so the match against the posting never happens.
-   */
   skillGroups: [
     {
       area: 'Backend',
@@ -96,8 +59,6 @@ export const en = {
       ],
     },
     {
-      /* Its own group: the only family with projects behind it — the rules engine, the
-         scoring pipeline, the query optimisation — and it was diluted inside Backend. */
       area: 'Databases',
       items: [
         'PostgreSQL',
@@ -129,11 +90,6 @@ export const en = {
       items: ['Docker', 'Linux', 'Nginx', 'GCP', 'AWS S3', 'Certbot'],
     },
     {
-      /* CI/CD is back. It had been dropped by his own call — sustained work he did not
-         want to sell as a specialty — and the effect was losing one of the most searched
-         literals for nothing: nobody reads an absence as modesty. It sits next to Git
-         and the way of working, not under Infrastructure, where it would read as a
-         specialty. */
       area: 'Process',
       items: ['Git', 'GitHub Actions', 'CI/CD', 'Agile methodologies'],
     },
@@ -142,8 +98,6 @@ export const en = {
     {
       id: 'gaf',
       employer: 'GAF Technology Solutions',
-      /* Places the company and the team size: on a team of 4, "backend developer"
-         means touching infrastructure and deployment, not just endpoints. */
       tagline:
         'Payroll-deduction lending fintech. Technology team of 4: 2 developers, a tech lead, and an infrastructure and security lead. Applications are originated by CK Comercializadora, a company in the same group.',
       role: 'Backend developer',
@@ -153,10 +107,6 @@ export const en = {
   ],
   projectGroups: [
     {
-      /* One group for the whole contract. The rules engine used to sit apart because CK
-         originated it, and that separation pulled it out of the platform he worked on:
-         same job, same team. Who originates the applications is already stated in the
-         employment tagline, where it is said once and not repeated. */
       category: 'GAF platform',
       employmentId: 'gaf',
       items: [
@@ -214,10 +164,6 @@ export const en = {
           tags: ['Python', 'PostgreSQL', 'Docker', 'Laravel'],
         },
         {
-          /* New entry. The work had been there from the start and was written down
-             nowhere, despite being the second strongest number in the profile after the
-             scoring pipeline: a measured before and after, which is exactly what a
-             technical evaluator looks for and almost nobody provides. */
           id: 'query-optimization',
           title: 'Query optimisation in production',
           summary:
@@ -295,14 +241,11 @@ export const en = {
           title: 'Portfolio',
           role: 'Personal project',
           period: '2026',
-          /* The assistant used to be a separate entry. It is not: it is the backend of
-             this very site, and listing it apart counted two projects where there is
-             one, exactly the padding this profile avoids in the work history. */
           summary:
-            'This site and its backend: React and TypeScript at the front, Python behind it for the agent that answers about my background.',
+            'This site and its backend: one screen with no scroll, its headings formed by a particle field, and a Python agent that answers about my background.',
           metrics: [{ value: '133 MB', label: 'of dependency dropped' }],
           brief:
-            'I built this site with React and TypeScript, with the bilingual content coming out of a single profile file that also feeds the CV, and the animations written without a library. Behind it runs a conversational agent in Python on serverless functions, answering about my background and the decisions behind each project: it only knows what is in its knowledge base, versioned text files, and it states that an agent is answering and can be wrong. I first assembled it with n8n and the OpenAI API, and on deploying it I rebuilt the orchestration in Python, because the Vercel free plan does not support n8n. I dropped litellm after measuring it (133 MB of the 199 the dependencies took, against a 250 MB per-function limit) and talk to the model over plain REST with httpx.',
+            'I built this site with React and TypeScript: a single screen with no scroll, walked plane by plane, with a 2D canvas particle field that samples the typography of the document itself and forms the headings with it, no animation library. The bilingual content comes out of a single profile file that also feeds the PDF CV. Behind it runs a conversational agent in Python on serverless functions, answering about my background and the decisions behind each project: it only knows what is in its knowledge base, versioned text files, and it states that an agent is answering and can be wrong. I first assembled it with n8n and the OpenAI API, and on deploying it I rebuilt the orchestration in Python, because the Vercel free plan does not support n8n. I dropped litellm after measuring it (133 MB of the 199 the dependencies took, against a 250 MB per-function limit) and talk to the model over plain REST with httpx.',
           tags: ['React', 'TypeScript', 'Python', 'FastAPI', 'Vercel'],
           url: 'https://github.com/wilfred524/portfolio',
         },
@@ -314,12 +257,6 @@ export const en = {
     { label: 'LinkedIn', url: 'https://www.linkedin.com/in/wilfred-morales-3220b2126' },
   ],
   ui: {
-    nav: {
-      experience: 'Experience',
-      skills: 'Skills',
-      contact: 'Contact',
-      ariaLabel: 'Main',
-    },
     sections: {
       experience: 'Experience',
       skills: 'Skills',
@@ -331,11 +268,8 @@ export const en = {
       ariaLabel: 'Views',
       previous: 'Previous view',
       next: 'Next view',
-      goTo: 'Go to',
       threshold: 'Start',
       context: 'Context',
-      /* Named after what they hold, not "Work I, II, III": a roman numeral says nothing
-         about what is inside. */
       data: 'Data and decisions',
       platform: 'The platform',
       own: 'Own projects',
@@ -368,12 +302,6 @@ export const en = {
       closeLabel: 'Close the chat',
       invite: "Something the page doesn't cover? Ask me.",
       inviteDismiss: 'Dismiss',
-    },
-    credit: {
-      intro: 'An interpretation of the design system',
-      author: '“Henry” by Henry Desroches',
-      catalogued: 'catalogued at',
-      outro: 'Rebuilt in React; content and code my own.',
     },
   },
 } satisfies Profile;

@@ -5,19 +5,26 @@
 
 ## Qué es
 
-Sitio personal de presentación de **una sola página**, construido sobre una
-reconstrucción fiel del sistema de diseño **Henry** (editorial monocromático). Monorepo:
-frontend TypeScript, **backend Python** (FastAPI en Vercel) con un agente de IA que
-conversa con el visitante y le agenda llamadas. **Idioma de trabajo: español.**
+Sitio personal de presentación: **una sola pantalla sin scroll**, recorrida por siete
+planos sobre un campo de partículas en canvas. Monorepo: frontend TypeScript, **backend
+Python** (FastAPI en Vercel) con un agente de IA que conversa con el visitante y le
+agenda llamadas. **Idioma de trabajo: español.**
 
-La colección de diseños que había en `/disenos` se retiró: varias páginas diluían el
-mensaje del portafolio. El objetivo del sitio es que un evaluador técnico entienda en
-tres o cuatro pantallas qué se ha construido, en qué dominio y desde cuándo.
+El objetivo es que un evaluador técnico entienda en tres o cuatro planos qué se ha
+construido, en qué dominio y desde cuándo. La reconstrucción del sistema Henry que había
+antes se retiró entera.
 
 ## Reglas invariantes (no romper)
 
-- **Diseño Henry**: 100% monocromo cálido (sin color), **sin sombras**, **radius solo
-  12px**, bandas Paper/Ink a sangre completa. Detalle en [`docs/design-henry.md`](docs/design-henry.md).
+- **Los valores de diseño salen de `web/src/styles/tokens.css`**, siempre. Un color o un
+  tamaño escrito a mano en otro archivo es un error, no una excepción. La jerarquía va en
+  la luminosidad, no en el color: hay dos acentos y cada uno significa una cosa.
+- **El código no lleva comentarios.** El porqué va a `docs/` o al mensaje del commit;
+  el código dice qué hace. Única excepción: el aviso que evita una regresión concreta
+  (un acoplamiento que no se ve desde el archivo que se edita, un valor medido que
+  alguien revertiría). Detalle en [`docs/conventions.md`](docs/conventions.md).
+- **Contraste mínimo 4,5:1** para todo texto bajo 24 px, comprobado sobre el campo de
+  partículas y no solo sobre el fondo liso. Legibilidad por encima de gracia.
 - **Todo texto/contenido** vive en `web/src/content/profile.es.ts` y `profile.en.ts`
   —incluidos los textos de interfaz, en su bloque `ui`—. Ningún componente hardcodea
   copy. Ambos declaran `satisfies Profile` (`content/types.ts`): si a un idioma le falta
@@ -43,9 +50,7 @@ tres o cuatro pantallas qué se ha construido, en qué dominio y desde cuándo.
 | Necesitas… | Lee |
 |---|---|
 | Estructura del repo, workspaces, comandos | [`docs/architecture.md`](docs/architecture.md) |
-| Tokens, tipografía y guidelines do/don't de Henry | [`docs/design-henry.md`](docs/design-henry.md) |
-| Qué hace cada componente y dónde está | [`docs/components.md`](docs/components.md) |
-| Cómo funcionan las interacciones (halftone, scroll, reveal, inversión) | [`docs/effects.md`](docs/effects.md) |
+| **Cómo funciona la superficie: planos, motor de partículas, capas, velo, rendimiento** | [`docs/observatorio.md`](docs/observatorio.md) |
 | Config de Vercel y errores ya resueltos | [`docs/deployment.md`](docs/deployment.md) |
 | **Obtener y conectar todas las credenciales, en orden** | [`docs/puesta-en-marcha.md`](docs/puesta-en-marcha.md) |
 | Credenciales de Google (Calendar y Sheets), en detalle | [`docs/credenciales-google.md`](docs/credenciales-google.md) |

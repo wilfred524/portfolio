@@ -7,6 +7,7 @@ import type { ProjectItem } from '../content';
 import { useContent, useLangSwitch } from '../i18n/LanguageProvider';
 import { useObservatorio } from '../hooks/useObservatorio';
 import { CampoParticulas, type Figura } from '../ui/CampoParticulas';
+import { ChatLanzador } from '../ui/ChatLanzador';
 import { Flechas, Hud } from '../ui/Hud';
 import { ProjectModal } from '../ui/ProjectModal';
 import { PLANOS } from './planos';
@@ -16,16 +17,6 @@ import { Trabajo } from './sections/Trabajo';
 import { Stack } from './sections/Stack';
 import { Contacto } from './sections/Contacto';
 
-/**
- * El observatorio: una sola pantalla por la que se navega, en vez de una página que se
- * recorre con el scroll.
- *
- * **Los siete planos se montan siempre**, los inactivos con `inert`: así el HTML servido
- * conserva todo el contenido y la búsqueda del navegador, los buscadores y los lectores
- * de pantalla lo siguen encontrando. El coste está en el canvas, que es uno solo.
- *
- * El modo documento es el mismo árbol con otra clase raíz, no una segunda implementación.
- */
 export default function SitePage() {
   const profile = useContent();
   const { lang } = useLangSwitch();
@@ -44,8 +35,6 @@ export default function SitePage() {
     for (const item of grupo.items) empleoDe.set(item.id, grupo.employmentId);
   }
 
-  // Numeración corrida por los nueve proyectos, en el orden en que se recorren: es el
-  // índice del trabajo, no una posición dentro de su plano.
   const numeros = useMemo(() => {
     const mapa = new Map<string, string>();
     let n = 0;
@@ -55,11 +44,6 @@ export default function SitePage() {
     return mapa;
   }, []);
 
-  /**
-   * La cascada del plano: primero su rótulo, después los números, en orden de lectura.
-   * Ese orden es el relato — dónde estamos y luego qué hay dentro—, y al salir se recorre
-   * al revés.
-   */
   const figuras = useMemo<Figura[]>(() => {
     const actual = PLANOS[plano];
     return [
@@ -68,8 +52,6 @@ export default function SitePage() {
     ];
   }, [plano]);
 
-  // En modo documento no hay cascada: todas las piezas se ven de entrada, y las de
-  // todos los planos, no solo las del activo.
   useEffect(() => {
     setSaltado(false);
     if (!documento) {
@@ -80,7 +62,6 @@ export default function SitePage() {
     setReveladas(new Set([...PLANOS.map((p) => p.id), ...todas]));
   }, [figuras, documento, profile]);
 
-  // La coreografía nunca es una puerta: cualquier interacción la salta al final.
   const saltar = () => {
     if (documento || saltado) return;
     setSaltado(true);
@@ -111,6 +92,7 @@ export default function SitePage() {
 
       <Hud plano={pedido} irA={irA} documento={documento} conmutarModo={conmutarModo} />
       {!documento && <Flechas plano={pedido} irA={irA} />}
+      <ChatLanzador listo={documento || reveladas.has(PLANOS[plano].id)} />
 
       <main className="planos" data-sentido={sentido}>
         {PLANOS.map((p, indice) => {
@@ -155,8 +137,6 @@ export default function SitePage() {
       </main>
 
       {abierto && (
-        /* La clave fuerza un montaje nuevo: sin ella, abrir otro proyecto reciclaría el
-           panel y los efectos de foco y de bloqueo de scroll no volverían a correr. */
         <ProjectModal
           key={abierto.id}
           item={abierto}

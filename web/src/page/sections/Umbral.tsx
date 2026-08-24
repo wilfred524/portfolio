@@ -1,11 +1,5 @@
 import { useContent } from '../../i18n/LanguageProvider';
 
-/**
- * Plano 0. Decide si el visitante sigue, así que es el único **sin coreografía de
- * entrada**: su texto está en su sitio al primer pintado.
- *
- * Dos salidas: seguir la narración, o el atajo al trabajo para quien ya sabe qué busca.
- */
 export function Umbral({ irA }: { irA: (indice: number) => void }) {
   const profile = useContent();
   const { planes } = profile.ui;

@@ -211,6 +211,13 @@ este sitio y la CLI de vídeo. Código público en github.com/wilfred524/portfol
 El contenido de la página y el del CV salen **del mismo archivo de perfil**, en dos
 idiomas, para que no puedan contradecirse.
 
+Sobre lo que se ve, si preguntan por el frontend: la página **no tiene scroll ni una sola
+imagen**. Se recorre por planos, y lo único que se mueve es un campo de partículas en
+canvas 2D, escrito sin librería de animación, que **muestrea la tipografía del propio
+documento** para formar el titular de cada plano y lo deshace al cambiar de vista. Hay un
+modo documento que lo apaga todo y apila el contenido con scroll, para buscar con Ctrl+F,
+imprimir o cuando el sistema pide menos movimiento.
+
 Sobre el agente, que es la parte que suele interesar:
 
 - Responde **con aviso explícito de que responde un agente y puede equivocarse** (eso

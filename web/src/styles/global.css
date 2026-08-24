@@ -1,20 +1,5 @@
-/* ============================================
-   Reset mínimo + fundamentos compartidos.
-   Los tokens del tema están en tokens.css; los
-   estilos del sitio, en site.css.
-   ============================================ */
 
 @import './tokens.css';
-
-/* Switzer (Fontshare) — grotesca variable, sustituta de Neue Montreal.
-   Solo la usa el diseño Henry, que se retira al final del rediseño; sale con él. */
-@font-face {
-  font-family: 'Switzer';
-  src: url('/fonts/Switzer-Variable.woff2') format('woff2');
-  font-weight: 100 900;
-  font-style: normal;
-  font-display: swap;
-}
 
 *,
 *::before,
@@ -26,10 +11,8 @@
   margin: 0;
 }
 
-/* El fondo va en html Y body, no en un contenedor: el rebote del scroll (y la franja
-   bajo la barra del navegador en móvil) pinta el fondo del documento, así que ponerlo
-   en un div deja destellos claros al tirar del scroll. `color-scheme` es lo que además
-   oscurece las barras de desplazamiento y los controles nativos. */
+/* El fondo va en html Y body: el rebote del scroll pinta el fondo del documento, y
+   ponerlo solo en un contenedor deja destellos claros al tirar. */
 html {
   scroll-behavior: smooth;
   color-scheme: dark;

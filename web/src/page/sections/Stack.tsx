@@ -1,12 +1,5 @@
 import { useContent } from '../../i18n/LanguageProvider';
 
-/**
- * Plano 5: el stack y los datos de perfil. Comparten plano porque los dos son bloques de
- * escaneo, no de lectura, y van después de la evidencia: una lista de literales delante
- * de los proyectos se lee como declaración; detrás, como índice de lo ya visto.
- *
- * El dominio no está aquí, se dijo en el plano de contexto.
- */
 export function Stack({ titulo }: { titulo: string }) {
   const profile = useContent();
   const ficha = profile.facts.filter((f) => f.id !== 'domain' && f.value.trim() !== '');
