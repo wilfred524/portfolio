@@ -112,6 +112,7 @@ export const en = {
       items: [
         {
           id: 'rules-engine',
+          diagram: 'rules-engine.html',
           title: 'Credit rules engine',
           summary:
             'Credit policy lives as data in PostgreSQL, not as code: the business team adjusts a term limit without waiting for a deployment.',
@@ -127,6 +128,7 @@ export const en = {
         },
         {
           id: 'esignature',
+          diagram: 'esignature.html',
           title: 'Electronic signature with identity validation',
           summary:
             'A 24-page document that used to be filled in by hand, now generated from templates and signed once the customer identity checks out.',
@@ -146,6 +148,7 @@ export const en = {
         },
         {
           id: 'scoring',
+          diagram: 'scoring.html',
           title: 'Monthly credit scoring process',
           summary:
             'A container on a monthly cron pulls the data from PostgreSQL, runs the risk model and loads the results with no manual step.',
@@ -165,6 +168,7 @@ export const en = {
         },
         {
           id: 'query-optimization',
+          diagram: 'query-optimization.html',
           title: 'Query optimisation in production',
           summary:
             'A query that took 20 to 30 seconds and ended in timeouts, fixed with upfront filters, indexes and pagination.',
@@ -184,6 +188,7 @@ export const en = {
         },
         {
           id: 'access-control',
+          diagram: 'access-control.html',
           title: 'Access control and permissions',
           summary:
             'A permission tree across 17 modules, down to the option and sub-process level, with existing users and roles migrated without stopping operations.',
@@ -194,6 +199,7 @@ export const en = {
         },
         {
           id: 'layered-migration',
+          diagram: 'layered-migration.html',
           title: 'Migration to a layered architecture',
           summary:
             'First stage of migrating six years of code, module by module, until controllers held no raw SQL at all.',
@@ -207,6 +213,7 @@ export const en = {
         },
         {
           id: 'infrastructure',
+          diagram: 'infrastructure.html',
           title: 'Infrastructure and deployment',
           summary:
             'The application went from running natively to a container on a new GCP instance, with nginx in front and a parallel migration, with no downtime.',
@@ -227,6 +234,7 @@ export const en = {
       items: [
         {
           id: 'video-cli',
+          diagram: 'video-cli.html',
           title: 'Video clipping CLI',
           role: 'Personal project',
           period: 'Jul 2026 – ongoing',
@@ -238,6 +246,7 @@ export const en = {
         },
         {
           id: 'portfolio-site',
+          diagram: 'portfolio-site.html',
           title: 'Portfolio',
           role: 'Personal project',
           period: '2026',
@@ -287,6 +296,10 @@ export const en = {
       metrics: 'Numbers',
       stack: 'Stack',
       visit: 'View the repository',
+      diagram: 'Architecture',
+      diagramHint:
+        'Inside the diagram, arrows pan and + and − zoom. Press Tab to come back to the page.',
+      diagramOpen: 'Open the diagram',
     },
     viewCode: 'View the code',
     chat: {

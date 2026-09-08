@@ -1,0 +1,174 @@
+{
+  "schema_version": 1,
+  "diagram_type": "architecture",
+  "meta": {
+    "title": "Permissions down to the sub-process",
+    "viewBox": [
+      1080,
+      560
+    ],
+    "quality_profile": "showcase"
+  },
+  "components": [
+    {
+      "id": "admin",
+      "type": "frontend",
+      "label": "Admin",
+      "sublabel": "assigns roles",
+      "pos": [
+        40,
+        140
+      ],
+      "size": [
+        120,
+        60
+      ]
+    },
+    {
+      "id": "roles",
+      "type": "database",
+      "label": "Roles",
+      "sublabel": "grouped grants",
+      "pos": [
+        250,
+        140
+      ],
+      "size": [
+        130,
+        60
+      ]
+    },
+    {
+      "id": "perms",
+      "type": "database",
+      "label": "Permissions",
+      "sublabel": "module to step",
+      "pos": [
+        460,
+        140
+      ],
+      "size": [
+        130,
+        60
+      ]
+    },
+    {
+      "id": "existing",
+      "type": "external",
+      "label": "Existing users",
+      "sublabel": "migrated live",
+      "pos": [
+        40,
+        330
+      ],
+      "size": [
+        120,
+        60
+      ]
+    },
+    {
+      "id": "users",
+      "type": "database",
+      "label": "Users",
+      "sublabel": "mapped to roles",
+      "pos": [
+        250,
+        330
+      ],
+      "size": [
+        130,
+        60
+      ]
+    },
+    {
+      "id": "guard",
+      "type": "security",
+      "label": "Route guard",
+      "sublabel": "every route",
+      "pos": [
+        460,
+        330
+      ],
+      "size": [
+        130,
+        60
+      ]
+    },
+    {
+      "id": "modules",
+      "type": "backend",
+      "label": "17 modules",
+      "sublabel": "options inside",
+      "pos": [
+        670,
+        330
+      ],
+      "size": [
+        130,
+        60
+      ]
+    }
+  ],
+  "connections": [
+    {
+      "from": "admin",
+      "to": "roles",
+      "label": "defines",
+      "variant": "emphasis"
+    },
+    {
+      "from": "roles",
+      "to": "perms",
+      "label": "holds",
+      "variant": "emphasis"
+    },
+    {
+      "from": "existing",
+      "to": "users",
+      "label": "migrated",
+      "variant": "dashed"
+    },
+    {
+      "from": "users",
+      "to": "roles",
+      "label": "belong to",
+      "variant": "emphasis"
+    },
+    {
+      "from": "perms",
+      "to": "guard",
+      "label": "checked by",
+      "variant": "emphasis",
+      "labelAt": [
+        525,
+        214
+      ]
+    },
+    {
+      "from": "guard",
+      "to": "modules",
+      "label": "allows",
+      "variant": "emphasis"
+    }
+  ],
+  "cards": [
+    {
+      "dot": "emerald",
+      "title": "Locked down by default",
+      "items": [
+        "Every route is guarded, not just the visible menu entries",
+        "Permissions reach the option and sub-process level",
+        "A role is a set of grants, not a hardcoded user type"
+      ]
+    },
+    {
+      "dot": "orange",
+      "title": "Migrated without stopping",
+      "items": [
+        "Existing users and roles were moved to the new tree",
+        "Operations kept running during the migration",
+        "17 modules covered"
+      ]
+    }
+  ]
+}

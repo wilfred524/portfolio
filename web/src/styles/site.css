@@ -189,6 +189,26 @@
   color: var(--text-dim);
 }
 
+.modal__panel--ancho {
+  max-width: 64rem;
+}
+
+.modal__diagrama {
+  display: block;
+  width: 100%;
+  height: var(--diagrama-h);
+  margin-top: 0.75rem;
+  background: var(--surface-lowest);
+  border: 1px solid var(--line);
+  border-radius: var(--radius);
+}
+
+.modal__ayuda {
+  margin-top: 0.5rem;
+  font-size: var(--text-xs);
+  color: var(--text-faint);
+}
+
 .modal__panel .label {
   display: block;
   margin-top: 1.5rem;
@@ -1004,6 +1024,7 @@
   .flecha,
   .skip,
   .campo,
+  .modal__diagrama,
   .lanzador,
   .chat,
   .chat__llamada {

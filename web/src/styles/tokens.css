@@ -55,6 +55,7 @@
   --gutter: clamp(1.5rem, 5vw, 4rem);
   --section-gap: clamp(4rem, 10vw, 8rem);
   --nav-h: 4.5rem;
+  --diagrama-h: min(30rem, 52dvh);
 
   --radius-sm: 0.25rem;
   --radius: 0.5rem;

@@ -1,0 +1,197 @@
+{
+  "schema_version": 1,
+  "diagram_type": "dataflow",
+  "meta": {
+    "title": "Video clipping CLI",
+    "quality_profile": "showcase",
+    "viewBox": [
+      1080,
+      620
+    ]
+  },
+  "stages": [
+    {
+      "label": "Source"
+    },
+    {
+      "label": "Understand"
+    },
+    {
+      "label": "Compose"
+    },
+    {
+      "label": "Assemble"
+    },
+    {
+      "label": "Deliver"
+    }
+  ],
+  "nodes": [
+    {
+      "id": "source",
+      "type": "external",
+      "label": "Long-form video",
+      "sublabel": "local file",
+      "stage": 0,
+      "row": 1
+    },
+    {
+      "id": "transcribe",
+      "type": "backend",
+      "label": "Transcribe",
+      "sublabel": "faster-whisper",
+      "stage": 1,
+      "row": 0,
+      "tag": "word timings"
+    },
+    {
+      "id": "segment",
+      "type": "backend",
+      "label": "Segment",
+      "sublabel": "model picks cuts",
+      "stage": 1,
+      "row": 2,
+      "tag": "schema-checked"
+    },
+    {
+      "id": "script",
+      "type": "backend",
+      "label": "Script",
+      "sublabel": "one per clip",
+      "stage": 2,
+      "row": 0
+    },
+    {
+      "id": "voice",
+      "type": "backend",
+      "label": "Narration",
+      "sublabel": "Edge-TTS",
+      "stage": 2,
+      "row": 2
+    },
+    {
+      "id": "assemble",
+      "type": "backend",
+      "label": "Assemble",
+      "sublabel": "ffmpeg + ducking",
+      "stage": 3,
+      "row": 0
+    },
+    {
+      "id": "render",
+      "type": "backend",
+      "label": "Render",
+      "sublabel": "9:16 + subtitles",
+      "stage": 3,
+      "row": 2
+    },
+    {
+      "id": "panel",
+      "type": "frontend",
+      "label": "Review panel",
+      "sublabel": "approve first",
+      "stage": 4,
+      "row": 0
+    },
+    {
+      "id": "store",
+      "type": "database",
+      "label": "Run artifacts",
+      "sublabel": "per video",
+      "stage": 4,
+      "row": 2,
+      "tag": "resumable"
+    }
+  ],
+  "flows": [
+    {
+      "id": "audio",
+      "from": "source",
+      "to": "transcribe",
+      "label": "audio track",
+      "classification": "input",
+      "variant": "emphasis"
+    },
+    {
+      "id": "transcript",
+      "from": "transcribe",
+      "to": "segment",
+      "label": "transcript",
+      "classification": "timed text",
+      "variant": "emphasis",
+      "labelDy": 24
+    },
+    {
+      "id": "bounds",
+      "from": "segment",
+      "to": "script",
+      "label": "episode bounds",
+      "classification": "validated JSON",
+      "variant": "emphasis"
+    },
+    {
+      "id": "lines",
+      "from": "script",
+      "to": "voice",
+      "label": "voice lines",
+      "classification": "validated JSON",
+      "variant": "emphasis",
+      "labelDy": 24
+    },
+    {
+      "id": "narration",
+      "from": "voice",
+      "to": "assemble",
+      "label": "narration track",
+      "classification": "audio",
+      "variant": "emphasis"
+    },
+    {
+      "id": "cut",
+      "from": "assemble",
+      "to": "render",
+      "label": "base cut",
+      "classification": "video",
+      "variant": "emphasis",
+      "labelDy": 24
+    },
+    {
+      "id": "preview",
+      "from": "render",
+      "to": "panel",
+      "label": "vertical clip",
+      "classification": "output",
+      "variant": "emphasis"
+    },
+    {
+      "id": "checkpoint",
+      "from": "render",
+      "to": "store",
+      "label": "step artifacts",
+      "classification": "checkpoint",
+      "variant": "dashed",
+      "route": "straight",
+      "labelDy": 44
+    }
+  ],
+  "cards": [
+    {
+      "dot": "emerald",
+      "title": "One step at a time",
+      "items": [
+        "Every stage writes its own artifact before the next one starts",
+        "A failed run resumes from the last good step instead of starting over",
+        "Model output is validated against a schema, not trusted as prose"
+      ]
+    },
+    {
+      "dot": "orange",
+      "title": "Where the work happens",
+      "items": [
+        "Transcription and narration run locally, no per-minute API cost",
+        "ffmpeg does the cutting and the music ducking",
+        "Nothing is published until it is approved in the panel"
+      ]
+    }
+  ]
+}

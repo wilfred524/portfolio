@@ -38,6 +38,24 @@ los hooks de scroll que solo ella usaba.
 - Animaciones: siempre con rama `prefers-reduced-motion`. Decorativo → `aria-hidden` +
   texto real en un elemento `.sr-only`.
 
+## Diagramas
+
+Cada proyecto abre con un diagrama de arquitectura en `web/public/diagramas/`. **No se
+editan a mano**: la fuente es el JSON de `diagramas/` y `npm run build:diagramas` los
+regenera con archify, que vive fuera del repo (`~/.claude/skills/archify`, o donde apunte
+`ARCHIFY_HOME`). Por eso los HTML se versionan: el build de Vercel no tiene la herramienta.
+
+Después de generar cada uno, el script lee `tokens.css` y reescribe con esos valores las
+variables de color del diagrama, y cambia su tipografía por Inter incrustada quitando la
+petición a Google Fonts. Un cambio de token se propaga con un `build:diagramas`; no hay
+colores escritos dos veces.
+
+Para añadir uno: escribir `diagramas/<id>.<tipo>.json` —tipos `architecture`, `workflow`,
+`sequence`, `dataflow`, `lifecycle`—, validarlo con `archify validate <tipo> <archivo>
+--quality showcase` hasta que dé los 9 checks sin errores ni avisos, y apuntar el proyecto
+a `<id>.html` con el campo `diagram` en los dos `profile.*.ts`. Un recibo con 4 checks es
+validación básica, no aceptación.
+
 ## Git
 
 - Commits en español, descriptivos. Terminar con:

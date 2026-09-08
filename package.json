@@ -14,7 +14,8 @@
     "dev:api": "node tools/dev-api.mjs",
     "build": "npm run build -w @portfolio/web",
     "build:web": "npm run build -w @portfolio/web",
-    "build:cv": "npm run build:cv -w @portfolio/cv"
+    "build:cv": "npm run build:cv -w @portfolio/cv",
+    "build:diagramas": "node tools/diagramas.mjs"
   },
   "engines": {
     "node": ">=22"
