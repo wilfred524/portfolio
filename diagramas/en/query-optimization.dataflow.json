@@ -1,0 +1,144 @@
+{
+  "schema_version": 1,
+  "diagram_type": "dataflow",
+  "meta": {
+    "title": "Where the slow query went",
+    "viewBox": [
+      1080,
+      560
+    ],
+    "quality_profile": "showcase"
+  },
+  "stages": [
+    {
+      "label": "Screen"
+    },
+    {
+      "label": "Narrow"
+    },
+    {
+      "label": "Match"
+    },
+    {
+      "label": "Page"
+    },
+    {
+      "label": "Answer"
+    }
+  ],
+  "nodes": [
+    {
+      "id": "screen",
+      "type": "frontend",
+      "label": "Screen",
+      "sublabel": "was unusable",
+      "stage": 0,
+      "row": 1
+    },
+    {
+      "id": "filter",
+      "type": "backend",
+      "label": "Filters",
+      "sublabel": "applied first",
+      "stage": 1,
+      "row": 1,
+      "tag": "before the join"
+    },
+    {
+      "id": "index",
+      "type": "database",
+      "label": "Indexes",
+      "sublabel": "on filtered keys",
+      "stage": 2,
+      "row": 0
+    },
+    {
+      "id": "join",
+      "type": "database",
+      "label": "Join",
+      "sublabel": "smaller set",
+      "stage": 2,
+      "row": 2
+    },
+    {
+      "id": "page",
+      "type": "backend",
+      "label": "Pagination",
+      "sublabel": "bounded rows",
+      "stage": 3,
+      "row": 1
+    },
+    {
+      "id": "answer",
+      "type": "frontend",
+      "label": "Answer",
+      "sublabel": "3 to 6 seconds",
+      "stage": 4,
+      "row": 1,
+      "tag": "no timeouts"
+    }
+  ],
+  "flows": [
+    {
+      "id": "request",
+      "from": "screen",
+      "to": "filter",
+      "label": "request",
+      "classification": "high volume",
+      "variant": "emphasis"
+    },
+    {
+      "id": "lookup",
+      "from": "filter",
+      "to": "index",
+      "label": "narrowed keys",
+      "classification": "indexed",
+      "variant": "emphasis"
+    },
+    {
+      "id": "matched",
+      "from": "index",
+      "to": "join",
+      "label": "matched rows",
+      "classification": "reduced",
+      "variant": "emphasis",
+      "labelDy": 24
+    },
+    {
+      "id": "ordered",
+      "from": "join",
+      "to": "page",
+      "label": "ordered set",
+      "classification": "bounded",
+      "variant": "emphasis"
+    },
+    {
+      "id": "first",
+      "from": "page",
+      "to": "answer",
+      "label": "one page",
+      "classification": "response",
+      "variant": "emphasis"
+    }
+  ],
+  "cards": [
+    {
+      "dot": "emerald",
+      "title": "Three causes, not one rewrite",
+      "items": [
+        "Filters moved ahead of the join so it never starts from the full set",
+        "Indexes added on the keys the filters actually use",
+        "Pagination bounds what comes back"
+      ]
+    },
+    {
+      "dot": "orange",
+      "title": "Before",
+      "items": [
+        "20 to 30 seconds per response",
+        "Timeouts exactly when there were most records",
+        "The screen that depended on it was unusable"
+      ]
+    }
+  ]
+}

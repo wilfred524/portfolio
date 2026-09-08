@@ -1,0 +1,197 @@
+{
+  "schema_version": 1,
+  "diagram_type": "dataflow",
+  "meta": {
+    "title": "CLI de cortes de vídeo",
+    "quality_profile": "showcase",
+    "viewBox": [
+      1080,
+      620
+    ]
+  },
+  "stages": [
+    {
+      "label": "Origen"
+    },
+    {
+      "label": "Entender"
+    },
+    {
+      "label": "Componer"
+    },
+    {
+      "label": "Montar"
+    },
+    {
+      "label": "Entregar"
+    }
+  ],
+  "nodes": [
+    {
+      "id": "source",
+      "type": "external",
+      "label": "Vídeo largo",
+      "sublabel": "archivo local",
+      "stage": 0,
+      "row": 1
+    },
+    {
+      "id": "transcribe",
+      "type": "backend",
+      "label": "Transcribir",
+      "sublabel": "faster-whisper",
+      "stage": 1,
+      "row": 0,
+      "tag": "tiempos"
+    },
+    {
+      "id": "segment",
+      "type": "backend",
+      "label": "Segmentar",
+      "sublabel": "el modelo corta",
+      "stage": 1,
+      "row": 2,
+      "tag": "validado"
+    },
+    {
+      "id": "script",
+      "type": "backend",
+      "label": "Guion",
+      "sublabel": "uno por clip",
+      "stage": 2,
+      "row": 0
+    },
+    {
+      "id": "voice",
+      "type": "backend",
+      "label": "Narración",
+      "sublabel": "Edge-TTS",
+      "stage": 2,
+      "row": 2
+    },
+    {
+      "id": "assemble",
+      "type": "backend",
+      "label": "Montar",
+      "sublabel": "ffmpeg + ducking",
+      "stage": 3,
+      "row": 0
+    },
+    {
+      "id": "render",
+      "type": "backend",
+      "label": "Render",
+      "sublabel": "9:16 + subtítulos",
+      "stage": 3,
+      "row": 2
+    },
+    {
+      "id": "panel",
+      "type": "frontend",
+      "label": "Panel",
+      "sublabel": "aprobar antes",
+      "stage": 4,
+      "row": 0
+    },
+    {
+      "id": "store",
+      "type": "database",
+      "label": "Artefactos",
+      "sublabel": "por vídeo",
+      "stage": 4,
+      "row": 2,
+      "tag": "reanudable"
+    }
+  ],
+  "flows": [
+    {
+      "id": "audio",
+      "from": "source",
+      "to": "transcribe",
+      "label": "audio",
+      "classification": "entrada",
+      "variant": "emphasis"
+    },
+    {
+      "id": "transcript",
+      "from": "transcribe",
+      "to": "segment",
+      "label": "transcripción",
+      "classification": "con tiempos",
+      "variant": "emphasis",
+      "labelDy": 24
+    },
+    {
+      "id": "bounds",
+      "from": "segment",
+      "to": "script",
+      "label": "cortes",
+      "classification": "JSON validado",
+      "variant": "emphasis"
+    },
+    {
+      "id": "lines",
+      "from": "script",
+      "to": "voice",
+      "label": "líneas",
+      "classification": "JSON validado",
+      "variant": "emphasis",
+      "labelDy": 24
+    },
+    {
+      "id": "narration",
+      "from": "voice",
+      "to": "assemble",
+      "label": "narración",
+      "classification": "audio",
+      "variant": "emphasis"
+    },
+    {
+      "id": "cut",
+      "from": "assemble",
+      "to": "render",
+      "label": "corte base",
+      "classification": "vídeo",
+      "variant": "emphasis",
+      "labelDy": 24
+    },
+    {
+      "id": "preview",
+      "from": "render",
+      "to": "panel",
+      "label": "clip vertical",
+      "classification": "salida",
+      "variant": "emphasis"
+    },
+    {
+      "id": "checkpoint",
+      "from": "render",
+      "to": "store",
+      "label": "artefactos",
+      "classification": "control",
+      "variant": "dashed",
+      "route": "straight",
+      "labelDy": 44
+    }
+  ],
+  "cards": [
+    {
+      "dot": "emerald",
+      "title": "Paso a paso",
+      "items": [
+        "Cada etapa escribe su artefacto antes de que arranque la siguiente",
+        "Una corrida fallida sigue desde el último paso bueno, no desde cero",
+        "Lo que devuelve el modelo se valida contra un esquema, no se cree como prosa"
+      ]
+    },
+    {
+      "dot": "orange",
+      "title": "Dónde ocurre el trabajo",
+      "items": [
+        "Transcripción y narración corren en local, sin coste por minuto de API",
+        "ffmpeg hace el corte y baja la música bajo la voz",
+        "Nada se publica sin aprobarlo en el panel"
+      ]
+    }
+  ]
+}

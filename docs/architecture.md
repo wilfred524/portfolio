@@ -11,6 +11,7 @@ Repo: https://github.com/wilfred524/portfolio (público, remoto SSH).
 | `api/` | — (no es workspace npm) | Backend **Python + FastAPI**: salud y agente de IA | 3001 |
 | `shared/` | `@portfolio/shared` | Contratos de la API tipados | — |
 | `tools/cv/` | `@portfolio/cv` | Script local que genera los PDF del CV | — |
+| `tools/diagramas.mjs` | — | Genera los diagramas de arquitectura y los tiñe con los tokens | — |
 
 `api/` no aparece en `workspaces` porque ya no es JavaScript: sus dependencias están en
 `requirements.txt` y las instala Vercel, no npm.

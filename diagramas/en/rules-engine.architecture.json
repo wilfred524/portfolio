@@ -1,0 +1,190 @@
+{
+  "schema_version": 1,
+  "diagram_type": "architecture",
+  "meta": {
+    "title": "Credit rules as data",
+    "viewBox": [
+      1080,
+      560
+    ],
+    "quality_profile": "showcase"
+  },
+  "components": [
+    {
+      "id": "business",
+      "type": "external",
+      "label": "Business",
+      "sublabel": "sets policy",
+      "pos": [
+        40,
+        120
+      ],
+      "size": [
+        120,
+        60
+      ]
+    },
+    {
+      "id": "policy",
+      "type": "database",
+      "label": "Policy tables",
+      "sublabel": "rules as rows",
+      "pos": [
+        250,
+        120
+      ],
+      "size": [
+        130,
+        60
+      ]
+    },
+    {
+      "id": "advisor",
+      "type": "frontend",
+      "label": "Advisor",
+      "sublabel": "files a case",
+      "pos": [
+        40,
+        320
+      ],
+      "size": [
+        120,
+        60
+      ]
+    },
+    {
+      "id": "api",
+      "type": "backend",
+      "label": "Intake API",
+      "sublabel": "applications",
+      "pos": [
+        250,
+        320
+      ],
+      "size": [
+        130,
+        60
+      ]
+    },
+    {
+      "id": "engine",
+      "type": "backend",
+      "label": "Rules engine",
+      "sublabel": "applies, not knows",
+      "pos": [
+        460,
+        320
+      ],
+      "size": [
+        130,
+        60
+      ]
+    },
+    {
+      "id": "capacity",
+      "type": "backend",
+      "label": "Capacity",
+      "sublabel": "by law and payer",
+      "pos": [
+        670,
+        320
+      ],
+      "size": [
+        130,
+        60
+      ]
+    },
+    {
+      "id": "decision",
+      "type": "backend",
+      "label": "Decision",
+      "sublabel": "approve or refer",
+      "pos": [
+        880,
+        320
+      ],
+      "size": [
+        130,
+        60
+      ]
+    },
+    {
+      "id": "trace",
+      "type": "database",
+      "label": "Trace",
+      "sublabel": "who filed it",
+      "pos": [
+        880,
+        120
+      ],
+      "size": [
+        130,
+        60
+      ]
+    }
+  ],
+  "connections": [
+    {
+      "from": "business",
+      "to": "policy",
+      "label": "edits",
+      "variant": "emphasis"
+    },
+    {
+      "from": "policy",
+      "to": "engine",
+      "label": "eligibility, limits",
+      "variant": "emphasis"
+    },
+    {
+      "from": "advisor",
+      "to": "api",
+      "label": "application",
+      "variant": "emphasis"
+    },
+    {
+      "from": "api",
+      "to": "engine",
+      "label": "evaluate",
+      "variant": "emphasis",
+      "labelDy": 47
+    },
+    {
+      "from": "engine",
+      "to": "capacity",
+      "label": "borrowing room",
+      "variant": "emphasis"
+    },
+    {
+      "from": "capacity",
+      "to": "decision",
+      "label": "criteria",
+      "variant": "emphasis"
+    },
+    {
+      "from": "decision",
+      "to": "trace",
+      "label": "recorded"
+    }
+  ],
+  "cards": [
+    {
+      "dot": "emerald",
+      "title": "Policy lives as data",
+      "items": [
+        "A term limit changes by editing a row, not by deploying code",
+        "The engine knows how to apply rules, not what they say",
+        "Eligibility, garnishments and requirements vary per paying entity"
+      ]
+    },
+    {
+      "dot": "orange",
+      "title": "Traceable by design",
+      "items": [
+        "Every application points back to the advisor who filed it",
+        "Applications can be re-evaluated when policy moves",
+        "Validation runs on both the screen and the server"
+      ]
+    }
+  ]
+}

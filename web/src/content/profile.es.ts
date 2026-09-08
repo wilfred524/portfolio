@@ -114,6 +114,7 @@ export const es = {
       items: [
         {
           id: 'rules-engine',
+          diagram: 'rules-engine.html',
           title: 'Motor de reglas de crédito',
           summary:
             'Las políticas de crédito viven como datos en PostgreSQL, no como código: negocio ajusta un límite de plazo sin esperar un despliegue.',
@@ -129,6 +130,7 @@ export const es = {
         },
         {
           id: 'esignature',
+          diagram: 'esignature.html',
           title: 'Firma electrónica con validación de identidad',
           summary:
             'Un documento de 24 páginas que se llenaba a mano, ahora generado desde plantillas y firmado tras verificar la identidad del cliente.',
@@ -148,6 +150,7 @@ export const es = {
         },
         {
           id: 'scoring',
+          diagram: 'scoring.html',
           title: 'Proceso mensual de puntaje crediticio',
           summary:
             'Un contenedor con cron mensual saca los datos de PostgreSQL, ejecuta el modelo de riesgo y carga los resultados sin intervención manual.',
@@ -167,6 +170,7 @@ export const es = {
         },
         {
           id: 'query-optimization',
+          diagram: 'query-optimization.html',
           title: 'Optimización de consultas en producción',
           summary:
             'Una consulta que tardaba entre 20 y 30 segundos y acababa en timeout, resuelta con filtros previos, índices y paginación.',
@@ -186,6 +190,7 @@ export const es = {
         },
         {
           id: 'access-control',
+          diagram: 'access-control.html',
           title: 'Control de accesos y permisos',
           summary:
             'Árbol de permisos sobre 17 módulos, hasta el nivel de opción y subproceso, con los usuarios y roles existentes migrados sin parar la operación.',
@@ -196,6 +201,7 @@ export const es = {
         },
         {
           id: 'layered-migration',
+          diagram: 'layered-migration.html',
           title: 'Migración a arquitectura por capas',
           summary:
             'Primera etapa de la migración de seis años de código, módulo a módulo, hasta dejar los controladores sin una sola consulta SQL en crudo.',
@@ -209,6 +215,7 @@ export const es = {
         },
         {
           id: 'infrastructure',
+          diagram: 'infrastructure.html',
           title: 'Infraestructura y despliegue',
           summary:
             'La aplicación pasó de correr nativa a un contenedor en una instancia nueva de GCP, con nginx delante y migración en paralelo, sin cortar el servicio.',
@@ -229,6 +236,7 @@ export const es = {
       items: [
         {
           id: 'video-cli',
+          diagram: 'video-cli.html',
           title: 'CLI de recorte de vídeo',
           role: 'Proyecto propio',
           period: 'Jul 2026 – en curso',
@@ -240,6 +248,7 @@ export const es = {
         },
         {
           id: 'portfolio-site',
+          diagram: 'portfolio-site.html',
           title: 'Portfolio',
           role: 'Proyecto propio',
           period: '2026',
@@ -289,6 +298,10 @@ export const es = {
       metrics: 'Cifras',
       stack: 'Tecnologías',
       visit: 'Ver el repositorio',
+      diagram: 'Arquitectura',
+      diagramHint:
+        'Dentro del diagrama las flechas mueven la vista y + y − acercan. Pulsa Tab para volver a la página.',
+      diagramOpen: 'Abrir el diagrama',
     },
     viewCode: 'Ver el código',
     chat: {

@@ -1,0 +1,153 @@
+{
+  "schema_version": 1,
+  "diagram_type": "sequence",
+  "meta": {
+    "title": "Portfolio chat agent",
+    "viewBox": [
+      900,
+      800
+    ],
+    "quality_profile": "showcase"
+  },
+  "participants": [
+    {
+      "id": "visitor",
+      "type": "external",
+      "label": "Visitor",
+      "sublabel": "browser"
+    },
+    {
+      "id": "api",
+      "type": "backend",
+      "label": "Chat endpoint",
+      "sublabel": "FastAPI"
+    },
+    {
+      "id": "guard",
+      "type": "security",
+      "label": "Guard",
+      "sublabel": "rate limit"
+    },
+    {
+      "id": "model",
+      "type": "external",
+      "label": "Model",
+      "sublabel": "REST"
+    },
+    {
+      "id": "calendar",
+      "type": "cloud",
+      "label": "Calendar",
+      "sublabel": "real agenda"
+    },
+    {
+      "id": "notify",
+      "type": "messagebus",
+      "label": "Notifications",
+      "sublabel": "mail, sheet, chat"
+    }
+  ],
+  "messages": [
+    {
+      "from": "visitor",
+      "to": "api",
+      "y": 180,
+      "label": "question",
+      "variant": "emphasis"
+    },
+    {
+      "from": "api",
+      "to": "guard",
+      "y": 222,
+      "label": "rate limit, hashed IP"
+    },
+    {
+      "from": "guard",
+      "to": "api",
+      "y": 264,
+      "label": "allowed",
+      "variant": "return"
+    },
+    {
+      "from": "api",
+      "to": "model",
+      "y": 306,
+      "label": "classify intent",
+      "variant": "emphasis"
+    },
+    {
+      "from": "model",
+      "to": "api",
+      "y": 348,
+      "label": "structured JSON",
+      "variant": "return"
+    },
+    {
+      "from": "api",
+      "to": "calendar",
+      "y": 400,
+      "label": "free/busy",
+      "variant": "emphasis"
+    },
+    {
+      "from": "calendar",
+      "to": "api",
+      "y": 442,
+      "label": "real openings",
+      "variant": "return"
+    },
+    {
+      "from": "api",
+      "to": "visitor",
+      "y": 484,
+      "label": "answer streamed",
+      "variant": "emphasis"
+    },
+    {
+      "from": "visitor",
+      "to": "api",
+      "y": 536,
+      "label": "picks a slot"
+    },
+    {
+      "from": "api",
+      "to": "calendar",
+      "y": 578,
+      "label": "create event",
+      "variant": "emphasis"
+    },
+    {
+      "from": "api",
+      "to": "notify",
+      "y": 620,
+      "label": "mail, sheet, chat"
+    },
+    {
+      "from": "api",
+      "to": "visitor",
+      "y": 662,
+      "label": "appointment confirmed",
+      "variant": "emphasis"
+    }
+  ],
+  "cards": [
+    {
+      "dot": "emerald",
+      "title": "Structured output, not tool calls",
+      "items": [
+        "Intent comes back as JSON validated against a schema",
+        "Booking a real meeting cannot depend on the model getting a call format right",
+        "Every offered slot comes from the calendar, never from the model"
+      ]
+    },
+    {
+      "dot": "orange",
+      "title": "Degrades on its own",
+      "items": [
+        "A missing credential switches off that piece and the chat keeps working",
+        "The agent only knows what the context files say",
+        "Requests are rate limited per hashed IP"
+      ]
+    }
+  ]
+}

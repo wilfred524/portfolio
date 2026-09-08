@@ -1,0 +1,181 @@
+{
+  "schema_version": 1,
+  "diagram_type": "architecture",
+  "meta": {
+    "title": "Del host nativo a contenedores",
+    "quality_profile": "showcase",
+    "viewBox": [
+      1080,
+      620
+    ]
+  },
+  "components": [
+    {
+      "id": "traffic",
+      "type": "external",
+      "label": "Tráfico",
+      "sublabel": "dominio",
+      "pos": [
+        40,
+        300
+      ],
+      "size": [
+        120,
+        60
+      ]
+    },
+    {
+      "id": "dns",
+      "type": "cloud",
+      "label": "DNS + TLS",
+      "sublabel": "certificados",
+      "pos": [
+        250,
+        300
+      ],
+      "size": [
+        130,
+        60
+      ]
+    },
+    {
+      "id": "nginx",
+      "type": "backend",
+      "label": "nginx",
+      "sublabel": "proxy inverso",
+      "pos": [
+        460,
+        300
+      ],
+      "size": [
+        130,
+        60
+      ]
+    },
+    {
+      "id": "app",
+      "type": "backend",
+      "label": "App",
+      "sublabel": "contenedor",
+      "pos": [
+        670,
+        300
+      ],
+      "size": [
+        130,
+        60
+      ]
+    },
+    {
+      "id": "worker",
+      "type": "backend",
+      "label": "Worker",
+      "sublabel": "contenedor",
+      "pos": [
+        670,
+        170
+      ],
+      "size": [
+        130,
+        60
+      ]
+    },
+    {
+      "id": "db",
+      "type": "database",
+      "label": "Base de datos",
+      "sublabel": "persistida",
+      "pos": [
+        880,
+        300
+      ],
+      "size": [
+        130,
+        60
+      ]
+    },
+    {
+      "id": "legacy",
+      "type": "external",
+      "label": "Host viejo",
+      "sublabel": "nativo, vivo",
+      "pos": [
+        460,
+        460
+      ],
+      "size": [
+        130,
+        60
+      ]
+    }
+  ],
+  "boundaries": [
+    {
+      "kind": "region",
+      "label": "Instancia nueva",
+      "wraps": [
+        "nginx",
+        "app",
+        "worker",
+        "db"
+      ]
+    }
+  ],
+  "connections": [
+    {
+      "from": "traffic",
+      "to": "dns",
+      "label": "peticiones",
+      "variant": "emphasis"
+    },
+    {
+      "from": "dns",
+      "to": "nginx",
+      "label": "resuelto",
+      "variant": "emphasis"
+    },
+    {
+      "from": "nginx",
+      "to": "app",
+      "label": "proxy",
+      "variant": "emphasis"
+    },
+    {
+      "from": "app",
+      "to": "worker",
+      "label": "en cola"
+    },
+    {
+      "from": "app",
+      "to": "db",
+      "label": "lee y escribe",
+      "variant": "emphasis"
+    },
+    {
+      "from": "legacy",
+      "to": "db",
+      "label": "en la migración",
+      "variant": "dashed"
+    }
+  ],
+  "cards": [
+    {
+      "dot": "emerald",
+      "title": "Migrado en paralelo",
+      "items": [
+        "La instancia nueva se levantó y validó mientras la vieja seguía en producción",
+        "El corte fue un cambio de DNS, no una ventana de mantenimiento",
+        "Sin caída para quien la estaba usando"
+      ]
+    },
+    {
+      "dot": "orange",
+      "title": "Por qué contenedores",
+      "items": [
+        "La aplicación corría nativa en la máquina",
+        "Sin aislamiento entre entorno y código",
+        "nginx queda entre el host y los contenedores"
+      ]
+    }
+  ]
+}

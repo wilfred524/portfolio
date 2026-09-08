@@ -23,6 +23,7 @@ export interface ProjectItem {
   brief?: string;
   tags: string[];
   url?: string;
+  diagram?: string;
 }
 
 export interface ProjectGroup {
@@ -60,6 +61,9 @@ export interface UiStrings {
     metrics: string;
     stack: string;
     visit: string;
+    diagram: string;
+    diagramHint: string;
+    diagramOpen: string;
   };
   viewCode: string;
   planes: {

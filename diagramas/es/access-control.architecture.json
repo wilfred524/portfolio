@@ -1,0 +1,174 @@
+{
+  "schema_version": 1,
+  "diagram_type": "architecture",
+  "meta": {
+    "title": "Permisos hasta el subproceso",
+    "viewBox": [
+      1080,
+      560
+    ],
+    "quality_profile": "showcase"
+  },
+  "components": [
+    {
+      "id": "admin",
+      "type": "frontend",
+      "label": "Admin",
+      "sublabel": "asigna roles",
+      "pos": [
+        40,
+        140
+      ],
+      "size": [
+        120,
+        60
+      ]
+    },
+    {
+      "id": "roles",
+      "type": "database",
+      "label": "Roles",
+      "sublabel": "permisos",
+      "pos": [
+        250,
+        140
+      ],
+      "size": [
+        130,
+        60
+      ]
+    },
+    {
+      "id": "perms",
+      "type": "database",
+      "label": "Permisos",
+      "sublabel": "módulo a paso",
+      "pos": [
+        460,
+        140
+      ],
+      "size": [
+        130,
+        60
+      ]
+    },
+    {
+      "id": "existing",
+      "type": "external",
+      "label": "Usuarios",
+      "sublabel": "en vivo",
+      "pos": [
+        40,
+        330
+      ],
+      "size": [
+        120,
+        60
+      ]
+    },
+    {
+      "id": "users",
+      "type": "database",
+      "label": "Usuarios",
+      "sublabel": "con rol",
+      "pos": [
+        250,
+        330
+      ],
+      "size": [
+        130,
+        60
+      ]
+    },
+    {
+      "id": "guard",
+      "type": "security",
+      "label": "Guarda",
+      "sublabel": "toda ruta",
+      "pos": [
+        460,
+        330
+      ],
+      "size": [
+        130,
+        60
+      ]
+    },
+    {
+      "id": "modules",
+      "type": "backend",
+      "label": "17 módulos",
+      "sublabel": "con opciones",
+      "pos": [
+        670,
+        330
+      ],
+      "size": [
+        130,
+        60
+      ]
+    }
+  ],
+  "connections": [
+    {
+      "from": "admin",
+      "to": "roles",
+      "label": "define",
+      "variant": "emphasis"
+    },
+    {
+      "from": "roles",
+      "to": "perms",
+      "label": "agrupa",
+      "variant": "emphasis"
+    },
+    {
+      "from": "existing",
+      "to": "users",
+      "label": "migrados",
+      "variant": "dashed"
+    },
+    {
+      "from": "users",
+      "to": "roles",
+      "label": "tienen",
+      "variant": "emphasis"
+    },
+    {
+      "from": "perms",
+      "to": "guard",
+      "label": "revisa",
+      "variant": "emphasis",
+      "labelAt": [
+        525,
+        214
+      ]
+    },
+    {
+      "from": "guard",
+      "to": "modules",
+      "label": "permite",
+      "variant": "emphasis"
+    }
+  ],
+  "cards": [
+    {
+      "dot": "emerald",
+      "title": "Cerrado por defecto",
+      "items": [
+        "Toda ruta está protegida, no solo las del menú visible",
+        "Los permisos llegan a la opción y al subproceso",
+        "Un rol es un conjunto de permisos, no un tipo de usuario fijo"
+      ]
+    },
+    {
+      "dot": "orange",
+      "title": "Migrado sin parar",
+      "items": [
+        "Los usuarios y roles existentes se pasaron al árbol nuevo",
+        "La operación siguió andando durante la migración",
+        "17 módulos cubiertos"
+      ]
+    }
+  ]
+}
