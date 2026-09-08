@@ -1,0 +1,124 @@
+{
+  "schema_version": 2,
+  "diagram_type": "workflow",
+  "meta": {
+    "title": "Scoring mensual de crédito",
+    "quality_profile": "showcase"
+  },
+  "lanes": [
+    {
+      "id": "schedule",
+      "label": "Programación"
+    },
+    {
+      "id": "run",
+      "label": "Contenedor"
+    },
+    {
+      "id": "data",
+      "label": "Base de datos"
+    }
+  ],
+  "nodes": [
+    {
+      "id": "cron",
+      "lane": "schedule",
+      "col": 0,
+      "type": "messagebus",
+      "label": "Cron mensual",
+      "sublabel": "sin manos"
+    },
+    {
+      "id": "artifact",
+      "lane": "run",
+      "col": 1,
+      "type": "security",
+      "label": "Comprobar",
+      "sublabel": "¿modelo nuevo?"
+    },
+    {
+      "id": "read",
+      "lane": "data",
+      "col": 2,
+      "type": "database",
+      "label": "Leer cohorte",
+      "sublabel": "a puntuar"
+    },
+    {
+      "id": "score",
+      "lane": "run",
+      "col": 3,
+      "type": "backend",
+      "label": "Ejecutar",
+      "sublabel": "puntaje"
+    },
+    {
+      "id": "validate",
+      "lane": "run",
+      "col": 4,
+      "type": "backend",
+      "label": "Validar filas",
+      "sublabel": "descarta malas"
+    },
+    {
+      "id": "load",
+      "lane": "data",
+      "col": 5,
+      "type": "database",
+      "label": "Cargar lotes",
+      "sublabel": "acotadas"
+    }
+  ],
+  "edges": [
+    {
+      "from": "cron",
+      "to": "artifact",
+      "label": "arranca",
+      "variant": "emphasis"
+    },
+    {
+      "from": "artifact",
+      "to": "read",
+      "label": "al día",
+      "variant": "emphasis"
+    },
+    {
+      "from": "read",
+      "to": "score",
+      "label": "filas",
+      "variant": "emphasis"
+    },
+    {
+      "from": "score",
+      "to": "validate",
+      "label": "puntajes",
+      "variant": "emphasis"
+    },
+    {
+      "from": "validate",
+      "to": "load",
+      "label": "aceptadas",
+      "variant": "emphasis"
+    }
+  ],
+  "cards": [
+    {
+      "dot": "emerald",
+      "title": "Idempotente y reanudable",
+      "items": [
+        "Una corrida detenida sigue donde quedó, no repite el mes",
+        "Las filas inválidas se descartan sin abortar la carga",
+        "Los lotes mantienen acotada cada sentencia"
+      ]
+    },
+    {
+      "dot": "orange",
+      "title": "La cañería, no el modelo",
+      "items": [
+        "El modelo de riesgo es del área de riesgo",
+        "Esto es lo que lo pone en producción cada mes",
+        "Ningún paso manual entre el cron y los resultados cargados"
+      ]
+    }
+  ]
+}

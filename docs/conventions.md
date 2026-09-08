@@ -40,20 +40,28 @@ los hooks de scroll que solo ella usaba.
 
 ## Diagramas
 
-Cada proyecto abre con un diagrama de arquitectura en `web/public/diagramas/`. **No se
-editan a mano**: la fuente es el JSON de `diagramas/` y `npm run build:diagramas` los
-regenera con archify, que vive fuera del repo (`~/.claude/skills/archify`, o donde apunte
-`ARCHIFY_HOME`). Por eso los HTML se versionan: el build de Vercel no tiene la herramienta.
+Cada proyecto abre con un diagrama de arquitectura en `web/public/diagramas/<idioma>/`.
+**No se editan a mano**: la fuente son los JSON de `diagramas/<idioma>/` y
+`npm run build:diagramas` los regenera con archify, que vive fuera del repo
+(`~/.claude/skills/archify`, o donde apunte `ARCHIFY_HOME`). Por eso los HTML se versionan:
+el build de Vercel no tiene la herramienta.
+
+**Van en los dos idiomas**, como el resto del copy: el modal sirve `/diagramas/es/…` o
+`/diagramas/en/…` según el idioma activo. El script compara los ids de las dos carpetas
+antes de generar nada y aborta si falta uno en alguna, porque ese fallo no aparecería en el
+build sino al expandir la pieza. Traducir no basta: el español es más largo y archify valida
+que ninguna etiqueta desborde su nodo, así que cada idioma lleva su propia geometría.
 
 Después de generar cada uno, el script lee `tokens.css` y reescribe con esos valores las
 variables de color del diagrama, y cambia su tipografía por Inter incrustada quitando la
 petición a Google Fonts. Un cambio de token se propaga con un `build:diagramas`; no hay
 colores escritos dos veces.
 
-Para añadir uno: escribir `diagramas/<id>.<tipo>.json` —tipos `architecture`, `workflow`,
-`sequence`, `dataflow`, `lifecycle`—, validarlo con `archify validate <tipo> <archivo>
---quality showcase` hasta que dé los 9 checks sin errores ni avisos, y apuntar el proyecto
-a `<id>.html` con el campo `diagram` en los dos `profile.*.ts`. Un recibo con 4 checks es
+Para añadir uno: escribir `diagramas/en/<id>.<tipo>.json` y su par en `diagramas/es/`
+—tipos `architecture`, `workflow`, `sequence`, `dataflow`, `lifecycle`—, validar cada uno
+con `archify validate <tipo> <archivo> --quality showcase` hasta que dé los 9 checks sin
+errores ni avisos, y apuntar el proyecto a `<id>.html` con el campo `diagram` en los dos
+`profile.*.ts`. Un recibo con 4 checks es
 validación básica, no aceptación.
 
 ## Git

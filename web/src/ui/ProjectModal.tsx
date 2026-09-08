@@ -1,5 +1,6 @@
 import { useEffect, useRef, useState } from 'react';
 import type { Employment, ProjectItem, UiStrings } from '../content';
+import { useLangSwitch } from '../i18n/LanguageProvider';
 
 const BLOCK_KEYS = ['problem', 'hard', 'result'] as const;
 const ANCHO_DIAGRAMA = '(min-width: 60rem)';
@@ -17,6 +18,7 @@ export function ProjectModal({
 }) {
   const panel = useRef<HTMLDivElement>(null);
   const labels = ui.project;
+  const { lang } = useLangSwitch();
   const [cabe, setCabe] = useState(() => window.matchMedia(ANCHO_DIAGRAMA).matches);
 
   useEffect(() => {
@@ -129,7 +131,7 @@ export function ProjectModal({
               <>
                 <iframe
                   className="modal__diagrama"
-                  src={`/diagramas/${item.diagram}?embed=1&theme=dark`}
+                  src={`/diagramas/${lang}/${item.diagram}?embed=1&theme=dark`}
                   title={`${item.title} — ${labels.diagram}`}
                   sandbox="allow-scripts allow-downloads"
                 />
@@ -139,7 +141,7 @@ export function ProjectModal({
               <p>
                 <a
                   className="btn"
-                  href={`/diagramas/${item.diagram}?theme=dark`}
+                  href={`/diagramas/${lang}/${item.diagram}?theme=dark`}
                   target="_blank"
                   rel="noreferrer"
                 >

@@ -1,0 +1,144 @@
+{
+  "schema_version": 1,
+  "diagram_type": "dataflow",
+  "meta": {
+    "title": "Dónde se iba la consulta lenta",
+    "viewBox": [
+      1080,
+      560
+    ],
+    "quality_profile": "showcase"
+  },
+  "stages": [
+    {
+      "label": "Pantalla"
+    },
+    {
+      "label": "Acotar"
+    },
+    {
+      "label": "Cruzar"
+    },
+    {
+      "label": "Paginar"
+    },
+    {
+      "label": "Respuesta"
+    }
+  ],
+  "nodes": [
+    {
+      "id": "screen",
+      "type": "frontend",
+      "label": "Pantalla",
+      "sublabel": "era inusable",
+      "stage": 0,
+      "row": 1
+    },
+    {
+      "id": "filter",
+      "type": "backend",
+      "label": "Filtros",
+      "sublabel": "primero",
+      "stage": 1,
+      "row": 1,
+      "tag": "antes del join"
+    },
+    {
+      "id": "index",
+      "type": "database",
+      "label": "Índices",
+      "sublabel": "en las claves",
+      "stage": 2,
+      "row": 0
+    },
+    {
+      "id": "join",
+      "type": "database",
+      "label": "Join",
+      "sublabel": "menos filas",
+      "stage": 2,
+      "row": 2
+    },
+    {
+      "id": "page",
+      "type": "backend",
+      "label": "Paginación",
+      "sublabel": "acotadas",
+      "stage": 3,
+      "row": 1
+    },
+    {
+      "id": "answer",
+      "type": "frontend",
+      "label": "Respuesta",
+      "sublabel": "de 3 a 6 s",
+      "stage": 4,
+      "row": 1,
+      "tag": "sin timeouts"
+    }
+  ],
+  "flows": [
+    {
+      "id": "request",
+      "from": "screen",
+      "to": "filter",
+      "label": "petición",
+      "classification": "alto volumen",
+      "variant": "emphasis"
+    },
+    {
+      "id": "lookup",
+      "from": "filter",
+      "to": "index",
+      "label": "claves",
+      "classification": "indexado",
+      "variant": "emphasis"
+    },
+    {
+      "id": "matched",
+      "from": "index",
+      "to": "join",
+      "label": "filas cruzadas",
+      "classification": "reducido",
+      "variant": "emphasis",
+      "labelDy": 24
+    },
+    {
+      "id": "ordered",
+      "from": "join",
+      "to": "page",
+      "label": "ordenado",
+      "classification": "acotado",
+      "variant": "emphasis"
+    },
+    {
+      "id": "first",
+      "from": "page",
+      "to": "answer",
+      "label": "una página",
+      "classification": "respuesta",
+      "variant": "emphasis"
+    }
+  ],
+  "cards": [
+    {
+      "dot": "emerald",
+      "title": "Tres causas, no una reescritura",
+      "items": [
+        "Los filtros van antes del join para que no arranque del conjunto completo",
+        "Índices sobre las claves que los filtros usan de verdad",
+        "La paginación acota lo que vuelve"
+      ]
+    },
+    {
+      "dot": "orange",
+      "title": "Antes",
+      "items": [
+        "De 20 a 30 segundos por respuesta",
+        "Timeouts justo cuando más registros había",
+        "La pantalla que dependía de ella era inusable"
+      ]
+    }
+  ]
+}

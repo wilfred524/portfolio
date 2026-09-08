@@ -134,45 +134,99 @@ function retenir(html) {
     .replace(/\s*<link href="https:\/\/fonts\.googleapis\.com[^>]*>/g, '')
     .replace(/\s*<noscript>\s*<link href="https:\/\/fonts\.googleapis\.com[\s\S]*?<\/noscript>/g, '');
 
-  if (!limpio.includes('</head>')) throw new Error('el HTML entregado no tiene </head>');
-  if (limpio.includes('fonts.googleapis.com')) throw new Error('quedan peticiones a Google Fonts');
-
-  return limpio.replace('</head>', `${estilo}</head>`);
-}
-
-mkdirSync(destino, { recursive: true });
-
-const archivos = readdirSync(fuentes).filter((archivo) => archivo.endsWith('.json'));
-let fallos = 0;
-
-for (const archivo of archivos) {
-  const [id, tipo] = archivo.replace(/\.json$/, '').split('.');
-  const salida = join(destino, `${id}.html`);
-
-  const { status } = spawnSync(
-    process.execPath,
-    [cli, 'deliver', tipo, join(fuentes, archivo), salida, '--quality', 'showcase'],
-    {
-      stdio: 'inherit',
-      cwd: archify,
-      env: { ...process.env, ARCHIFY_UPDATE_CHECK_DISABLED: '1' },
-    },
+  // El sufijo sale de la plantilla de archify, que no tiene traducción: en la pestaña del
+  // navegador un diagrama en español acababa titulado "... Diagram".
+  const titulado = limpio.replace(
+    /<title>([^<]*) Diagram<\/title>/,
+    (_coincidencia, titulo) => `<title>${titulo}</title>`,
   );
 
-  if (status !== 0) {
-    fallos++;
-    continue;
-  }
+  if (!titulado.includes('</head>')) throw new Error('el HTML entregado no tiene </head>');
+  if (titulado.includes('fonts.googleapis.com')) throw new Error('quedan peticiones a Google Fonts');
 
-  writeFileSync(salida, retenir(readFileSync(salida, 'utf8')));
-  console.log(`  reteñido ${id}.html`);
+  return titulado.replace('</head>', `${estilo}</head>`);
 }
+mkdirSync(destino, { recursive: true });
 
-if (fallos > 0) {
-  console.error(`
-${fallos} diagrama(s) sin entregar.`);
+const idiomas = readdirSync(fuentes, { withFileTypes: true })
+  .filter((entrada) => entrada.isDirectory())
+  .map((entrada) => entrada.name)
+  .sort();
+
+if (idiomas.length === 0) {
+  console.error('No hay carpetas de idioma en diagramas/.');
   process.exit(1);
 }
 
-console.log(`
-${archivos.length} diagrama(s) en web/public/diagramas.`);
+const porIdioma = new Map(
+  idiomas.map((idioma) => [
+    idioma,
+    readdirSync(join(fuentes, idioma)).filter((archivo) => archivo.endsWith('.json')),
+  ]),
+);
+
+// Los idiomas se comparan por id antes de generar nada: un diagrama que solo existe en uno
+// deja al sitio pidiendo un archivo que no está, y eso no falla en build sino al abrir la
+// pieza, que es donde nadie mira.
+const ids = new Map(
+  idiomas.map((idioma) => [
+    idioma,
+    new Set(porIdioma.get(idioma).map((archivo) => archivo.split('.')[0])),
+  ]),
+);
+
+const [referencia, ...resto] = idiomas;
+for (const idioma of resto) {
+  for (const id of ids.get(referencia)) {
+    if (!ids.get(idioma).has(id)) {
+      console.error(`Falta ${id} en diagramas/${idioma}.`);
+      process.exit(1);
+    }
+  }
+  for (const id of ids.get(idioma)) {
+    if (!ids.get(referencia).has(id)) {
+      console.error(`Falta ${id} en diagramas/${referencia}.`);
+      process.exit(1);
+    }
+  }
+}
+
+let fallos = 0;
+let hechos = 0;
+
+for (const idioma of idiomas) {
+  const carpeta = join(destino, idioma);
+  mkdirSync(carpeta, { recursive: true });
+
+  for (const archivo of porIdioma.get(idioma)) {
+    const [id, tipo] = archivo.replace(/\.json$/, '').split('.');
+    const salida = join(carpeta, `${id}.html`);
+
+    const { status } = spawnSync(
+      process.execPath,
+      [cli, 'deliver', tipo, join(fuentes, idioma, archivo), salida, '--quality', 'showcase'],
+      {
+        stdio: 'inherit',
+        cwd: archify,
+        env: { ...process.env, ARCHIFY_UPDATE_CHECK_DISABLED: '1' },
+      },
+    );
+
+    if (status !== 0) {
+      fallos++;
+      continue;
+    }
+
+    writeFileSync(salida, retenir(readFileSync(salida, 'utf8')));
+    hechos++;
+  }
+
+  console.log(`  ${idioma}: ${porIdioma.get(idioma).length} diagrama(s)`);
+}
+
+if (fallos > 0) {
+  console.error(`${fallos} diagrama(s) sin entregar.`);
+  process.exit(1);
+}
+
+console.log(`${hechos} diagrama(s) en web/public/diagramas.`);
