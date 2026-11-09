@@ -1,0 +1,144 @@
+{
+  "schema_version": 1,
+  "diagram_type": "dataflow",
+  "meta": {
+    "title": "Una venta sin conexión, sin perder el saldo",
+    "quality_profile": "showcase",
+    "viewBox": [
+      1080,
+      620
+    ]
+  },
+  "stages": [
+    {
+      "label": "Dispositivo"
+    },
+    {
+      "label": "Pantalla"
+    },
+    {
+      "label": "Cola"
+    },
+    {
+      "label": "Base"
+    },
+    {
+      "label": "Resultado"
+    }
+  ],
+  "nodes": [
+    {
+      "id": "owner",
+      "type": "external",
+      "label": "Dueño o cajero",
+      "sublabel": "desde el celular",
+      "stage": 0,
+      "row": 1
+    },
+    {
+      "id": "ui",
+      "type": "frontend",
+      "label": "PWA",
+      "sublabel": "refleja al instante",
+      "stage": 1,
+      "row": 1
+    },
+    {
+      "id": "queue",
+      "type": "database",
+      "label": "Cola",
+      "sublabel": "IndexedDB",
+      "stage": 2,
+      "row": 1,
+      "tag": "op_id"
+    },
+    {
+      "id": "rpc",
+      "type": "backend",
+      "label": "Función RPC",
+      "sublabel": "security definer",
+      "stage": 3,
+      "row": 1,
+      "tag": "idempotente"
+    },
+    {
+      "id": "ledger",
+      "type": "database",
+      "label": "Libro de fiados",
+      "sublabel": "solo inserción",
+      "stage": 4,
+      "row": 0,
+      "tag": "saldo en SQL"
+    },
+    {
+      "id": "review",
+      "type": "frontend",
+      "label": "Por revisar",
+      "sublabel": "rechazo del negocio",
+      "stage": 4,
+      "row": 2
+    }
+  ],
+  "flows": [
+    {
+      "id": "op",
+      "from": "owner",
+      "to": "ui",
+      "label": "registro",
+      "classification": "venta o fiado",
+      "variant": "emphasis"
+    },
+    {
+      "id": "local",
+      "from": "ui",
+      "to": "queue",
+      "label": "operación",
+      "classification": "con su op_id",
+      "variant": "emphasis"
+    },
+    {
+      "id": "sync",
+      "from": "queue",
+      "to": "rpc",
+      "label": "en orden",
+      "classification": "al volver la red",
+      "variant": "emphasis"
+    },
+    {
+      "id": "insert",
+      "from": "rpc",
+      "to": "ledger",
+      "label": "inserción",
+      "classification": "saldo y límite",
+      "variant": "emphasis"
+    },
+    {
+      "id": "reject",
+      "from": "rpc",
+      "to": "review",
+      "label": "error con código",
+      "classification": "no se reintenta",
+      "variant": "dashed"
+    }
+  ],
+  "cards": [
+    {
+      "dot": "emerald",
+      "title": "Las reglas viven en la base",
+      "items": [
+        "El saldo lo calcula un trigger, no la API ni el cliente",
+        "El libro es de solo inserción: los errores se anulan, no se editan",
+        "Los libros solo se escriben por funciones, con permisos por tienda"
+      ]
+    },
+    {
+      "dot": "orange",
+      "title": "Sin internet",
+      "items": [
+        "La operación se refleja al instante y se envía cuando hay red",
+        "Reenviar un op_id devuelve la operación ya registrada",
+        "Sin código de Postgres es red y se reintenta; con código, queda por revisar"
+      ]
+    }
+  ]
+}

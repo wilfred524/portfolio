@@ -49,8 +49,8 @@ El trabajo de GAF es propietario y no se puede publicar: eso es normal y se expl
 frase. Pero significa que **todo lo que un evaluador puede verificar por su cuenta son los
 proyectos propios**, y hoy solo hay uno visible.
 
-La CLI de recorte de vídeo se cita como proyecto propio en el contexto del agente y no
-tiene repositorio público. Publicarla (aunque esté a medias, con un README honesto que diga
+Gestienda y el cotizador de Cristal Lumired se citan en el contexto del agente y sus
+repositorios son privados. Publicar uno (aunque esté a medias, con un README honesto que diga
 en qué punto está) convierte una afirmación del CV en algo comprobable. Es probablemente el
 trabajo de una tarde con el mayor retorno de toda esta lista.
 

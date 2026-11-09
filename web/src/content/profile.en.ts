@@ -233,16 +233,30 @@ export const en = {
       category: 'Projects',
       items: [
         {
-          id: 'video-cli',
-          diagram: 'video-cli.html',
-          title: 'Video clipping CLI',
-          role: 'Personal project',
-          period: 'Jul 2026 – ongoing',
+          id: 'cristal-lumired',
+          diagram: 'cristal-lumired.html',
+          title: 'Glass shop quoter',
+          role: 'Freelance project',
+          period: 'Aug 2026 – ongoing',
           summary:
-            'Splits a long video into vertical clips: transcribes, writes the script, narrates and renders the subtitles, step by step and resumable.',
+            'Quoter for windows, doors and shower screens: the price spreadsheet is extracted to JSON once, and the public receives a price, never the list.',
+          metrics: [{ value: '898', label: 'cells checked against the Excel' }],
           brief:
-            'I built a TypeScript command-line tool that splits a long video into vertical clips: it transcribes with Whisper, writes the script with a model whose output is validated against a schema before use, narrates with speech synthesis and renders subtitles with Remotion. Every step persists its result to disk and the process is resumable, so already-paid model calls are never repeated.',
-          tags: ['TypeScript', 'Node.js', 'Remotion', 'ffmpeg'],
+            'I built the quoter for a Chilean glass shop from the price workbook the client maintained. I extracted it once to JSON, unfolding every formula until it was written over measurements and fixed costs, and a test checks 898 cells against what Excel had computed. The engine, in Python and FastAPI, returns the same price as the sheet. The public landing page and quoter, in Vue and Tailwind, are prerendered and their API returns only the requested combination: sending the grid would have handed the price list to anyone who opened the browser tools.',
+          tags: ['Python', 'FastAPI', 'Vue.js', 'Tailwind CSS', 'Vercel'],
+        },
+        {
+          id: 'gestienda',
+          diagram: 'gestienda.html',
+          title: 'Gestienda',
+          role: 'Personal project',
+          period: 'Nov 2026 – ongoing',
+          summary:
+            'Store credit and inventory for small shops, in a PWA that keeps working without internet and with the balance computed by the database.',
+          metrics: [{ value: '127', label: 'tests, against in-memory Postgres' }],
+          brief:
+            'I built a platform for small shops with two pillars: store credit (accounts with payments and limits) and counter sales with inventory. It is a React PWA on Supabase. The balance, limit and stock rules live in SQL: a trigger computes the balance, the credit ledger is insert only and is written solely through functions with per store permissions. Offline, every operation is saved in a local queue with a unique identifier and sent in order once the network returns; resending it does not duplicate it. A Postgres error code is a business rejection and the operation waits for review; no code means the network and it is retried. A shop already uses it, and it installs on Android as an app.',
+          tags: ['React', 'JavaScript', 'PostgreSQL', 'Supabase', 'PWA'],
         },
         {
           id: 'portfolio-site',
