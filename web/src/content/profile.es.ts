@@ -235,16 +235,30 @@ export const es = {
       category: 'Proyectos',
       items: [
         {
-          id: 'video-cli',
-          diagram: 'video-cli.html',
-          title: 'CLI de recorte de vídeo',
-          role: 'Proyecto propio',
-          period: 'Jul 2026 – en curso',
+          id: 'cristal-lumired',
+          diagram: 'cristal-lumired.html',
+          title: 'Cotizador de una vidriería',
+          role: 'Proyecto freelance',
+          period: 'Ago 2026 – en curso',
           summary:
-            'Parte un vídeo largo en clips verticales: transcribe, escribe el guion, narra y monta los subtítulos, paso a paso y reanudable.',
+            'Cotizador de ventanas, puertas y mamparas: el Excel de precios se extrae a JSON una vez y el público recibe un precio, nunca la lista.',
+          metrics: [{ value: '898', label: 'celdas contrastadas con el Excel' }],
           brief:
-            'Construí una herramienta de línea de comandos en TypeScript que parte un vídeo largo en clips verticales: transcribe con Whisper, escribe el guion con un modelo cuya salida se valida contra un esquema antes de usarla, narra con síntesis de voz y monta los subtítulos con Remotion. Cada paso persiste su resultado en disco y el proceso es reanudable, para no repetir llamadas al modelo ya pagadas.',
-          tags: ['TypeScript', 'Node.js', 'Remotion', 'ffmpeg'],
+            'Construí el cotizador de una vidriería chilena a partir de la planilla de precios que el cliente mantenía. La extraje una sola vez a JSON, desplegando cada fórmula hasta dejarla escrita sobre medidas y costos fijos, y una prueba contrasta 898 celdas con lo que Excel había calculado. El motor, en Python y FastAPI, da el mismo precio que la hoja. La landing y el cotizador públicos, en Vue y Tailwind, salen prerenderizados y su API devuelve solo la combinación pedida: enviar la grilla habría entregado la lista de precios a cualquiera que abriera las herramientas del navegador.',
+          tags: ['Python', 'FastAPI', 'Vue.js', 'Tailwind CSS', 'Vercel'],
+        },
+        {
+          id: 'gestienda',
+          diagram: 'gestienda.html',
+          title: 'Gestienda',
+          role: 'Proyecto propio',
+          period: 'Nov 2026 – en curso',
+          summary:
+            'Fiados e inventario para pequeños comercios, en una PWA que sigue funcionando sin internet y con el saldo calculado por la base de datos.',
+          metrics: [{ value: '127', label: 'pruebas, contra Postgres en memoria' }],
+          brief:
+            'Construí una plataforma para pequeños comercios con dos pilares: fiados (créditos con abonos y límites) y ventas con inventario de mostrador. Es una PWA en React sobre Supabase. Las reglas de saldo, límite y stock viven en SQL: un trigger calcula el saldo, el libro de fiados es de solo inserción y se escribe únicamente por funciones con permisos por tienda. Sin conexión, cada operación se guarda en una cola local con un identificador único y se envía en orden al volver la red; reenviarla no la duplica. Un error con código de Postgres es un rechazo del negocio y queda por revisar; sin código es la red y se reintenta. Ya la usa una tienda y se instala en Android como app.',
+          tags: ['React', 'JavaScript', 'PostgreSQL', 'Supabase', 'PWA'],
         },
         {
           id: 'portfolio-site',
