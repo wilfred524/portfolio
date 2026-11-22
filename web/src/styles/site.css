@@ -21,7 +21,12 @@
   color: var(--text);
   border-radius: 0 0 var(--radius-sm) 0;
   transform: translateY(-120%);
-  transition: transform var(--fast);
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  .skip {
+    transition: transform var(--fast);
+  }
 }
 
 .skip:focus-visible {
@@ -79,22 +84,22 @@
   color: var(--bg);
 }
 
-.modal {
-  position: fixed;
-  inset: 0;
-  z-index: 1000;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  padding: var(--gutter);
+.modal__panel:modal {
+  overscroll-behavior: contain;
+}
+
+.modal__panel::backdrop {
+  overflow: hidden;
+  overscroll-behavior: contain;
   background: var(--bg-overlay);
   backdrop-filter: blur(12px);
 }
 
 .modal__panel {
-  position: relative;
-  width: 100%;
+  width: calc(100% - var(--gutter) * 2);
   max-width: 40rem;
+  margin: auto;
+  color: var(--text);
   max-height: 85dvh;
   overflow-y: auto;
   padding: 2.5rem;
@@ -669,7 +674,12 @@
   border-radius: 50%;
   background: var(--accent);
   box-shadow: 0 0 8px var(--accent-glow);
-  animation: latido 2s infinite;
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  .available::before {
+    animation: latido 2s 3;
+  }
 }
 
 @keyframes latido {
@@ -799,7 +809,12 @@
   border: 1px solid var(--accent-act);
   border-radius: 999px;
   pointer-events: none;
-  animation: pulso 2.4s cubic-bezier(0.2, 0, 0.3, 1) 3;
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  .lanzador__pulso {
+    animation: pulso 2.4s cubic-bezier(0.2, 0, 0.3, 1) 3;
+  }
 }
 
 .lanzador__pulso:nth-of-type(2) {
@@ -994,6 +1009,11 @@
   outline: none;
 }
 
+.chat__entrada:focus-within {
+  outline: 2px solid var(--accent-act);
+  outline-offset: -2px;
+}
+
 .chat__enviar {
   flex-shrink: 0;
   display: grid;
@@ -1069,8 +1089,10 @@
    pieza, así que el plano le cede sitio mientras está abierto. Por encima no hace falta y
    nada se mueve; por debajo manda el tratamiento móvil, donde el chat tapa a propósito. */
 @media (min-width: 48.0625rem) and (max-width: 80rem) {
-  .plano {
-    transition: opacity 0.3s ease, visibility 0.3s ease, padding-right 0.25s ease;
+  @media (prefers-reduced-motion: no-preference) {
+    .plano {
+      transition: opacity 0.3s ease, visibility 0.3s ease, padding-right 0.25s ease;
+    }
   }
 
   .obs:has(.chat:not([hidden])) .plano {
@@ -1198,5 +1220,16 @@
 
   .modal__title {
     max-width: calc(100% - 5rem);
+  }
+}
+
+@media (pointer: coarse) {
+  .hud__plano,
+  .langswitch__btn,
+  .chat__cerrar,
+  .chat__enviar,
+  .modal__close {
+    min-block-size: 44px;
+    min-inline-size: 44px;
   }
 }

@@ -37,6 +37,19 @@ los hooks de scroll que solo ella usaba.
 - Commits en **español**.
 - Animaciones: siempre con rama `prefers-reduced-motion`. Decorativo → `aria-hidden` +
   texto real en un elemento `.sr-only`.
+- Movimiento: la animación se **activa** dentro de `@media (prefers-reduced-motion:
+  no-preference)`, regla por regla, en vez de declararla y anularla después. No hay un
+  bloque global de `0.01ms`: hace más bruscas algunas animaciones y apaga también las
+  transiciones de color, que no son movimiento. Lo que late o pulsa en bucle se limita a
+  3 iteraciones.
+- Overlays: `<dialog>` nativo. Modal con `showModal()` y `closedby="any"` (más el
+  respaldo por posición del puntero donde no existe), sin `role`, `aria-modal`, trampa de
+  foco ni bloqueo de `overflow` en `body`: el bloqueo del fondo lo hace
+  `overscroll-behavior: contain` en `dialog:modal` y `::backdrop`.
+- Fuentes: solo el subconjunto latino, servido desde `web/public/fonts/` con nombre fijo
+  y declarado en `styles/fonts.css`; Inter y Montserrat van precargadas en `index.html`.
+  Nada de importar `@fontsource-variable/*` desde el código: arrastra los 16 subconjuntos
+  y les pone hash, y así no se pueden precargar.
 
 ## Diagramas
 

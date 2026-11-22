@@ -10,7 +10,9 @@ export function Contacto({ titulo }: { titulo: string }) {
 
       <p className="contacto__directo" data-texto>
         <a href={`mailto:${profile.email}`}>{profile.email}</a>
-        <span className="meta">{profile.phone}</span>
+        <a className="meta" href={`tel:${profile.phone.replace(/\s/g, '')}`}>
+          {profile.phone}
+        </a>
       </p>
 
       <div className="contacto__acciones">

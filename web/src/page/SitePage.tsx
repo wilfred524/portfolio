@@ -1,6 +1,4 @@
-import '@fontsource-variable/inter';
-import '@fontsource-variable/montserrat';
-import '@fontsource-variable/space-grotesk';
+import '../styles/fonts.css';
 import '../styles/site.css';
 import { useEffect, useMemo, useRef, useState } from 'react';
 import type { ProjectItem } from '../content';
