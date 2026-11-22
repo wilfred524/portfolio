@@ -1,0 +1,143 @@
+{
+  "schema_version": 1,
+  "diagram_type": "architecture",
+  "meta": {
+    "title": "Migración a arquitectura por capas",
+    "viewBox": [
+      1080,
+      560
+    ],
+    "quality_profile": "showcase"
+  },
+  "components": [
+    {
+      "id": "screen",
+      "type": "frontend",
+      "label": "Pantalla",
+      "sublabel": "una de tantas",
+      "pos": [
+        40,
+        220
+      ],
+      "size": [
+        120,
+        60
+      ]
+    },
+    {
+      "id": "controller",
+      "type": "backend",
+      "label": "Controlador",
+      "sublabel": "sin SQL",
+      "pos": [
+        250,
+        220
+      ],
+      "size": [
+        130,
+        60
+      ]
+    },
+    {
+      "id": "service",
+      "type": "backend",
+      "label": "Servicio",
+      "sublabel": "reglas",
+      "pos": [
+        460,
+        220
+      ],
+      "size": [
+        130,
+        60
+      ]
+    },
+    {
+      "id": "repository",
+      "type": "backend",
+      "label": "Repositorio",
+      "sublabel": "consultas aquí",
+      "pos": [
+        670,
+        220
+      ],
+      "size": [
+        130,
+        60
+      ]
+    },
+    {
+      "id": "db",
+      "type": "database",
+      "label": "Base de datos",
+      "sublabel": "seis años",
+      "pos": [
+        880,
+        220
+      ],
+      "size": [
+        130,
+        60
+      ]
+    }
+  ],
+  "connections": [
+    {
+      "id": "call",
+      "from": "screen",
+      "to": "controller",
+      "label": "petición",
+      "variant": "emphasis"
+    },
+    {
+      "id": "delegate",
+      "from": "controller",
+      "to": "service",
+      "label": "delega",
+      "variant": "emphasis"
+    },
+    {
+      "id": "fetch",
+      "from": "service",
+      "to": "repository",
+      "label": "pide datos",
+      "variant": "emphasis"
+    },
+    {
+      "id": "query",
+      "from": "repository",
+      "to": "db",
+      "label": "consulta",
+      "variant": "emphasis"
+    },
+    {
+      "id": "legacy",
+      "from": "controller",
+      "to": "db",
+      "label": "SQL crudo, fuera",
+      "variant": "dashed",
+      "fromSide": "bottom",
+      "toSide": "bottom"
+    }
+  ],
+  "cards": [
+    {
+      "dot": "emerald",
+      "title": "Módulo a módulo",
+      "items": [
+        "Seis años de código, migrados de módulo en módulo",
+        "Cada cambio verificado antes de pasar al siguiente",
+        "El trazo discontinuo es lo que la migración retiró"
+      ]
+    },
+    {
+      "dot": "orange",
+      "title": "Qué cambió",
+      "items": [
+        "Los controladores acabaron sin una línea de SQL crudo",
+        "Las consultas se fueron a una capa de repositorio",
+        "Las reglas de negocio dejaron de vivir en el controlador"
+      ]
+    }
+  ]
+}

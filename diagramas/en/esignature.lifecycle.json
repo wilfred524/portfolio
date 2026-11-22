@@ -1,0 +1,188 @@
+{
+  "schema_version": 1,
+  "diagram_type": "lifecycle",
+  "meta": {
+    "title": "Electronic signature lifecycle",
+    "quality_profile": "showcase"
+  },
+  "lanes": [
+    {
+      "id": "main",
+      "label": "Document"
+    },
+    {
+      "id": "events",
+      "label": "Recoverable"
+    },
+    {
+      "id": "terminal",
+      "label": "Outcome"
+    }
+  ],
+  "states": [
+    {
+      "id": "draft",
+      "type": "start",
+      "label": "Draft",
+      "sublabel": "from template",
+      "lane": "main",
+      "col": 0
+    },
+    {
+      "id": "approved",
+      "type": "active",
+      "label": "Approved",
+      "sublabel": "advisor checks",
+      "lane": "main",
+      "col": 1
+    },
+    {
+      "id": "validated",
+      "type": "active",
+      "label": "Validated",
+      "sublabel": "bureau data",
+      "lane": "main",
+      "col": 2
+    },
+    {
+      "id": "verified",
+      "type": "decision",
+      "label": "Verified",
+      "sublabel": "OTP or KBA",
+      "lane": "main",
+      "col": 3
+    },
+    {
+      "id": "signed",
+      "type": "success",
+      "label": "Signed",
+      "sublabel": "with hash",
+      "lane": "main",
+      "col": 4
+    },
+    {
+      "id": "rejected",
+      "type": "failure",
+      "label": "Data rejected",
+      "sublabel": "fix the data",
+      "lane": "events",
+      "col": 0
+    },
+    {
+      "id": "failed",
+      "type": "failure",
+      "label": "No answer",
+      "sublabel": "challenge again",
+      "lane": "events",
+      "col": 1
+    },
+    {
+      "id": "archived",
+      "type": "neutral",
+      "label": "Archived",
+      "sublabel": "object storage",
+      "lane": "terminal",
+      "col": 2
+    }
+  ],
+  "transitions": [
+    {
+      "from": "draft",
+      "to": "approved",
+      "label": "approve",
+      "variant": "emphasis",
+      "route": "straight",
+      "labelDy": -25
+    },
+    {
+      "from": "approved",
+      "to": "validated",
+      "label": "check data",
+      "variant": "emphasis",
+      "route": "straight",
+      "labelDy": -25
+    },
+    {
+      "from": "validated",
+      "to": "verified",
+      "label": "challenge",
+      "variant": "emphasis",
+      "route": "straight",
+      "labelDy": -25
+    },
+    {
+      "from": "verified",
+      "to": "signed",
+      "label": "identity holds",
+      "variant": "emphasis",
+      "route": "straight",
+      "labelDy": -25
+    },
+    {
+      "from": "signed",
+      "to": "archived",
+      "label": "store",
+      "route": "straight",
+      "labelAt": [
+        710,
+        202
+      ]
+    },
+    {
+      "from": "validated",
+      "to": "rejected",
+      "label": "mismatch",
+      "labelAt": [
+        356,
+        206
+      ]
+    },
+    {
+      "from": "rejected",
+      "to": "validated",
+      "label": "fixed",
+      "labelAt": [
+        449,
+        240
+      ]
+    },
+    {
+      "from": "verified",
+      "to": "failed",
+      "label": "timeout",
+      "labelAt": [
+        512,
+        206
+      ]
+    },
+    {
+      "from": "failed",
+      "to": "verified",
+      "label": "retry",
+      "labelAt": [
+        600,
+        240
+      ]
+    }
+  ],
+  "cards": [
+    {
+      "dot": "emerald",
+      "title": "The hard part is before signing",
+      "items": [
+        "Approval, data validation and identity have to line up first",
+        "The provider answers asynchronously, so this is a state machine",
+        "A long process ends in a valid document or an actionable error"
+      ]
+    },
+    {
+      "dot": "orange",
+      "title": "What it replaced",
+      "items": [
+        "A 24-page document filled in by hand",
+        "Now generated from a template per product",
+        "The whole procedure closes in about twenty minutes"
+      ]
+    }
+  ]
+}

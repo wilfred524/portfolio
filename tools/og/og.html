@@ -1,0 +1,112 @@
+<!doctype html>
+<!--
+  Fuente de la tarjeta social (og:image). No se despliega: se rasteriza a
+  web/public/og.png, que es lo que consumen LinkedIn, Slack y X.
+
+  Misma identidad que el observatorio: --bg, --text y --accent de tokens.css, Montserrat
+  e Inter, y un cielo de estrellas con el núcleo abajo a la izquierda. El cielo sale de un
+  generador con semilla fija, así que la tarjeta es idéntica en cada regeneración.
+
+  Titular: el mismo del CV, sin raya y sin barra entre PHP y Laravel.
+
+  Regenerar tras cualquier cambio:
+    chrome --headless --disable-gpu --hide-scrollbars --window-size=1200,630 \
+      --screenshot=web/public/og.png tools/og/og.html
+-->
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <style>
+      @font-face {
+        font-family: 'Montserrat';
+        src: url('../../node_modules/@fontsource-variable/montserrat/files/montserrat-latin-wght-normal.woff2') format('woff2-variations');
+        font-weight: 100 900;
+      }
+      @font-face {
+        font-family: 'Inter';
+        src: url('../../node_modules/@fontsource-variable/inter/files/inter-latin-wght-normal.woff2') format('woff2-variations');
+        font-weight: 100 900;
+      }
+      * { margin: 0; box-sizing: border-box; }
+      body {
+        position: relative;
+        width: 1200px; height: 630px; overflow: hidden;
+        background: #131314; color: #e5e2e3;
+        font-family: 'Inter', Arial, sans-serif;
+      }
+      canvas { position: absolute; inset: 0; }
+      .tarjeta {
+        position: relative;
+        display: flex; flex-direction: column; justify-content: space-between;
+        height: 100%; padding: 72px 84px;
+      }
+      .rol {
+        font-size: 22px; font-weight: 600; letter-spacing: 0.1em; text-transform: uppercase;
+        color: #b0b0b6;
+      }
+      h1 {
+        margin-top: 18px;
+        font-family: 'Montserrat', Arial, sans-serif;
+        font-size: 104px; font-weight: 700; line-height: 1; letter-spacing: 0.02em;
+        text-shadow: 0 0 48px rgba(229, 226, 227, 0.22);
+      }
+      .stack { margin-top: 26px; font-size: 32px; font-weight: 500; color: #c7c6cc; }
+      .pie { display: flex; align-items: flex-end; justify-content: space-between; gap: 40px; }
+      .claim { max-width: 720px; font-size: 26px; line-height: 1.45; color: #c7c6cc; }
+      .claim b { font-weight: 600; color: #e5e2e3; }
+      .url { font-size: 20px; letter-spacing: 0.08em; color: #dbc3a8; white-space: nowrap; }
+      .velo::before {
+        content: ''; position: absolute; inset: -18px -24px; z-index: -1;
+        border-radius: 24px; background: rgba(19, 19, 20, 0.9); filter: blur(10px);
+      }
+      .velo { position: relative; }
+    </style>
+  </head>
+  <body>
+    <canvas id="cielo" width="1200" height="630"></canvas>
+    <div class="tarjeta">
+      <div>
+        <p class="rol velo">Backend Developer</p>
+        <h1>Wilfred Morales</h1>
+        <p class="stack velo">PHP · Laravel · PostgreSQL · Python</p>
+      </div>
+      <div class="pie">
+        <p class="claim velo">
+          In production: a <b>rules engine</b>, <b>e-signature</b> with identity verification and a
+          monthly pipeline that scores <b>over 320,000 people</b>.
+        </p>
+        <p class="url velo">portfolio-wilfred524.vercel.app</p>
+      </div>
+    </div>
+    <script>
+      const lienzo = document.getElementById('cielo');
+      const ctx = lienzo.getContext('2d');
+      let semilla = 524;
+      const azar = () => ((semilla = (semilla * 16807) % 2147483647) - 1) / 2147483646;
+
+      const nucleo = { x: 1200 * 0.2, y: 630 * 0.78 };
+      const brillo = ctx.createRadialGradient(nucleo.x, nucleo.y, 0, nucleo.x, nucleo.y, 520);
+      brillo.addColorStop(0, 'rgba(219, 195, 168, 0.28)');
+      brillo.addColorStop(0.35, 'rgba(195, 198, 215, 0.07)');
+      brillo.addColorStop(1, 'rgba(19, 19, 20, 0)');
+      ctx.fillStyle = brillo;
+      ctx.fillRect(0, 0, 1200, 630);
+
+      const tintes = ['229,226,227', '219,195,168', '195,198,215'];
+      for (let i = 0; i < 1500; i++) {
+        const brazo = i % 3;
+        const r = Math.pow(azar(), 0.6) * 900;
+        const angulo = brazo * ((2 * Math.PI) / 3) + r / 260 + (azar() - 0.5) * 0.9;
+        const x = nucleo.x + Math.cos(angulo) * r * 1.25;
+        const y = nucleo.y + Math.sin(angulo) * r * 0.55;
+        if (x < -10 || x > 1210 || y < -10 || y > 640) continue;
+        const tam = azar() < 0.06 ? 1.6 + azar() * 1.2 : 0.5 + azar() * 0.9;
+        const alfa = (0.3 + azar() * 0.6) * Math.max(0.25, 1 - r / 1000);
+        ctx.fillStyle = `rgba(${tintes[Math.floor(azar() * 3)]},${alfa.toFixed(3)})`;
+        ctx.beginPath();
+        ctx.arc(x, y, tam, 0, Math.PI * 2);
+        ctx.fill();
+      }
+    </script>
+  </body>
+</html>

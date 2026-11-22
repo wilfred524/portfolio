@@ -1,0 +1,171 @@
+{
+  "schema_version": 1,
+  "diagram_type": "dataflow",
+  "meta": {
+    "title": "From the client spreadsheet to a price",
+    "quality_profile": "showcase",
+    "viewBox": [
+      1080,
+      620
+    ]
+  },
+  "stages": [
+    {
+      "label": "Source"
+    },
+    {
+      "label": "Extract"
+    },
+    {
+      "label": "Compute"
+    },
+    {
+      "label": "Serve"
+    },
+    {
+      "label": "Quote"
+    }
+  ],
+  "nodes": [
+    {
+      "id": "xlsx",
+      "type": "external",
+      "label": "Precios.xlsx",
+      "sublabel": "not in git",
+      "stage": 0,
+      "row": 1
+    },
+    {
+      "id": "extract",
+      "type": "backend",
+      "label": "Extractor",
+      "sublabel": "unfolds formulas",
+      "stage": 1,
+      "row": 0,
+      "tag": "once"
+    },
+    {
+      "id": "catalog",
+      "type": "database",
+      "label": "Catalog",
+      "sublabel": "catalogo.json",
+      "stage": 1,
+      "row": 2,
+      "tag": "versioned"
+    },
+    {
+      "id": "engine",
+      "type": "backend",
+      "label": "Engine",
+      "sublabel": "expressions",
+      "stage": 2,
+      "row": 1,
+      "tag": "898 cells"
+    },
+    {
+      "id": "price",
+      "type": "backend",
+      "label": "Price",
+      "sublabel": "one cell",
+      "stage": 3,
+      "row": 0
+    },
+    {
+      "id": "options",
+      "type": "backend",
+      "label": "Options",
+      "sublabel": "no prices",
+      "stage": 3,
+      "row": 2
+    },
+    {
+      "id": "page",
+      "type": "frontend",
+      "label": "Quoter",
+      "sublabel": "prerendered Vue",
+      "stage": 4,
+      "row": 1
+    }
+  ],
+  "flows": [
+    {
+      "id": "sheet",
+      "from": "xlsx",
+      "to": "extract",
+      "label": "workbook",
+      "classification": "input",
+      "variant": "emphasis"
+    },
+    {
+      "id": "json",
+      "from": "extract",
+      "to": "catalog",
+      "label": "JSON",
+      "classification": "project data",
+      "variant": "emphasis",
+      "labelDy": 24
+    },
+    {
+      "id": "expr",
+      "from": "catalog",
+      "to": "engine",
+      "label": "expressions",
+      "classification": "cell by cell",
+      "variant": "emphasis"
+    },
+    {
+      "id": "cell",
+      "from": "engine",
+      "to": "price",
+      "label": "combination",
+      "classification": "just one",
+      "variant": "emphasis"
+    },
+    {
+      "id": "choices",
+      "from": "catalog",
+      "to": "options",
+      "label": "fields",
+      "classification": "no amounts",
+      "variant": "dashed",
+      "route": "straight",
+      "labelDy": 44
+    },
+    {
+      "id": "quote",
+      "from": "price",
+      "to": "page",
+      "label": "one price",
+      "classification": "output",
+      "variant": "emphasis"
+    },
+    {
+      "id": "menu",
+      "from": "options",
+      "to": "page",
+      "label": "what can be picked",
+      "classification": "no amounts",
+      "variant": "emphasis"
+    }
+  ],
+  "cards": [
+    {
+      "dot": "emerald",
+      "title": "The spreadsheet is not read at runtime",
+      "items": [
+        "Extracted once to JSON; the app only reads the JSON",
+        "A test checks every cell against the value Excel computed",
+        "Raising a profile price means changing one number in one place"
+      ]
+    },
+    {
+      "dot": "orange",
+      "title": "What the public receives",
+      "items": [
+        "The requested combination, never the full grid",
+        "Options travel without a single price inside",
+        "Only combinations that resolve to a number are offered"
+      ]
+    }
+  ]
+}

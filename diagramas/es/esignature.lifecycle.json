@@ -1,0 +1,188 @@
+{
+  "schema_version": 1,
+  "diagram_type": "lifecycle",
+  "meta": {
+    "title": "Ciclo de la firma electrónica",
+    "quality_profile": "showcase"
+  },
+  "lanes": [
+    {
+      "id": "main",
+      "label": "Documento"
+    },
+    {
+      "id": "events",
+      "label": "Recuperable"
+    },
+    {
+      "id": "terminal",
+      "label": "Desenlace"
+    }
+  ],
+  "states": [
+    {
+      "id": "draft",
+      "type": "start",
+      "label": "Borrador",
+      "sublabel": "de plantilla",
+      "lane": "main",
+      "col": 0
+    },
+    {
+      "id": "approved",
+      "type": "active",
+      "label": "Aprobado",
+      "sublabel": "revisa asesor",
+      "lane": "main",
+      "col": 1
+    },
+    {
+      "id": "validated",
+      "type": "active",
+      "label": "Validado",
+      "sublabel": "datos del buró",
+      "lane": "main",
+      "col": 2
+    },
+    {
+      "id": "verified",
+      "type": "decision",
+      "label": "Verificado",
+      "sublabel": "OTP o KBA",
+      "lane": "main",
+      "col": 3
+    },
+    {
+      "id": "signed",
+      "type": "success",
+      "label": "Firmado",
+      "sublabel": "con hash",
+      "lane": "main",
+      "col": 4
+    },
+    {
+      "id": "rejected",
+      "type": "failure",
+      "label": "Datos mal",
+      "sublabel": "corregir",
+      "lane": "events",
+      "col": 0
+    },
+    {
+      "id": "failed",
+      "type": "failure",
+      "label": "Sin respuesta",
+      "sublabel": "reintentar",
+      "lane": "events",
+      "col": 1
+    },
+    {
+      "id": "archived",
+      "type": "neutral",
+      "label": "Archivado",
+      "sublabel": "almacén",
+      "lane": "terminal",
+      "col": 2
+    }
+  ],
+  "transitions": [
+    {
+      "from": "draft",
+      "to": "approved",
+      "label": "aprueba",
+      "variant": "emphasis",
+      "route": "straight",
+      "labelDy": -25
+    },
+    {
+      "from": "approved",
+      "to": "validated",
+      "label": "verifica",
+      "variant": "emphasis",
+      "route": "straight",
+      "labelDy": -25
+    },
+    {
+      "from": "validated",
+      "to": "verified",
+      "label": "reto",
+      "variant": "emphasis",
+      "route": "straight",
+      "labelDy": -25
+    },
+    {
+      "from": "verified",
+      "to": "signed",
+      "label": "identidad ok",
+      "variant": "emphasis",
+      "route": "straight",
+      "labelDy": -25
+    },
+    {
+      "from": "signed",
+      "to": "archived",
+      "label": "guarda",
+      "route": "straight",
+      "labelAt": [
+        710,
+        202
+      ]
+    },
+    {
+      "from": "validated",
+      "to": "rejected",
+      "label": "no cuadra",
+      "labelAt": [
+        356,
+        206
+      ]
+    },
+    {
+      "from": "rejected",
+      "to": "validated",
+      "label": "corregido",
+      "labelAt": [
+        449,
+        240
+      ]
+    },
+    {
+      "from": "verified",
+      "to": "failed",
+      "label": "sin respuesta",
+      "labelAt": [
+        512,
+        206
+      ]
+    },
+    {
+      "from": "failed",
+      "to": "verified",
+      "label": "reintento",
+      "labelAt": [
+        600,
+        240
+      ]
+    }
+  ],
+  "cards": [
+    {
+      "dot": "emerald",
+      "title": "Lo difícil es antes de firmar",
+      "items": [
+        "Aprobación, validación de datos e identidad tienen que cuadrar antes",
+        "El proveedor responde en asíncrono, así que esto es una máquina de estados",
+        "Un proceso largo acaba en documento válido o en un error accionable"
+      ]
+    },
+    {
+      "dot": "orange",
+      "title": "Qué reemplazó",
+      "items": [
+        "Un documento de 24 páginas llenado a mano",
+        "Ahora se genera desde una plantilla por producto",
+        "El trámite completo cierra en unos veinte minutos"
+      ]
+    }
+  ]
+}

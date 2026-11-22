@@ -1,0 +1,255 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <title>Wilfred Morales · Backend Developer</title>
+    <style>
+      /* Una columna, sin tablas ni gráficos: el CV pasa por lectores ATS antes que por
+         ojos humanos, y cualquier maquetación en columnas los confunde.
+         Estructura heredada del export de LinkedIn —nombre centrado, secciones en
+         versales con regla— porque es un formato que los reclutadores reconocen. */
+      /* TODO el documento va en una sans del sistema. Fraunces (la serif del sitio) se
+         usaba en el <h1> para que CV y web se leyeran como una sola cosa, y se ha
+         retirado: era el ÚNICO elemento del PDF que Chrome no embebía como /FontFile2,
+         sino que vectorizaba como fuente /Type3 con /CharProcs. Type3 es justo la clase
+         de fuente que peor manejan los extractores baratos, y lo que se pierde cuando
+         fallan es el nombre del candidato: el campo más caro del documento.
+
+         Es el mismo fallo que ya costó Switzer (abajo), con la diferencia de que aquí sí
+         había /ToUnicode y por eso pypdf lo leía bien. No basta: la garantía la da la
+         fuente embebida, no la suerte del extractor.
+
+         Nota histórica sobre el cuerpo, que NO usa Switzer, y no por estética:
+
+         Switzer-Variable.woff2 rompe la extracción de texto del PDF. Chrome la vectoriza
+         y el resultado es que un lector de PDF —o el parser de un ATS— lee
+         "wilfred3019@ gmail.com", "AW S", "CK Com ercializadora", "M igración": 42
+         palabras partidas en la versión española. El email queda inservible y "AWS"
+         desaparece como término buscable.
+
+         Está aislado y medido: en el mismo PDF, con el mismo Chrome, Fraunces (también
+         variable, también woff2) extrae perfecto y Switzer no. No lo arregla
+         font-kerning:none, ni desactivar ligaduras, ni letter-spacing:0 — es el propio
+         archivo. Por eso el cuerpo va en una sans del sistema, que Chrome sí embebe
+         (/FontFile2) y que ningún lector interpreta mal. En papel la diferencia no se
+         ve; en un ATS, sí.
+
+         Antes aquí ponía "no afecta a los lectores ATS: extraen texto, no tipografía".
+         Es falso y era la premisa que sostenía el fallo.
+
+         Para comprobarlo tras cualquier cambio de tipografía:
+           python -c "import pypdf; t=''.join(p.extract_text() for p in
+             pypdf.PdfReader('web/public/Wilfred-Morales-Desarrollador-Backend.pdf').pages);
+             print('wilfred3019@gmail.com' in t, 'AWS' in t, 'Wilfred Morales' in t)"
+         Las tres deben dar True. Y para verificar que no ha vuelto a colarse una fuente
+         sin embeber, que es la comprobación de fondo:
+           python -c "import pypdf; d=pypdf.PdfReader('...pdf');
+             print([f for f in d.pages[0]['/Resources']['/Font'].values()])"
+         Ninguna debe ser /Type3. */
+
+      /* Márgenes ajustados para que el documento siga cabiendo en DOS páginas tras
+         desplegar la cabecera de empleo a cuatro líneas y añadir la entrada de
+         optimización de consultas. Un CV de tres páginas con diez meses de experiencia
+         se lee como relleno, y la tercera página eran dos líneas huérfanas. */
+      @page { size: A4; margin: 11mm 13mm; }
+      * { box-sizing: border-box; }
+      body {
+        margin: 0 auto;
+        max-width: 200mm;
+        padding: 10mm 12mm;
+        font-family: Arial, 'Helvetica Neue', Helvetica, sans-serif;
+        font-size: 10pt;
+        line-height: 1.42;
+        letter-spacing: -0.005em;
+        color: #1c1c1c;
+        background: #fff;
+      }
+      header { text-align: center; border-bottom: 2px solid #1c4a5a; padding-bottom: 6pt; }
+      h1 {
+        margin: 0;
+        font-weight: 700;
+        font-size: 23pt;
+        line-height: 1.05;
+        letter-spacing: -0.015em;
+        color: #1c4a5a;
+      }
+      .headline { margin: 3pt 0 0; font-size: 9.5pt; color: #333; }
+      .contact { margin: 4pt 0 0; font-size: 8.5pt; color: #444; }
+      /* Enlaces sin subrayado ni color: son clicables en el PDF, pero un CV con seis
+         trozos de texto azul subrayado en la cabecera parece una plantilla de 2009. */
+      a { color: inherit; text-decoration: none; }
+      /* Palabras clave a la altura del perfil. La sección Habilidades cae en la página 2
+         y es donde salta el reclutador tras leer el titular. */
+      .stackline { margin-top: 3pt; font-size: 9pt; color: #555; }
+      h2 {
+        margin: 11pt 0 0;
+        padding-bottom: 2pt;
+        border-bottom: 1px solid #b8c4c9;
+        font-size: 9.5pt;
+        font-weight: 600;
+        letter-spacing: 0.12em;
+        text-transform: uppercase;
+        color: #1c4a5a;
+      }
+      section > p:first-of-type, section > div:first-of-type { margin-top: 5pt; }
+      p { margin: 0 0 4pt; }
+      /* Sin page-break-inside aquí: un empleo con varios proyectos no cabe en lo que
+         queda de página y saltaba entero, dejando media hoja en blanco. */
+      .job { margin-top: 8pt; }
+      /* Un dato por línea, muy juntas: visualmente siguen leyéndose como un bloque de
+         cabecera, pero en el PDF son párrafos independientes y cada uno se extrae en su
+         propia línea. */
+      .job-role { margin: 0; font-weight: 700; }
+      .job-company { margin: 0; font-style: italic; }
+      .job-meta { margin: 0; color: #555; font-size: 9pt; }
+      .job-meta + .tagline { margin-top: 3pt; }
+      .tagline { margin: 0 0 4pt; font-size: 9pt; font-style: italic; color: #555; }
+      .entry { margin: 0 0 6pt; page-break-inside: avoid; }
+      /* Dos páginas es el formato asumido (legibilidad por encima de encajar en una):
+         lo que no se admite es una cabecera de sección huérfana al pie. */
+      h2 { break-after: avoid-page; }
+      .entry-title { margin: 0 0 1pt; font-weight: 600; }
+      .note { font-weight: 400; font-size: 9pt; color: #555; }
+      ul { margin: 0; padding-left: 14pt; }
+      li { margin-bottom: 1pt; }
+      /* En línea con el título, no en un párrafo al pie del bloque. */
+      .stack { font-weight: 400; font-size: 8.5pt; color: #555; }
+      .skill { margin-bottom: 2pt; }
+      .skill-area { font-weight: 700; }
+      @media print { body { padding: 0; max-width: none; } }
+    </style>
+  </head>
+  <body>
+    <header>
+      <h1>Wilfred Morales</h1>
+      <p class="headline">Backend Developer | PHP · Laravel · PostgreSQL · Python | Automation &amp; DevOps</p>
+      <p class="contact"><a href="mailto:wilfred3019@gmail.com">wilfred3019@gmail.com</a>&nbsp;&nbsp;·&nbsp;&nbsp;+57 322 310 3476&nbsp;&nbsp;·&nbsp;&nbsp;Bogotá, Colombia (GMT-5)&nbsp;&nbsp;·&nbsp;&nbsp;Remote or on-site</p>
+      <p class="contact"><a href="https://portfolio-wilfred524.vercel.app">https://portfolio-wilfred524.vercel.app</a>&nbsp;&nbsp;·&nbsp;&nbsp;<a href="https://github.com/wilfred524">https://github.com/wilfred524</a>&nbsp;&nbsp;·&nbsp;&nbsp;<a href="https://www.linkedin.com/in/wilfred-morales">https://www.linkedin.com/in/wilfred-morales</a></p>
+    </header>
+
+    <section>
+      <h2>Professional summary</h2>
+      <p>Backend developer working with PHP, Laravel and Python on PostgreSQL, with hands-on automation and DevOps. I work on configurable business logic, REST APIs, integrations with external services, batch processing, query optimisation and access control, and on deploying it with Docker, Google Cloud and GitHub Actions. My production experience comes from a credit fintech and from freelance work.</p>
+      <p class="stackline">Laravel · PHP · PostgreSQL · REST APIs · Python · Docker</p>
+    </section>
+
+    <section>
+      <h2>Professional experience</h2>
+      
+      <div class="job">
+        <p class="job-role">Backend Developer</p>
+        <p class="job-company">Freelance</p>
+        <p class="job-meta">Aug 2026 - Present</p>
+        <p class="job-meta">Remote</p>
+        <p class="tagline">Commissioned work, remote.</p>
+        
+        <div class="entry">
+          <p class="entry-title">Gestienda <span class="stack">React, JavaScript, PostgreSQL, Supabase, PWA</span></p>
+          <ul>
+            <li>I build Gestienda, a React and Supabase PWA for small businesses: credit sales, payments and inventory, in production with a real client.</li>
+            <li>Moved the balance, credit limit and stock rules into PostgreSQL: a trigger computes the balance, the ledger is insert only and each business can only reach its own data (RLS).</li>
+            <li>Designed the offline mode: operations are saved in a local queue and sent in order when the network returns, without duplicates.</li>
+            <li>I apply schema migrations in production with a prior backup and every balance checked before and after, with none altered.</li>
+          </ul>
+        </div>
+
+        <div class="entry">
+          <p class="entry-title">Website and quoter for a glass shop (in progress) <span class="stack">Python, FastAPI, Vue.js, Tailwind CSS, Vercel</span></p>
+          <ul>
+            <li>Turned the Excel workbook the client used to price their work into a web quoter. Extracted every formula into data, and the Python engine reproduces the 898 cells of the original, each one checked by automated tests.</li>
+            <li>Designed the FastAPI API, serverless on Vercel, to return only the requested price without exposing the list. I am also building the company website in Vue and Tailwind CSS, prerendered for search engines.</li>
+          </ul>
+        </div>
+      </div>
+
+      <div class="job">
+        <p class="job-role">Backend Developer</p>
+        <p class="job-company">GAF Technology Solutions</p>
+        <p class="job-meta">Oct 2025 - Jul 2026</p>
+        <p class="job-meta">Fixed-term project contract · Remote, Colombia</p>
+        <p class="tagline">Payroll-deduction lending fintech. Technology team of 4. Git workflow with feature branches and pull requests, in sprints (Scrum). Besides the backend, I built the frontend of my modules in Vue.js and Inertia.js, and nearly all of the frontend at CK Comercializadora, a company in the same group.</p>
+        
+        <div class="entry">
+          <p class="entry-title">Credit rules engine <span class="stack">Laravel, Vue.js, Inertia.js, PostgreSQL</span></p>
+          <ul>
+            <li>Modelled the data and translated business policy into a rules schema in PostgreSQL: eligibility, garnishments, term limits, and employment and financial requirements per payer. The business team now adjusts parameters without a deployment.</li>
+            <li>Implemented the full evaluation logic: borrowing-capacity calculation under Law 1527 (payroll-deduction lending) and Law 50 for active employees and pensioners, decision criteria, special rules, and application re-evaluation.</li>
+            <li>Built the public application portal with front-end and back-end validation, per-advisor traceability and reCAPTCHA Enterprise. Adapted its requests to the submission REST API, which a colleague built.</li>
+          </ul>
+        </div>
+
+        <div class="entry">
+          <p class="entry-title">Monthly credit scoring process <span class="stack">Python, PostgreSQL, Docker, Laravel</span></p>
+          <ul>
+            <li>Took a risk model living in a script owned by the risk team to production as a Python ETL job: a Docker container on a monthly cron that extracts from PostgreSQL, scores and stores the results.</li>
+            <li>Processed over 320,000 distinct people per run, loading in batches of 5,000, with an idempotent and resumable process and invalid-row handling that does not abort the load.</li>
+          </ul>
+        </div>
+
+        <div class="entry">
+          <p class="entry-title">Query optimisation in production <span class="stack">PostgreSQL, SQL, Laravel, Eloquent ORM</span></p>
+          <ul>
+            <li>Cut a multi-table query from 20-30 seconds down to 3-6, removing the timeouts that made the screen depending on it unusable under high volume.</li>
+            <li>Applied filters upfront so the join would not start from the full set, added indexes on the fields used in joins and filters, and paginated the response so the page stopped loading everything at once.</li>
+          </ul>
+        </div>
+
+        <div class="entry">
+          <p class="entry-title">Electronic signature with identity validation <span class="stack">Laravel, Vue.js, Python, TransUnion, AWS S3</span></p>
+          <ul>
+            <li>Built the electronic signature module from scratch, replacing a disused legacy one: a 24-page document once filled in by hand is now generated from templates, one per product.</li>
+            <li>Designed the flow as a state machine over the asynchronous responses from the provider: an advisor approves a draft, customer data is validated against TransUnion, and identity is verified by OTP or KBA.</li>
+            <li>Integrated the provider REST API and email delivery of the draft and signed document with Laravel Jobs. About 20 minutes end to end, with hash and a copy in AWS S3.</li>
+          </ul>
+        </div>
+
+        <div class="entry">
+          <p class="entry-title">Access control and permissions <span class="stack">Spatie Permission, MFA, Laravel, PostgreSQL</span></p>
+          <ul>
+            <li>Built the platform permission tree across 17 modules, with permissions down to the option and sub-process level, locked down every route, and migrated existing users and roles to the new schema without interrupting operations.</li>
+            <li>Implemented MFA: a one-time code by email on a new device, with trust per user and device.</li>
+          </ul>
+        </div>
+
+        <div class="entry">
+          <p class="entry-title">Migration to a layered architecture <span class="stack">Layered architecture, Laravel, PostgreSQL</span></p>
+          <ul>
+            <li>Took part in the first stage of migrating a platform with six years of code to a layered architecture, and removed raw SQL from controllers entirely.</li>
+            <li>Validated each module before the next, with code review by the tech lead on every delivery, over three months.</li>
+          </ul>
+        </div>
+
+        <div class="entry">
+          <p class="entry-title">Infrastructure and deployment <span class="stack">Docker, Linux, Nginx, GCP, Certbot</span></p>
+          <ul>
+            <li>Containerised the application with Docker, which had been running natively on the machine, and deployed it on a new GCP instance with nginx as a reverse proxy between the containers and the host.</li>
+            <li>Migrated in parallel: validated the new instance while the old one was still in production, configured DNS and issued certificates with Certbot until it ran fully over HTTPS, with no downtime.</li>
+            <li>Worked on the GitHub Actions workflows: deployment over SSH and security scanning with Snyk and Gitleaks.</li>
+          </ul>
+        </div>
+      </div>
+    </section>
+
+
+    <section>
+      <h2>Technical skills</h2>
+      <p class="skill"><span class="skill-area">Backend</span> PHP, Laravel, Eloquent ORM, Laravel Queues, Composer, REST APIs, Python, FastAPI, Node.js, Layered architecture</p>
+      <p class="skill"><span class="skill-area">Databases</span> PostgreSQL, MySQL, SQL, Supabase, Data modelling and migrations, Query and index optimisation</p>
+      <p class="skill"><span class="skill-area">Security and access control</span> Spatie Laravel Permission, RBAC, MFA, Session management, Row Level Security (RLS), Snyk, Gitleaks, reCAPTCHA Enterprise</p>
+      <p class="skill"><span class="skill-area">Automation &amp; AI</span> AI-assisted development, OpenAI API, DeepSeek API, n8n, Webhooks</p>
+      <p class="skill"><span class="skill-area">Frontend</span> Vue.js 3, Inertia.js, Blade, Tailwind CSS, Vite</p>
+      <p class="skill"><span class="skill-area">Infrastructure and cloud</span> Docker, Docker Compose, Linux, Bash, Nginx, Google Cloud (GCP), AWS, AWS S3, Vercel, Certbot</p>
+      <p class="skill"><span class="skill-area">Process</span> Git, GitHub, Pull requests, GitHub Actions, CI/CD, PHPUnit, Scrum, Agile methodologies</p>
+    </section>
+
+    <section>
+      <h2>Education</h2>
+      <p>Computer Engineering, Universidad Nacional Experimental del Táchira (UNET), in progress.</p>
+    </section>
+
+    <section>
+      <h2>Languages and certifications</h2>
+      <p>Spanish (native) · English B2 (EF SET) · Google Cloud Fundamentals and Claude Code · Preparing for Google Cloud ACE</p>
+    </section>
+  </body>
+</html>

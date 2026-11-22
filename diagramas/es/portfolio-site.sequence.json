@@ -1,0 +1,153 @@
+{
+  "schema_version": 1,
+  "diagram_type": "sequence",
+  "meta": {
+    "title": "Agente del portafolio",
+    "viewBox": [
+      900,
+      800
+    ],
+    "quality_profile": "showcase"
+  },
+  "participants": [
+    {
+      "id": "visitor",
+      "type": "external",
+      "label": "Visitante",
+      "sublabel": "navegador"
+    },
+    {
+      "id": "api",
+      "type": "backend",
+      "label": "Endpoint",
+      "sublabel": "FastAPI"
+    },
+    {
+      "id": "guard",
+      "type": "security",
+      "label": "Guarda",
+      "sublabel": "límite"
+    },
+    {
+      "id": "model",
+      "type": "external",
+      "label": "Modelo",
+      "sublabel": "REST"
+    },
+    {
+      "id": "calendar",
+      "type": "cloud",
+      "label": "Agenda",
+      "sublabel": "agenda real"
+    },
+    {
+      "id": "notify",
+      "type": "messagebus",
+      "label": "Avisos",
+      "sublabel": "correo, hoja"
+    }
+  ],
+  "messages": [
+    {
+      "from": "visitor",
+      "to": "api",
+      "y": 180,
+      "label": "pregunta",
+      "variant": "emphasis"
+    },
+    {
+      "from": "api",
+      "to": "guard",
+      "y": 222,
+      "label": "límite por IP"
+    },
+    {
+      "from": "guard",
+      "to": "api",
+      "y": 264,
+      "label": "permitido",
+      "variant": "return"
+    },
+    {
+      "from": "api",
+      "to": "model",
+      "y": 306,
+      "label": "clasificar",
+      "variant": "emphasis"
+    },
+    {
+      "from": "model",
+      "to": "api",
+      "y": 348,
+      "label": "JSON",
+      "variant": "return"
+    },
+    {
+      "from": "api",
+      "to": "calendar",
+      "y": 400,
+      "label": "libre/ocupado",
+      "variant": "emphasis"
+    },
+    {
+      "from": "calendar",
+      "to": "api",
+      "y": 442,
+      "label": "huecos reales",
+      "variant": "return"
+    },
+    {
+      "from": "api",
+      "to": "visitor",
+      "y": 484,
+      "label": "respuesta",
+      "variant": "emphasis"
+    },
+    {
+      "from": "visitor",
+      "to": "api",
+      "y": 536,
+      "label": "elige hueco"
+    },
+    {
+      "from": "api",
+      "to": "calendar",
+      "y": 578,
+      "label": "crear evento",
+      "variant": "emphasis"
+    },
+    {
+      "from": "api",
+      "to": "notify",
+      "y": 620,
+      "label": "correo, hoja"
+    },
+    {
+      "from": "api",
+      "to": "visitor",
+      "y": 662,
+      "label": "cita confirmada",
+      "variant": "emphasis"
+    }
+  ],
+  "cards": [
+    {
+      "dot": "emerald",
+      "title": "Salida estructurada, no llamadas a herramientas",
+      "items": [
+        "La intención vuelve como JSON validado contra un esquema",
+        "Agendar una reunión real no puede depender de que el modelo acierte un formato",
+        "Todo hueco ofrecido sale de la agenda, nunca del modelo"
+      ]
+    },
+    {
+      "dot": "orange",
+      "title": "Se degrada solo",
+      "items": [
+        "Si falta una credencial se apaga esa pieza y el chat sigue",
+        "El agente solo sabe lo que dicen los archivos de contexto",
+        "Las peticiones van limitadas por IP hasheada"
+      ]
+    }
+  ]
+}

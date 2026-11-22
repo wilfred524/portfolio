@@ -1,0 +1,171 @@
+{
+  "schema_version": 1,
+  "diagram_type": "dataflow",
+  "meta": {
+    "title": "Del Excel del cliente a un precio",
+    "quality_profile": "showcase",
+    "viewBox": [
+      1080,
+      620
+    ]
+  },
+  "stages": [
+    {
+      "label": "Origen"
+    },
+    {
+      "label": "Extraer"
+    },
+    {
+      "label": "Calcular"
+    },
+    {
+      "label": "Servir"
+    },
+    {
+      "label": "Cotizar"
+    }
+  ],
+  "nodes": [
+    {
+      "id": "xlsx",
+      "type": "external",
+      "label": "Precios.xlsx",
+      "sublabel": "fuera de git",
+      "stage": 0,
+      "row": 1
+    },
+    {
+      "id": "extract",
+      "type": "backend",
+      "label": "Extractor",
+      "sublabel": "despliega fórmulas",
+      "stage": 1,
+      "row": 0,
+      "tag": "una vez"
+    },
+    {
+      "id": "catalog",
+      "type": "database",
+      "label": "Catálogo",
+      "sublabel": "catalogo.json",
+      "stage": 1,
+      "row": 2,
+      "tag": "versionado"
+    },
+    {
+      "id": "engine",
+      "type": "backend",
+      "label": "Motor",
+      "sublabel": "expresiones",
+      "stage": 2,
+      "row": 1,
+      "tag": "898 celdas"
+    },
+    {
+      "id": "price",
+      "type": "backend",
+      "label": "Precio",
+      "sublabel": "una celda",
+      "stage": 3,
+      "row": 0
+    },
+    {
+      "id": "options",
+      "type": "backend",
+      "label": "Opciones",
+      "sublabel": "sin precios",
+      "stage": 3,
+      "row": 2
+    },
+    {
+      "id": "page",
+      "type": "frontend",
+      "label": "Cotizador",
+      "sublabel": "Vue prerenderizado",
+      "stage": 4,
+      "row": 1
+    }
+  ],
+  "flows": [
+    {
+      "id": "sheet",
+      "from": "xlsx",
+      "to": "extract",
+      "label": "planilla",
+      "classification": "entrada",
+      "variant": "emphasis"
+    },
+    {
+      "id": "json",
+      "from": "extract",
+      "to": "catalog",
+      "label": "JSON",
+      "classification": "dato del proyecto",
+      "variant": "emphasis",
+      "labelDy": 24
+    },
+    {
+      "id": "expr",
+      "from": "catalog",
+      "to": "engine",
+      "label": "expresiones",
+      "classification": "celda a celda",
+      "variant": "emphasis"
+    },
+    {
+      "id": "cell",
+      "from": "engine",
+      "to": "price",
+      "label": "combinación",
+      "classification": "una sola",
+      "variant": "emphasis"
+    },
+    {
+      "id": "choices",
+      "from": "catalog",
+      "to": "options",
+      "label": "campos",
+      "classification": "sin importes",
+      "variant": "dashed",
+      "route": "straight",
+      "labelDy": 44
+    },
+    {
+      "id": "quote",
+      "from": "price",
+      "to": "page",
+      "label": "un precio",
+      "classification": "salida",
+      "variant": "emphasis"
+    },
+    {
+      "id": "menu",
+      "from": "options",
+      "to": "page",
+      "label": "qué se puede elegir",
+      "classification": "sin importes",
+      "variant": "emphasis"
+    }
+  ],
+  "cards": [
+    {
+      "dot": "emerald",
+      "title": "El Excel no se lee en ejecución",
+      "items": [
+        "Se extrae una vez a JSON y la aplicación solo lee el JSON",
+        "Una prueba contrasta cada celda con el valor que dejó Excel",
+        "Subir el precio de un perfil es cambiar un número en un sitio"
+      ]
+    },
+    {
+      "dot": "orange",
+      "title": "Qué recibe el público",
+      "items": [
+        "Una combinación pedida, nunca la grilla completa",
+        "Las opciones viajan sin un solo precio dentro",
+        "Solo se ofrece lo que resuelve a un número"
+      ]
+    }
+  ]
+}

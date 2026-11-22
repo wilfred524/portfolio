@@ -1,0 +1,181 @@
+{
+  "schema_version": 1,
+  "diagram_type": "architecture",
+  "meta": {
+    "title": "From native host to containers",
+    "quality_profile": "showcase",
+    "viewBox": [
+      1080,
+      620
+    ]
+  },
+  "components": [
+    {
+      "id": "traffic",
+      "type": "external",
+      "label": "Traffic",
+      "sublabel": "public domain",
+      "pos": [
+        40,
+        300
+      ],
+      "size": [
+        120,
+        60
+      ]
+    },
+    {
+      "id": "dns",
+      "type": "cloud",
+      "label": "DNS + TLS",
+      "sublabel": "issued certs",
+      "pos": [
+        250,
+        300
+      ],
+      "size": [
+        130,
+        60
+      ]
+    },
+    {
+      "id": "nginx",
+      "type": "backend",
+      "label": "nginx",
+      "sublabel": "reverse proxy",
+      "pos": [
+        460,
+        300
+      ],
+      "size": [
+        130,
+        60
+      ]
+    },
+    {
+      "id": "app",
+      "type": "backend",
+      "label": "App",
+      "sublabel": "container",
+      "pos": [
+        670,
+        300
+      ],
+      "size": [
+        130,
+        60
+      ]
+    },
+    {
+      "id": "worker",
+      "type": "backend",
+      "label": "Worker",
+      "sublabel": "container",
+      "pos": [
+        670,
+        170
+      ],
+      "size": [
+        130,
+        60
+      ]
+    },
+    {
+      "id": "db",
+      "type": "database",
+      "label": "Database",
+      "sublabel": "persisted",
+      "pos": [
+        880,
+        300
+      ],
+      "size": [
+        130,
+        60
+      ]
+    },
+    {
+      "id": "legacy",
+      "type": "external",
+      "label": "Old host",
+      "sublabel": "native, still live",
+      "pos": [
+        460,
+        460
+      ],
+      "size": [
+        130,
+        60
+      ]
+    }
+  ],
+  "boundaries": [
+    {
+      "kind": "region",
+      "label": "New instance",
+      "wraps": [
+        "nginx",
+        "app",
+        "worker",
+        "db"
+      ]
+    }
+  ],
+  "connections": [
+    {
+      "from": "traffic",
+      "to": "dns",
+      "label": "requests",
+      "variant": "emphasis"
+    },
+    {
+      "from": "dns",
+      "to": "nginx",
+      "label": "resolved",
+      "variant": "emphasis"
+    },
+    {
+      "from": "nginx",
+      "to": "app",
+      "label": "proxied",
+      "variant": "emphasis"
+    },
+    {
+      "from": "app",
+      "to": "worker",
+      "label": "queued work"
+    },
+    {
+      "from": "app",
+      "to": "db",
+      "label": "reads, writes",
+      "variant": "emphasis"
+    },
+    {
+      "from": "legacy",
+      "to": "db",
+      "label": "during migration",
+      "variant": "dashed"
+    }
+  ],
+  "cards": [
+    {
+      "dot": "emerald",
+      "title": "Migrated in parallel",
+      "items": [
+        "The new instance was brought up and validated while the old one served production",
+        "Cutover was a DNS change, not a maintenance window",
+        "No downtime for the people using it"
+      ]
+    },
+    {
+      "dot": "orange",
+      "title": "Why containers",
+      "items": [
+        "The application used to run natively on the machine",
+        "No isolation between environment and code",
+        "nginx now sits between the host and the containers"
+      ]
+    }
+  ]
+}

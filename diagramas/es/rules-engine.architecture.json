@@ -1,0 +1,190 @@
+{
+  "schema_version": 1,
+  "diagram_type": "architecture",
+  "meta": {
+    "title": "Las reglas de crédito como datos",
+    "viewBox": [
+      1080,
+      560
+    ],
+    "quality_profile": "showcase"
+  },
+  "components": [
+    {
+      "id": "business",
+      "type": "external",
+      "label": "Negocio",
+      "sublabel": "define",
+      "pos": [
+        40,
+        120
+      ],
+      "size": [
+        120,
+        60
+      ]
+    },
+    {
+      "id": "policy",
+      "type": "database",
+      "label": "Tablas",
+      "sublabel": "reglas en filas",
+      "pos": [
+        250,
+        120
+      ],
+      "size": [
+        130,
+        60
+      ]
+    },
+    {
+      "id": "advisor",
+      "type": "frontend",
+      "label": "Asesor",
+      "sublabel": "radica",
+      "pos": [
+        40,
+        320
+      ],
+      "size": [
+        120,
+        60
+      ]
+    },
+    {
+      "id": "api",
+      "type": "backend",
+      "label": "API",
+      "sublabel": "solicitudes",
+      "pos": [
+        250,
+        320
+      ],
+      "size": [
+        130,
+        60
+      ]
+    },
+    {
+      "id": "engine",
+      "type": "backend",
+      "label": "Motor",
+      "sublabel": "aplica, no sabe",
+      "pos": [
+        460,
+        320
+      ],
+      "size": [
+        130,
+        60
+      ]
+    },
+    {
+      "id": "capacity",
+      "type": "backend",
+      "label": "Capacidad",
+      "sublabel": "por ley",
+      "pos": [
+        670,
+        320
+      ],
+      "size": [
+        130,
+        60
+      ]
+    },
+    {
+      "id": "decision",
+      "type": "backend",
+      "label": "Decisión",
+      "sublabel": "aprobar o no",
+      "pos": [
+        880,
+        320
+      ],
+      "size": [
+        130,
+        60
+      ]
+    },
+    {
+      "id": "trace",
+      "type": "database",
+      "label": "Traza",
+      "sublabel": "quién radicó",
+      "pos": [
+        880,
+        120
+      ],
+      "size": [
+        130,
+        60
+      ]
+    }
+  ],
+  "connections": [
+    {
+      "from": "business",
+      "to": "policy",
+      "label": "edita",
+      "variant": "emphasis"
+    },
+    {
+      "from": "policy",
+      "to": "engine",
+      "label": "requisitos",
+      "variant": "emphasis"
+    },
+    {
+      "from": "advisor",
+      "to": "api",
+      "label": "solicitud",
+      "variant": "emphasis"
+    },
+    {
+      "from": "api",
+      "to": "engine",
+      "label": "evaluar",
+      "variant": "emphasis",
+      "labelDy": 47
+    },
+    {
+      "from": "engine",
+      "to": "capacity",
+      "label": "capacidad",
+      "variant": "emphasis"
+    },
+    {
+      "from": "capacity",
+      "to": "decision",
+      "label": "criterios",
+      "variant": "emphasis"
+    },
+    {
+      "from": "decision",
+      "to": "trace",
+      "label": "registrada"
+    }
+  ],
+  "cards": [
+    {
+      "dot": "emerald",
+      "title": "La política vive como datos",
+      "items": [
+        "Un tope de plazo cambia editando una fila, no desplegando código",
+        "El motor sabe aplicar reglas, no qué dicen",
+        "Requisitos, embargos y condiciones cambian por pagaduría"
+      ]
+    },
+    {
+      "dot": "orange",
+      "title": "Trazable por diseño",
+      "items": [
+        "Cada solicitud apunta al asesor que la radicó",
+        "Las solicitudes se reevalúan cuando cambia la política",
+        "La validación corre en la pantalla y en el servidor"
+      ]
+    }
+  ]
+}

@@ -1,0 +1,3 @@
+# Solo desarrollo: tests del backend. Vercel instala `requirements.txt`, no este.
+-r requirements.txt
+pytest==8.4.2

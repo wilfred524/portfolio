@@ -1,0 +1,26 @@
+{
+  "name": "portfolio",
+  "private": true,
+  "version": "0.1.0",
+  "description": "Página de presentación — frontend en web, backend Python en api, tooling local en tools",
+  "workspaces": [
+    "shared",
+    "web",
+    "tools/cv"
+  ],
+  "scripts": {
+    "dev": "concurrently -n api,web -c yellow,cyan \"npm run dev:api\" \"npm run dev:web\"",
+    "dev:web": "npm run dev -w @portfolio/web",
+    "dev:api": "node tools/dev-api.mjs",
+    "build": "npm run build -w @portfolio/web",
+    "build:web": "npm run build -w @portfolio/web",
+    "build:cv": "npm run build:cv -w @portfolio/cv",
+    "build:diagramas": "node tools/diagramas.mjs"
+  },
+  "engines": {
+    "node": ">=22"
+  },
+  "devDependencies": {
+    "concurrently": "^9.1.2"
+  }
+}

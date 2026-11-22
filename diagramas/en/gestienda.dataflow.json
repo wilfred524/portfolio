@@ -1,0 +1,144 @@
+{
+  "schema_version": 1,
+  "diagram_type": "dataflow",
+  "meta": {
+    "title": "An offline sale that keeps the balance right",
+    "quality_profile": "showcase",
+    "viewBox": [
+      1080,
+      620
+    ]
+  },
+  "stages": [
+    {
+      "label": "Device"
+    },
+    {
+      "label": "Screen"
+    },
+    {
+      "label": "Queue"
+    },
+    {
+      "label": "Database"
+    },
+    {
+      "label": "Outcome"
+    }
+  ],
+  "nodes": [
+    {
+      "id": "owner",
+      "type": "external",
+      "label": "Owner or cashier",
+      "sublabel": "from the phone",
+      "stage": 0,
+      "row": 1
+    },
+    {
+      "id": "ui",
+      "type": "frontend",
+      "label": "PWA",
+      "sublabel": "updates instantly",
+      "stage": 1,
+      "row": 1
+    },
+    {
+      "id": "queue",
+      "type": "database",
+      "label": "Queue",
+      "sublabel": "IndexedDB",
+      "stage": 2,
+      "row": 1,
+      "tag": "op_id"
+    },
+    {
+      "id": "rpc",
+      "type": "backend",
+      "label": "RPC function",
+      "sublabel": "security definer",
+      "stage": 3,
+      "row": 1,
+      "tag": "idempotent"
+    },
+    {
+      "id": "ledger",
+      "type": "database",
+      "label": "Credit ledger",
+      "sublabel": "insert only",
+      "stage": 4,
+      "row": 0,
+      "tag": "balance in SQL"
+    },
+    {
+      "id": "review",
+      "type": "frontend",
+      "label": "To review",
+      "sublabel": "business rejection",
+      "stage": 4,
+      "row": 2
+    }
+  ],
+  "flows": [
+    {
+      "id": "op",
+      "from": "owner",
+      "to": "ui",
+      "label": "entry",
+      "classification": "sale or credit",
+      "variant": "emphasis"
+    },
+    {
+      "id": "local",
+      "from": "ui",
+      "to": "queue",
+      "label": "operation",
+      "classification": "with its op_id",
+      "variant": "emphasis"
+    },
+    {
+      "id": "sync",
+      "from": "queue",
+      "to": "rpc",
+      "label": "in order",
+      "classification": "when back online",
+      "variant": "emphasis"
+    },
+    {
+      "id": "insert",
+      "from": "rpc",
+      "to": "ledger",
+      "label": "insert",
+      "classification": "balance and limit",
+      "variant": "emphasis"
+    },
+    {
+      "id": "reject",
+      "from": "rpc",
+      "to": "review",
+      "label": "coded error",
+      "classification": "not retried",
+      "variant": "dashed"
+    }
+  ],
+  "cards": [
+    {
+      "dot": "emerald",
+      "title": "The rules live in the database",
+      "items": [
+        "A trigger computes the balance, not the API or the client",
+        "The ledger is insert only: mistakes are voided, never edited",
+        "Ledgers are written only through functions, with per store permissions"
+      ]
+    },
+    {
+      "dot": "orange",
+      "title": "Without internet",
+      "items": [
+        "The operation shows instantly and is sent once the network is back",
+        "Resending an op_id returns the operation already recorded",
+        "No Postgres code means network and is retried; a code means it waits for review"
+      ]
+    }
+  ]
+}

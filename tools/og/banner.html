@@ -1,0 +1,97 @@
+<!doctype html>
+<!--
+  Banner de LinkedIn (1584×396). Misma identidad que og.html. La foto de perfil tapa la
+  esquina inferior izquierda, así que el texto va a la derecha y el núcleo del cielo a la
+  izquierda, donde queda medio oculto sin perder nada.
+
+  Regenerar:
+    chrome --headless --disable-gpu --hide-scrollbars --window-size=1584,396       --screenshot=tools/og/linkedin-banner.png tools/og/banner.html
+-->
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <style>
+      @font-face {
+        font-family: 'Montserrat';
+        src: url('../../node_modules/@fontsource-variable/montserrat/files/montserrat-latin-wght-normal.woff2') format('woff2-variations');
+        font-weight: 100 900;
+      }
+      @font-face {
+        font-family: 'Inter';
+        src: url('../../node_modules/@fontsource-variable/inter/files/inter-latin-wght-normal.woff2') format('woff2-variations');
+        font-weight: 100 900;
+      }
+      * { margin: 0; box-sizing: border-box; }
+      body {
+        position: relative;
+        width: 1584px; height: 396px; overflow: hidden;
+        background: #131314; color: #e5e2e3;
+        font-family: 'Inter', Arial, sans-serif;
+      }
+      canvas { position: absolute; inset: 0; }
+      .tarjeta {
+        position: relative;
+        display: flex; flex-direction: column; justify-content: center; align-items: flex-end;
+        height: 100%; padding: 48px 96px; text-align: right;
+      }
+      .rol {
+        font-size: 22px; font-weight: 600; letter-spacing: 0.1em; text-transform: uppercase;
+        color: #b0b0b6;
+      }
+      h1 {
+        margin-top: 18px;
+        font-family: 'Montserrat', Arial, sans-serif;
+        font-size: 64px; font-weight: 700; line-height: 1; letter-spacing: 0.02em;
+        text-shadow: 0 0 48px rgba(229, 226, 227, 0.22);
+      }
+      .stack { margin-top: 16px; font-size: 26px; font-weight: 500; color: #c7c6cc; }
+      .pie { display: flex; align-items: flex-end; justify-content: space-between; gap: 40px; }
+      .claim { max-width: 720px; font-size: 26px; line-height: 1.45; color: #c7c6cc; }
+      .claim b { font-weight: 600; color: #e5e2e3; }
+      .url { font-size: 20px; letter-spacing: 0.08em; color: #dbc3a8; white-space: nowrap; }
+      .velo::before {
+        content: ''; position: absolute; inset: -18px -24px; z-index: -1;
+        border-radius: 24px; background: rgba(19, 19, 20, 0.9); filter: blur(10px);
+      }
+      .velo { position: relative; }
+    </style>
+  </head>
+  <body>
+    <canvas id="cielo" width="1584" height="396"></canvas>
+    <div class="tarjeta">
+      <p class="rol velo">Backend Developer</p>
+      <h1>Wilfred Morales</h1>
+      <p class="stack velo">PHP · Laravel · PostgreSQL · Python</p>
+    </div>
+    <script>
+      const lienzo = document.getElementById('cielo');
+      const ctx = lienzo.getContext('2d');
+      let semilla = 524;
+      const azar = () => ((semilla = (semilla * 16807) % 2147483647) - 1) / 2147483646;
+
+      const nucleo = { x: 1584 * 0.14, y: 396 * 0.62 };
+      const brillo = ctx.createRadialGradient(nucleo.x, nucleo.y, 0, nucleo.x, nucleo.y, 520);
+      brillo.addColorStop(0, 'rgba(219, 195, 168, 0.28)');
+      brillo.addColorStop(0.35, 'rgba(195, 198, 215, 0.07)');
+      brillo.addColorStop(1, 'rgba(19, 19, 20, 0)');
+      ctx.fillStyle = brillo;
+      ctx.fillRect(0, 0, 1584, 396);
+
+      const tintes = ['229,226,227', '219,195,168', '195,198,215'];
+      for (let i = 0; i < 1500; i++) {
+        const brazo = i % 3;
+        const r = Math.pow(azar(), 0.6) * 900;
+        const angulo = brazo * ((2 * Math.PI) / 3) + r / 260 + (azar() - 0.5) * 0.9;
+        const x = nucleo.x + Math.cos(angulo) * r * 1.25;
+        const y = nucleo.y + Math.sin(angulo) * r * 0.55;
+        if (x < -10 || x > 1594 || y < -10 || y > 406) continue;
+        const tam = azar() < 0.06 ? 1.6 + azar() * 1.2 : 0.5 + azar() * 0.9;
+        const alfa = (0.3 + azar() * 0.6) * Math.max(0.25, 1 - r / 1000);
+        ctx.fillStyle = `rgba(${tintes[Math.floor(azar() * 3)]},${alfa.toFixed(3)})`;
+        ctx.beginPath();
+        ctx.arc(x, y, tam, 0, Math.PI * 2);
+        ctx.fill();
+      }
+    </script>
+  </body>
+</html>

@@ -1,0 +1,69 @@
+
+:root {
+  --bg: #131314;
+  --surface-lowest: #0e0e0f;
+  --surface-low: #1c1b1c;
+  --surface: #201f20;
+  --surface-high: #2a2a2b;
+  --surface-highest: #353436;
+  --bg-overlay: rgba(14, 14, 15, 0.72);
+  --velo: rgba(19, 19, 20, 0.94);
+
+  --bg-card: var(--surface-low);
+  --bg-raised: var(--surface);
+
+  --text: #e5e2e3;
+  --text-soft: #e5e2e3;
+  --text-mute: #c7c6cc;
+  --text-dim: #b0b0b6;
+  --text-faint: #a8a8ae;
+
+  --accent: #dbc3a8;
+  --accent-glow: rgba(219, 195, 168, 0.35);
+  --accent-act: #c3c6d7;
+  --accent-act-soft: rgba(195, 198, 215, 0.14);
+
+  --line: #2a2a2b;
+  --line-soft: #46464c;
+  --line-strong: #909096;
+
+  --star-core: 229, 226, 227;
+  --star-glow: 199, 198, 204;
+  --star-line: 144, 144, 150;
+  --star-blue: 168, 192, 232;
+  --star-warm: 219, 195, 168;
+
+  --font: 'Inter Variable', system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif;
+  --font-display: 'Montserrat Variable', var(--font);
+  --font-label: 'Space Grotesk Variable', var(--font);
+
+  --text-xs: 0.75rem; /* 12px, rótulos en versales */
+  --text-sm: 0.875rem; /* 14px, meta y pies */
+  --text-base: 1rem; /* 16px, cuerpo */
+  --text-md: 1.125rem; /* 18px, títulos de tarjeta */
+  --text-lg: clamp(1.25rem, 2.5vw, 1.75rem);
+  --text-xl: clamp(1.5rem, 4vw, 2rem);
+  --display: clamp(2.5rem, 6vw, 4rem);
+  --figura: clamp(2rem, 1.25rem + 1.75vw, 2.75rem);
+
+  --tracking-display: 0.05em;
+  --tracking-head: 0.02em;
+  --tracking-label: 0.1em;
+  --leading-body: 1.6;
+
+  --page: 72rem;
+  --measure: 36rem;
+  --gutter: clamp(1.5rem, 5vw, 4rem);
+  --section-gap: clamp(4rem, 10vw, 8rem);
+  --nav-h: 4.5rem;
+  --diagrama-h: min(30rem, 52dvh);
+
+  --radius-sm: 0.25rem;
+  --radius: 0.5rem;
+  --radius-md: 0.75rem;
+  --radius-lg: 1.5rem;
+
+  --fast: 0.2s ease;
+  --medium: 0.3s ease;
+  --slow: 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+}

@@ -1,0 +1,7 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 32 32">
+  <rect width="32" height="32" rx="6" fill="#131314"/>
+  <text x="15" y="21.5" text-anchor="middle" fill="#e5e2e3"
+        font-family="Montserrat, 'Segoe UI', Arial, sans-serif" font-size="13" font-weight="700"
+        letter-spacing="0.5">WM</text>
+  <circle cx="27" cy="20.5" r="1.6" fill="#dbc3a8"/>
+</svg>

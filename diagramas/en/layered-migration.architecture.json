@@ -1,0 +1,43 @@
+{
+  "schema_version": 1,
+  "diagram_type": "architecture",
+  "meta": {
+    "title": "Migration to a layered architecture",
+    "viewBox": [1080, 560],
+    "quality_profile": "showcase"
+  },
+  "components": [
+    { "id": "screen", "type": "frontend", "label": "Screen", "sublabel": "one of many", "pos": [40, 220], "size": [120, 60] },
+    { "id": "controller", "type": "backend", "label": "Controller", "sublabel": "no SQL left", "pos": [250, 220], "size": [130, 60] },
+    { "id": "service", "type": "backend", "label": "Service", "sublabel": "business rules", "pos": [460, 220], "size": [130, 60] },
+    { "id": "repository", "type": "backend", "label": "Repository", "sublabel": "queries live here", "pos": [670, 220], "size": [130, 60] },
+    { "id": "db", "type": "database", "label": "Database", "sublabel": "six years of it", "pos": [880, 220], "size": [130, 60] }
+  ],
+  "connections": [
+    { "id": "call", "from": "screen", "to": "controller", "label": "request", "variant": "emphasis" },
+    { "id": "delegate", "from": "controller", "to": "service", "label": "delegates", "variant": "emphasis" },
+    { "id": "fetch", "from": "service", "to": "repository", "label": "asks for data", "variant": "emphasis" },
+    { "id": "query", "from": "repository", "to": "db", "label": "queries", "variant": "emphasis" },
+    { "id": "legacy", "from": "controller", "to": "db", "label": "raw SQL, removed", "variant": "dashed", "fromSide": "bottom", "toSide": "bottom" }
+  ],
+  "cards": [
+    {
+      "dot": "emerald",
+      "title": "Module by module",
+      "items": [
+        "Six years of code, migrated one module at a time",
+        "Every change verified before moving on to the next",
+        "The dashed path is what the migration removed"
+      ]
+    },
+    {
+      "dot": "orange",
+      "title": "What changed",
+      "items": [
+        "Controllers ended up with no raw SQL at all",
+        "Queries moved to a repository layer",
+        "Business rules stopped living in the controller"
+      ]
+    }
+  ]
+}

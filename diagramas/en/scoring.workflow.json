@@ -1,0 +1,124 @@
+{
+  "schema_version": 2,
+  "diagram_type": "workflow",
+  "meta": {
+    "title": "Monthly credit scoring run",
+    "quality_profile": "showcase"
+  },
+  "lanes": [
+    {
+      "id": "schedule",
+      "label": "Schedule"
+    },
+    {
+      "id": "run",
+      "label": "Containerised run"
+    },
+    {
+      "id": "data",
+      "label": "Database"
+    }
+  ],
+  "nodes": [
+    {
+      "id": "cron",
+      "lane": "schedule",
+      "col": 0,
+      "type": "messagebus",
+      "label": "Monthly cron",
+      "sublabel": "unattended"
+    },
+    {
+      "id": "artifact",
+      "lane": "run",
+      "col": 1,
+      "type": "security",
+      "label": "Check artifact",
+      "sublabel": "model rebuilt?"
+    },
+    {
+      "id": "read",
+      "lane": "data",
+      "col": 2,
+      "type": "database",
+      "label": "Read cohort",
+      "sublabel": "people to score"
+    },
+    {
+      "id": "score",
+      "lane": "run",
+      "col": 3,
+      "type": "backend",
+      "label": "Run model",
+      "sublabel": "risk score"
+    },
+    {
+      "id": "validate",
+      "lane": "run",
+      "col": 4,
+      "type": "backend",
+      "label": "Validate rows",
+      "sublabel": "drop the bad ones"
+    },
+    {
+      "id": "load",
+      "lane": "data",
+      "col": 5,
+      "type": "database",
+      "label": "Batch load",
+      "sublabel": "bounded statements"
+    }
+  ],
+  "edges": [
+    {
+      "from": "cron",
+      "to": "artifact",
+      "label": "start",
+      "variant": "emphasis"
+    },
+    {
+      "from": "artifact",
+      "to": "read",
+      "label": "fresh",
+      "variant": "emphasis"
+    },
+    {
+      "from": "read",
+      "to": "score",
+      "label": "rows",
+      "variant": "emphasis"
+    },
+    {
+      "from": "score",
+      "to": "validate",
+      "label": "scores",
+      "variant": "emphasis"
+    },
+    {
+      "from": "validate",
+      "to": "load",
+      "label": "accepted",
+      "variant": "emphasis"
+    }
+  ],
+  "cards": [
+    {
+      "dot": "emerald",
+      "title": "Idempotent and resumable",
+      "items": [
+        "A halted run resumes instead of starting the month again",
+        "Invalid rows are discarded without aborting the load",
+        "Batches keep every statement bounded"
+      ]
+    },
+    {
+      "dot": "orange",
+      "title": "The plumbing, not the model",
+      "items": [
+        "The risk model belongs to the risk team",
+        "This is what puts it in production every month",
+        "No manual step between the cron and the loaded results"
+      ]
+    }
+  ]
+}

@@ -1,0 +1,356 @@
+import type { Profile } from './types';
+
+/* `facts` se lee por POSICIÓN desde tools/cv/src/build.ts, no por etiqueta: reordenar
+   este array cambia lo que sale impreso en el CV. */
+export const en = {
+  name: 'Wilfred Morales',
+  role: 'Backend developer',
+  stack: 'PHP · Laravel · PostgreSQL · Python',
+  credential:
+    'Configurable business logic, external service integrations and batch processing, shipped to production.',
+  availability: 'Freelance backend developer · Open to roles or contracts, remote or in Bogotá',
+  trajectory: 'Bogotá, Colombia · Remote, hybrid or on-site (GMT-5)',
+  heroSlogan: { start: 'Ideas', link: 'into', end: 'Product' },
+  location: 'Bogotá, Colombia',
+  email: 'wilfred3019@gmail.com',
+  phone: '+57 322 310 3476',
+  repoUrl: 'https://github.com/wilfred524/portfolio',
+  siteUrl: 'https://portfolio-wilfred524.vercel.app',
+  cv: { label: 'Download CV', url: '/Wilfred-Morales-Backend-Developer.pdf' },
+  colophon:
+    'React and TypeScript, no animation library: the particle field is 2D canvas and samples the typography of the document itself to form each heading. A single profile file feeds the page, the PDF CV and what the assistant knows. The assistant itself runs on Python in serverless functions. The code is public.',
+  facts: [
+    {
+      id: 'education',
+      label: 'Education',
+      value: 'Computer Engineering, Universidad Nacional Experimental del Táchira (UNET), in progress.',
+    },
+    {
+      id: 'languages',
+      label: 'Languages and certifications',
+      value:
+        'Spanish (native) · English B2 (EF SET) · Google Cloud Fundamentals and Claude Code · Preparing for Google Cloud ACE',
+    },
+    {
+      id: 'mode',
+      label: 'Work mode',
+      value:
+        'Remote, hybrid or on-site in Bogotá · GMT-5 · Local employment in Colombia or international contracting.',
+    },
+    {
+      id: 'domain',
+      label: 'Domain',
+      value:
+        'Payroll-deduction lending: loans repaid through automatic salary deductions, a regulated sector in Colombia (Law 1527).',
+    },
+  ],
+  skillGroups: [
+    {
+      area: 'Backend',
+      items: [
+        'PHP',
+        'Laravel',
+        'Eloquent ORM',
+        'Laravel Queues',
+        'Composer',
+        'REST APIs',
+        'Python',
+        'FastAPI',
+        'Node.js',
+        'Layered architecture',
+      ],
+    },
+    {
+      area: 'Databases',
+      items: [
+        'PostgreSQL',
+        'MySQL',
+        'SQL',
+        'Supabase',
+        'Data modelling and migrations',
+        'Query and index optimisation',
+      ],
+    },
+    {
+      area: 'Security and access control',
+      items: [
+        'Spatie Laravel Permission',
+        'RBAC',
+        'MFA',
+        'Session management',
+        'Row Level Security (RLS)',
+        'Snyk',
+        'Gitleaks',
+        'reCAPTCHA Enterprise',
+      ],
+    },
+    {
+      area: 'Automation & AI',
+      items: ['AI-assisted development', 'OpenAI API', 'DeepSeek API', 'n8n', 'Webhooks'],
+    },
+    {
+      area: 'Frontend',
+      items: ['Vue.js 3', 'Inertia.js', 'Blade', 'Tailwind CSS', 'Vite'],
+    },
+    {
+      area: 'Infrastructure and cloud',
+      items: [
+        'Docker',
+        'Docker Compose',
+        'Linux',
+        'Bash',
+        'Nginx',
+        'Google Cloud (GCP)',
+        'AWS',
+        'AWS S3',
+        'Vercel',
+        'Certbot',
+      ],
+    },
+    {
+      area: 'Process',
+      items: ['Git', 'GitHub', 'Pull requests', 'GitHub Actions', 'CI/CD', 'PHPUnit', 'Scrum', 'Agile methodologies'],
+    },
+  ],
+  employments: [
+    {
+      id: 'freelance',
+      employer: 'Freelance',
+      tagline:
+        'Commissioned work, remote.',
+      role: 'Backend Developer',
+      period: 'Aug 2026 – Present',
+      mode: 'Remote',
+    },
+    {
+      id: 'gaf',
+      employer: 'GAF Technology Solutions',
+      tagline:
+        'Payroll-deduction lending fintech. Technology team of 4. Git workflow with feature branches and pull requests, in sprints (Scrum). Besides the backend, I built the frontend of my modules in Vue.js and Inertia.js, and nearly all of the frontend at CK Comercializadora, a company in the same group.',
+      role: 'Backend Developer',
+      period: 'Oct 2025 – Jul 2026',
+      mode: 'Fixed-term project contract · Remote, Colombia',
+    },
+  ],
+  projectGroups: [
+    {
+      category: 'GAF platform',
+      employmentId: 'gaf',
+      items: [
+        {
+          id: 'rules-engine',
+          diagram: 'rules-engine.html',
+          title: 'Credit rules engine',
+          summary:
+            'Credit policy lives as data in PostgreSQL, not as code: the business team adjusts a term limit without waiting for a deployment.',
+          body: {
+            problem:
+              'Changing a credit policy meant a deployment: the business team could not adjust a term limit or a garnishment condition without going through development.',
+            hard:
+              'I modelled the data and translated business policy into a rules schema in PostgreSQL (eligibility, garnishments, term limits, employment and financial requirements per paying entity), so the code does not know what the rules are, only how to apply them. On top of that I implemented the full evaluation: borrowing-capacity calculation under Law 1527 (payroll-deduction lending) and Law 50 for active employees and pensioners, decision criteria, special rules, application re-evaluation, and the front-end and back-end validation.',
+            result:
+              'The business team adjusts parameters without touching code or waiting for a deployment, and every application is traced back to the advisor who filed it. A colleague built the submission REST API; I restructured its request body several times as the model changed.',
+          },
+          tags: ['Laravel', 'Vue.js', 'Inertia.js', 'PostgreSQL'],
+        },
+        {
+          id: 'scoring',
+          diagram: 'scoring.html',
+          title: 'Monthly credit scoring process',
+          summary:
+            'A container on a monthly cron pulls the data from PostgreSQL, runs the risk model and loads the results with no manual step.',
+          metrics: [
+            { value: '320,000+', label: 'people per run' },
+            { value: '5,000', label: 'rows per batch' },
+          ],
+          body: {
+            problem:
+              'A risk model lived in a script owned by the risk team, with no way to reach production.',
+            hard:
+              'I packaged it into a container with a monthly cron: it reads from PostgreSQL, runs the model, checks the artifact has been regenerated before going further, and loads in batches of 5,000 to bound each statement. The process is idempotent and resumable, and discards invalid rows without aborting the whole load.',
+            result:
+              'The model is not mine; the plumbing that puts it in production is. Over 320,000 distinct people are scored on every run, with no manual step.',
+          },
+          tags: ['Python', 'PostgreSQL', 'Docker', 'Laravel'],
+        },
+        {
+          id: 'query-optimization',
+          diagram: 'query-optimization.html',
+          title: 'Query optimisation in production',
+          summary:
+            'A query that took 20 to 30 seconds and ended in timeouts, fixed with upfront filters, indexes and pagination.',
+          metrics: [
+            { value: '3-6 s', label: 'previously 20-30 s' },
+            { value: '0', label: 'timeouts' },
+          ],
+          body: {
+            problem:
+              'A query joining several tables took between 20 and 30 seconds to return, and timed out under high volume: the screen that depended on it was unusable exactly when there were most records to show.',
+            hard:
+              'I did not rewrite the whole query: I separated the three causes and went after each one. I applied filters upfront so the join would not start from the full set, added indexes on the fields taking part in the joins and the filters, and paginated the response so the page stopped loading everything at once.',
+            result:
+              'Response times dropped to between 3 and 6 seconds depending on the size of the result, and the timeouts were gone.',
+          },
+          tags: ['PostgreSQL', 'SQL', 'Laravel', 'Eloquent ORM'],
+        },
+        {
+          id: 'esignature',
+          diagram: 'esignature.html',
+          title: 'Electronic signature with identity validation',
+          summary:
+            'A 24-page document that used to be filled in by hand, now generated from templates and signed once the customer identity checks out.',
+          metrics: [
+            { value: '24', label: 'pages previously by hand' },
+            { value: '20 min', label: 'full procedure' },
+          ],
+          body: {
+            problem:
+              'The previous module was disused and the document, 24 pages long, was filled in by hand. I built the module from scratch: it is now generated automatically from templates, with a different template per product.',
+            hard:
+              'The hard part is not signing, it is getting everything to line up before signing. An advisor approves a draft, customer data is validated against TransUnion, and identity is verified by OTP or KBA. I designed the flow as a state machine over the asynchronous responses from the provider REST API, so a long process always ends in a valid document, or in an error the user can act on.',
+            result:
+              'The provider returns the signed document with its hash, the transaction is fully traceable, and a copy is kept in S3. The whole procedure closes in about 20 minutes, against a manual fill-in of 24 pages.',
+          },
+          tags: ['Laravel', 'Vue.js', 'Python', 'TransUnion', 'AWS S3'],
+        },
+        {
+          id: 'access-control',
+          diagram: 'access-control.html',
+          title: 'Access control and permissions',
+          summary:
+            'A permission tree across 17 modules, down to the option and sub-process level, with existing users and roles migrated without stopping operations.',
+          metrics: [{ value: '17', label: 'modules covered' }],
+          brief:
+            'I built the platform permission tree across 17 modules, with permissions down to the option and sub-process level, locked down every route, and migrated existing users and roles to the new schema without interrupting operations. I also implemented MFA: signing in from a new device asks for a one-time code by email that expires in 15 minutes, and trust is remembered per user and device.',
+          tags: ['Spatie Permission', 'MFA', 'Laravel', 'PostgreSQL'],
+        },
+        {
+          id: 'layered-migration',
+          diagram: 'layered-migration.html',
+          title: 'Migration to a layered architecture',
+          summary:
+            'First stage of migrating six years of code, module by module, until controllers held no raw SQL at all.',
+          metrics: [
+            { value: '6 years', label: 'of legacy code' },
+            { value: '3 months', label: 'of work' },
+          ],
+          brief:
+            'I took part in the first stage of migrating the platform, six years of code, to a layered architecture, verifying every change module by module before moving on and removing raw SQL queries from controllers entirely. Three months of work, reviewed by the tech lead at each step.',
+          tags: ['Layered architecture', 'Laravel', 'PostgreSQL'],
+        },
+        {
+          id: 'infrastructure',
+          diagram: 'infrastructure.html',
+          title: 'Infrastructure and deployment',
+          summary:
+            'The application went from running natively to a container on a new GCP instance, with nginx in front and a parallel migration, with no downtime.',
+          body: {
+            problem:
+              'The application ran natively on the machine, with no isolation between environment and code.',
+            hard:
+              'I containerised the application with Docker and deployed it on a new GCP instance, with nginx as a reverse proxy between the containers and the host.',
+            result:
+              'I ran the migration in parallel: I brought up and validated the new instance while the old one was still in production, configured the domain DNS and issued the certificates with Certbot until the application ran entirely over HTTPS. No service interruption.',
+          },
+          tags: ['Docker', 'Linux', 'Nginx', 'GCP', 'Certbot'],
+        },
+      ],
+    },
+    {
+      category: 'Freelance projects',
+      employmentId: 'freelance',
+      items: [
+        {
+          id: 'gestienda',
+          diagram: 'gestienda.html',
+          title: 'Gestienda',
+          role: 'Freelance project',
+          period: 'Nov 2026 – Present',
+          summary:
+            'A platform for small businesses: credit sales, payments and inventory, offline too. In production with a real client.',
+          metrics: [{ value: 'No notebooks', label: 'credit, collections and sales on one screen' }],
+          body: {
+            problem:
+              'The client kept every account in notebooks: store credit and collections were slow to follow and error-prone, because nobody flagged a missed payment or an exceeded limit.',
+            hard:
+              'I built a React PWA on Supabase with two pillars: store credit (accounts with payments and limits) and counter sales with inventory. The balance, limit and stock rules live in PostgreSQL: a trigger computes the balance, the ledger is insert only and is written solely through functions with per store permissions. Offline, every operation is saved in a local queue with a unique identifier and sent in order once the network returns; resending it does not duplicate it.',
+            result:
+              'The client sells, collects and checks the daily state of the shop from a single screen, on a tool they carry around: it installs on Android as an app. Schema migrations were applied in production with a prior backup and every balance checked before and after.',
+          },
+          tags: ['React', 'JavaScript', 'PostgreSQL', 'Supabase', 'PWA'],
+        },
+        {
+          id: 'cristal-lumired',
+          diagram: 'cristal-lumired.html',
+          title: 'Website and quoter for a glass shop (in progress)',
+          role: 'Freelance project',
+          period: 'Aug 2026 – Present',
+          summary:
+            'The client priced windows, doors and shower screens in an Excel workbook. The quoter reproduces that workbook and returns a price without exposing the list.',
+          metrics: [{ value: '898', label: 'Excel cells reproduced' }],
+          brief:
+            'I built the quoter for a Chilean glass shop from the price workbook the client maintained. I extracted it once to JSON, unfolding every formula until it was written over measurements and fixed costs, and the engine, in Python and FastAPI, reproduces the 898 cells Excel had computed. The landing page and quoter, in Vue and Tailwind, are designed to be public: they are prerendered and their API returns only the requested combination, because sending the grid would have handed the price list to anyone who opened the browser tools.',
+          tags: ['Python', 'FastAPI', 'Vue.js', 'Tailwind CSS', 'Vercel'],
+        },
+      ],
+    },
+  ],
+  social: [
+    { label: 'GitHub', url: 'https://github.com/wilfred524' },
+    { label: 'LinkedIn', url: 'https://www.linkedin.com/in/wilfred-morales' },
+  ],
+  ui: {
+    sections: {
+      experience: 'Experience',
+      skills: 'Skills',
+      contact: 'Contact',
+      colophon: 'How this site is built',
+      profile: 'Profile',
+    },
+    planes: {
+      ariaLabel: 'Views',
+      previous: 'Previous view',
+      next: 'Next view',
+      threshold: 'Start',
+      context: 'Context',
+      data: 'Data and decisions',
+      platform: 'The platform',
+      own: 'Freelance projects',
+      stack: 'Stack',
+      contact: 'Contact',
+      enter: 'Begin',
+      skipToWork: 'Skip to the work',
+      documentMode: 'Document view',
+      observatoryMode: 'Observatory view',
+      skipToContent: 'Skip to content',
+      position: 'View {n} of {total}',
+    },
+    blocks: { problem: 'Problem', hard: 'The hard part', result: 'Outcome' },
+    project: {
+      open: 'View detail',
+      close: 'Close',
+      metrics: 'Numbers',
+      stack: 'Stack',
+      visit: 'View the repository',
+      diagram: 'Architecture',
+      diagramHint:
+        'Inside the diagram, arrows pan and + and − zoom. Press Tab to come back to the page.',
+      diagramOpen: 'Open the diagram',
+    },
+    viewCode: 'View the code',
+    chat: {
+      title: 'Ask what the page leaves out',
+      intro: 'Why he made each decision, how he works, and what sits behind each project.',
+      placeholder: 'Type your question',
+      send: 'Send',
+      thinking: 'Thinking',
+      error: "I couldn't answer. Write to wilfred3019@gmail.com instead.",
+      logLabel: 'Conversation with the agent',
+      disclaimer: "You're talking to an agent, not to Wilfred. It can be wrong.",
+      launcher: 'Ask the agent',
+      closeLabel: 'Close the chat',
+      invite: "Something the page doesn't cover? Ask me.",
+      inviteDismiss: 'Dismiss',
+    },
+  },
+} satisfies Profile;
