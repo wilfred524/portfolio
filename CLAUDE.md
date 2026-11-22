@@ -14,6 +14,19 @@ El objetivo es que un evaluador técnico entienda en tres o cuatro planos qué s
 construido, en qué dominio y desde cuándo. La reconstrucción del sistema Henry que había
 antes se retiró entera.
 
+## Dos repositorios
+
+- **`wilfred524/portfolio-deploy`** (privado): el de trabajo. Vercel despliega desde su
+  `main`. Aquí se edita siempre.
+- **`wilfred524/portfolio`** (público): copia limpia para quien evalúa el trabajo; es el
+  enlace «View code» del sitio. **No se edita a mano.** Cada push a `main` del privado la
+  regenera con `.github/workflows/publicar.yml` → `tools/publicar/publicar.py`.
+
+La copia publica `docs/` por **lista blanca** (`DOCS_PUBLICOS` en el script) y sustituye
+el contexto del agente por `tools/publicar/_context-ejemplo/`. Un documento nuevo en
+`docs/` queda privado salvo que se añada a la lista. Si cambia la estructura de
+`api/_context/`, actualiza también los archivos de ejemplo.
+
 ## Reglas invariantes (no romper)
 
 - **Los valores de diseño salen de `web/src/styles/tokens.css`**, siempre. Un color o un
